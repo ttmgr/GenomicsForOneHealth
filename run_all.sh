@@ -12,9 +12,10 @@ echo "5) AMR Nanopore"
 echo "6) Wetland Health Analysis"
 echo "7) Air Metagenomics"
 echo "8) Avian Influenza Profiling"
+echo "9) From Feather to Fur"
 echo "========================================="
 
-read -p "Enter number (1-8): " choice
+read -p "Enter number (1-9): " choice
 
 case $choice in
     1)
@@ -43,6 +44,9 @@ case $choice in
         ;;
     8)
         echo "Avian Influenza profiling requires initial config mapping. See Avian-Influenza-Profiling/README.md"
+        ;;
+    9)
+        echo "From Feather to Fur requires config mapping. See From_feather_to_fur/README.md"
         ;;
     *)
         echo "Invalid selection."
