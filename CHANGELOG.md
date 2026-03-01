@@ -17,3 +17,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Imported `AMR_nanopore` (Cloned).
 - Imported `Wetland_Health` (Cloned).
 - Imported `Air_Metagenomics` (Cloned).
+- Imported `Avian-Influenza-Profiling` (Cloned).

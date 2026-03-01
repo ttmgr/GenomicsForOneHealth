@@ -82,6 +82,14 @@ This repository currently hosts three distinct, yet complementary, analytical pi
 *   **Comprehensive Annotation:** Functional gene prediction and AMR screening on both raw reads and assembled contigs.
 *   **Metagenomic Binning:** Recovers Metagenome-Assembled Genomes (MAGs) from difficult environmental air samples.
 
+### [Avian Influenza Profiling Pipeline](./Avian-Influenza-Profiling/README.md)
+*Latest RNA and DNA nanopores allow for rapid avian influenza profiling.*
+
+**Key Capabilities:**
+*   **Rapid Virus Detection:** Workflows specifically optimized for quick identification and profiling of Avian Influenza.
+*   **Direct RNA Sequencing:** Methodology demonstrating the utility of direct RNA sequencing for viral diagnostics without the amplification biases.
+*   **Subtyping Support:** Facilitates epidemiological surveillance of circulating avian influenza strains.
+
 ---
 
 ## Getting Started
@@ -94,11 +102,16 @@ cd HAI-Pipelines
 ```
 
 ### Dependencies
-Each sub-pipeline maintains its own specific dependencies, managed via Conda/Mamba or Docker. Please refer to the specific setup instructions within each pipeline's directory:
+We have centralized the environment and requirement files for this repository into the `envs/` directory. Each sub-pipeline also maintains specific container recommendations or additional instructions within its own directory:
 
 *   [Listeria Setup Guide](./Listeria-Adaptive-Sampling/docs/01_installation.md)
 *   [CRE-Plasmid Setup Guide](./CRE-Plasmid-clustering/README.md)
 *   [AMR-Host Setup Guide](./Nanopore-AMR-Host-Association/README.md)
+*   [Squiggle4Viability Setup Guide](./Squiggle4Viability/README.md) *(Requirements: `envs/squiggle4viability_requirements.txt`)*
+*   [AMR Nanopore Setup Guide](./AMR_nanopore/README.md)
+*   [Wetland Health Setup Guide](./Wetland_Health/Installation_tutorial.md)
+*   [Air Metagenomics Setup Guide](./Air_Metagenomics/Installation_tutorial.md) *(Environment: `envs/air_metagenomics_env.yaml`)*
+*   [Avian Influenza Profiling Guide](./Avian-Influenza-Profiling/README.md)
 
 ---
 
@@ -113,6 +126,7 @@ graph TD
     A --> J(AMR Nanopore)
     A --> M(Wetland Health)
     A --> N(Air Metagenomics)
+    A --> Q(Avian Influenza Profiling)
     
     B --> E[Taxonomy & AMR Reports]
     C --> F[Plasmid Similarity Networks]
@@ -121,6 +135,7 @@ graph TD
     J --> L[Rapid AMR Profiles]
     M --> O[Ecosystem & Viral Communities]
     N --> P[Bioaerosol MAGs & Diversity]
+    Q --> R[Viral Subtyping & Diagnostics]
     
     E --> H((Integrated HAI Insights))
     F --> H
@@ -129,6 +144,7 @@ graph TD
     L --> H
     O --> H
     P --> H
+    R --> H
     
     style H fill:#f9f,stroke:#333,stroke-width:4px
 ```

@@ -11,9 +11,10 @@ echo "4) Squiggle4Viability"
 echo "5) AMR Nanopore"
 echo "6) Wetland Health Analysis"
 echo "7) Air Metagenomics"
+echo "8) Avian Influenza Profiling"
 echo "========================================="
 
-read -p "Enter number (1-7): " choice
+read -p "Enter number (1-8): " choice
 
 case $choice in
     1)
@@ -39,6 +40,9 @@ case $choice in
     7)
         echo "Starting Air Metagenomics pipeline..."
         cd Air_Metagenomics && bash bash_scripts/run_pipeline.sh
+        ;;
+    8)
+        echo "Avian Influenza profiling requires initial config mapping. See Avian-Influenza-Profiling/README.md"
         ;;
     *)
         echo "Invalid selection."
