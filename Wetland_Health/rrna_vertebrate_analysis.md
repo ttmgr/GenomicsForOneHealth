@@ -66,7 +66,7 @@ vsearch --usearch_global otus.fasta --db MIDORI2_unique_266.fasta --id 0.98 \
     --blast6out assignments.b6
 
 # 5. Downstream processing
-#   Summarize assiments, check against eBird, and aggregate read counts per taxon
+#  Summarize assiments, check against eBird, and aggregate read counts per taxon
 ==
 # Assign taxonomy with MIDORI2 reference database
 vsearch --usearch_global otus.fasta --db MIDORI2_unique_266.fasta --id 0.98 \

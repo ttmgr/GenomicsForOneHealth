@@ -19,7 +19,7 @@ This repository contains the bioinformatic workflows used to process the sequenc
 
 ## Sample Information and Barcoding Scheme
 
-**⚠️ IMPORTANT: This table is essential for reproducing our analyses. It maps sampling locations to their corresponding barcodes and FASTQ files.**
+** IMPORTANT: This table is essential for reproducing our analyses. It maps sampling locations to their corresponding barcodes and FASTQ files.**
 
 ### Site Coding System
 Sites are coded using a **[Country][Environment][Number]** format:
