@@ -66,6 +66,22 @@ This repository currently hosts three distinct, yet complementary, analytical pi
 *   **Comprehensive AMR Profiling:** Identifies a wide range of resistance determinants across diverse bacterial pathogens.
 *   **Actionable Insights:** Designed to produce rapid reports suitable for clinical or epidemiological decision-making.
 
+### 6️⃣ [Wetland Health Analysis Pipeline](./Wetland_Health/README.md)
+*Real-time genomic pathogen, resistance, and host range characterization from passive water sampling of wetland ecosystems.*
+
+**Key Capabilities:**
+*   **Multi-omics Processing:** Integrates DNA Shotgun Metagenomics, 12S rRNA Vertebrate Metabarcoding, AIV RNA Analysis, and RNA Viromics.
+*   **Ecosystem Monitoring:** Characterizes microbial communities, vertebrate biodiversity, and AMR prevalence across diverse environments.
+*   **Targeted Viral Surveillance:** Specific workflows for Avian Influenza Virus (AIV) and other RNA viruses.
+
+### 7️⃣ [Air Metagenomics Pipeline](./Air_Metagenomics/README.md)
+*Air monitoring by nanopore sequencing for the detection of bioaerosol communities.*
+
+**Key Capabilities:**
+*   **Automated Profiling:** End-to-end automated modular pipeline turning raw reads into taxonomical and functional insight reports.
+*   **Comprehensive Annotation:** Functional gene prediction and AMR screening on both raw reads and assembled contigs.
+*   **Metagenomic Binning:** Recovers Metagenome-Assembled Genomes (MAGs) from difficult environmental air samples.
+
 ---
 
 ## 🚀 Getting Started
@@ -95,18 +111,24 @@ graph TD
     A --> D(AMR Host Association)
     A --> I(Squiggle4Viability)
     A --> J(AMR Nanopore)
+    A --> M(Wetland Health)
+    A --> N(Air Metagenomics)
     
     B --> E[Taxonomy & AMR Reports]
     C --> F[Plasmid Similarity Networks]
     D --> G[AMR-Taxa Linkage Maps]
     I --> K[Viability Status]
     J --> L[Rapid AMR Profiles]
+    M --> O[Ecosystem & Viral Communities]
+    N --> P[Bioaerosol MAGs & Diversity]
     
     E --> H((Integrated HAI Insights))
     F --> H
     G --> H
     K --> H
     L --> H
+    O --> H
+    P --> H
     
     style H fill:#f9f,stroke:#333,stroke-width:4px
 ```
