@@ -4,7 +4,7 @@ This guide provides solutions to common issues you might encounter while setting
 
 ---
 
-## ⚠️ Issue: "Command not found" or Tool Incompatibility Errors
+## Issue: "Command not found" or Tool Incompatibility Errors
 
 This is the most common issue and usually relates to the software environment.
 
@@ -29,7 +29,7 @@ This is the most common issue and usually relates to the software environment.
 
 ---
 
-## 🗃️ Issue: Database Errors
+## Issue: Database Errors
 
 Problems with database paths or files are another frequent cause of pipeline failure.
 

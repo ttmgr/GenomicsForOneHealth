@@ -1,6 +1,6 @@
 # Air Monitoring by Nanopore Sequencing (PRJNA1063692)
 
-## 🔬 Project Overview
+## Project Overview
 
 This project utilizes metagenomic analysis of bioaerosols collected via air sampling to monitor microbial communities, employing Oxford Nanopore Technologies (ONT) sequencing. This repository contains a comprehensive workflow designed to process raw sequencing data, perform assembly and binning, and conduct detailed taxonomic and functional analysis.
 
@@ -8,7 +8,7 @@ This project utilizes metagenomic analysis of bioaerosols collected via air samp
 
 ---
 
-## **❗️ Important First Step: Data Access & Preprocessing**
+## ** Important First Step: Data Access & Preprocessing**
 
 Before running the main pipeline, you **must** consult the specific data guide for the dataset you are analyzing. These guides contain critical, non-optional instructions for accessing the correct raw data and preparing your FASTQ files.
 
@@ -33,7 +33,7 @@ dorado basecaller dna_r10.4.1_e8.2_400bps_hac@v5.0.0 -r /path/to/input/pod5/ --e
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 * **`/bash_scripts`**: Contains the modular, automated bash pipeline. The main `run_pipeline.sh` script orchestrates the entire workflow.
 * **`/config`**: Contains configuration files such as `config.yaml` with parameters for the pipeline tools.
@@ -45,7 +45,7 @@ dorado basecaller dna_r10.4.1_e8.2_400bps_hac@v5.0.0 -r /path/to/input/pod5/ --e
 
 ---
 
-## 🛠️ Installation & Setup
+## Installation & Setup
 
 1.  **Install Tools**: For comprehensive installation instructions for all pipeline tools and their dependencies, please refer to the **[`Installation_tutorial.md`](./Installation_tutorial.md)** file. It is highly recommended to use `mamba` to create a dedicated environment.
 
@@ -58,7 +58,7 @@ dorado basecaller dna_r10.4.1_e8.2_400bps_hac@v5.0.0 -r /path/to/input/pod5/ --e
 
 ---
 
-## 🚀 Usage Workflow
+## Usage Workflow
 
 This repository now uses a streamlined, automated pipeline. The manual, step-by-step commands have been replaced by a series of modular scripts orchestrated by a single main script.
 
@@ -100,7 +100,7 @@ For more details on summarizing specific results (e.g., Kraken2 reports, NanoSta
 
 ---
 
-## 🧰 Tools Integrated
+## Tools Integrated
 
 This pipeline integrates the following key bioinformatics tools:
 * **Basecalling**: Guppy / Dorado

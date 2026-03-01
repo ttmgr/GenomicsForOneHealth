@@ -145,7 +145,7 @@ for seg in "${segments[@]}"; do
   mapped_total=$(awk '{sum+=$3} END{print sum+0}' "$seg_out/idxstats.txt")
  
   if [ "$mapped_total" -eq 0 ]; then
-    echo "  ⚠️  No reads mapped to segment $seg—skipping."
+    echo "    No reads mapped to segment $seg—skipping."
     continue
   fi
  
@@ -173,7 +173,7 @@ for seg in "${segments[@]}"; do
   # require at least one primary alignment
   primary_count=$(samtools view -F0x100 -F0x800 -c "$seg_out/best_ref_sorted.bam")
   if [ "$primary_count" -eq 0 ]; then
-    echo "  ⚠️  Only secondary/supplementary reads for $seg — skipping consensus."
+    echo "    Only secondary/supplementary reads for $seg — skipping consensus."
     continue
   fi
  

@@ -2,7 +2,7 @@
 
 This guide provides streamlined instructions for setting up the necessary software environment and databases to run the entire Air Monitoring Nanopore Sequencing Pipeline.
 
-## 🔬 Overview of the Installation Process
+## Overview of the Installation Process
 
 The setup process consists of three main steps:
 
@@ -52,7 +52,7 @@ Please refer to the **ONT Community** for instructions on downloading and instal
 
 The pipeline requires several large databases. A helper script, `download_databases.sh`, is provided to automate this process.
 
-1.  **❗️ IMPORTANT ❗️:** First, open the script **`bash_scripts/download_databases.sh`** and edit the `DB_BASE_DIR` variable to the full path where you want to store the databases. This location requires **~400-500 GB** of free space.
+1.  ** IMPORTANT :** First, open the script **`bash_scripts/download_databases.sh`** and edit the `DB_BASE_DIR` variable to the full path where you want to store the databases. This location requires **~400-500 GB** of free space.
 
 2.  Run the script. Make sure you have activated the `nanopore-metagenomics` environment first, as it contains some of the required helper tools.
     ```bash
@@ -71,7 +71,7 @@ The pipeline requires several large databases. A helper script, `download_databa
 
 ---
 
-## 🧰 Key Tools Included in the Environment
+## Key Tools Included in the Environment
 
 Creating the environment with the `environment.yaml` file provides all the necessary tools for the automated pipeline, including:
 

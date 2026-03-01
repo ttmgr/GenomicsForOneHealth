@@ -1,6 +1,6 @@
 <div align="center">
   
-# 🔬 HAI-Pipelines
+# HAI-Pipelines
 
 **A Comprehensive Bioinformatics Pipeline Collection for Healthcare-Associated Infections (HAI)**
 
@@ -14,17 +14,17 @@
 
 ---
 
-## 📖 Overview
+## Overview
 
 The **HAI-Pipelines** repository is a centralized, modular collection of bioinformatics workflows developed to address the growing challenge of **Healthcare-Associated Infections (HAIs)** and **Antimicrobial Resistance (AMR)**. Designed for the analysis of Nanopore sequencing data, this repository integrates multiple specialized pipelines into a cohesive, reproducible ecosystem.
 
 Our tools leverage long-read sequencing technology to provide rapid, high-resolution insights into pathogen genomics, enabling detailed epidemiological tracking, resistome profiling, and plasmid characterization.
 
-## 🧬 Integrated Pipelines
+## Integrated Pipelines
 
 This repository currently hosts three distinct, yet complementary, analytical pipelines:
 
-### 1️⃣ [Listeria Adaptive Sampling Pipeline](./Listeria-Adaptive-Sampling/README.md)
+### [Listeria Adaptive Sampling Pipeline](./Listeria-Adaptive-Sampling/README.md)
 *High-resolution genomic analysis of Listeria monocytogenes from complex samples.*
 
 **Key Capabilities:**
@@ -34,7 +34,7 @@ This repository currently hosts three distinct, yet complementary, analytical pi
 *   **AMR Profiling:** Comprehensive detection of antimicrobial resistance genes via AMRFinderPlus.
 *   **Automated Reporting:** Generates detailed HTML and Excel reports summarizing sequencing metrics, taxonomy, and resistance profiles.
 
-### 2️⃣ [CRE Plasmid Clustering Pipeline](./CRE-Plasmid-clustering/README.md)
+### [CRE Plasmid Clustering Pipeline](./CRE-Plasmid-clustering/README.md)
 *Advanced characterization and clustering of plasmids in Carbapenem-resistant Enterobacterales (CRE).*
 
 **Key Capabilities:**
@@ -42,7 +42,7 @@ This repository currently hosts three distinct, yet complementary, analytical pi
 *   **Comparative Genomics:** Tools for clustering and comparing plasmid sequences across isolates.
 *   **Epidemiological Tracking:** Facilitates the study of plasmid-mediated dissemination of carbapenem resistance genes.
 
-### 3️⃣ [Nanopore AMR Host Association Pipeline](./Nanopore-AMR-Host-Association/README.md)
+### [Nanopore AMR Host Association Pipeline](./Nanopore-AMR-Host-Association/README.md)
 *Direct linking of antimicrobial resistance genes to their bacterial hosts in metagenomic samples.*
 
 **Key Capabilities:**
@@ -50,7 +50,7 @@ This repository currently hosts three distinct, yet complementary, analytical pi
 *   **Host-Resistance Linkage:** Bioinformatic linking of AMR gene annotations (e.g., from AMRFinderPlus) with taxonomic classifications (e.g., from Kraken2) on the same individual reads or assembled contigs.
 *   **Resistome Contextualization:** Provides critical context for understanding the mobility and potential clinical impact of identified resistance elements.
 
-### 4️⃣ [Squiggle4Viability Pipeline](./Squiggle4Viability/README.md)
+### [Squiggle4Viability Pipeline](./Squiggle4Viability/README.md)
 *Assessing bacterial viability directly from raw nanopore electrical signals.*
 
 **Key Capabilities:**
@@ -58,7 +58,7 @@ This repository currently hosts three distinct, yet complementary, analytical pi
 *   **Viability Determination:** Distinguishes between live and dead bacterial cells based on subtle signal differences indicating membrane integrity or metabolic state prior to sequencing.
 *   **Rapid Diagnostics:** Enables faster and more direct insights into treatment efficacy and infection viability status.
 
-### 5️⃣ [AMR Nanopore Pipeline](./AMR_nanopore/README.md)
+### [AMR Nanopore Pipeline](./AMR_nanopore/README.md)
 *Rapid and robust detection of Antimicrobial Resistance directly from nanopore sequencing data.*
 
 **Key Capabilities:**
@@ -66,7 +66,7 @@ This repository currently hosts three distinct, yet complementary, analytical pi
 *   **Comprehensive AMR Profiling:** Identifies a wide range of resistance determinants across diverse bacterial pathogens.
 *   **Actionable Insights:** Designed to produce rapid reports suitable for clinical or epidemiological decision-making.
 
-### 6️⃣ [Wetland Health Analysis Pipeline](./Wetland_Health/README.md)
+### [Wetland Health Analysis Pipeline](./Wetland_Health/README.md)
 *Real-time genomic pathogen, resistance, and host range characterization from passive water sampling of wetland ecosystems.*
 
 **Key Capabilities:**
@@ -74,7 +74,7 @@ This repository currently hosts three distinct, yet complementary, analytical pi
 *   **Ecosystem Monitoring:** Characterizes microbial communities, vertebrate biodiversity, and AMR prevalence across diverse environments.
 *   **Targeted Viral Surveillance:** Specific workflows for Avian Influenza Virus (AIV) and other RNA viruses.
 
-### 7️⃣ [Air Metagenomics Pipeline](./Air_Metagenomics/README.md)
+### [Air Metagenomics Pipeline](./Air_Metagenomics/README.md)
 *Air monitoring by nanopore sequencing for the detection of bioaerosol communities.*
 
 **Key Capabilities:**
@@ -84,7 +84,7 @@ This repository currently hosts three distinct, yet complementary, analytical pi
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 To utilize these pipelines, clone the repository to your local environment:
 
@@ -102,7 +102,7 @@ Each sub-pipeline maintains its own specific dependencies, managed via Conda/Mam
 
 ---
 
-## 📊 Workflow Architecture
+## Workflow Architecture
 
 ```mermaid
 graph TD
@@ -137,7 +137,7 @@ graph TD
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions to improve and expand the HAI-Pipelines collection! 
 
@@ -149,7 +149,7 @@ We welcome contributions to improve and expand the HAI-Pipelines collection!
 
 ---
 
-## 📝 License
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
