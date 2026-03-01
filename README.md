@@ -50,6 +50,22 @@ This repository currently hosts three distinct, yet complementary, analytical pi
 *   **Host-Resistance Linkage:** Bioinformatic linking of AMR gene annotations (e.g., from AMRFinderPlus) with taxonomic classifications (e.g., from Kraken2) on the same individual reads or assembled contigs.
 *   **Resistome Contextualization:** Provides critical context for understanding the mobility and potential clinical impact of identified resistance elements.
 
+### 4️⃣ [Squiggle4Viability Pipeline](./Squiggle4Viability/README.md)
+*Assessing bacterial viability directly from raw nanopore electrical signals.*
+
+**Key Capabilities:**
+*   **Signal-level Analysis:** Bypasses basecalling by analyzing the raw "squiggle" data (FAST5/POD5) directly.
+*   **Viability Determination:** Distinguishes between live and dead bacterial cells based on subtle signal differences indicating membrane integrity or metabolic state prior to sequencing.
+*   **Rapid Diagnostics:** Enables faster and more direct insights into treatment efficacy and infection viability status.
+
+### 5️⃣ [AMR Nanopore Pipeline](./AMR_nanopore/README.md)
+*Rapid and robust detection of Antimicrobial Resistance directly from nanopore sequencing data.*
+
+**Key Capabilities:**
+*   **Real-time Analysis:** Optimized for the continuous, real-time nature of nanopore sequencing.
+*   **Comprehensive AMR Profiling:** Identifies a wide range of resistance determinants across diverse bacterial pathogens.
+*   **Actionable Insights:** Designed to produce rapid reports suitable for clinical or epidemiological decision-making.
+
 ---
 
 ## 🚀 Getting Started
@@ -77,14 +93,20 @@ graph TD
     A[Nanopore Raw Data] --> B(Listeria AST Pipeline)
     A --> C(CRE Plasmid Clustering)
     A --> D(AMR Host Association)
+    A --> I(Squiggle4Viability)
+    A --> J(AMR Nanopore)
     
     B --> E[Taxonomy & AMR Reports]
     C --> F[Plasmid Similarity Networks]
     D --> G[AMR-Taxa Linkage Maps]
+    I --> K[Viability Status]
+    J --> L[Rapid AMR Profiles]
     
     E --> H((Integrated HAI Insights))
     F --> H
     G --> H
+    K --> H
+    L --> H
     
     style H fill:#f9f,stroke:#333,stroke-width:4px
 ```
