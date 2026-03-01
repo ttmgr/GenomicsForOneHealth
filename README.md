@@ -82,13 +82,21 @@ This repository currently hosts three distinct, yet complementary, analytical pi
 *   **Comprehensive Annotation:** Functional gene prediction and AMR screening on both raw reads and assembled contigs.
 *   **Metagenomic Binning:** Recovers Metagenome-Assembled Genomes (MAGs) from difficult environmental air samples.
 
-### [Avian Influenza Profiling Pipeline](./Avian-Influenza-Profiling/README.md)
+### 8. [Avian Influenza Profiling Pipeline](./Avian-Influenza-Profiling/README.md)
 *Latest RNA and DNA nanopores allow for rapid avian influenza profiling.*
 
 **Key Capabilities:**
 *   **Rapid Virus Detection:** Workflows specifically optimized for quick identification and profiling of Avian Influenza.
 *   **Direct RNA Sequencing:** Methodology demonstrating the utility of direct RNA sequencing for viral diagnostics without the amplification biases.
 *   **Subtyping Support:** Facilitates epidemiological surveillance of circulating avian influenza strains.
+
+### 9. [From Feather to Fur Pipeline](./From_feather_to_fur/README.md)
+*Metagenomic analysis tracking transmission pathways from avian to mammalian hosts.*
+
+**Key Capabilities:**
+*   **Cross-species Pathogen Tracking:** Traces the spread and adaptation of pathogens jumping between birds and mammals.
+*   **Genomic Epidemiology:** Leverages long-read sequencing to establish high-confidence transmission networks.
+*   **One-Health Focus:** Integrates environmental, avian, and mammalian data to model zoonotic spillover events.
 
 ---
 
@@ -112,6 +120,7 @@ We have centralized the environment and requirement files for this repository in
 *   [Wetland Health Setup Guide](./Wetland_Health/Installation_tutorial.md)
 *   [Air Metagenomics Setup Guide](./Air_Metagenomics/Installation_tutorial.md) *(Environment: `envs/air_metagenomics_env.yaml`)*
 *   [Avian Influenza Profiling Guide](./Avian-Influenza-Profiling/README.md)
+*   [From Feather to Fur Guide](./From_feather_to_fur/README.md)
 
 ---
 
@@ -127,6 +136,7 @@ graph TD
     A --> M(Wetland Health)
     A --> N(Air Metagenomics)
     A --> Q(Avian Influenza Profiling)
+    A --> S(From Feather to Fur)
     
     B --> E[Taxonomy & AMR Reports]
     C --> F[Plasmid Similarity Networks]
@@ -136,6 +146,7 @@ graph TD
     M --> O[Ecosystem & Viral Communities]
     N --> P[Bioaerosol MAGs & Diversity]
     Q --> R[Viral Subtyping & Diagnostics]
+    S --> T[Zoonotic Transmission Networks]
     
     E --> H((Integrated HAI Insights))
     F --> H
@@ -145,6 +156,7 @@ graph TD
     O --> H
     P --> H
     R --> H
+    T --> H
     
     style H fill:#f9f,stroke:#333,stroke-width:4px
 ```
