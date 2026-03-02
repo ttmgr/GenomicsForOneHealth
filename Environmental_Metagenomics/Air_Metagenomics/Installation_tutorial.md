@@ -1,6 +1,6 @@
 # Installation Guide for the Nanopore Metagenomics Pipeline
 
-This guide provides streamlined instructions for setting up the specific software environment needed for the Air Monitoring Nanopore Sequencing Pipeline.
+This guide provides concise instructions for setting up the specific software environment needed for the Air Monitoring Nanopore Sequencing Pipeline.
 
 ⚠️ **Important:** For the general installation of **Mamba**, **Dorado/Guppy basecallers**, and large databases like **Kraken2** or **AMRFinderPlus**, please see the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) at the root of the repository.
 
