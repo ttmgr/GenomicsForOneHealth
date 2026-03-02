@@ -1,0 +1,75 @@
+#This file contain the script used to trimm primers, remove chimeric sequences, dereplicate, quality filtering and OTU clustering. Used for both #Illumina and nanopore datasets
+threads=${SLURM_CPUS_PER_TASK:-32}
+
+
+PRIMER_F="insert_Fprimer_sequence"
+PRIMER_R="insert_Rprimer_sequence"
+
+
+input_dir="path/to/demultiplexed/reads"
+
+
+logs_dir="./illumina_logs"
+mkdir -p "$logs_dir"
+
+cluster_id=0.99          
+shopt -s nullglob        
+
+for fq in "$input_dir"/*.fastq.gz; do
+    base=$(basename "$fq" .fastq.gz)
+    echo "[INFO] Processing $base"
+
+    # 0) Trim primer pair (and remove the primer sequences themselves)
+    trimmed="${base}_trimmed.fastq"
+    cutadapt \
+        -g "$PRIMER_F" -a "$PRIMER_R" \
+	--revcomp \
+        --error-rate 0.1 \
+        --cores "$threads" \
+        -o "$trimmed" "$fq" \
+        > "$logs_dir/cutadapt.${base}.log"
+
+    # 1) Length / quality filter
+    filtered="${base}.filtered.fa"
+    vsearch --fastq_filter "$trimmed" \
+            --fastq_minlen 80 \
+            --fastq_maxlen 150 \
+            --fastq_maxns  0 \
+            --fastq_maxee 1 \
+            --fastq_qmax  64 \
+            --fastaout    "$filtered" \
+            --fasta_width 0 \
+            --threads "$threads" \
+            2> "$logs_dir/vsearch.filter.${base}.log"
+
+    # 2) Dereplication
+    derep="${base}.derep.fa"
+    vsearch --derep_fulllength "$filtered" \
+            --minuniquesize 2 \
+            --sizein --sizeout \
+            --fasta_width 0 \
+            --output "$derep" \
+            --threads "$threads" \
+            2> "$logs_dir/vsearch.derep.${base}.log"
+
+    # 3) Chimera removal
+    nochim="${base}.nochimera.fa"
+    vsearch --uchime3_denovo "$derep" \
+            --nonchimeras "$nochim" \
+            --threads "$threads" \
+            2> "$logs_dir/vsearch.uchime.${base}.log"
+
+    # 4) OTU clustering
+    idstr=${cluster_id/#0./}          
+    otus="otus_${idstr}_${base}.fa"
+    vsearch --cluster_size "$nochim" \
+            --id "$cluster_id" \
+            --sizein --sizeout \
+            --centroids "$otus" \
+            --threads "$threads" \
+            2> "$logs_dir/vsearch.cluster.${base}.log"
+
+    echo "[OK] $base  →  $otus"
+done
+
+echo "[DONE]"

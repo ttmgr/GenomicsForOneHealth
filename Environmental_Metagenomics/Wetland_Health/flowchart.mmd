@@ -1,0 +1,70 @@
+flowchart TD
+    A[Passive Water Sample] --> B[DNA]
+    A --> C[RNA]
+    
+    %% DNA Branch
+    B --> D[DNA Shotgun Metagenomics]
+    B --> E[12S rRNA Vertebrate Genomics]
+    
+    %% DNA Shotgun Pipeline
+    D --> D1[Basecalling & Demultiplexing<br/>Dorado v5.0.0]
+    D1 --> D2[Adapter Trimming<br/>Porechop v0.2.4]
+    D2 --> D3[Quality Filtering<br/>NanoFilt v2.8.0<br/>≥100 bp]
+    D3 --> D4{Analysis Strategy}
+    
+    D4 --> D5[Community Analysis]
+    D4 --> D6[Hazard Detection]
+    
+    D5 --> D5a[Rarefaction<br/>Seqkit v2.3.0<br/>87,000 reads]
+    D5a --> D5b[Taxonomic Classification<br/>Kraken2 v2.1.2<br/>NCBI nt_core]
+    D5a --> D5c[Pathogen ID - Reads<br/>Minimap2 v2.24 +<br/>MEGAN-CE v6.21.1]
+    
+    D6 --> D6a[Full Dataset - Reads]
+    D6a --> D6b[<i>De novo</i> Assembly<br/>nanoMDBG v1.1]
+    D6b --> D6c[Pathogen ID - Contigs<br/>Minimap2 v2.24 +<br/>MEGAN-CE v6.21.1]
+    D6a --> D6h[Pathogen ID - Reads<br/>Minimap2 v2.24 +<br/>MEGAN-CE v6.21.1]
+    D6b --> D6d[AMR Detection - Contigs<br/>AMRFinderPlus v4.0.23<br/>+ Prodigal v2.6.3]
+    D6a --> D6i[AMR Detection - Reads<br/>AMRFinderPlus v4.0.23]
+    D6b --> D6e[Plasmid Detection<br/>PlasmidFinder v2.1.6]
+    D6a --> D6f[Virulence Factors<br/>DIAMOND v2.1.13<br/>vs VFDB]
+    
+    %% 12S rRNA Pipeline
+    E --> E1[PCR Amplification<br/>12S rRNAV05 primers<br/>+ human blocking]
+    E1 --> E2[Demultiplexing<br/>OBITools4 v1.3.1<br/>9 bp tags]
+    E2 --> E3[Primer Trimming<br/>Cutadapt v4.2]
+    E3 --> E4[Quality Filtering<br/>VSEARCH v2.21<br/>maxEE 1.0]
+    E4 --> E5[Dereplication &<br/>Singleton Removal<br/>VSEARCH]
+    E5 --> E6[Chimera Removal<br/>VSEARCH]
+    E6 --> E7[OTU Clustering<br/>VSEARCH<br/>97% similarity]
+    E7 --> E8[Taxonomic Assignment<br/>VSEARCH<br/>vs MIDORI2]
+    
+    %% RNA Branch
+    C --> F[AIV Analysis]
+    C --> G[Viral Metagenomics]
+    
+    %% AIV Pipeline
+    F --> F1[Basecalling & Demultiplexing<br/>Dorado v5.0.0]
+    F1 --> F2[Quality Filtering]
+    F2 --> F3[Alignment to AIV References<br/>Minimap2 v2.28<br/>-ax map-ont]
+    F3 --> F4[Best Reference Selection<br/>SAMtools v1.17]
+    F4 --> F5[Consensus Generation<br/>BCFtools v1.17<br/>8 segments]
+    
+    %% Viromics Pipeline
+    G --> G1[DNase Treatment]
+    G1 --> G2[cDNA Synthesis<br/>SMART-9N protocol]
+    G2 --> G3[Adapter Trimming<br/>Porechop v0.2.4]
+    G3 --> G4[Quality Filtering<br/>NanoFilt v2.8.0]
+    G4 --> G5[Translated Alignment<br/>DIAMOND BLASTx v2.1.13<br/>vs NCBI NR]
+    G5 --> G6[RNA Virome Profile]
+    
+    %% Styling
+    classDef dna fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef rna fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef tool fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef readsLevel fill:#dcedc8,stroke:#33691e,stroke-width:2px,color:#000
+    classDef contigsLevel fill:#ffe0b2,stroke:#e65100,stroke-width:2px,color:#000
+    
+    class B,D,E,D1,D2,D3,D4,D5,D5a,D5b,D5c,D6,E1,E2,E3,E4,E5,E6,E7,E8 dna
+    class C,F,G,F1,F2,F3,F4,F5,G1,G2,G3,G4,G5,G6 rna
+    class D6a,D6h,D6i,D6f readsLevel
+    class D6b,D6c,D6d,D6e contigsLevel

@@ -2,9 +2,76 @@
 
 ## Project Overview
 
-This project utilizes metagenomic analysis of bioaerosols collected via air sampling to monitor microbial communities, employing Oxford Nanopore Technologies (ONT) sequencing. This repository contains a comprehensive workflow designed to process raw sequencing data, perform assembly and binning, and conduct detailed taxonomic and functional analysis.
+This project uses metagenomic analysis of bioaerosols collected via air sampling to monitor microbial communities, employing Oxford Nanopore Technologies (ONT) sequencing. This repository contains a workflow designed to process raw sequencing data, perform assembly and binning, and conduct detailed taxonomic and functional analysis.
 
 **ENA Project Link:** [https://www.ebi.ac.uk/ena/browser/view/PRJNA1063692](https://www.ebi.ac.uk/ena/browser/view/PRJEB76446)
+
+---
+
+## Analysis Pipeline Overview
+
+```mermaid
+flowchart TD
+    A[Air Sample] --> B[DNA Extraction]
+    
+    %% Basecalling
+    B --> C{Study Type}
+    
+    %% Pilot Study
+    C --> |Pilot Study| D[fast5 format]
+    D --> D1[Basecalling & Demultiplexing<br/>Guppy]
+    D1 --> D2[Concatenate FASTQ]
+    
+    %% Urban Study
+    C --> |Urban Study| E[pod5 format]
+    E --> E1[Basecalling & Demultiplexing<br/>Dorado]
+    
+    %% Common Input
+    D2 --> F[Demultiplexed FASTQ]
+    E1 --> F
+    
+    %% Read Processing
+    F --> F1[Adapter Trimming<br/>Porechop]
+    F1 --> F2[Quality Filtering<br/>NanoFilt]
+    F2 --> F3[QC Stats<br/>NanoStat]
+    
+    %% Processing Branches
+    F2 --> G[Read-level Analysis]
+    F2 --> H[Assembly-level Analysis]
+    
+    %% Read-level Analysis
+    G --> G1[Taxonomic Classification<br/>Kraken2]
+    G --> G2[AMR & Virulence<br/>ABRicate + AMRFinderPlus]
+    
+    %% Assembly-level Analysis
+    H --> H1[<i>De novo</i> Assembly<br/>Flye --meta]
+    H1 --> H2[Polishing<br/>Minimap2 + Racon]
+    H2 --> H3[Assembly Stats<br/>assembly-stats]
+    
+    H2 --> I[Taxonomic & Functional Annotation]
+    H2 --> J[Metagenome Binning]
+    
+    %% Annotation
+    I --> I1[Taxonomic Classification<br/>Kraken2]
+    I --> I2[Gene Prediction & Annotation<br/>Prokka + Bakta]
+    I --> I3[Functional Annotation<br/>Prodigal + eggNOG-mapper]
+    I --> I4[AMR & Virulence<br/>ABRicate + AMRFinderPlus]
+    
+    %% Binning
+    J --> J1[Binning<br/>MetaWRAP<br/>MetaBAT2, MaxBin2, CONCOCT]
+    J1 --> J2[Bin Refinement<br/>MetaWRAP]
+
+    %% Styling
+    classDef input fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef readLevel fill:#dcedc8,stroke:#33691e,stroke-width:2px,color:#000
+    classDef assemblyLevel fill:#ffe0b2,stroke:#e65100,stroke-width:2px,color:#000
+    classDef binningLevel fill:#e1bee7,stroke:#4a148c,stroke-width:2px,color:#000
+    
+    class A,B,C,D,E,D1,E1,D2,F input
+    class F1,F2,F3,G,G1,G2 readLevel
+    class H,H1,H2,H3,I,I1,I2,I3,I4 assemblyLevel
+    class J,J1,J2 binningLevel
+```
 
 ---
 
@@ -47,7 +114,7 @@ dorado basecaller dna_r10.4.1_e8.2_400bps_hac@v5.0.0 -r /path/to/input/pod5/ --e
 
 ## Installation & Setup
 
-1.  **Install Tools**: For comprehensive installation instructions for all pipeline tools and their dependencies, please refer to the **[`Installation_tutorial.md`](./Installation_tutorial.md)** file. It is highly recommended to use `mamba` to create a dedicated environment.
+1.  **Install Tools**: For detailed installation instructions for all pipeline tools and their dependencies, please refer to the **[`Installation_tutorial.md`](./Installation_tutorial.md)** file. It is highly recommended to use `mamba` to create a dedicated environment.
 
 2.  **Download Databases**: Before running the pipeline, you must download the necessary databases. A helper script is provided to automate this process.
     ```bash
@@ -60,7 +127,19 @@ dorado basecaller dna_r10.4.1_e8.2_400bps_hac@v5.0.0 -r /path/to/input/pod5/ --e
 
 ## Usage Workflow
 
-This repository now uses a streamlined, automated pipeline. The manual, step-by-step commands have been replaced by a series of modular scripts orchestrated by a single main script.
+This repository provides two ways to run the pipeline: a fully interactive user-friendly wrapper, or manual modular script execution.
+
+### Option A: Interactive Quick Start (Recommended)
+To immediately begin processing your data without manually editing configuration files:
+1. **Activate your environment** (Ensure Conda/Docker tools are active).
+2. **Run the Interactive Wrapper:**
+    ```bash
+    bash run_pipeline.sh
+    ```
+3. **Follow the Prompts** to provide your FASTQ directory, desired output path, threads, and necessary downstream database paths.
+
+### Option B: Manual Configuration and Execution
+If you prefer to run the pipeline in headless mode or execute individual stages step-by-step using the modular scripts, follow these instructions.
 
 ### 1. Configure the Pipeline
 
@@ -79,11 +158,24 @@ Execute the main pipeline script from the root of the repository. It will automa
 bash bash_scripts/run_pipeline.sh
 ```
 
-The pipeline will perform the following stages:
+The pipeline will perform the following stages sequentially. You can also run these independently if you prefer manual control:
+
 1.  **Read Processing**: Trims adapters, filters reads, generates QC stats, and performs taxonomic classification on reads.
+    ```bash
+    bash bash_scripts/01_read_processing.sh
+    ```
 2.  **Assembly & Polishing**: Assembles reads into contigs and polishes them for accuracy.
+    ```bash
+    bash bash_scripts/02_assembly_and_polishing.sh
+    ```
 3.  **Metagenome Binning**: Groups contigs into Metagenome-Assembled Genomes (MAGs).
+    ```bash
+    bash bash_scripts/03_binning.sh
+    ```
 4.  **Functional Annotation**: Predicts genes and annotates functions for both reads and assemblies, including AMR gene screening.
+    ```bash
+    bash bash_scripts/04_annotation.sh
+    ```
 
 ### 3. Post-Pipeline Analysis & Reporting
 

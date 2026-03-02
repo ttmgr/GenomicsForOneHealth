@@ -1,0 +1,39 @@
+#Global alignment script for taxonomic assignment of OTUS
+
+db_dir="/path/to/database"
+db_zip="/path/MIDORI2_UNIQ_NUC_GB266_srRNA_BLAST.fasta.zip"
+db_fasta="${db_dir}/MIDORI2_UNIQ_NUC_GB266_srRNA_BLAST.fasta"   
+udb="${db_dir}/MIDORI2_UNIQ_NUC_GB266_srRNA_BLAST.udb"
+
+fastaDir="otu_fasta"
+threads=32
+
+if [[ ! -s "$db_fasta" || "$db_zip" -nt "$db_fasta" ]]; then
+  echo "[INFO] Unzipping $db_zip → $db_fasta"
+  unzip -p "$db_zip" > "$db_fasta"
+fi
+
+# ── build the vsearch UDB if missing/outdated ───────────────────────────
+if [[ ! -s "$udb" || "$db_fasta" -nt "$udb" ]]; then
+  echo "[INFO] Building UDB with vsearch…"
+  vsearch --makeudb_usearch "$db_fasta" --output "$udb"
+fi
+
+# ── search all OTU fasta files ──────────────────────────────────────────
+for fa in "$fastaDir"/*.fa; do
+  [[ -e "$fa" ]] || { echo "[WARN] No .fa files in $fastaDir"; break; }
+  base=$(basename "$fa" .fa)
+  echo "[INFO] Aligning $base …"
+
+  vsearch --usearch_global "$fa" \
+          --db "$udb" \
+          --strand both \
+          --id 0.90 \
+          --query_cov 0.80 \
+          --maxaccepts 1 \
+          --blast6out "${base}_global.tsv" \
+          --threads $threads
+done
+
+echo "[DONE]"
+
