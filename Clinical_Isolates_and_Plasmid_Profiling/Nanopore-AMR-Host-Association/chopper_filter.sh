@@ -31,3 +31,4 @@ mkdir -p "$(dirname "$OUTPUT_FASTQ")"
 # Run
 # ------------------------------------------------------------
 "$CHOPPER_BIN" -q "$MIN_Q" -l "$MIN_LEN" -i "$INPUT_FASTQ" > "$OUTPUT_FASTQ"
+

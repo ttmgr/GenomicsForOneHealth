@@ -47,3 +47,4 @@ else
     echo "No Myloasm assemblies found."
 fi
 echo "Finished: $(date)"
+

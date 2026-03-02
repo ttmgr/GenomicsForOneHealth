@@ -22,3 +22,4 @@ DORADO_BASE_MODEL="${DORADO_BASE_MODEL:-rna004_130bps_sup@v3.0.1}"
     "$DORADO_BASE_MODEL" \
     "$input_dir" \
     > "$output_bam_file"
+

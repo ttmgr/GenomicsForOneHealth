@@ -14,3 +14,4 @@ echo "Generating comparison report..."
 echo "Start time: $(date)"
 python3 "${SCRIPT_DIR}/20_comparison_report.py" "$BASE_DIR"
 echo "Finished: $(date)"
+

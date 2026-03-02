@@ -35,3 +35,4 @@ mkdir -p "$(dirname "$ALN_BAM")"
   | "$SAMTOOLS_BIN" sort -@ "$THREADS" -o "$ALN_BAM"
 
 "$SAMTOOLS_BIN" index -@ "$THREADS" "$ALN_BAM"
+

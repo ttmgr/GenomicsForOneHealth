@@ -59,3 +59,4 @@ if [ -f "$LISTERIA_CSV" ]; then
 fi
 echo ""
 echo "Finished: $(date)"
+

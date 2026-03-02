@@ -57,3 +57,4 @@ else
     rm -f "$SAM_FILE"
 fi
 echo "Finished: $(date)"
+

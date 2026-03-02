@@ -52,3 +52,4 @@ for fq_file in ${INPUT_FASTQ_DIR}/barcode*.fastq; do
 done
 
 echo "Stage 1: Read Processing complete."
+

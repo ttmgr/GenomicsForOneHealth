@@ -57,3 +57,4 @@ for fastq_file in "$fastq_dir"/*.fastq; do
         samtools mpileup -aa -A -d 0 -Q 0 "${fastq_name}_${segment_name}_sorted_best_reference.bam" | ivar consensus -m 0 -q 0 -p "$consensus_ivar_file"
 
     done
+

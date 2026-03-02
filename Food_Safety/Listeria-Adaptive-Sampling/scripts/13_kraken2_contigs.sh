@@ -108,3 +108,4 @@ else
     echo "WARNING: Myloasm contigs missing or empty for ${BASENAME}"
 fi
 echo "Finished: $(date)"
+

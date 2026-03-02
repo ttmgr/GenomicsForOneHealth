@@ -71,3 +71,4 @@ if __name__ == "__main__":
             rel_file = md_file.relative_to(base)
             print(f"- In {rel_file}: [{text}]({link}) -> {reason}")
         sys.exit(1)
+

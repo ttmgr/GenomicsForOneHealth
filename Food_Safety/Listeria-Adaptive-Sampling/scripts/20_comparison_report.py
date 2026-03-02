@@ -776,3 +776,4 @@ with open(report_path, 'w') as f:
     f.write(html)
 print(f"\nReport saved: {report_path}")
 print("Done!")
+

@@ -107,3 +107,4 @@ if __name__ == "__main__":
     parser.add_argument("--pod5_path", type=str, required=True, help="path to the specific pod5 file")
     args = parser.parse_args()
     main(args)
+

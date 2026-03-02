@@ -77,3 +77,4 @@ extract_listeria_contigs "myloasm" \
     "${MYLOASM_DIR}/${BASENAME}/assembly_primary.fa" \
     "${OUTPUT_DIR}/contigs_myloasm/listeria_myloasm_${BASENAME}.fasta"
 echo "Finished: $(date)"
+

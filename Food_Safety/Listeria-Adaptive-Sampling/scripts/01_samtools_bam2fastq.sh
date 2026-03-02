@@ -24,3 +24,4 @@ echo "Start time: $(date)"
 samtools fastq -@ 4 "${INPUT_DIR}/${BAM_FILE}" > "${OUTPUT_DIR}/${BASENAME}.fastq"
 echo "Finished: $(date)"
 echo "Output size: $(du -h ${OUTPUT_DIR}/${BASENAME}.fastq)"
+

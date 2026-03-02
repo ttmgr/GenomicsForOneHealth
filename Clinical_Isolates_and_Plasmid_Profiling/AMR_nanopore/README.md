@@ -134,3 +134,4 @@ In this command:
 - /path/to/minimap2/output/reads.sorted.bam is the file path to the sorted alignment file.
 - /path/to/flye/output/assembly.fasta is the file path to the assembled sequences.
 - /path/to/racon/output/assembly.polished.fasta specifies the output file path.
+

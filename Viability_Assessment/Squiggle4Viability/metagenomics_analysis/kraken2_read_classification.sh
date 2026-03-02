@@ -28,3 +28,4 @@ for FASTQ in "$INPUT_DIR"/*.fastq; do
 done
 end_time=$(date +%s)
 echo "Total classification time: $((end_time - start_time)) seconds"
+

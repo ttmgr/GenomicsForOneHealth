@@ -991,3 +991,4 @@ print(f"Slim report generated: {out_file_slim}")
 # Generate PDF (Slim only? or Full? User asked for 'all the information', so Full)
 generate_pdf(out_file)
 generate_pdf(out_file_slim)
+

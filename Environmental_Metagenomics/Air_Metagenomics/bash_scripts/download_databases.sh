@@ -376,3 +376,4 @@ To use these databases with the pipeline:
 EOF
 
 log "SUCCESS" "Setup complete!"
+

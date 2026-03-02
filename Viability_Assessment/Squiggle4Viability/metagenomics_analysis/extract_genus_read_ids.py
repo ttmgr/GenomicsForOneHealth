@@ -34,3 +34,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     extract_read_ids(args.input_dir, args.genus, args.output)
+

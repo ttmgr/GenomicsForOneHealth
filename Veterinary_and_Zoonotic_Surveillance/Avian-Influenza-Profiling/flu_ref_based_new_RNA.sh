@@ -58,3 +58,4 @@ for fastq_file in "$fastq_dir"/*.fastq; do
 
     done
 done
+

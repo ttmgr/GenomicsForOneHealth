@@ -30,3 +30,4 @@ echo "Reads in:  $INPUT_READS"
 echo "Reads out: $OUTPUT_READS"
 echo "Removed:   $((INPUT_READS - OUTPUT_READS)) reads below 100 bp"
 echo "Finished: $(date)"
+

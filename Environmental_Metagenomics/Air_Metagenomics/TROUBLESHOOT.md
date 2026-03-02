@@ -82,3 +82,4 @@ Problems with database paths or files are another frequent cause of pipeline fai
     3.  **Adjust Filtering Parameters**: The `01_read_processing.sh` script uses default filtering parameters (`-q 9` and `-l 500`). These are a good starting point but may not be optimal for every dataset. If you are losing too many reads, consider lowering the quality threshold (e.g., `-q 8`) or the minimum length (e.g., `-l 300`). Conversely, if your downstream results are poor, you may need to increase the stringency.
 
 If you encounter tool-specific errors not covered here, the best course of action is to copy the error message and consult the official documentation or GitHub page for that particular tool.
+

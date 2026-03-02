@@ -60,3 +60,4 @@ echo "Pipeline complete. Results are in $OUTPUT_DIR."
 #Extra, needs to modify -> use bcftools to generate a readable file with the variants always from merge_output 
 
 bcftools view merge_output.vcf.gz > all_variants.vcf
+

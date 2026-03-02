@@ -434,3 +434,4 @@ python AI_scripts/generate_cam.py --ground_truth_file truth.txt --model_weights 
 # 7. XAI Anomaly/Drop Detection
 python AI_scripts/detect_drops.py --out_path drops.tsv --in_path /path/to/pod5_folder --figure_path /path/to/figures
 ```
+

@@ -66,3 +66,4 @@ Creating the environment with the `environment.yaml` file provides all the neces
 * **Utilities**: `Seqkit`, `Samtools`
 
 With the environment activated and databases configured, you are now ready to run the main pipeline.
+

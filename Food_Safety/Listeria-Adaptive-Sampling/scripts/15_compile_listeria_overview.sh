@@ -13,3 +13,4 @@ echo "Compiling comprehensive Listeria overview..."
 echo "Start time: $(date)"
 python3 "${WORK_DIR}/scripts/15_compile_listeria_overview.py" "$WORK_DIR"
 echo "Finished: $(date)"
+

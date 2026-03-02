@@ -86,3 +86,4 @@ for polished_fasta in ${RACON_DIR}/polished_barcode*.fasta; do
 done
 
 echo "Stage 4: Annotation complete."
+
