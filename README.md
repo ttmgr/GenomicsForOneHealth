@@ -40,12 +40,14 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 #### [Air Metagenomics Pipeline](./Environmental_Metagenomics/Air_Metagenomics/README.md)
 *Air monitoring by nanopore sequencing for the detection of bioaerosol communities.*
+**Corresponding Author:** Tim Reska
 
 > **Abstract:** While the air microbiome and its diversity are essential for human health and ecosystem resilience, comprehensive air microbial diversity monitoring has remained rare. Here we show that nanopore sequencing-based metagenomics can robustly assess the air microbiome in combination with active air sampling through liquid impingement. We provide fast and portable laboratory and computational approaches for air microbiome profiling, robustly assessing the taxonomic composition of the core air microbiome of a controlled greenhouse environment and a natural outdoor environment. We show that long-read sequencing can resolve species-level annotations and specific ecosystem functions through de novo metagenomic assemblies. We then apply our pipeline to assess the diversity and variability of an urban air microbiome gives insights into the presence of location-specific air microbiomes within the city's boundaries.
 > **Publication:** [ISME Communications, 2024](https://academic.oup.com/ismecommun/article/4/1/ycae099/7714796)
 
 #### [Wetland Health Analysis Pipeline](./Environmental_Metagenomics/Wetland_Health/README.md)
 *Real-time genomic pathogen, resistance, and host range characterization from passive water sampling of wetland ecosystems.*
+**Corresponding Authors:** Tim Reska, Dr. Albert Perlas
 
 > **Abstract:** Wetland ecosystems provide interfaces for the transmission of microbial pathogens and antimicrobial resistances (AMR) between migratory birds, wild and domestic animals, and human populations. Here, we present a holistic, accessible, and cost-efficient framework to characterize the pathogen and resistance load of water sources together with their potential associated hosts by combining passive water sampling through torpedo-shaped devices with nanopore sequencing technology. We obtained robust assessments of the microbial communities from long-read metagenomic and RNA virome data, showing that anthropogenically impacted wetland ecosystems consistently exhibited higher relative abundances of pathogens and AMR genes. By focusing on avian influenza viruses (AIV), we highlight the additional need for targeted screening and whole-genome sequencing; we detected and characterized AIV at a third of the monitored sites, and used environmental DNA (eDNA) to explore potential animal hosts.
 > **Publication:** [bioRxiv, 2024](https://www.biorxiv.org/content/10.1101/2025.09.05.674394v1)
@@ -56,6 +58,7 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 #### [Zambia eDNA Pipeline](./eDNA_Metabarcoding/README.md)
 *Environmental DNA metabarcoding pipeline for tracking biodiversity and community structures in Zambia.*
+**Corresponding Author:** Daniel Gygax
 
 > **Abstract:** Biodiversity loss is a global challenge of the 21st century. Environmental DNA (eDNA)-based metabarcoding offers a cost- and time-efficient alternative to conventional biodiversity surveys, enabling detection of rare, cryptic, and elusive species. However, limited access to genomic technologies restricts the application of eDNA metabarcoding in low- and middle-income countries (LMICs). Here, we directly compared the latest portable nanopore sequencing methods with established Illumina sequencing for vertebrate eDNA metabarcoding of Zambian water samples. Our results show that nanopore sequencing data can recapitulate or even surpass established protocols, demonstrating the feasibility of in situ biodiversity assessments. eDNA- and camera trap-based species detections had minimal overlap, suggesting a complementary application. We demonstrate that our entire eDNA workflow can be successfully implemented in a mobile laboratory under remote field conditions.
 > **Publication:** [PLOS One, 2025](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0333994)
@@ -66,6 +69,7 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 #### [Listeria Adaptive Sampling Pipeline](./Food_Safety/Listeria-Adaptive-Sampling/README.md)
 *High-resolution genomic analysis of Listeria monocytogenes from complex food safety samples using Oxford Nanopore Adaptive Sampling.*
+**Corresponding Author:** Tim Reska
 
 ---
 
@@ -73,15 +77,18 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 #### [AMR Nanopore Pipeline](./Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore/README.md)
 *Rapid and reliable clinical detection of Antimicrobial Resistance directly from nanopore sequencing data.*
+**Corresponding Author:** Ela Sauerborn
 
 > **Abstract:** Real-time genomics through nanopore sequencing holds the promise of fast antibiotic resistance prediction directly in the clinical setting. However, concerns about the accuracy of genomics-based resistance predictions persist, particularly when compared to traditional, clinically established diagnostic methods. Here, we leverage the case of a multi-drug resistant Klebsiella pneumoniae infection to demonstrate how real-time genomics can enhance the accuracy of antibiotic resistance profiling in complex infection scenarios. Our results show that unlike established diagnostics, nanopore sequencing data analysis can accurately detect low-abundance plasmid-mediated resistance, which often remains undetected by conventional methods. The rapid, in situ application of real-time genomics holds significant promise for improving clinical decision-making and patient outcomes.
 > **Publication:** [Nature Communications, 2024](https://www.nature.com/articles/s41467-024-49851-4)
 
 #### [CRE Plasmid Clustering Pipeline](./Clinical_Isolates_and_Plasmid_Profiling/CRE-Plasmid-clustering/README.md)
 *Advanced characterization and clustering of plasmids in Carbapenem-resistant Enterobacterales (CRE) for clinical settings.*
+**Corresponding Author:** Ela Sauerborn
 
 #### [Nanopore AMR Host Association Pipeline](./Clinical_Isolates_and_Plasmid_Profiling/Nanopore-AMR-Host-Association/README.md)
 *Nanopore metagenomic sequencing links clinically relevant resistance determinants to pathogens.*
+**Corresponding Authors:** Ela Sauerborn, Harika Ürel
 
 > **Abstract:** Metagenomic sequencing can detect pathogens and antimicrobial resistance genes directly from clinical samples without culture, but linking resistance genes to their bacterial hosts remains challenging. Here, we exploit DNA methylation patterns in nanopore sequencing data to associate plasmid-encoded resistance genes with their host bacteria in metagenomic samples. We developed a contig similarity score based on shared methylation motifs and validated this approach using mock metagenomic communities of clinically relevant carbapenem-resistant Enterobacterales, achieving 91% accuracy at the taxonomic species level. We then applied our framework to nanopore metagenomic data from patient rectal swabs collected during routine hospital screening. Comparison with established culture-based diagnostics and whole-genome sequencing confirmed that our approach correctly associated plasmid-as well as chromosomally encoded resistance genes—including all detected carbapenemases—with their pathogenic hosts while identifying additional clinically relevant resistance genes missed by routine testing. Our results demonstrate that nanopore metagenomics can provide actionable resistance-pathogen associations for clinical surveillance.
 > **Publication:** [bioRxiv, 2026](https://www.biorxiv.org/content/10.64898/2026.02.16.706128v1)
@@ -92,12 +99,14 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 #### [Avian Influenza Profiling Pipeline](./Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md)
 *Rapid avian influenza profiling from Latest RNA and DNA nanopores.*
+**Corresponding Author:** Dr. Albert Perlas
 
 > **Abstract:** Avian influenza virus (AIV) currently causes a panzootic with extensive mortality in wild birds, poultry, and wild mammals, underscoring the need for efficient monitoring. We systematically investigate AIV genetic characterization through rapid, portable nanopore sequencing by comparing the latest DNA and RNA nanopore sequencing approaches and various computational pipelines for viral consensus sequence generation and phylogenetic analysis. We show that the latest direct RNA nanopore sequencing updates improve consensus sequence generation, but that the application of the latest DNA nanopore chemistry after reverse transcription and amplification outperforms native viral RNA sequencing by achieving higher sequencing accuracy and throughput. We applied these sequencing approaches together with portable AIV diagnosis and quantification tools to environmental samples from a poultry farm.
 > **Publication:** [Virus Evolution, 2024](https://academic.oup.com/ve/article/11/1/veaf010/8020575)
 
 #### [From Feather to Fur Pipeline](./Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md)
 *Variant calling workflow tracking transmission pathways from avian to mammalian hosts.*
+**Corresponding Author:** Dr. Albert Perlas
 
 ---
 
@@ -105,6 +114,10 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 #### [Squiggle4Viability Pipeline](./Viability_Assessment/Squiggle4Viability/README.md)
 *Assessing bacterial viability directly from raw nanopore electrical signals (FAST5/POD5).*
+**Corresponding Author:** Harika Ürel
+
+> **Abstract:** The ability to differentiate between viable and dead microorganisms in metagenomic data is crucial for various microbial inferences, ranging from assessing ecosystem functions of environmental microbiomes to inferring the virulence of potential pathogens from metagenomic analysis. We here introduce a new fully computational framework that leverages nanopore sequencing technology to assess microbial viability directly from freely available nanopore signal data. Our approach utilizes deep neural networks to learn features from such raw nanopore signal data that can distinguish DNA from viable and dead microorganisms in a controlled experimental setting of UV-induced Escherichia cell death. The application of explainable artificial intelligence (AI) tools then allows us to pinpoint the signal patterns in the nanopore raw data that allow the model to make viability predictions at high accuracy. Using the model predictions as well as explainable AI, we show that our framework can be leveraged in a real-world application to estimate the viability of obligate intracellular Chlamydia, where traditional culture-based methods suffer from inherently high false-negative rates.
+> **Publication:** [GigaScience, 2025](https://academic.oup.com/gigascience/article/doi/10.1093/gigascience/giaf100/8246397)
 
 ---
 
