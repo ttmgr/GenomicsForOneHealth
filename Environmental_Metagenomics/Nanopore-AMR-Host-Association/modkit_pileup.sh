@@ -8,15 +8,15 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Tool paths (edit as needed)
 # ------------------------------------------------------------
-MODKIT_BIN="/path/to/modkit"
-SAMTOOLS_BIN="/path/to/samtools"
+MODKIT_BIN="${MODKIT_BIN:-modkit}"
+SAMTOOLS_BIN="${SAMTOOLS_BIN:-samtools}"
 
 # ------------------------------------------------------------
 # Input / output
 # ------------------------------------------------------------
-REF_FASTA="/path/to/reference.fasta"
-ALN_BAM="/path/to/aligned.sorted.bam"
-OUT_DIR="/path/to/modkit_pileup_out"
+REF_FASTA="${REF_FASTA:-/path/to/reference.fasta}"
+ALN_BAM="${ALN_BAM:-/path/to/aligned.sorted.bam}"
+OUT_DIR="${OUT_DIR:-/path/to/modkit_pileup_out}"
 PREFIX="sample"   # output prefix
 
 # ------------------------------------------------------------

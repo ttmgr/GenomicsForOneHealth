@@ -31,7 +31,7 @@ This document provides a detailed explanation of the primary tools used for anno
 - **What it is**: Rapid, all-in-one prokaryotic genome annotation pipelines.
 - **How it Works**: These tools automate the process of gene finding (using Prodigal), rRNA/tRNA detection, and assigning functions by searching against multiple databases of known proteins (e.g., UniProt) and protein domains.
 - **Input**: Assembled contigs (FASTA).
-- **Output**: Comprehensive annotation files in standard formats like GFF, GenBank, and summary tables.
+- **Output**: Annotation files in standard formats like GFF, GenBank, and summary tables.
 - **Best for**: Quickly generating high-quality, standardized annotations for assembled genomes or high-completeness MAGs.
 
 ### eggNOG-mapper

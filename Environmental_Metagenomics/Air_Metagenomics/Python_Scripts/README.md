@@ -109,7 +109,7 @@ python metagenomics_analysis.py plot_counts \
 
 ### 6. `create_report`: Generate Final HTML Report
 
-This is the final step. It scans a pipeline output directory and generates a comprehensive, interactive HTML report summarizing all results.
+This is the final step. It scans a pipeline output directory and generates an interactive HTML report summarizing all results.
 
 - **Input**: The main output directory of your entire bioinformatics pipeline (which should contain subdirectories for `03_nanostat`, `04_kraken2_reads`, `10_annotation`, etc.).
 - **Output**: A single HTML report file.
@@ -123,7 +123,7 @@ python metagenomics_analysis.py create_report \
 
 ## Recommended Workflow
 
-Here is a recommended order of operations for using these scripts after running the main pipeline:
+### Recommended Order of Operations
 
 1.  **Extract initial metrics from your results:**
     ```bash

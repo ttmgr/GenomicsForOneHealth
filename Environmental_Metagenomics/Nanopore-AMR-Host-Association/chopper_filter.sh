@@ -8,13 +8,13 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Tool path (edit as needed)
 # ------------------------------------------------------------
-CHOPPER_BIN="/path/to/chopper"
+CHOPPER_BIN="${CHOPPER_BIN:-chopper}"
 
 # ------------------------------------------------------------
 # Input / output (edit as needed)
 # ------------------------------------------------------------
-INPUT_FASTQ="/path/to/input.fastq"
-OUTPUT_FASTQ="/path/to/output.fastq"
+INPUT_FASTQ="${INPUT_FASTQ:-/path/to/input.fastq}"
+OUTPUT_FASTQ="${OUTPUT_FASTQ:-/path/to/output.fastq}"
 
 # ------------------------------------------------------------
 # Filtering parameters

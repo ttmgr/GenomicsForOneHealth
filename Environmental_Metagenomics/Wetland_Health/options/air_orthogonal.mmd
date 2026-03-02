@@ -1,0 +1,60 @@
+%%{init: { "flowchart": { "curve": "stepBefore", "rankSpacing": 30, "nodeSpacing": 30 } } }%%
+flowchart TD
+    A[Air Sample] --> B[DNA Extraction]
+    
+    %% Basecalling
+    B --> C{Study Type}
+    
+    %% Pilot Study
+    C --> |Pilot Study| D[fast5]
+    D --> D1[Guppy Basecall]
+    D1 --> D2[Concatenate]
+    
+    %% Urban Study
+    C --> |Urban Study| E[pod5]
+    E --> E1[Dorado Basecall]
+    
+    %% Common Input
+    D2 --> F[Demultiplexed FASTQ]
+    E1 --> F
+    
+    %% Read Processing
+    F --> F1[Porechop]
+    F1 --> F2[NanoFilt]
+    F2 --> F3[NanoStat]
+    
+    %% Processing Branches
+    F2 --> G[Read-level]
+    F2 --> H[Assembly-level]
+    
+    %% Read-level Analysis
+    G --> G1[Kraken2]
+    G --> G2[ABRicate + AMRFinderPlus]
+    
+    %% Assembly-level Analysis
+    H --> H1[<i>De novo</i> Assembly<br/>Flye --meta]
+    H1 --> H2[Polishing]
+    
+    H2 --> I[Annotation]
+    H2 --> J[Binning]
+    
+    %% Annotation
+    I --> I1[Kraken2]
+    I --> I2[Prokka + Bakta]
+    I --> I3[Prodigal + eggNOG]
+    I --> I4[ABRicate + AMRFinderPlus]
+    
+    %% Binning
+    J --> J1[MetaWRAP Binning]
+    J1 --> J2[Bin Refinement]
+
+    %% Styling
+    classDef input fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef readLevel fill:#dcedc8,stroke:#33691e,stroke-width:2px,color:#000
+    classDef assemblyLevel fill:#ffe0b2,stroke:#e65100,stroke-width:2px,color:#000
+    classDef binningLevel fill:#e1bee7,stroke:#4a148c,stroke-width:2px,color:#000
+    
+    class A,B,C,D,E,D1,E1,D2,F input
+    class F1,F2,F3,G,G1,G2 readLevel
+    class H,H1,H2,I,I1,I2,I3,I4 assemblyLevel
+    class J,J1,J2 binningLevel

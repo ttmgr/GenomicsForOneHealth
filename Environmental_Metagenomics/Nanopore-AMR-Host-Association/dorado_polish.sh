@@ -8,14 +8,14 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Tool path (edit as needed)
 # ------------------------------------------------------------
-DORADO_BIN="/path/to/dorado/bin/dorado"
+DORADO_BIN="${DORADO_BIN:-dorado}"
 
 # ------------------------------------------------------------
 # Input / output
 # ------------------------------------------------------------
-ALN_BAM="/path/to/aligned.sorted.bam"
-REF_FASTA="/path/to/reference.fasta"
-OUT_FASTA="/path/to/polished.fasta"
+ALN_BAM="${ALN_BAM:-/path/to/aligned.sorted.bam}"
+REF_FASTA="${REF_FASTA:-/path/to/reference.fasta}"
+OUT_FASTA="${OUT_FASTA:-/path/to/polished.fasta}"
 
 # ------------------------------------------------------------
 # Polishing parameters

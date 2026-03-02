@@ -6,21 +6,13 @@ set -euo pipefail
 
 # --- User Configuration ---
 # Set the base directory for all analysis outputs
-OUTPUT_BASE_DIR="./processing"
-
-# Set the path to your demultiplexed FASTQ files (e.g., from Guppy or Dorado)
-# The pipeline assumes files are named like 'barcode01.fastq', 'barcode02.fastq', etc.
-INPUT_FASTQ_DIR="./raw_fastq"
-
-# Set the number of threads to use for multithreaded tasks
-THREADS=24
-
-# Set paths to your downloaded databases
-# These should match the paths in download_databases.sh
-KRAKEN2_DB_PATH="/path/to/kraken2/database"
-AMRFINDER_DB_PATH="/path/to/amrfinderplus/data"
-BAKTA_DB_PATH="/path/to/bakta/db"
-EGGNOG_DATA_DIR="/path/to/eggnog/data"
+OUTPUT_BASE_DIR="${OUTPUT_BASE_DIR:-./processing}"
+INPUT_FASTQ_DIR="${INPUT_FASTQ_DIR:-./raw_fastq}"
+THREADS="${THREADS:-24}"
+KRAKEN2_DB_PATH="${KRAKEN2_DB_PATH:-/path/to/kraken2/database}"
+AMRFINDER_DB_PATH="${AMRFINDER_DB_PATH:-/path/to/amrfinderplus/data}"
+BAKTA_DB_PATH="${BAKTA_DB_PATH:-/path/to/bakta/db}"
+EGGNOG_DATA_DIR="${EGGNOG_DATA_DIR:-/path/to/eggnog/data}"
 
 # Export variables to be used by subscripts
 export OUTPUT_BASE_DIR

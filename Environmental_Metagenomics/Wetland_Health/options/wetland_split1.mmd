@@ -1,0 +1,45 @@
+flowchart TD
+    A[Passive Water Sample] --> B[DNA]
+    
+    %% DNA Shotgun Pipeline
+    B --> D[DNA Shotgun Metagenomics]
+    B --> E[12S rRNA Vertebrate Genomics]
+    
+    D --> D1[Basecalling & Demultiplexing]
+    D1 --> D2[Adapter Trimming]
+    D2 --> D3[Quality Filtering]
+    D3 --> D4{Analysis Strategy}
+    
+    D4 --> D5[Community Analysis]
+    D4 --> D6[Hazard Detection]
+    
+    D5 --> D5a[Rarefaction]
+    D5a --> D5b[Taxonomic Classification]
+    D5a --> D5c[Pathogen ID - Reads]
+    
+    D6 --> D6a[Full Dataset - Reads]
+    D6a --> D6b[<i>De novo</i> Assembly]
+    D6b --> D6c[Pathogen ID - Contigs]
+    D6a --> D6h[Pathogen ID - Reads]
+    D6b --> D6d[AMR Detection - Contigs]
+    D6a --> D6i[AMR Detection - Reads]
+    D6b --> D6e[Plasmid Detection]
+    D6a --> D6f[Virulence Factors]
+    
+    %% 12S rRNA Pipeline
+    E --> E1[PCR Amplification]
+    E1 --> E2[Demultiplexing]
+    E2 --> E3[Primer Trimming]
+    E3 --> E4[Quality Filtering]
+    E4 --> E5[Dereplication]
+    E5 --> E6[Chimera Removal]
+    E6 --> E7[OTU Clustering]
+    E7 --> E8[Taxonomic Assignment]
+    
+    classDef dna fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef readsLevel fill:#dcedc8,stroke:#33691e,stroke-width:2px,color:#000
+    classDef contigsLevel fill:#ffe0b2,stroke:#e65100,stroke-width:2px,color:#000
+    
+    class B,D,E,D1,D2,D3,D4,D5,D5a,D5b,D5c,D6,E1,E2,E3,E4,E5,E6,E7,E8 dna
+    class D6a,D6h,D6i,D6f readsLevel
+    class D6b,D6c,D6d,D6e contigsLevel

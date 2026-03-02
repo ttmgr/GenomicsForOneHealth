@@ -8,15 +8,15 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Input / output (edit as needed)
 # ------------------------------------------------------------
-READS_DIR="/path/to/pod5_dir"
-OUTPUT_BAM="/path/to/output/trimmed.bam"
+READS_DIR="${READS_DIR:-/path/to/pod5_dir}"
+OUTPUT_BAM="${OUTPUT_BAM:-/path/to/output/trimmed.bam}"
 KIT_NAME="SQK-RBK114-24"
 
 # ------------------------------------------------------------
 # Tool paths (edit as needed)
 # ------------------------------------------------------------
-DORADO_BIN="/path/to/dorado/bin/dorado"
-MODELS_DIR="/path/to/dorado/models"
+DORADO_BIN="${DORADO_BIN:-dorado}"
+MODELS_DIR="${MODELS_DIR:-/path/to/dorado/models}"
 
 # ------------------------------------------------------------
 # Basecalling parameters

@@ -11,6 +11,7 @@ This repository contains scripts used in the paper for processing POD5 files, ge
 
 ## Table of Contents
 
+- [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Neural Networks Trainings, Predictions, Explainability and Algorithm for Anomaly Detection](#neural-networks-trainings-predictions-and-algorithm-for-anomaly-detection)
   - [Segment Signals](#segment-signals)
@@ -36,6 +37,15 @@ This repository contains scripts used in the paper for processing POD5 files, ge
   - [Kraken2 Read Classification](#kraken2-read-classification)
   - [Extract Read IDs by Genus from Kraken2 Output](#extract-read-ids-by-genus-from-kraken2-output)
 
+
+## Quick Start
+To get results immediately without understanding configuration, use the interactive wrapper.
+1. **Activate your environment** (Ensure the `requirements.txt` packages and bioinformatics tools are installed).
+2. **Run the Interactive Wrapper:**
+    ```bash
+    bash run_pipeline.sh
+    ```
+3. **Follow the Prompts** to select between AI inference on raw signals or the full metagenomics workflow.
 
 ## Installation
 

@@ -8,13 +8,13 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Tool path (edit as needed)
 # ------------------------------------------------------------
-DORADO_BIN="/path/to/dorado/bin/dorado"
+DORADO_BIN="${DORADO_BIN:-dorado}"
 
 # ------------------------------------------------------------
 # Input / output
 # ------------------------------------------------------------
-INPUT_BAM="/path/to/basecalled/trimmed.bam"
-OUTPUT_DIR="/path/to/demux"
+INPUT_BAM="${INPUT_BAM:-/path/to/basecalled/trimmed.bam}"
+OUTPUT_DIR="${OUTPUT_DIR:-/path/to/demux}"
 
 # ------------------------------------------------------------
 # Demux parameters

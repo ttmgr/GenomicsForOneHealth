@@ -1,7 +1,7 @@
 #Global alignment script for taxonomic assignment of OTUS
 
-db_dir="/path/to/database"
-db_zip="/path/MIDORI2_UNIQ_NUC_GB266_srRNA_BLAST.fasta.zip"
+db_dir="<Path_To_Database_Directory>"
+db_zip="<Path_To_MIDORI2_Zip>"
 db_fasta="${db_dir}/MIDORI2_UNIQ_NUC_GB266_srRNA_BLAST.fasta"   
 udb="${db_dir}/MIDORI2_UNIQ_NUC_GB266_srRNA_BLAST.udb"
 

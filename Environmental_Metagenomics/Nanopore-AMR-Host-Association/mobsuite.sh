@@ -8,13 +8,13 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Tool path (edit as needed)
 # ------------------------------------------------------------
-MOB_RECON_BIN="/path/to/mob_recon"
+MOB_RECON_BIN="${MOB_RECON_BIN:-mob_recon}"
 
 # ------------------------------------------------------------
 # Input / output
 # ------------------------------------------------------------
-INPUT_FASTA="/path/to/polished_assembly.fasta"
-OUT_DIR="/path/to/mobsuite_output"
+INPUT_FASTA="${INPUT_FASTA:-/path/to/polished_assembly.fasta}"
+OUT_DIR="${OUT_DIR:-/path/to/mobsuite_output}"
 
 # ------------------------------------------------------------
 # Parameters

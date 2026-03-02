@@ -1,9 +1,10 @@
 # Zambia_eDNA
-This site contains the main code I used for my research (Link coming soon)
+# Zambia eDNA Pipeline
 
-This repository includes the main code I used for my environmental DNA research in Zambia for my PhD work.
+This repository contains the primary code and workflows utilized for environmental DNA research in Zambia. The pipeline facilitates the merging and demultiplexing of Nanopore and Illumina sequencing data, alongside comprehensive steps for read quality filtering, chimera removal, dereplication, and OTU clustering, culminating in global alignment mapping against a reference database.
 
-## Analysis Pipeline Overview
+The original demultiplexing reference files and command parameters used for this pipeline are included for reproducibility.
+
 
 ```mermaid
 flowchart TD
@@ -39,4 +40,4 @@ flowchart TD
     class E input
 ```
 
-It includes the script I used for merging and demultiplexing of nanopore and illumina data, scripts for read quality filtering, chimera removal, derreplication and OTU clustering, and a script to perform global aligment on a reference database. I include the original demultiplexing files I used as well as the command parameters used for this study. For more details on software or database versions please refer to my paper (Link coming soon) or write me to dgygax90@gmail.com
+

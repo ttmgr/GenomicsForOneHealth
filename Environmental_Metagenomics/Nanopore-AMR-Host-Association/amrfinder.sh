@@ -8,13 +8,13 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Tool path (edit as needed)
 # ------------------------------------------------------------
-AMRFINDER_BIN="/path/to/amrfinder"
+AMRFINDER_BIN="${AMRFINDER_BIN:-amrfinder}"
 
 # ------------------------------------------------------------
 # Input / output
 # ------------------------------------------------------------
-INPUT_FASTA="/path/to/input_sequences.fasta"
-OUT_TXT="/path/to/amrfinder_output.txt"
+INPUT_FASTA="${INPUT_FASTA:-/path/to/input_sequences.fasta}"
+OUT_TXT="${OUT_TXT:-/path/to/amrfinder_output.txt}"
 
 # ------------------------------------------------------------
 # Prepare output directory

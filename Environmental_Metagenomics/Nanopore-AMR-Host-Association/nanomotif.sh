@@ -6,13 +6,13 @@ set -euo pipefail
 # (detect_contamination is used only to produce the motif–contig score file)
 # ============================================================
 
-NANOMOTIF_BIN="/path/to/nanomotif"
+NANOMOTIF_BIN="${NANOMOTIF_BIN:-nanomotif}"
 
-ASSEMBLY_FASTA="/path/to/assembly.fasta"
-PILEUP_BED="/path/to/pileup.bed"
-CONTIG_BIN_TSV="/path/to/contig2bin.tsv"
+ASSEMBLY_FASTA="${ASSEMBLY_FASTA:-/path/to/assembly.fasta}"
+PILEUP_BED="${PILEUP_BED:-/path/to/pileup.bed}"
+CONTIG_BIN_TSV="${CONTIG_BIN_TSV:-/path/to/contig2bin.tsv}"
 
-OUT_DIR="/path/to/nanomotif_output"
+OUT_DIR="${OUT_DIR:-/path/to/nanomotif_output}"
 
 THREADS=20
 VALID_COVERAGE_THRESHOLD=10

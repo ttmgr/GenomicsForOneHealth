@@ -1,7 +1,15 @@
 # Klebsiella pneumoniae KPC pre- and post-treatment sample nanopore sequencing processing and assembly protocol
 
+## Quick Start
+To immediately begin processing your data without manually configuring each tool, use our interactive wrapper.
+1. **Activate your environment** (Ensure Guppy, Porechop, NanoFilt, Flye, Minimap2, and Racon are available).
+2. **Run the Interactive Wrapper:**
+    ```bash
+    bash run_pipeline.sh
+    ```
+3. **Follow the Prompts** to provide your raw input data (FAST5/FASTQ) and desired output directory.
 
-
+---
 
 ## Guppy Basecaller
 

@@ -1,6 +1,6 @@
 # Comparative Analysis of Annotation Tools
 
-This document provides a comprehensive overview of the similarities and differences among tools used for taxonomic classification, functional annotation, and the detection of antimicrobial resistance (AMR) and virulence factors in metagenomic data.
+This document provides an overview of the similarities and differences among tools used for taxonomic classification, functional annotation, and the detection of antimicrobial resistance (AMR) and virulence factors in metagenomic data.
 
 ## Comparison Table: Taxonomic Classification
 
@@ -10,7 +10,7 @@ This document provides a comprehensive overview of the similarities and differen
 | **Centrifuge** | Memory-efficient classification | Raw reads/contigs | Taxonomic classifications, abundance estimates | Low memory usage due to compressed FM-index | May sacrifice some accuracy for speed |
 | **MetaPhlAn** | Species-level profiling | Raw reads | Species-level profiles, relative abundances | Uses clade-specific marker genes for high precision | Limited to known marker genes, may miss rare taxa |
 | **Kaiju** | Protein-level classification | Raw reads | Taxonomic classifications, summary reports | Tolerant to sequencing errors, good for novel organisms | Slower than k-mer methods |
-| **DIAMOND + MEGAN** | Comprehensive analysis | Protein/Translated DNA | Alignment files, interactive visualizations | Simultaneous taxonomic and functional analysis | Very slow, requires large databases |
+| **DIAMOND + MEGAN** | Detailed analysis | Protein/Translated DNA | Alignment files, interactive visualizations | Simultaneous taxonomic and functional analysis | Very slow, requires large databases |
 
 ## Comparison Table: Functional Annotation
 
@@ -28,9 +28,9 @@ This document provides a comprehensive overview of the similarities and differen
 |--- |--- |--- |--- |--- |--- |
 | **ABRicate** | Mass screening for AMR/virulence | Assembled contigs | Summary reports | Screens against multiple databases (CARD, ResFinder, VFDB) | Requires genome assembly |
 | **AMRFinderPlus**| AMR gene identification | Protein sequences/genome assemblies | Detailed AMR reports | Uses NCBI's curated protein database and HMMs | Limited to NCBI's curated database |
-| **CARD-RGI** | AMR gene prediction | Protein/nucleotide sequences | Detailed AMR reports | Based on the comprehensive CARD database | Can be computationally intensive |
+| **CARD-RGI** | AMR gene prediction | Protein/nucleotide sequences | Detailed AMR reports | Based on the CARD database | Can be computationally intensive |
 | **DeepARG** | AMR gene prediction | Raw reads/contigs | AMR gene predictions with confidence scores | Uses a deep learning approach | Requires significant computational resources |
-| **VFDB** | Virulence factor identification | Protein/nucleotide sequences | Identified virulence factors | Comprehensive database of virulence factors | Mainly focused on known pathogens |
+| **VFDB** | Virulence factor identification | Protein/nucleotide sequences | Identified virulence factors | Large database of virulence factors | Mainly focused on known pathogens |
 
 ## Key Considerations for Tool Selection
 
@@ -38,4 +38,4 @@ This document provides a comprehensive overview of the similarities and differen
 2.  **Input Data**: Do you have raw reads or high-quality assembled contigs? Some tools work better with one or the other. For nanopore data, tools that are tolerant to errors (e.g., protein-level classifiers like Kaiju) or that are designed for long reads are advantageous.
 3.  **Computational Resources**: Be realistic about your available CPU, memory, and storage. K-mer methods are fast but memory-intensive, while deep learning or exhaustive alignment approaches are CPU-intensive.
 4.  **Desired Output**: Do you need simple presence/absence lists, relative abundances, or fully annotated genome maps?
-5.  **Database Dependency**: The quality and scope of a tool's underlying database are critical to the quality of the results. Ensure the database is comprehensive and up-to-date for your research area.
+5.  **Database Dependency**: The quality and scope of a tool's underlying database are critical to the quality of the results. Ensure the database is up-to-date for your research area.

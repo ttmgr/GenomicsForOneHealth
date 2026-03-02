@@ -5,8 +5,8 @@
 # Before running: set BAM_DIR and WORK_DIR to real paths on your system.
 # Usage: cd /path/to/project && bash scripts/submit_pipeline.sh
 # -----------------------------------------------------------------------------
-BAM_DIR="/path/to/BAM_files"
-WORK_DIR="/path/to/project"
+BAM_DIR="${BAM_DIR:-/path/to/BAM_files}"
+WORK_DIR="${WORK_DIR:-/path/to/project}"
 SCRIPT_DIR="${WORK_DIR}/scripts"
 cd "$WORK_DIR"
 # ---- Step 0: Create/update file list ----

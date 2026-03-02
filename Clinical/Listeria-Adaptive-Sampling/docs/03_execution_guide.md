@@ -91,7 +91,7 @@ bash run_local.sh
 
 ## Output Locations to Check First
 After a successful run, check the following endpoints to confirm completion:
-- `processing/report/pipeline_report.html` (The final comprehensive report)
+- `processing/report/pipeline_report.html` (The final report)
 - `processing/listeria/overview/listeria_overview.csv`
 - `processing/amrfinder/overview/amr_reads_overview.csv`
 - `processing/stats/read_metrics_summary.csv`
@@ -111,3 +111,22 @@ After a successful run, check the following endpoints to confirm completion:
   ```bash
   bash scripts/check_report_inputs.sh /path/to/project
   ```
+
+---
+
+## Approach 3: Standalone Single-Sample Execution
+
+If you wish to run a specific script on a single file manually, you can skip the automated loop entirely. You simply need to export the targeted SLURM array index corresponding to the line number of your target BAM file in `filelist.txt`.
+
+For example, to run the mapping and depth scripts exclusively on the 4th sample in your dataset:
+
+```bash
+# 1. Point the pipeline to the 4th sample
+export SLURM_ARRAY_TASK_ID=4
+export SLURM_CPUS_PER_TASK=8
+
+# 2. Run the desired standalone steps
+bash scripts/01_samtools_bam2fastq.sh
+bash scripts/04_minimap2.sh
+bash scripts/08_depth_calculation.sh
+```

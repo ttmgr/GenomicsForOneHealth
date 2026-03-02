@@ -23,7 +23,7 @@ The workflow consists of modular scripts located in the `scripts/` directory.
 | **14.**| `15_compile_listeria_overview.sh` | Integrated Target overview compilation |
 | **15.**| `16_compile_amr_overview.sh` | AMR overview tables |
 | **16.**| `18_assembly_stats.sh` | Assembly summary statistics |
-| **17.**| `17_generate_report.sh` | Builds the comprehensive HTML pipeline report |
+| **17.**| `17_generate_report.sh` | Builds the HTML pipeline report |
 | **18.**| `20_comparison_report.sh` | Dedicated AS vs N comparative report (optional) |
 
 ### Optional Downstream Visualizations/Exports

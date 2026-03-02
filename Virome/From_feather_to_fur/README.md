@@ -3,6 +3,15 @@
 Code used in the manuscript:  
 **From feather to fur: gull and mink H5N1 clade 2.3.4.4b high pathogenicity avian influenza viruses in their original hosts and their spillover and spillback potential**
 
+## Quick Start
+To interactively execute the variant calling and filtering pipeline steps locally:
+1. **Activate your environment** (Ensure `minimap2`, `clair3`, and `bcftools` are installed).
+2. **Run the Interactive Wrapper:**
+    ```bash
+    bash run_pipeline.sh
+    ```
+3. **Follow the Prompts** to input your FASTQ/VCF files and references. The script will guide you through calling variants, filtering them, and generating the FASTA required for the manual FluSurver step.
+
 ---
 
 ## Variant Calling

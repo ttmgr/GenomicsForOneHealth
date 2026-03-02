@@ -1,6 +1,6 @@
 # DNA Shotgun Metagenomics Analysis Pipeline
 
-This document provides a comprehensive workflow for DNA shotgun metagenomics analysis, from raw Nanopore data to AMR gene identification and taxonomic assignment.
+This document provides a workflow for DNA shotgun metagenomics analysis, from raw Nanopore data to AMR gene identification and taxonomic assignment.
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
@@ -880,7 +880,7 @@ if __name__ == '__main__':
 
 ```bash
 #!/bin/bash
-# Generate comprehensive AMR-pathogen linkage report
+# Generate AMR-pathogen linkage report
 
 OUTPUT_DIR="15_amr_pathogen_linkage"
 REPORT_DIR="${OUTPUT_DIR}/linkage_reports"
@@ -1542,7 +1542,7 @@ python3 generate_qc_summary.py --qc-dir ${QC_DIR} --output "${QC_DIR}/qc_summary
 ```python
 #!/usr/bin/env python3
 """
-Generate comprehensive QC summary report
+Generate QC summary report
 """
 
 import argparse
