@@ -23,6 +23,13 @@ As a signatory of the San Francisco Declaration on Research Assessment, we suppo
 
 Learn more about our work at the [Urban Lab website](https://sites.google.com/view/urban-lab/home).
 
+### Our Team
+- **Dr. Alber Perlas**: Virome and Avian Influenza Virus (AIV) 
+- **Daniel Gygax**: eDNA Metabarcoding
+- **Ela Sauerborn**: CRE Plasmid and Isolates
+- **Harika Ürel**: Plasmid and Viability
+
+
 ## Integrated Pipelines
 
 This repository currently hosts 9 distinct, yet complementary, analytical pipelines across 5 application domains:
