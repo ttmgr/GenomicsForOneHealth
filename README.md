@@ -26,7 +26,7 @@ Learn more about our work at the [Urban Lab website](https://sites.google.com/vi
 ### Our Team
 - **Prof. Dr. Lara Urban**: Principal Investigator & Supervisor (Helmholtz AI & University of Zurich)
 - **Dr. Albert Perlas** (former Postdoc): Virome and Avian Influenza Virus (AIV) 
-- **Tim Reska** (PhD Student): Pipeline Developer & Integrator (Complete Metagenomics for Air and Wetland)
+- **Tim Reska** (PhD Student): Metagenomics (Air and Wetland)
 - **Daniel Gygax** (PhD Student): eDNA Metabarcoding
 - **Ela Sauerborn** (PhD Student): CRE Plasmid and Isolates
 - **Harika Ürel** (PhD Student): Plasmid and Viability
@@ -157,6 +157,15 @@ We welcome contributions to improve and expand the GenomicsForOneHealth collecti
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
 4. Push to the branch (`git push origin feature/AmazingFeature`).
 5. Open a Pull Request.
+
+---
+
+## Publications
+
+If you use any of these pipelines in your research, please cite the corresponding papers:
+
+*   **[Insert Paper Title Here]** - *[Authors]*. [Journal], [Year]. [DOI/Link]
+*   **[Insert Paper Title Here]** - *[Authors]*. [Journal], [Year]. [DOI/Link]
 
 ---
 
