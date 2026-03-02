@@ -24,10 +24,12 @@ As a signatory of the San Francisco Declaration on Research Assessment, we suppo
 Learn more about our work at the [Urban Lab website](https://sites.google.com/view/urban-lab/home).
 
 ### Our Team
-- **Dr. Alber Perlas**: Virome and Avian Influenza Virus (AIV) 
-- **Daniel Gygax**: eDNA Metabarcoding
-- **Ela Sauerborn**: CRE Plasmid and Isolates
-- **Harika Ürel**: Plasmid and Viability
+- **Prof. Dr. Lara Urban**: Principal Investigator & Supervisor (Helmholtz AI & University of Zurich)
+- **Dr. Albert Perlas** (former Postdoc): Virome and Avian Influenza Virus (AIV) 
+- **Tim Reska** (PhD Student): Pipeline Developer & Integrator
+- **Daniel Gygax** (PhD Student): eDNA Metabarcoding
+- **Ela Sauerborn** (PhD Student): CRE Plasmid and Isolates
+- **Harika Ürel** (PhD Student): Plasmid and Viability
 
 
 ## Integrated Pipelines
