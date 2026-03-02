@@ -296,12 +296,9 @@ This project integrates the following key bioinformatics tools:
 
     *For detailed commands, see [`aiv_rna_analysis_pipeline.md`](./aiv_rna_analysis_pipeline.md).*
 
-### Viral Metagenomics (Viromics) Workflow
+### Viral Metagenomics (`virus_analysis_pipeline.md`)
 
-1.  **Library Prep & Read Processing:** RNA was DNase-treated and then converted to cDNA using the **Rapid SMART-9N protocol**, which employs random priming and template switching. Barcoded amplicons were generated and sequenced. Reads were trimmed (Porechop) and filtered (NanoFilt).
-2.  **Taxonomic Classification:** Reads were taxonomically classified by translated alignment using **DIAMOND BLASTx** against the NCBI non-redundant (NR) protein database. Viral hits were tallied to profile the RNA virome of each sample.
-
-    *For detailed commands, see [`virome_analysis_pipeline.md`](./virome_analysis_pipeline.md).*
+Used for deep characterization of RNA viromes extracted from wetland water samples. Combines quality filtering (Filtlong), read translation (seqkit, DIAMOND on NR database), and custom python parsing for deep classification of viral families.
 
 ### 12S rRNA Vertebrate Genomics Workflow
 

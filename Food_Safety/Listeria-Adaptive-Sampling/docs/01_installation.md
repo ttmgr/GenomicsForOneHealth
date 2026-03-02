@@ -1,25 +1,12 @@
 # Installation and Setup
 
-This pipeline is designed for Linux/macOS with conda-compatible package management (Conda or Mamba). For Windows, we recommend using WSL2.
+This pipeline is designed for Linux/macOS. For Windows, we recommend using WSL2.
 
-## 1) Install Mamba (Recommended for Speed)
-Mamba is a drop-in replacement for Conda that resolves environments significantly faster.
+⚠️ **Important:** For the general installation of **Mamba**, **Dorado**, and large databases like **Kraken2** or **AMRFinderPlus**, please see the centralized [INSTALL_AND_DATABASES.md](../../../INSTALL_AND_DATABASES.md) at the root of the repository.
 
-**If you don't have Mamba installed yet:**
-```bash
-# Example for installing Miniforge (which includes mamba) on Linux:
-wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-bash Miniforge3-$(uname)-$(uname -m).sh
-```
+Once Mamba and Dorado are set up from the master guide, return here to create the project-specific environment.
 
-## 2) Set up Bioconda channels (one time)
-```bash
-mamba config --add channels bioconda
-mamba config --add channels conda-forge
-mamba config --set channel_priority strict
-```
-
-## 3) Create an environment with all required tools
+## 1) Create an environment with all required tools
 The pipeline uses one consolidated environment for all steps.
 
 ```bash
@@ -45,50 +32,13 @@ flye --version
 amrfinder --version
 ```
 
-## 4) Databases: Where to get them and how to configure
+## 2) Databases & Dorado Models
 
-### Kraken2 database (required for steps 5 and 13)
-Current scripts use a `KRAKEN2_DB` variable, which you must set in:
-- `scripts/05_kraken2.sh`
-- `scripts/13_kraken2_contigs.sh`
+As declared in the [INSTALL_AND_DATABASES.md](../../../INSTALL_AND_DATABASES.md), you will need the Kraken2 and AMRFinderPlus databases, as well as Dorado basecalling models.
 
-**Options to get the database:**
-1. **Prebuilt (Easiest):** Download the standard or PlusPF index from the [Ben Langmead AWS index collection](https://benlangmead.github.io/aws-indexes/k2).
-2. **Build from NCBI/RefSeq:**
-```bash
-kraken2-build --standard --threads 24 --db /path/to/kraken2_standard
-```
-
-### AMRFinderPlus database (required for step 11)
-Install or update the latest AMRFinderPlus database:
-
-```bash
-amrfinder --update
-```
-*(If you need a custom location, use `amrfinder_update -d /path/to/amrfinder_db` and reference it with `-d` in `11_amrfinderplus.sh`)*.
-
----
-
-## 5) Dorado Installation and Models (required for step 9b)
-
-Dorado is heavily optimized for NVIDIA GPUs or Apple M-series chips and operates outside of Conda. 
-
-### Installing the Dorado Binary
-1. Download the correct pre-compiled binary for your system from the [Dorado GitHub Releases](https://github.com/nanoporetech/dorado/releases) (e.g., `dorado-x.y.z-linux-x64.tar.gz`).
-2. Extract the archive:
-   ```bash
-   tar -xvf dorado-*-linux-x64.tar.gz
-   ```
-3. Add the `bin/` directory to your system `$PATH`, or place the path directly into the `scripts/09b_dorado_polish.sh` file.
-
-### Downloading the Polishing Models
-Dorado needs to download specific machine learning models for polishing. It is highly recommended to declare a persistent directory so Dorado doesn't re-download models on every run.
-
-```bash
-export DORADO_MODELS_DIRECTORY="/path/to/my/dorado_models"
-dorado download --model all
-```
-*(Note: You must edit `scripts/09b_dorado_polish.sh` to include your specific `DORADO_MODELS_DIRECTORY` line so it knows where to find the downloaded models when submitted to a cluster).*
+* **Kraken2:** Once downloaded centrally, set the `KRAKEN2_DB` variable in `scripts/05_kraken2.sh` and `scripts/13_kraken2_contigs.sh`.
+* **AMRFinderPlus:** Once updated centrally, set the reference using `-d` in `11_amrfinderplus.sh`.
+* **Dorado Models:** Download models centrally (`dorado download --model all`) and export `DORADO_MODELS_DIRECTORY` in `09b_dorado_polish.sh`.
 
 ---
 

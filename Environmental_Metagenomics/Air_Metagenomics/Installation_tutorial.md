@@ -1,26 +1,8 @@
 # Installation Guide for the Nanopore Metagenomics Pipeline
 
-This guide provides streamlined instructions for setting up the necessary software environment and databases to run the entire Air Monitoring Nanopore Sequencing Pipeline.
+This guide provides streamlined instructions for setting up the specific software environment needed for the Air Monitoring Nanopore Sequencing Pipeline.
 
-## Overview of the Installation Process
-
-The setup process consists of three main steps:
-
-1.  **Create the Conda Environment**: Use the provided `environment.yaml` file to create a single, unified Conda environment with all the required pipeline tools. This is the recommended and most straightforward method.
-2.  **Install ONT Basecaller (Manual)**: Manually install the appropriate Oxford Nanopore basecaller (Guppy or Dorado), as these are not available through Conda.
-3.  **Download Databases**: Run the provided helper script to download the large databases required for taxonomic classification, functional annotation, and AMR gene detection.
-
----
-
-## ✅ Prerequisites
-
-Before you begin, ensure you have **Mamba** installed, which is a much faster alternative to Conda for creating environments. If you don't have it, you can install it into your base Conda environment:
-
-```bash
-conda install mamba -n base -c conda-forge
-```
-
----
+⚠️ **Important:** For the general installation of **Mamba**, **Dorado/Guppy basecallers**, and large databases like **Kraken2** or **AMRFinderPlus**, please see the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) at the root of the repository.
 
 ## Step 1: Create the Conda Environment
 
@@ -40,15 +22,15 @@ mamba activate nanopore-metagenomics
 
 ---
 
-## Step 2: Install ONT Basecallers (Manual)
+## Step 2: Install ONT Basecallers & Large Databases
 
-The Oxford Nanopore basecallers, **Guppy** (for FAST5 data) and **Dorado** (for POD5 data), must be installed manually. They are not available on Conda.
+As noted above, **Guppy** and **Dorado** cannot be installed via `environment.yaml`. Some databases also require manual caching. 
 
-Please refer to the **ONT Community** for instructions on downloading and installing the correct version for your system's architecture (e.g., Linux/Windows, CPU/GPU).
+Please refer strictly to the root [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) for how to download these external dependencies.
 
 ---
 
-## Step 3: Download Databases
+## Step 3: Run Additional Database Helpers
 
 The pipeline requires several large databases. A helper script, `download_databases.sh`, is provided to automate this process.
 

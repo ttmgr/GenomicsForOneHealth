@@ -46,6 +46,8 @@ Identify and compare plasmids (and chromosomes) from relevant bacterial isolates
 
 ## 4. Detailed Steps & Codes
 
+> ⚠️ **Installation:** For the general installation of **Mamba**, **Dorado**, and large databases (**Kraken2**, **AMRFinderPlus**), please see the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) at the root of the repository. The commands below document the specific parameters used in this project.
+
 > Note: Replace placeholder paths, models, parameters as appropriate. All software versions are listed below.
 
 ### 4.1 Basecalling
