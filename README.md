@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux-lightgray.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-*Developed at the Helmholtz Institute / Lab*
+*Developed by the One Health group under the supervision of [Lara Urban](https://sites.google.com/view/urban-lab/home)*
 
 </div>
 
@@ -18,6 +18,16 @@
 The **HAI-Pipelines** repository is a centralized, modular collection of bioinformatics workflows developed to address the growing challenge of **Healthcare-Associated Infections (HAIs)** and **Antimicrobial Resistance (AMR)**. Designed for the analysis of Nanopore sequencing data, this repository integrates multiple specialized pipelines into a cohesive, reproducible ecosystem.
 
 Our tools use long-read sequencing technology to provide rapid, high-resolution insights into pathogen genomics, enabling detailed epidemiological tracking, resistome profiling, and plasmid characterization.
+
+## About Us
+
+Using Nanopore technology and AI, we contribute to developing genomic surveillance strategies at the intersection of human, animal, and environmental health to empower our understanding of pathogens, their transmission, drug resistance, and virulence—in the context of food safety, water and air quality, and human clinical monitoring. Our research embraces the interdisciplinarity of One Health, and spans applications in the clinical, veterinarian, and environmental setting. By integrating portable technology and real-time AI analysis, we try to leverage genomics wherever it is needed—to improve health globally and holistically.
+
+We are based at the University of Zurich and its Food Safety and One Health Institutes, with affiliations to the Helmholtz AI Institute. Our research has, amongst others, been funded by the German Ministry of Research, UK Research and Innovation, the New Zealand Department of Conservation, the European Union’s Horizon Europe, and the German Helmholtz Association. 
+
+As a signatory of the San Francisco Declaration on Research Assessment, we support fair and responsible research assessments and therefore discourage the inappropriate use of proxies such as journal impact factors.
+
+Learn more about our work at the [Urban Lab website](https://sites.google.com/view/urban-lab/home).
 
 ## Integrated Pipelines
 
