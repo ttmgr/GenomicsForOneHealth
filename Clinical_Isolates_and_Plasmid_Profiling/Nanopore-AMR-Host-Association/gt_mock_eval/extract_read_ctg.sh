@@ -14,3 +14,4 @@ samtools view -F 2308 "${ALIGNED_BAM}" \
 echo "[02] Done."
 echo "  BAM: ${ALIGNED_BAM}"
 echo "  Mapping TSV: ${MAP_TSV}"
+

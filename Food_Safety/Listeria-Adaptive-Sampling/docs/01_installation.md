@@ -57,3 +57,4 @@ As declared in the [INSTALL_AND_DATABASES.md](../../../INSTALL_AND_DATABASES.md)
 - **minimap2:** https://bioconda.github.io/recipes/minimap2/README.html
 - **racon:** https://bioconda.github.io/recipes/racon/README.html
 - **AMRFinderPlus:** https://bioconda.github.io/recipes/ncbi-amrfinderplus/README.html
+

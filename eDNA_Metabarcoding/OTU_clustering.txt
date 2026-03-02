@@ -73,3 +73,4 @@ for fq in "$input_dir"/*.fastq.gz; do
 done
 
 echo "[DONE]"
+

@@ -37,3 +37,4 @@ BIN_MOTIFS_TSV="${OUT_DIR}/bin-motifs.tsv"   # produced by motif_discovery
   --bin_motifs "$BIN_MOTIFS_TSV" \
   --contig_bins "$CONTIG_BIN_TSV" \
   --out "$OUT_DIR"
+

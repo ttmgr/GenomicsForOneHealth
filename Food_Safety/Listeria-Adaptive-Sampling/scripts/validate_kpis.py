@@ -139,3 +139,4 @@ if __name__ == "__main__":
         sys.exit(1)
     base_dir = sys.argv[1]
     validate_kpis(base_dir)
+

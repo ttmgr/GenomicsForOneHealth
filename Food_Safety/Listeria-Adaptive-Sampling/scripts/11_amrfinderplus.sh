@@ -104,3 +104,4 @@ else
     echo "WARNING: Myloasm contigs not found for ${BASENAME}"
 fi
 echo "Finished all AMRFinderPlus analyses: $(date)"
+

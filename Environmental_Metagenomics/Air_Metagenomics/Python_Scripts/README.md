@@ -164,3 +164,4 @@ python metagenomics_analysis.py create_report \
       --input_dir /path/to/your/project_results/ \
       --output_file FINAL_REPORT.html
     ```
+

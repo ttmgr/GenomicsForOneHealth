@@ -33,3 +33,4 @@ with OUTPUT_TSV.open("w") as out:
         out.write(f"{contig}\t{BIN_PREFIX}{contig}\n")
 
 print(f"[INFO] Wrote {len(contig_names)} contig-bin mappings to {OUTPUT_TSV}")
+

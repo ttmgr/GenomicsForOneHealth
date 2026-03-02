@@ -17,3 +17,4 @@ A typical workflow involves the following steps:
 
 - **To select the right tools for your needs**, start with the **`Comparative_Analysis.md`** file. It provides a high-level comparison of different tools for taxonomic, functional, and AMR analysis, highlighting their strengths and weaknesses.
 - **For detailed explanations of how each tool works**, refer to the **`Tools_Explained.md`** file. This document consolidates information on the primary tools used in this pipeline, giving you a deeper understanding of their methodologies and outputs.
+

@@ -21,3 +21,4 @@ The pipeline is divided into four main stages:
     ```
 
 The main script will handle the creation of directories and execute each stage in the correct order.
+

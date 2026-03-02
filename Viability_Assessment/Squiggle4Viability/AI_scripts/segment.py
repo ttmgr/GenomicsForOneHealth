@@ -24,3 +24,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(args.path_dir, args.out_dir, args.chunk_size, args.start_index)
+

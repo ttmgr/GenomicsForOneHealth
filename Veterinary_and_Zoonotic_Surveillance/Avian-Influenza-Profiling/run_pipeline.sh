@@ -68,3 +68,4 @@ echo "========================================="
 echo " Initial guidance complete. Note that these scripts contain hardcoded variables"
 echo " that you must edit per your data locations before execution, per developer design."
 echo "========================================="
+

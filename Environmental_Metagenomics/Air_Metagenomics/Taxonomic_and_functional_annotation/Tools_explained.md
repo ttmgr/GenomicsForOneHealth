@@ -56,3 +56,4 @@ This document provides a detailed explanation of the primary tools used for anno
 - **Input**: Can take either nucleotide contigs or predicted protein sequences (FASTA).
 - **Output**: A detailed tab-delimited report on found AMR genes, including information on resistance mechanisms.
 - **Best for**: A highly accurate, targeted search for AMR genes that aligns with NCBI standards.
+

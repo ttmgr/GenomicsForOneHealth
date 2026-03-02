@@ -119,3 +119,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     main(args.alive_dir, args.dead_dir, args.output_dir)
+

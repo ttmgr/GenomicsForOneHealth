@@ -49,3 +49,4 @@ fi
   "$ALN_BAM" \
   "$OUT_DIR/${PREFIX}.pileup.bed"
 
+

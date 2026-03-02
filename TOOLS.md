@@ -99,3 +99,4 @@ This file lists the bioinformatics tools used across the GenomicsForOneHealth pi
 | Tool | Description | Link |
 |------|-------------|------|
 | **Miniforge / Mamba** | Fast conda package manager | [GitHub](https://github.com/conda-forge/miniforge) |
+

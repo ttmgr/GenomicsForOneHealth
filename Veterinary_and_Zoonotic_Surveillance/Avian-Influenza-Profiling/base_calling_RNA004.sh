@@ -18,3 +18,4 @@ DORADO_MODEL="${DORADO_MODEL:-rna004_130bps_hac@v3.0.1}"
     "$DORADO_MODEL" \
     "$input_dir" \
     > "$output_fastq_file"
+

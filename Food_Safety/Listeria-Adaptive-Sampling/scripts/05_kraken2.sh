@@ -33,3 +33,4 @@ kraken2 --db "$KRAKEN2_DB" \
         --output "$KRAKEN2_OUTPUT" \
         "$INPUT_FASTQ"
 echo "Finished Kraken2: $(date)"
+

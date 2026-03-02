@@ -49,3 +49,4 @@ else
     echo "WARNING: Filtered FASTQ not found: $FILT_FASTQ"
 fi
 echo "Finished: $(date)"
+

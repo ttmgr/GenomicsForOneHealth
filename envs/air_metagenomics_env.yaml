@@ -117,3 +117,4 @@ dependencies:
 # 2. Dorado must be installed separately from Oxford Nanopore
 # 3. Some tools may require manual compilation or special installation procedures
 # 4. Database paths must be configured in config/config.yaml
+

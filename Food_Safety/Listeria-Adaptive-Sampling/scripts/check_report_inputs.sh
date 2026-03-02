@@ -39,3 +39,4 @@ ls -lh "$BASE_DIR/processing/listeria/overview/" | grep ".png" | head -n 5
 echo "(Total png files: $(ls -1 "$BASE_DIR/processing/listeria/overview/"*.png 2>/dev/null | wc -l))"
 echo ""
 echo "Done."
+

@@ -64,3 +64,4 @@ echo "========================================="
 echo "Note: Full end-to-end processing of this complex AI pipeline requires cluster access (SLURM) or significant compute."
 echo "The initial inputs have been collected and the first two steps launched automatically via this wrapper."
 echo "Please refer to the README.md to continue the subsequent contig-level matching steps."
+

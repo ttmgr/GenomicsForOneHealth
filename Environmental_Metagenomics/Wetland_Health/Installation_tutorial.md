@@ -139,3 +139,4 @@ Once you have downloaded them using the central instructions, configure your scr
 To use a tool, activate its corresponding Mamba environment:
 ```bash
 mamba activate <environment_name>
+

@@ -1834,3 +1834,4 @@ rule generate_report:
 ## Citation
 
 If you use this pipeline, please cite the tools accordingly
+

@@ -17,3 +17,4 @@ for fastq_file in "$input_dir"/*.fastq; do
     IRMA FLU-minion "$fastq_file" "${file_name}_MinION"
 done
 
+

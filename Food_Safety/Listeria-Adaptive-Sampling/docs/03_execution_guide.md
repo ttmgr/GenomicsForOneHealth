@@ -130,3 +130,4 @@ bash scripts/01_samtools_bam2fastq.sh
 bash scripts/04_minimap2.sh
 bash scripts/08_depth_calculation.sh
 ```
+

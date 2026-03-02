@@ -216,3 +216,4 @@ def main(ttrain, tval, ntrain, nval, outpath, interm, batch, epoch, learningrate
 
 if __name__ == '__main__':
 	main()
+

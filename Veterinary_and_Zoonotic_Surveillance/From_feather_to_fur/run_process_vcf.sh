@@ -21,3 +21,4 @@ OUTPUT_VCF=$4
 # Run the Python script with the provided arguments
 python3 process_vcf.py --animal "$ANIMAL_VCF" --inoculum "$INOCULUM_VCF" \
        --output_excel "$OUTPUT_EXCEL" --output_vcf "$OUTPUT_VCF"
+

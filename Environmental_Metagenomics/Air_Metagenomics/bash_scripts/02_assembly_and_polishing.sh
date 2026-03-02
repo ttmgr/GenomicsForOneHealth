@@ -49,3 +49,4 @@ for filtered_fq in ${NANOFILT_DIR}/filtered_barcode*.fastq; do
 done
 
 echo "Stage 2: Assembly and Polishing complete."
+

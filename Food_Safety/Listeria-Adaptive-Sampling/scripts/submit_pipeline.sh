@@ -306,3 +306,4 @@ echo "                                                     ├─ 16 AMR overvie
 echo "                                                     └─ 18 assembly stats ────┘"
 echo ""
 echo "Monitor: squeue -u \$USER"
+

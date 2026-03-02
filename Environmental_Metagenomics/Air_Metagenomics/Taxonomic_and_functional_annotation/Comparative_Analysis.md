@@ -39,3 +39,4 @@ This document provides an overview of the similarities and differences among too
 3.  **Computational Resources**: Be realistic about your available CPU, memory, and storage. K-mer methods are fast but memory-intensive, while deep learning or exhaustive alignment approaches are CPU-intensive.
 4.  **Desired Output**: Do you need simple presence/absence lists, relative abundances, or fully annotated genome maps?
 5.  **Database Dependency**: The quality and scope of a tool's underlying database are critical to the quality of the results. Ensure the database is up-to-date for your research area.
+
