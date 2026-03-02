@@ -27,7 +27,7 @@ minimap2 -ax map-ont -t 8 assembly.fasta "$output_file" > aln_ass.sam
 
 #racon consensus contruction
 
-racon "$output_file" aln_ass.sam assembly.fasta > polyshed_consensus.fasta
+racon "$output_file" aln_ass.sam assembly.fasta > polished_consensus.fasta
 
 # Output directory for blastn results
 blastn_output_dir="blastn_results"
@@ -35,11 +35,11 @@ blastn_output_dir="blastn_results"
 # Create output directory if it doesn't exist
 mkdir -p "$blastn_output_dir"
 
-# Step 1: Separate contigs of polyshed_consensus.fasta into individual FASTA files
-awk '/^>/{s="polyshed_consensus_"++d".fasta"} {print > s}' polyshed_consensus.fasta
+# Step 1: Separate contigs of polished_consensus.fasta into individual FASTA files
+awk '/^>/{s="polished_consensus_"++d".fasta"} {print > s}' polished_consensus.fasta
 
 # Step 2: Perform blastn against the reference database for each contig
-for fasta_file in polyshed_consensus_*.fasta; do
+for fasta_file in polished_consensus_*.fasta; do
     # Get the contig name without the file extension
     contig_name=$(basename "$fasta_file" .fasta)
     

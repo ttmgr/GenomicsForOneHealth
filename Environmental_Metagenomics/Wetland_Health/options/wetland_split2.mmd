@@ -1,0 +1,24 @@
+flowchart TD
+    A[Passive Water Sample] --> C[RNA]
+
+    %% RNA Branch
+    C --> F[AIV Analysis]
+    C --> G[Viral Metagenomics]
+    
+    %% AIV Pipeline
+    F --> F1[Basecalling & Demux]
+    F1 --> F2[Quality Filtering]
+    F2 --> F3[Alignment to AIV]
+    F3 --> F4[Reference Selection]
+    F4 --> F5[Consensus Generation]
+    
+    %% Viromics Pipeline
+    G --> G1[DNase Treatment]
+    G1 --> G2[cDNA Synthesis]
+    G2 --> G3[Adapter Trimming]
+    G3 --> G4[Quality Filtering]
+    G4 --> G5[Translated Alignment]
+    G5 --> G6[RNA Virome Profile]
+    
+    classDef rna fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    class C,F,G,F1,F2,F3,F4,F5,G1,G2,G3,G4,G5,G6 rna

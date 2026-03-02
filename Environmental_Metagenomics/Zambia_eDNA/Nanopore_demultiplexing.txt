@@ -7,8 +7,8 @@ TAG16="./zambia_16_ngs_dmx_final.tsv"
 [[ -f "$TAG16" ]] || { echo "[ERR] Missing $TAG16 in $(pwd)"; exit 1; }
 
 # inputs (ONT, single-end)
-IN12="/path/zambia_12s_SUP_basecalled.fastq.gz"
-IN16="/path/big_zambia_16s_SUP_basecalled.fastq.gz"
+IN12="<Path_To_Zambia_12s_Fastq>"
+IN16="<Path_To_Zambia_16s_Fastq>"
 
 # outputs
 OUT12="ONT_12S"; OUT16="ONT_16S"

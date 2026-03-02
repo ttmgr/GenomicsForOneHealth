@@ -8,15 +8,15 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Tool paths (edit as needed)
 # ------------------------------------------------------------
-DORADO_BIN="/path/to/dorado/bin/dorado"
-SAMTOOLS_BIN="/path/to/samtools"
+DORADO_BIN="${DORADO_BIN:-dorado}"
+SAMTOOLS_BIN="${SAMTOOLS_BIN:-samtools}"
 
 # ------------------------------------------------------------
 # Input / output
 # ------------------------------------------------------------
-REF_FASTA="/path/to/reference.fasta"
-READS_BAM="/path/to/reads.bam"
-ALN_BAM="/path/to/aligned.sorted.bam"
+REF_FASTA="${REF_FASTA:-/path/to/reference.fasta}"
+READS_BAM="${READS_BAM:-/path/to/reads.bam}"
+ALN_BAM="${ALN_BAM:-/path/to/aligned.sorted.bam}"
 
 # ------------------------------------------------------------
 # Parameters

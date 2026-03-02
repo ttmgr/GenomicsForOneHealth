@@ -102,15 +102,14 @@ mamba activate listeria_as
 ### 2) Install Dorado Basecaller & Polisher
 Dorado must be installed manually outside of Mamba. See [docs/01_installation.md](docs/01_installation.md) for full instructions on downloading the binary and models.
 
-### 3) Run Orchestrator
-
+### 3) Run the Interactive Pipeline
+The pipeline includes a user-friendly wrapper script that will automatically ask you for file paths and configure the pipeline.
 1. **Clone the repo** and enter it.
-2. **Edit path variables** in `scripts/submit_pipeline.sh` (replace `/path/to/project` with your real paths).
-3. **Run the orchestrator script:**
+2. **Run the wrapper:**
     ```bash
-    bash scripts/submit_pipeline.sh
+    bash run_pipeline.sh
     ```
-    This orchestrator submits and links the full workflow (steps 1 to 20), and gracefully skips outputs that have already been generated.
+    This will prompt you for the location of your raw BAM files and your working directory. It automatically submits and links the full workflow (steps 1 to 20), and gracefully skips outputs that have already been generated.
 
 ---
 

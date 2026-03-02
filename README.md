@@ -1,8 +1,7 @@
 <div align="center">
   
 # HAI-Pipelines
-
-**A Comprehensive Bioinformatics Pipeline Collection for Healthcare-Associated Infections (HAI)**
+**A Bioinformatics Pipeline Collection for Healthcare-Associated Infections (HAI)**
 
 [![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
 [![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux-lightgray.svg)]()
@@ -18,91 +17,62 @@
 
 The **HAI-Pipelines** repository is a centralized, modular collection of bioinformatics workflows developed to address the growing challenge of **Healthcare-Associated Infections (HAIs)** and **Antimicrobial Resistance (AMR)**. Designed for the analysis of Nanopore sequencing data, this repository integrates multiple specialized pipelines into a cohesive, reproducible ecosystem.
 
-Our tools leverage long-read sequencing technology to provide rapid, high-resolution insights into pathogen genomics, enabling detailed epidemiological tracking, resistome profiling, and plasmid characterization.
+Our tools use long-read sequencing technology to provide rapid, high-resolution insights into pathogen genomics, enabling detailed epidemiological tracking, resistome profiling, and plasmid characterization.
 
 ## Integrated Pipelines
 
-This repository currently hosts three distinct, yet complementary, analytical pipelines:
+This repository currently hosts 9 distinct, yet complementary, analytical pipelines across 5 application domains:
 
-### [Listeria Adaptive Sampling Pipeline](./Listeria-Adaptive-Sampling/README.md)
-*High-resolution genomic analysis of Listeria monocytogenes from complex samples.*
+### 🌍 1. Environmental Metagenomics
 
-**Key Capabilities:**
-*   **Adaptive Sampling Processing:** Optimized for nanopore adaptive sampling runs.
-*   **Taxonomic Profiling:** utilizing Kraken2 for rapid community characterization.
-*   **Metagenomic Assembly:** High-quality assembly using MetaFlye and polishing with Dorado.
-*   **AMR Profiling:** Comprehensive detection of antimicrobial resistance genes via AMRFinderPlus.
-*   **Automated Reporting:** Generates detailed HTML and Excel reports summarizing sequencing metrics, taxonomy, and resistance profiles.
-
-### [CRE Plasmid Clustering Pipeline](./CRE-Plasmid-clustering/README.md)
-*Advanced characterization and clustering of plasmids in Carbapenem-resistant Enterobacterales (CRE).*
-
-**Key Capabilities:**
-*   **Plasmid Reconstruction:** Specialized workflows for resolving complex plasmid structures from long-read data.
-*   **Comparative Genomics:** Tools for clustering and comparing plasmid sequences across isolates.
-*   **Epidemiological Tracking:** Facilitates the study of plasmid-mediated dissemination of carbapenem resistance genes.
-
-### [Nanopore AMR Host Association Pipeline](./Nanopore-AMR-Host-Association/README.md)
-*Direct linking of antimicrobial resistance genes to their bacterial hosts in metagenomic samples.*
-
-**Key Capabilities:**
-*   **Long-read Metagenomics:** Exploits the length of nanopore reads to span across repetitive genomic elements.
-*   **Host-Resistance Linkage:** Bioinformatic linking of AMR gene annotations (e.g., from AMRFinderPlus) with taxonomic classifications (e.g., from Kraken2) on the same individual reads or assembled contigs.
-*   **Resistome Contextualization:** Provides critical context for understanding the mobility and potential clinical impact of identified resistance elements.
-
-### [Squiggle4Viability Pipeline](./Squiggle4Viability/README.md)
-*Assessing bacterial viability directly from raw nanopore electrical signals.*
-
-**Key Capabilities:**
-*   **Signal-level Analysis:** Bypasses basecalling by analyzing the raw "squiggle" data (FAST5/POD5) directly.
-*   **Viability Determination:** Distinguishes between live and dead bacterial cells based on subtle signal differences indicating membrane integrity or metabolic state prior to sequencing.
-*   **Rapid Diagnostics:** Enables faster and more direct insights into treatment efficacy and infection viability status.
-
-### [AMR Nanopore Pipeline](./AMR_nanopore/README.md)
-*Rapid and robust detection of Antimicrobial Resistance directly from nanopore sequencing data.*
-
-**Key Capabilities:**
-*   **Real-time Analysis:** Optimized for the continuous, real-time nature of nanopore sequencing.
-*   **Comprehensive AMR Profiling:** Identifies a wide range of resistance determinants across diverse bacterial pathogens.
-*   **Actionable Insights:** Designed to produce rapid reports suitable for clinical or epidemiological decision-making.
-
-### [Wetland Health Analysis Pipeline](./Wetland_Health/README.md)
-*Real-time genomic pathogen, resistance, and host range characterization from passive water sampling of wetland ecosystems.*
-
-**Key Capabilities:**
-*   **Multi-omics Processing:** Integrates DNA Shotgun Metagenomics, 12S rRNA Vertebrate Metabarcoding, AIV RNA Analysis, and RNA Viromics.
-*   **Ecosystem Monitoring:** Characterizes microbial communities, vertebrate biodiversity, and AMR prevalence across diverse environments.
-*   **Targeted Viral Surveillance:** Specific workflows for Avian Influenza Virus (AIV) and other RNA viruses.
-
-### [Air Metagenomics Pipeline](./Air_Metagenomics/README.md)
+#### [Air Metagenomics Pipeline](./Environmental_Metagenomics/Air_Metagenomics/README.md)
 *Air monitoring by nanopore sequencing for the detection of bioaerosol communities.*
 
-**Key Capabilities:**
-*   **Automated Profiling:** End-to-end automated modular pipeline turning raw reads into taxonomical and functional insight reports.
-*   **Comprehensive Annotation:** Functional gene prediction and AMR screening on both raw reads and assembled contigs.
-*   **Metagenomic Binning:** Recovers Metagenome-Assembled Genomes (MAGs) from difficult environmental air samples.
+#### [Wetland Health Analysis Pipeline](./Environmental_Metagenomics/Wetland_Health/README.md)
+*Real-time genomic pathogen, resistance, and host range characterization from passive water sampling of wetland ecosystems.*
 
-### 8. [Avian Influenza Profiling Pipeline](./Avian-Influenza-Profiling/README.md)
-*Latest RNA and DNA nanopores allow for rapid avian influenza profiling.*
+#### [Nanopore AMR Host Association Pipeline](./Environmental_Metagenomics/Nanopore-AMR-Host-Association/README.md)
+*Direct linking of antimicrobial resistance genes to their bacterial hosts in metagenomic samples.*
 
-**Key Capabilities:**
-*   **Rapid Virus Detection:** Workflows specifically optimized for quick identification and profiling of Avian Influenza.
-*   **Direct RNA Sequencing:** Methodology demonstrating the utility of direct RNA sequencing for viral diagnostics without the amplification biases.
-*   **Subtyping Support:** Facilitates epidemiological surveillance of circulating avian influenza strains.
+---
 
-### 9. [From Feather to Fur Pipeline](./From_feather_to_fur/README.md)
-*Metagenomic analysis tracking transmission pathways from avian to mammalian hosts.*
+### 🧫 2. Isolates & Plasmid Profiling
 
-**Key Capabilities:**
-*   **Cross-species Pathogen Tracking:** Traces the spread and adaptation of pathogens jumping between birds and mammals.
-*   **Genomic Epidemiology:** Leverages long-read sequencing to establish high-confidence transmission networks.
-*   **One-Health Focus:** Integrates environmental, avian, and mammalian data to model zoonotic spillover events.
+#### [AMR Nanopore Pipeline](./Isolates/AMR_nanopore/README.md)
+*Rapid and reliable detection of Antimicrobial Resistance directly from nanopore sequencing data.*
+
+#### [CRE Plasmid Clustering Pipeline](./Isolates/CRE-Plasmid-clustering/README.md)
+*Advanced characterization and clustering of plasmids in Carbapenem-resistant Enterobacterales (CRE).*
+
+---
+
+### 🏥 3. Clinical Sequencing
+
+#### [Listeria Adaptive Sampling Pipeline](./Clinical/Listeria-Adaptive-Sampling/README.md)
+*High-resolution genomic analysis of Listeria monocytogenes from complex samples using Oxford Nanopore Adaptive Sampling.*
+
+---
+
+### 🦠 4. Virome & Diagnostics
+
+#### [Avian Influenza Profiling Pipeline](./Virome/Avian-Influenza-Profiling/README.md)
+*Rapid avian influenza profiling from Latest RNA and DNA nanopores.*
+
+#### [From Feather to Fur Pipeline](./Virome/From_feather_to_fur/README.md)
+*Variant calling workflow tracking transmission pathways from avian to mammalian hosts.*
+
+---
+
+### 🔬 5. Viability Assessment
+
+#### [Squiggle4Viability Pipeline](./Viability/Squiggle4Viability/README.md)
+*Assessing bacterial viability directly from raw nanopore electrical signals (FAST5/POD5).*
 
 ---
 
 ## Getting Started
 
-To utilize these pipelines, clone the repository to your local environment:
+To use these pipelines, clone the repository to your local environment:
 
 ```bash
 git clone https://github.com/ttmgr/HAI-Pipelines.git
@@ -112,15 +82,15 @@ cd HAI-Pipelines
 ### Dependencies
 We have centralized the environment and requirement files for this repository into the `envs/` directory. Each sub-pipeline also maintains specific container recommendations or additional instructions within its own directory:
 
-*   [Listeria Setup Guide](./Listeria-Adaptive-Sampling/docs/01_installation.md)
-*   [CRE-Plasmid Setup Guide](./CRE-Plasmid-clustering/README.md)
-*   [AMR-Host Setup Guide](./Nanopore-AMR-Host-Association/README.md)
-*   [Squiggle4Viability Setup Guide](./Squiggle4Viability/README.md) *(Requirements: `envs/squiggle4viability_requirements.txt`)*
-*   [AMR Nanopore Setup Guide](./AMR_nanopore/README.md)
-*   [Wetland Health Setup Guide](./Wetland_Health/Installation_tutorial.md)
-*   [Air Metagenomics Setup Guide](./Air_Metagenomics/Installation_tutorial.md) *(Environment: `envs/air_metagenomics_env.yaml`)*
-*   [Avian Influenza Profiling Guide](./Avian-Influenza-Profiling/README.md)
-*   [From Feather to Fur Guide](./From_feather_to_fur/README.md)
+*   [Listeria Setup Guide](./Clinical/Listeria-Adaptive-Sampling/docs/01_installation.md)
+*   [CRE-Plasmid Setup Guide](./Isolates/CRE-Plasmid-clustering/README.md)
+*   [AMR-Host Setup Guide](./Environmental_Metagenomics/Nanopore-AMR-Host-Association/README.md)
+*   [Squiggle4Viability Setup Guide](./Viability/Squiggle4Viability/README.md) *(Requirements: `envs/squiggle4viability_requirements.txt`)*
+*   [AMR Nanopore Setup Guide](./Isolates/AMR_nanopore/README.md)
+*   [Wetland Health Setup Guide](./Environmental_Metagenomics/Wetland_Health/Installation_tutorial.md)
+*   [Air Metagenomics Setup Guide](./Environmental_Metagenomics/Air_Metagenomics/Installation_tutorial.md) *(Environment: `envs/air_metagenomics_env.yaml`)*
+*   [Avian Influenza Profiling Guide](./Virome/Avian-Influenza-Profiling/README.md)
+*   [From Feather to Fur Guide](./Virome/From_feather_to_fur/README.md)
 
 ---
 
@@ -161,7 +131,7 @@ graph TD
     style H fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-*(Note: The pipelines can be run independently or their outputs combined for comprehensive sample characterization.)*
+*(Note: The pipelines can be run independently or their outputs combined for detailed sample characterization.)*
 
 ---
 

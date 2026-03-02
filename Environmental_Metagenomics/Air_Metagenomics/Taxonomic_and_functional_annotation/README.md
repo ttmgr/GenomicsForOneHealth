@@ -1,6 +1,6 @@
 # Taxonomic and Functional Annotation Guide
 
-This directory provides comprehensive guidance on the taxonomic classification, functional annotation, and antimicrobial resistance (AMR) gene detection stages of the metagenomics pipeline.
+This directory provides detailed guidance on the taxonomic classification, functional annotation, and antimicrobial resistance (AMR) gene detection stages of the metagenomics pipeline.
 
 ## Overview & Workflow
 

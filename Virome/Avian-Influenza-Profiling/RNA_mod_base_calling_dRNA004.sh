@@ -10,10 +10,15 @@
 input_dir=$1
 output_bam_file=$2
 
+DORADO_BIN="${DORADO_BIN:-dorado}"
+DORADO_MOD_MODEL="${DORADO_MOD_MODEL:-rna004_130bps_sup@v3.0.1_m6A_DRACH@v1}"
+REF_FASTA="${REF_FASTA:-italy_ref_plot.fasta}"
+DORADO_BASE_MODEL="${DORADO_BASE_MODEL:-rna004_130bps_sup@v3.0.1}"
+
 # Dorado basecalling and call m6a modifications
-/home/haicu/albert.perlas/dorado-0.4.3-linux-x64/bin/dorado basecaller \
-    --modified-bases-models /home/haicu/albert.perlas/dorado-0.4.3-linux-x64/bin/rna004_130bps_sup@v3.0.1_m6A_DRACH@v1/ \
-    --reference /home/haicu/albert.perlas/past/tfm/downsampled_fastq/plot_coverage/italy_ref_plot.fasta \
-    /home/haicu/albert.perlas/dorado-0.4.3-linux-x64/bin/rna004_130bps_sup@v3.0.1/ \
+"$DORADO_BIN" basecaller \
+    --modified-bases-models "$DORADO_MOD_MODEL" \
+    --reference "$REF_FASTA" \
+    "$DORADO_BASE_MODEL" \
     "$input_dir" \
     > "$output_bam_file"

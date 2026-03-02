@@ -8,13 +8,13 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Tool path (edit as needed)
 # ------------------------------------------------------------
-FLYE_BIN="/path/to/flye"
+FLYE_BIN="${FLYE_BIN:-flye}"
 
 # ------------------------------------------------------------
 # Input / output
 # ------------------------------------------------------------
-INPUT_FASTQ="/path/to/input.fastq.gz"
-OUT_DIR="/path/to/metaflye_assembly"
+INPUT_FASTQ="${INPUT_FASTQ:-/path/to/input.fastq.gz}"
+OUT_DIR="${OUT_DIR:-/path/to/metaflye_assembly}"
 
 # ------------------------------------------------------------
 # Parameters

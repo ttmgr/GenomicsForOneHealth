@@ -1,0 +1,42 @@
+flowchart TD
+    A[Air Sample] --> B[DNA Extraction]
+    
+    B --> C{Study Type}
+    
+    C --> |Pilot| D[fast5]
+    D --> D1[Guppy Basecalling]
+    D1 --> D2[Concatenate]
+    
+    C --> |Urban| E[pod5]
+    E --> E1[Dorado Basecalling]
+    
+    D2 --> F[FASTQ]
+    E1 --> F
+    
+    F --> F1[Porechop]
+    F1 --> F2[NanoFilt]
+    
+    F2 --> G[Read-level]
+    F2 --> H[Assembly-level]
+    
+    G --> G1[Kraken2]
+    G --> G2[ABRicate + AMRFinderPlus]
+    
+    H --> H1[Flye]
+    H1 --> H2[Polishing Minmap/Racon]
+    
+    H2 --> I[Annotation]
+    H2 --> J[Binning MetaWRAP]
+    
+    I --> I1[Kraken2 + Prokka + Bakta + eggNOG]
+    I --> I4[ABRicate + AMRFinder]
+
+    classDef input fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef readLevel fill:#dcedc8,stroke:#33691e,stroke-width:2px,color:#000
+    classDef assemblyLevel fill:#ffe0b2,stroke:#e65100,stroke-width:2px,color:#000
+    classDef binningLevel fill:#e1bee7,stroke:#4a148c,stroke-width:2px,color:#000
+    
+    class A,B,C,D,E,D1,E1,D2,F input
+    class F1,F2,G,G1,G2 readLevel
+    class H,H1,H2,I,I1,I4 assemblyLevel
+    class J binningLevel

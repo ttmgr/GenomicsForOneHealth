@@ -1,0 +1,55 @@
+flowchart TD
+    A[Passive Water Sample]
+    A --> B[DNA]
+    A --> C[RNA]
+    
+    %% Stacked approach using invisible links
+    subgraph DNA [DNA Analysis Branches]
+        B --> D[DNA Shotgun Metagenomics]
+        B --> E[12S rRNA Vertebrate Genomics]
+        
+        %% Shotgun
+        D -.-> D1[Basecalling & Demux]
+        D1 -.-> D2[Adapter Trimming]
+        D2 -.-> D3[Quality Filtering]
+        D3 -.-> D4{Analysis Strategy}
+        
+        D4 -.-> D5[Community Analysis]
+        D5 -.-> D5b[Kraken2 Classification]
+        
+        D4 -.-> D6[Hazard Detection]
+        D6 -.-> D6b[De novo Assembly]
+        D6b -.-> D6c[Pathogen ID Contigs]
+        D6 -.-> D6d[AMR Detection]
+        
+        %% 12S
+        E -.-> E1[PCR Amplification]
+        E1 -.-> E2[Demultiplexing]
+        E2 -.-> E3[Primer Trimming]
+        E3 -.-> E4[Quality Filtering]
+        E4 -.-> E7[OTU Clustering]
+        
+        %% Force 12s below Shotgun
+        D6d ~~~ E
+    end
+    
+    subgraph RNA [RNA Analysis Branches]
+        C --> F[AIV Analysis]
+        C --> G[Viral Metagenomics]
+        
+        F -.-> F1[Basecalling & Demux]
+        F1 -.-> F3[Alignment to AIV]
+        F3 -.-> F5[Consensus Generation]
+        
+        G -.-> G1[DNase Treatment]
+        G1 -.-> G2[cDNA Synthesis]
+        G2 -.-> G5[Translated Alignment]
+        
+        F5 ~~~ G
+    end
+
+    classDef dna fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef rna fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    
+    class B,D,E,D1,D2,D3,D4,D5,D5b,D6,D6b,D6c,D6d,E1,E2,E3,E4,E7 dna
+    class C,F,G,F1,F3,F5,G1,G2,G5 rna

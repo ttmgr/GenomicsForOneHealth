@@ -8,13 +8,13 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Tool path (edit as needed)
 # ------------------------------------------------------------
-SAMTOOLS_BIN="/path/to/samtools"
+SAMTOOLS_BIN="${SAMTOOLS_BIN:-samtools}"
 
 # ------------------------------------------------------------
 # Input / output
 # ------------------------------------------------------------
-INPUT_BAM="/path/to/input.bam"
-OUTPUT_FASTQ="/path/to/output.fastq"
+INPUT_BAM="${INPUT_BAM:-/path/to/input.bam}"
+OUTPUT_FASTQ="${OUTPUT_FASTQ:-/path/to/output.fastq}"
 
 # ------------------------------------------------------------
 # Parameters

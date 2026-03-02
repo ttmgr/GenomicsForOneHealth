@@ -96,8 +96,8 @@ READS=$1
 OUTDIR=$2
  
 # Hard-coded paths
-DB_DIR="/home/haicu/albert.perlas/past/tfm/reference_segment"
-CLAIR3_MODEL="/home/haicu/albert.perlas/ISIDORe/clair3_models/r1041_e82_400bps_sup_v500"
+DB_DIR="/path/to/reference_segment"
+CLAIR3_MODEL="/path/to/clair3_models/r1041_e82_400bps_sup_v500"
  
 echo "[$(date)] Starting influenza pipeline"
 echo "  Reads:     $READS"

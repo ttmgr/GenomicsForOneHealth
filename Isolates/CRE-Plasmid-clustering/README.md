@@ -3,6 +3,18 @@ This repository offers description of the analytical steps needed for plasmid-en
 
 ---
 
+## Quick Start
+To get results immediately without reading the full methodology, we have provided an interactive wrapper script that automates the steps below.
+
+1. **Activate your environment** (Ensure Conda/Docker tools like Dorado, Flye, Medaka, AMRFinderPlus are active).
+2. **Run the interactive script:**
+    ```bash
+    bash run_pipeline.sh
+    ```
+3. **Answer the prompts** (Provide your input FASTQ/POD5 paths and desired output directory).
+
+---
+
 ## 1. Goal & Scope
 
 Identify and compare plasmids (and chromosomes) from relevant bacterial isolates sequenced with the RBK114 library preparation kit on a R10.4.1 MinION flowcell:
@@ -211,7 +223,7 @@ done
 
 # 2) DCJ-based clustering with Pling (after selecting pairs below threshold)
 pling align --containment_distance 0.3 --cores 8 --sourmash plasmid.txt "$OUTDIR/clustering/pling_out"
-
+```
 
 ### 4.10 Miscellaneous & Reporting
 

@@ -2,11 +2,11 @@
 threads=${SLURM_CPUS_PER_TASK:-32}
 
 
-PRIMER_F="insert_Fprimer_sequence"
-PRIMER_R="insert_Rprimer_sequence"
+PRIMER_F="<Forward_Primer_Sequence>"
+PRIMER_R="<Reverse_Primer_Sequence>"
 
 
-input_dir="path/to/demultiplexed/reads"
+input_dir="<Path_To_Demultiplexed_Reads>"
 
 
 logs_dir="./illumina_logs"

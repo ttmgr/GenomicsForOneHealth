@@ -18,8 +18,8 @@ KRAKEN2_DB="/path/to/kraken2_db"
 # ------------------------------------------------------------
 # Input / output
 # ------------------------------------------------------------
-INPUT_FASTA="/path/to/assembly.fasta"
-OUT_DIR="/path/to/kraken2_output"
+INPUT_FASTA="${INPUT_FASTA:-/path/to/assembly.fasta}"
+OUT_DIR="${OUT_DIR:-/path/to/kraken2_output}"
 
 OUTPUT_FILE="${OUT_DIR}/kraken2.out"
 REPORT_FILE="${OUT_DIR}/kraken2.report"

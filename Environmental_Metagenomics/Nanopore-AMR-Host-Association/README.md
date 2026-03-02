@@ -8,6 +8,17 @@ Each step is implemented as a **standalone script**, but the steps are intended 
 
 ---
 
+## Quick Start
+To immediately begin processing your data without configuring individual scripts, we provide a unified interactive wrapper.
+1. **Activate your environment** (Ensure Dorado, Chopper, modkit, etc., are in your PATH).
+2. **Launch the interactive wrapper:**
+    ```bash
+    bash run_pipeline.sh
+    ```
+3. **Answer the prompts** (Provide your POD5 input directory and Kraken2 database path). The wrapper will automatically orchestrate the tools using appropriate fallbacks.
+
+---
+
 ## Requirements
 
 ### External tools
@@ -344,13 +355,15 @@ Generate contig-level host ground truth by aggregating read labels.
 
   * `read_isolate.tsv`
   * `read_to_ctg.tsv`
-
-python /home/haicu/harika.uerel/github_nanomotif/build_contig_gt.py \
- --read-isolate /path/to/read_isolate.tsv \
- --read-ctg /path/to/read_to_contig_map.tsv \
- --mobsuite-root /path/to/mobsuite \
- --kraken-root /path/to/kraken \
- --out /path/to/contig_eval_table.tsv
+```bash
+python gt_mock_eval/build_contig_gt.py \
+    --input BAM_DIR \
+    --read-isolate /path/to/read_isolate.tsv \
+    --read-ctg /path/to/read_to_contig_map.tsv \
+    --mobsuite-root /path/to/mobsuite \
+    --kraken-root /path/to/kraken \
+    --out /path/to/contig_eval_table.tsv
+```
 
 **Output**
 

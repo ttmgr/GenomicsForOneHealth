@@ -9,9 +9,12 @@
 input_dir=$1
 output_fastq_file=$2
 
+DORADO_BIN="${DORADO_BIN:-dorado}"
+DORADO_MODEL="${DORADO_MODEL:-rna004_130bps_hac@v3.0.1}"
+
 # Dorado basecalling command 
-/home/haicu/albert.perlas/dorado-0.4.3-linux-x64/bin/dorado basecaller \
+"$DORADO_BIN" basecaller \
     --emit-fastq \
-    /home/haicu/albert.perlas/dorado-0.4.3-linux-x64/bin/rna004_130bps_hac@v3.0.1 \
+    "$DORADO_MODEL" \
     "$input_dir" \
     > "$output_fastq_file"

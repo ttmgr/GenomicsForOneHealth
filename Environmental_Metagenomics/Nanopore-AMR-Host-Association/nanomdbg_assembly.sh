@@ -8,13 +8,13 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Tool path (edit as needed)
 # ------------------------------------------------------------
-NANOMDBG_BIN="/path/to/metaMDBG"
+NANOMDBG_BIN="${NANOMDBG_BIN:-metaMDBG}"
 
 # ------------------------------------------------------------
 # Input / output
 # ------------------------------------------------------------
-INPUT_FASTQ="/path/to/chopper_filtered.fastq"
-OUT_DIR="/path/to/nanomdbg_assembly"
+INPUT_FASTQ="${INPUT_FASTQ:-/path/to/chopper_filtered.fastq}"
+OUT_DIR="${OUT_DIR:-/path/to/nanomdbg_assembly}"
 
 # ------------------------------------------------------------
 # Parameters
