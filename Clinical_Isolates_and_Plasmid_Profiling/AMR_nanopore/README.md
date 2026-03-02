@@ -11,6 +11,8 @@ To immediately begin processing your data without manually configuring each tool
 
 ---
 
+> ⚠️ **Installation:** For the general installation of **Mamba** and **Dorado/Guppy**, please see the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) at the root of the repository. The tool descriptions below are provided as a quick reference for the specific parameters used in this project.
+
 ## Guppy Basecaller
 
 Guppy Basecaller is a software tool to convert the raw electrical signal ("Squiggle") data from nanopore sequencing into DNA sequences. 

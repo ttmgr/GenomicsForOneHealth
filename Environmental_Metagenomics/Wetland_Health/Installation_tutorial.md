@@ -1,39 +1,12 @@
 # Installation Tutorial
 
-This guide provides instructions for installing the necessary bioinformatics tools for the Wetland Metagenomics & Viromics by Nanopore Sequencing project. We recommend using Mamba for managing software packages and environments, as it is generally faster than Conda. Dorado basecaller installation is handled separately as per ONT's recommendations.
+This guide provides instructions for creating Mamba environments for the necessary bioinformatics tools for the Wetland Metagenomics & Viromics by Nanopore Sequencing project.
 
-## 1. Prerequisites
+⚠️ **Important:** For the general installation of **Mamba**, **Dorado**, and large databases like **Kraken2** or **AMRFinderPlus**, please see the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) at the root of the repository.
 
-Before you begin, ensure you have the following installed on your system:
+Once Mamba and Dorado are set up from the master guide, return here to create the project-specific environments.
 
-* **Mamba:** If you don't have Mamba, we recommend installing Mambaforge or Miniforge.
-    * **Mambaforge:** [https://github.com/conda-forge/mambaforge#installation](https://github.com/conda-forge/mambaforge#installation)
-    * Follow the instructions on the Mambaforge GitHub page for your operating system. This will also install Conda and set up Mamba.
-* **Git:** Required for cloning the Dorado repository and potentially others.
-    * Installation: [https://git-scm.com/book/en/v2/Getting-Started-Installing-Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* **Build Tools (Optional but Recommended):** Some software or their dependencies might require compilation. Having common build tools can be helpful.
-    * On Linux (Debian/Ubuntu): `sudo apt-get update && sudo apt-get install build-essential`
-    * On Linux (Fedora/CentOS): `sudo yum groupinstall "Development Tools"`
-    * On macOS: Install Xcode Command Line Tools: `xcode-select --install`
-
-## 2. Dorado Installation (from ONT GitHub)
-
-Dorado is Oxford Nanopore Technologies' basecaller. It's recommended to install it from their official GitHub repository to get the latest versions and models.
-
-1.  **Visit the Dorado GitHub page:** [https://github.com/nanoporetech/dorado](https://github.com/nanoporetech/dorado)
-2.  **Check for Releases:** Look for the "Releases" section for pre-compiled binaries suitable for your system (Linux/macOS, CPU/GPU). Downloading a pre-compiled binary is often the easiest method. The DNA analysis in the manuscript used Dorado v5.0.0[cite: 83].
-3.  **Follow ONT's Instructions:** The Dorado GitHub page provides detailed instructions on downloading pre-compiled versions or building from source if needed.
-    * You will also need to download basecalling models compatible with your data (e.g., R10.4.1 super-accuracy models mentioned in the manuscript [cite: 83]). Dorado's documentation will guide you on model download and usage.
-
-    ```bash
-    # Example of cloning (if building from source, but check releases first)
-    # git clone [https://github.com/nanoporetech/dorado.git](https://github.com/nanoporetech/dorado.git)
-    # cd dorado
-    # # Follow their build instructions, e.g., using cmake
-    ```
-    **Note:** Ensure the Dorado executable is in your system's PATH or call it using its full path.
-
-## 3. Mamba Environment Setup
+## 1. Mamba Environment Setup
 
 Using separate Mamba environments for each tool or logical groups of tools helps manage dependencies and avoid conflicts.
 
@@ -45,7 +18,7 @@ We will use the following primary channels:
 * `bioconda`
 * `conda-forge`
 
-## 4. Installation of Tools via Mamba
+## 2. Installation of Tools via Mamba
 
 Install each of the following tools in its own Mamba environment to ensure clean dependency management, unless specified otherwise. Versions are specified as used in the manuscript where available.
 
@@ -149,41 +122,13 @@ Install each of the following tools in its own Mamba environment to ensure clean
     ```
     *(Note: The Python version 3.12.2 is specified from the manuscript's PCoA visualization tools list[cite: 90]. Adjust if needed based on compatibility or your system preferences.)*
 
-## 5. Database Setup
+## 3. Database Setup
 
-Several tools require specific databases:
+Several tools require specific databases.
 
-* **Kraken2 Database:**
-    * Kraken2 needs a pre-built database for classification. The manuscript used `nt_core database` (accessed May 2025)[cite: 88, 101].
-    * You can download pre-built databases from the Kraken2 website or build your own. Building standard databases can be resource-intensive.
-    * Example for downloading a small test database (replace with your chosen database):
-        ```bash
-        # mamba activate kraken2_env
-        # kraken2-build --download-library bacteria --db /path/to/your_kraken2_db
-        # kraken2-build --build --db /path/to/your_kraken2_db --threads <N>
-        ```
-    * The `nt_core` database would be significantly larger. Consult Kraken2 documentation and available resources for the `nt_core` database specifically.
+⚠️ Please refer to the [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) file at the root of the repository for centralized instructions on downloading the extremely large databases for **Kraken2**, **AMRFinderPlus**, and **DIAMOND**.
 
-* **AMRFinderPlus Database:**
-    * AMRFinderPlus requires its own database of AMR genes and virulence factors.
-    * When you install AMRFinderPlus, it usually comes with instructions to download/update the database.
-        ```bash
-        # mamba activate amrfinder_env
-        # amrfinder --update_db --database /path/to/your_amrfinderplus_db
-        ```
-    * Ensure this path is provided when running `amrfinder`.
-
-* **DIAMOND Database (NCBI nr):**
-    * The manuscript used the NCBI nr database (accessed May 2025) for DIAMOND alignments[cite: 101].
-    * Download `nr.gz` from the NCBI FTP site.
-    * Create a DIAMOND-formatted database:
-        ```bash
-        # mamba activate diamond_env
-        # wget ftp://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/nr.gz
-        # gunzip nr.gz
-        # diamond makedb --in nr --db /path/to/your_diamond_db/nr
-        ```
-    * This is a very large database and will take significant time and disk space.
+Once you have downloaded them using the central instructions, configure your scripts to point to their paths.
 
 * **AIV Reference Database:**
     * The manuscript used a custom database generated for each segment from the NCBI Influenza Virus Database, containing all AIV nucleotide sequences from Europe (as of 04/03/2023)[cite: 112].

@@ -100,7 +100,7 @@ mamba activate listeria_as
 ```
 
 ### 2) Install Dorado Basecaller & Polisher
-Dorado must be installed manually outside of Mamba. See [docs/01_installation.md](docs/01_installation.md) for full instructions on downloading the binary and models.
+Dorado must be installed manually outside of Mamba. See the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) for instructions on downloading the binary and models, or refer to [docs/01_installation.md](docs/01_installation.md) for project-specific configuration.
 
 ### 3) Run the Interactive Pipeline
 The pipeline includes a user-friendly wrapper script that will automatically ask you for file paths and configure the pipeline.

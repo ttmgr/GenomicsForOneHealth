@@ -705,121 +705,32 @@ echo "[$(date)] AMR detection on contigs completed!"
 
 ### 15. AMR Gene-Pathogen Linkage Analysis
 
-The linkage between AMR genes and their host organisms was determined by aligning reads to the NCBI NT database and taxonomic classification using MEGAN.
+The linkage between AMR genes and their host organisms was determined by aligning reads and contigs to the NCBI NT database and taxonomic classification using MEGAN.
+
+To streamline this process, dedicated standalone SLURM scripts are provided: `align_megan.sh`, `submit_megan_processing_from_existing.sh`, and `run_megan_post_alignment_from_existing.sh`.
 
 #### Step 15.1: Alignment to NT Database (Minimap2)
+First, we use `align_megan.sh` to align either filtered reads or assembled contigs to the NCBI nt database.
 
 ```bash
-#!/bin/bash
-# Align AMR-containing reads to NCBI NT database for taxonomic classification
-
-# Define variables
-AMR_READS_DIR="10_amr_prep"  # Directory with AMR-ready reads
-OUTPUT_DIR="15_amr_pathogen_linkage"
-MINIMAP2_NT_DB="/path/to/mm_nt_db_ONT.mmi"  # Pre-indexed NT database for ONT
-THREADS=28
-
-# Create output directories
-mkdir -p ${OUTPUT_DIR}/{fasta,sorted_fasta,minimap2_sam,temp}
-
-# Process each sample
-for SAMPLE_FASTQ in ${AMR_READS_DIR}/*.amr_ready.fastq; do
-    BARCODE=$(basename ${SAMPLE_FASTQ} .amr_ready.fastq)
-    
-    echo "[$(date)] Processing ${BARCODE}..."
-    
-    # Convert FASTQ to FASTA
-    RAW_FASTA="${OUTPUT_DIR}/fasta/${BARCODE}.fasta"
-    seqtk seq -a ${SAMPLE_FASTQ} > ${RAW_FASTA}
-    
-    # Sort FASTA by read names (required for MEGAN)
-    SORTED_FASTA="${OUTPUT_DIR}/sorted_fasta/${BARCODE}.sorted.fasta"
-    seqkit sort -n -w 0 --quiet ${RAW_FASTA} -o ${SORTED_FASTA}
-    
-    # Run Minimap2 alignment
-    SAM_FILE="${OUTPUT_DIR}/minimap2_sam/${BARCODE}.aligned.sam"
-    LOG_FILE="${OUTPUT_DIR}/minimap2_sam/${BARCODE}.minimap2.log"
-    TMP_DIR="${OUTPUT_DIR}/temp/${BARCODE}"
-    mkdir -p ${TMP_DIR}
-    
-    minimap2 -ax map-ont \
-        -k 19 -w 10 -I 10G -g 5000 -r 2000 -N 100 \
-        --lj-min-ratio 0.5 -A 2 -B 5 -O 5,56 -E 4,1 -z 400,50 \
-        --sam-hit-only \
-        -t ${THREADS} \
-        --split-prefix "${TMP_DIR}/temp_split_idx" \
-        ${MINIMAP2_NT_DB} \
-        ${SORTED_FASTA} > ${SAM_FILE} 2> ${LOG_FILE}
-    
-    echo "[$(date)] Alignment completed for ${BARCODE}"
-done
+# Edit align_megan.sh to set INPUT_TYPE="reads" (or "contigs")
+# Then execute it to submit the Minimap2 alignment jobs
+./align_megan.sh
 ```
 
 #### Step 15.2: MEGAN Taxonomic Classification
+After the alignments finish, we process the SAM files with `sam2rma` and extract taxonomic assignments.
 
 ```bash
-#!/bin/bash
-# Convert SAM to RMA and perform taxonomic classification with MEGAN
-
-# Define variables
-SAM_DIR="${OUTPUT_DIR}/minimap2_sam"
-MEGAN_DB="/path/to/megan-nucl-Feb2022.db"
-THREADS=20
-
-# Create MEGAN output directories
-mkdir -p ${OUTPUT_DIR}/{rma_files,r2c_reports,c2c_reports,final_reports}
-
-# Process each aligned SAM file
-for SAM_FILE in ${SAM_DIR}/*.aligned.sam; do
-    BARCODE=$(basename ${SAM_FILE} .aligned.sam)
-    SORTED_FASTA="${OUTPUT_DIR}/sorted_fasta/${BARCODE}.sorted.fasta"
-    RAW_FASTA="${OUTPUT_DIR}/fasta/${BARCODE}.fasta"
-    
-    echo "[$(date)] Running MEGAN analysis for ${BARCODE}..."
-    
-    # Convert SAM to RMA (filtered, 0.01% minimum support)
-    FILTERED_RMA="${OUTPUT_DIR}/rma_files/${BARCODE}.filtered.rma"
-    sam2rma \
-        -i ${SAM_FILE} \
-        -r ${SORTED_FASTA} \
-        -o ${FILTERED_RMA} \
-        -lg -alg longReads \
-        -t ${THREADS} \
-        -mdb ${MEGAN_DB} \
-        -ram readCount \
-        --minSupportPercent 0.01 \
-        -v 2> "${OUTPUT_DIR}/rma_files/${BARCODE}.sam2rma.log"
-    
-    # Extract read-to-class assignments (r2c)
-    R2C_FILE="${OUTPUT_DIR}/r2c_reports/${BARCODE}.NCBI_Taxonomy.r2c.txt"
-    rma2info \
-        -i ${FILTERED_RMA} \
-        -o ${R2C_FILE} \
-        -r2c Taxonomy \
-        -n
-    
-    # Extract class counts (c2c)
-    C2C_FILE="${OUTPUT_DIR}/c2c_reports/${BARCODE}.NCBI_Taxonomy.c2c.txt"
-    rma2info \
-        -i ${FILTERED_RMA} \
-        -c2c Taxonomy \
-        -n -r \
-        -o ${C2C_FILE}
-    
-    # Convert to Kraken-style report
-    READ_COUNT=$(grep -c ">" ${RAW_FASTA})
-    KRAKEN_REPORT="${OUTPUT_DIR}/final_reports/${BARCODE}.ncbi.kreport"
-    MPA_REPORT="${OUTPUT_DIR}/final_reports/${BARCODE}.ncbi.mpa.txt"
-    
-    python3 Convert_MEGAN_RMA_NCBI_c2c.py \
-        --input ${C2C_FILE} \
-        --kreport ${KRAKEN_REPORT} \
-        --mpa ${MPA_REPORT} \
-        --readcount ${READ_COUNT}
-    
-    echo "[$(date)] MEGAN analysis completed for ${BARCODE}"
-done
+# Edit submit_megan_processing_from_existing.sh to set INPUT_TYPE="reads" (or "contigs")
+# Then execute it to submit the MEGAN classification jobs
+./submit_megan_processing_from_existing.sh
 ```
+
+These scripts will generate:
+- `.rma` files
+- Read/Contig-to-class (`.r2c`) assignments
+- Pathogen abundance summary files (`.kreport` and `.mpa` formats)
 
 #### Step 15.3: Link AMR Genes to Host Organisms
 
