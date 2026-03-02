@@ -1,6 +1,6 @@
 # Metagenomics Analysis Bash Pipeline
 
-This directory contains a streamlined, modular bash pipeline for processing nanopore metagenomics data. The workflow is orchestrated by the main `run_pipeline.sh` script, which executes a series of numbered scripts in a logical order.
+This directory contains a modular bash pipeline for processing nanopore metagenomics data. The workflow is orchestrated by the main `run_pipeline.sh` script, which executes a series of numbered scripts in a logical order.
 
 ## Pipeline Workflow
 

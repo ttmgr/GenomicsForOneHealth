@@ -134,6 +134,8 @@ cd GenomicsForOneHealth
 
 > ⚠️ **Start here:** For installing **Mamba**, the **Dorado** basecaller, and large databases (**Kraken2**, **AMRFinderPlus**, **DIAMOND**), please see the centralized **[INSTALL_AND_DATABASES.md](./INSTALL_AND_DATABASES.md)**.
 
+For a full list of all bioinformatics tools used across our pipelines (with GitHub links), see **[TOOLS.md](./TOOLS.md)**.
+
 Each sub-pipeline maintains specific environment files and tool version requirements within its own directory:
 
 *   [Air Metagenomics Setup Guide](./Environmental_Metagenomics/Air_Metagenomics/Installation_tutorial.md)
@@ -218,5 +220,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ---
 
 <div align="center">
-  <i>"Empowering rapid response to infectious threats through advanced genomic surveillance."</i>
+  <i>"Rapid response to infectious threats through advanced genomic surveillance."</i>
 </div>

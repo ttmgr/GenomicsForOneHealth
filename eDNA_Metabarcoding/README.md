@@ -1,6 +1,6 @@
 # Zambia eDNA Metabarcoding Pipeline
 
-This repository contains the primary code and workflows utilized for environmental DNA research in Zambia. The pipeline facilitates the merging and demultiplexing of Nanopore and Illumina sequencing data, alongside comprehensive steps for read quality filtering, chimera removal, dereplication, and OTU clustering, culminating in global alignment mapping against a reference database.
+This repository contains the code and workflows used for environmental DNA research in Zambia. The pipeline covers merging and demultiplexing of Nanopore and Illumina sequencing data, read quality filtering, chimera removal, dereplication, and OTU clustering, followed by global alignment mapping against a reference database.
 
 The original demultiplexing reference files and command parameters used for this pipeline are included for reproducibility.
 

@@ -31,7 +31,7 @@ mamba config --set channel_priority strict
 
 ## 2. Dorado Basecaller Installation
 
-Dorado is Oxford Nanopore Technologies' state-of-the-art basecaller. Because it is highly optimized for specific hardware (NVIDIA GPUs, Apple M-series chips) and releases frequently, it is not distributed via Conda and **must be installed manually**.
+Dorado is Oxford Nanopore Technologies' latest basecaller. Because it is highly optimized for specific hardware (NVIDIA GPUs, Apple M-series chips) and releases frequently, it is not distributed via Conda and **must be installed manually**.
 
 1. **Download the Binary:** Visit the [Dorado GitHub Releases page](https://github.com/nanoporetech/dorado/releases) and download the pre-compiled binary for your architecture (e.g., `dorado-x.y.z-linux-x64.tar.gz`).
 2. **Extract:**
