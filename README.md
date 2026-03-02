@@ -58,34 +58,34 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 ### 🍽️ 3. Food Safety
 
-#### [Listeria Adaptive Sampling Pipeline](./Clinical/Listeria-Adaptive-Sampling/README.md)
+#### [Listeria Adaptive Sampling Pipeline](./Food_Safety/Listeria-Adaptive-Sampling/README.md)
 *High-resolution genomic analysis of Listeria monocytogenes from complex food safety samples using Oxford Nanopore Adaptive Sampling.*
 
 ---
 
 ### 🏥 4. Clinical Isolates & Plasmid Profiling
 
-#### [AMR Nanopore Pipeline](./Isolates/AMR_nanopore/README.md)
+#### [AMR Nanopore Pipeline](./Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore/README.md)
 *Rapid and reliable clinical detection of Antimicrobial Resistance directly from nanopore sequencing data.*
 
-#### [CRE Plasmid Clustering Pipeline](./Isolates/CRE-Plasmid-clustering/README.md)
+#### [CRE Plasmid Clustering Pipeline](./Clinical_Isolates_and_Plasmid_Profiling/CRE-Plasmid-clustering/README.md)
 *Advanced characterization and clustering of plasmids in Carbapenem-resistant Enterobacterales (CRE) for clinical settings.*
 
 ---
 
 ### 🦆 5. Veterinary & Zoonotic Surveillance (Virome)
 
-#### [Avian Influenza Profiling Pipeline](./Virome/Avian-Influenza-Profiling/README.md)
+#### [Avian Influenza Profiling Pipeline](./Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md)
 *Rapid avian influenza profiling from Latest RNA and DNA nanopores.*
 
-#### [From Feather to Fur Pipeline](./Virome/From_feather_to_fur/README.md)
+#### [From Feather to Fur Pipeline](./Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md)
 *Variant calling workflow tracking transmission pathways from avian to mammalian hosts.*
 
 ---
 
 ### 🔬 6. Viability Assessment (Squiggle-level)
 
-#### [Squiggle4Viability Pipeline](./Viability/Squiggle4Viability/README.md)
+#### [Squiggle4Viability Pipeline](./Viability_Assessment/Squiggle4Viability/README.md)
 *Assessing bacterial viability directly from raw nanopore electrical signals (FAST5/POD5).*
 
 ---
@@ -106,12 +106,12 @@ We have centralized the environment and requirement files for this repository in
 *   [Wetland Health Setup Guide](./Environmental_Metagenomics/Wetland_Health/Installation_tutorial.md)
 *   [AMR-Host Setup Guide](./Environmental_Metagenomics/Nanopore-AMR-Host-Association/README.md)
 *   [Zambia eDNA Setup Guide](./Environmental_Metagenomics/Zambia_eDNA/README.md)
-*   [Listeria Setup Guide](./Clinical/Listeria-Adaptive-Sampling/docs/01_installation.md)
-*   [CRE-Plasmid Setup Guide](./Isolates/CRE-Plasmid-clustering/README.md)
-*   [AMR Nanopore Setup Guide](./Isolates/AMR_nanopore/README.md)
-*   [Avian Influenza Profiling Guide](./Virome/Avian-Influenza-Profiling/README.md)
-*   [From Feather to Fur Guide](./Virome/From_feather_to_fur/README.md)
-*   [Squiggle4Viability Setup Guide](./Viability/Squiggle4Viability/README.md)
+*   [Listeria Setup Guide](./Food_Safety/Listeria-Adaptive-Sampling/docs/01_installation.md)
+*   [CRE-Plasmid Setup Guide](./Clinical_Isolates_and_Plasmid_Profiling/CRE-Plasmid-clustering/README.md)
+*   [AMR Nanopore Setup Guide](./Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore/README.md)
+*   [Avian Influenza Profiling Guide](./Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md)
+*   [From Feather to Fur Guide](./Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md)
+*   [Squiggle4Viability Setup Guide](./Viability_Assessment/Squiggle4Viability/README.md)
 
 ---
 
