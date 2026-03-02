@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "========================================="
-echo " HAI-Pipelines Master Execution Script"
+echo " GenomicsForOneHealth Master Execution Script"
 echo "========================================="
 echo "Select the pipeline you wish to run:"
 echo "1) Listeria Adaptive Sampling"

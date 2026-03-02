@@ -26,7 +26,7 @@ Learn more about our work at the [Urban Lab website](https://sites.google.com/vi
 ### Our Team
 - **Prof. Dr. Lara Urban**: Principal Investigator & Supervisor (Helmholtz AI & University of Zurich)
 - **Dr. Albert Perlas** (former Postdoc): Virome and Avian Influenza Virus (AIV) 
-- **Tim Reska** (PhD Student): Pipeline Developer & Integrator
+- **Tim Reska** (PhD Student): Pipeline Developer & Integrator (Complete Metagenomics for Air and Wetland)
 - **Daniel Gygax** (PhD Student): eDNA Metabarcoding
 - **Ela Sauerborn** (PhD Student): CRE Plasmid and Isolates
 - **Harika Ürel** (PhD Student): Plasmid and Viability
@@ -131,7 +131,7 @@ graph TD
     Q --> R[Viral Subtyping & Diagnostics]
     S --> T[Zoonotic Transmission Networks]
     
-    E --> H((Integrated HAI Insights))
+    E --> H((Integrated One Health Insights))
     F --> H
     G --> H
     K --> H
