@@ -17,6 +17,17 @@ This repository contains the bioinformatic workflows used to process the sequenc
 
 ---
 
+## Quick Start
+To simplify the execution of the four distinct workflows described below, we provide a unified interactive launcher script.
+1. **Activate your environment** (Ensure core tools like Porechop, NanoFilt, and Minimap2 are available).
+2. **Run the Interactive Wrapper:**
+    ```bash
+    bash run_pipeline.sh
+    ```
+3. **Select your workflow** (1-4) and provide the absolute path to your raw input FASTQ directory. The script will automatically execute the corresponding universally-applicable pre-processing steps.
+
+---
+
 ## Sample Information and Barcoding Scheme
 
 ** IMPORTANT: This table is essential for reproducing our analyses. It maps sampling locations to their corresponding barcodes and FASTQ files.**
@@ -170,11 +181,12 @@ flowchart TD
     D5a --> D5b[Taxonomic Classification<br/>Kraken2 v2.1.2<br/>NCBI nt_core]
     D5a --> D5c[Pathogen ID - Reads<br/>Minimap2 v2.24 +<br/>MEGAN-CE v6.21.1]
     
-    D6 --> D6a[Full Dataset]
-    D6a --> D6b[De novo Assembly<br/>nanoMDBG v1.1]
+    D6 --> D6a[Full Dataset - Reads]
+    D6a --> D6b[<i>De novo</i> Assembly<br/>nanoMDBG v1.1]
     D6b --> D6c[Pathogen ID - Contigs<br/>Minimap2 v2.24 +<br/>MEGAN-CE v6.21.1]
     D6a --> D6h[Pathogen ID - Reads<br/>Minimap2 v2.24 +<br/>MEGAN-CE v6.21.1]
-    D6b --> D6d[AMR Detection<br/>AMRFinderPlus v4.0.23<br/>+ Prodigal v2.6.3]
+    D6b --> D6d[AMR Detection - Contigs<br/>AMRFinderPlus v4.0.23<br/>+ Prodigal v2.6.3]
+    D6a --> D6i[AMR Detection - Reads<br/>AMRFinderPlus v4.0.23]
     D6b --> D6e[Plasmid Detection<br/>PlasmidFinder v2.1.6]
     D6a --> D6f[Virulence Factors<br/>DIAMOND v2.1.13<br/>vs VFDB]
     
@@ -211,9 +223,13 @@ flowchart TD
     classDef dna fill:#e1f5fe,stroke:#01579b,stroke-width:2px
     classDef rna fill:#fce4ec,stroke:#880e4f,stroke-width:2px
     classDef tool fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef readsLevel fill:#dcedc8,stroke:#33691e,stroke-width:2px,color:#000
+    classDef contigsLevel fill:#ffe0b2,stroke:#e65100,stroke-width:2px,color:#000
     
-    class B,D,E,D1,D2,D3,D4,D5,D5a,D5b,D5c,D6,D6a,D6b,D6c,D6d,D6e,D6f,D6g,D6h,E1,E2,E3,E4,E5,E6,E7,E8 dna
+    class B,D,E,D1,D2,D3,D4,D5,D5a,D5b,D5c,D6,E1,E2,E3,E4,E5,E6,E7,E8 dna
     class C,F,G,F1,F2,F3,F4,F5,G1,G2,G3,G4,G5,G6 rna
+    class D6a,D6h,D6i,D6f readsLevel
+    class D6b,D6c,D6d,D6e contigsLevel
 ```
 
 ## Tools Used

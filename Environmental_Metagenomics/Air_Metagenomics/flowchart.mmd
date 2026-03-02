@@ -1,0 +1,60 @@
+flowchart TD
+    A[Air Sample] --> B[DNA Extraction]
+    
+    %% Basecalling
+    B --> C{Study Type}
+    
+    %% Pilot Study
+    C --> |Pilot Study| D[fast5 format]
+    D --> D1[Basecalling & Demultiplexing<br/>Guppy]
+    D1 --> D2[Concatenate FASTQ]
+    
+    %% Urban Study
+    C --> |Urban Study| E[pod5 format]
+    E --> E1[Basecalling & Demultiplexing<br/>Dorado]
+    
+    %% Common Input
+    D2 --> F[Demultiplexed FASTQ]
+    E1 --> F
+    
+    %% Read Processing
+    F --> F1[Adapter Trimming<br/>Porechop]
+    F1 --> F2[Quality Filtering<br/>NanoFilt]
+    F2 --> F3[QC Stats<br/>NanoStat]
+    
+    %% Processing Branches
+    F2 --> G[Read-level Analysis]
+    F2 --> H[Assembly-level Analysis]
+    
+    %% Read-level Analysis
+    G --> G1[Taxonomic Classification<br/>Kraken2]
+    G --> G2[AMR & Virulence<br/>ABRicate + AMRFinderPlus]
+    
+    %% Assembly-level Analysis
+    H --> H1[<i>De novo</i> Assembly<br/>Flye --meta]
+    H1 --> H2[Polishing<br/>Minimap2 + Racon]
+    H2 --> H3[Assembly Stats<br/>assembly-stats]
+    
+    H2 --> I[Taxonomic & Functional Annotation]
+    H2 --> J[Metagenome Binning]
+    
+    %% Annotation
+    I --> I1[Taxonomic Classification<br/>Kraken2]
+    I --> I2[Gene Prediction & Annotation<br/>Prokka + Bakta]
+    I --> I3[Functional Annotation<br/>Prodigal + eggNOG-mapper]
+    I --> I4[AMR & Virulence<br/>ABRicate + AMRFinderPlus]
+    
+    %% Binning
+    J --> J1[Binning<br/>MetaWRAP<br/>MetaBAT2, MaxBin2, CONCOCT]
+    J1 --> J2[Bin Refinement<br/>MetaWRAP]
+
+    %% Styling
+    classDef input fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef readLevel fill:#dcedc8,stroke:#33691e,stroke-width:2px,color:#000
+    classDef assemblyLevel fill:#ffe0b2,stroke:#e65100,stroke-width:2px,color:#000
+    classDef binningLevel fill:#e1bee7,stroke:#4a148c,stroke-width:2px,color:#000
+    
+    class A,B,C,D,E,D1,E1,D2,F input
+    class F1,F2,F3,G,G1,G2 readLevel
+    class H,H1,H2,H3,I,I1,I2,I3,I4 assemblyLevel
+    class J,J1,J2 binningLevel

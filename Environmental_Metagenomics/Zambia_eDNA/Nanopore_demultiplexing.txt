@@ -1,0 +1,33 @@
+#DEMULTIPLEXING NANOPORE SINGLE END READS WIH OBITOOLS4
+TAG12="./zambia_12_ngs_dmx_final.tsv"
+TAG16="./zambia_16_ngs_dmx_final.tsv"
+
+# sanity check
+[[ -f "$TAG12" ]] || { echo "[ERR] Missing $TAG12 in $(pwd)"; exit 1; }
+[[ -f "$TAG16" ]] || { echo "[ERR] Missing $TAG16 in $(pwd)"; exit 1; }
+
+# inputs (ONT, single-end)
+IN12="/path/zambia_12s_SUP_basecalled.fastq.gz"
+IN16="/path/big_zambia_16s_SUP_basecalled.fastq.gz"
+
+# outputs
+OUT12="ONT_12S"; OUT16="ONT_16S"
+mkdir -p "$OUT12" "$OUT16"
+
+echo "[INFO] Demultiplexing 12S (ONT)"
+obimultiplex "$IN12" \
+  -t "$TAG12" \
+  -o "${OUT12}/demuxed_12S.fastq.gz" \
+  -u "${OUT12}/unknown_12S.fastq.gz" \
+  -e 2 --fastq-output --compress \
+  --output-OBI-header --max-cpu 1 --no-order
+
+echo "[INFO] Demultiplexing 16S (ONT)"
+obimultiplex "$IN16" \
+  -t "$TAG16" \
+  -o "${OUT16}/demuxed_16S.fastq.gz" \
+  -u "${OUT16}/unknown_16S.fastq.gz" \
+  -e 2 --fastq-output --compress \
+  --output-OBI-header --max-cpu 1 --no-order
+
+echo "[DONE]"

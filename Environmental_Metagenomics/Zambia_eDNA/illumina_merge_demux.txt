@@ -1,0 +1,72 @@
+#MERGE ILLUMINA PAIRED-END READS AND DEMULTIPLEX WITH OBITOOLS4
+merge_min_identity=0.90        
+merge_min_overlap=20           
+allowed_tag_mm=2               
+threads=${SLURM_CPUS_PER_TASK:-8}
+
+TAG12="./zambia_12_ngs_dmx_final.tsv"
+TAG16="./zambia_16_ngs_dmx_final.tsv"
+MERGED_DIR="./merge_logs"      
+STAMP=$(date +%Y%m%d_%H%M%S)
+DEMUX_ROOT="demux_after_merge_${STAMP}"
+
+
+# 12 S
+R12_L1_1="path/Zambia_12s_FKDN240388094-1A_HKHNHDSXC_L1_1.fq.gz"
+R12_L1_2="path/Zambia_12s_FKDN240388094-1A_HKHNHDSXC_L1_2.fq.gz"
+R12_L4_1="path/Zambia_12s_FKDN240388094-1A_HKHNHDSXC_L4_1.fq.gz"
+R12_L4_2="path/Zambia_12s_FKDN240388094-1A_HKHNHDSXC_L4_2.fq.gz"
+
+# 16 S
+R16_L1_1="path/Zambia_16s_FKDN240388093-1A_HKHNHDSXC_L1_1.fq.gz"
+R16_L1_2="path/Zambia_16s_FKDN240388093-1A_HKHNHDSXC_L1_2.fq.gz"
+R16_L4_1="path/Zambia_16s_FKDN240388093-1A_HKHNHDSXC_L4_1.fq.gz"
+R16_L4_2="path/Zambia_16s_FKDN240388093-1A_HKHNHDSXC_L4_2.fq.gz"
+
+# ───────────────────── helper: pair ▸ filter ▸ demux ────────────────────
+process_lane() {
+    local fwd="$1" rev="$2" tag_tsv="$3" gene="$4" lane="$5"
+
+    mkdir -p "${MERGED_DIR}" "${DEMUX_ROOT}/${gene}/${lane}"
+
+    merged="${MERGED_DIR}/merged_${gene}_${lane}.fastq.gz"
+    merged_acgt="${MERGED_DIR}/merged_${gene}_${lane}_acgt.fastq.gz"
+
+    echo "[${gene} ${lane}] Pairing / merging ..."
+    obipairing \
+        --max-cpu "$threads" \
+        --compress \
+        --min-identity "$merge_min_identity" \
+        --min-overlap  "$merge_min_overlap" \
+        --forward-reads "$fwd" \
+        --reverse-reads "$rev" \
+        --out "$merged"
+
+    echo "[${gene} ${lane}] Keeping ACGT-only internal matches ..."
+    obigrep \
+  	--predicate 'annotations.mode == "alignment"' \
+  	--max-cpu "$threads" \
+  	--compress \
+  	--out "$merged_acgt" \
+  	"$merged"
+
+    echo "[${gene} ${lane}] Demultiplexing merged reads (single tag)..."
+    obimultiplex \
+        "$merged_acgt" \
+        -t "$tag_tsv" \
+        -o "${DEMUX_ROOT}/${gene}/${lane}/demux.fastq.gz" \
+        -u "${DEMUX_ROOT}/${gene}/${lane}/unknown.fastq.gz" \
+        -e "$allowed_tag_mm" \
+        --fastq-output --compress \
+        --max-cpu "$threads" --no-order
+
+    echo "[${gene} ${lane}] DONE"
+}
+
+# ────────────────────────── pipeline execution ──────────────────────────
+process_lane "$R12_L1_1" "$R12_L1_2" "$TAG12" "12S" "L1"
+process_lane "$R12_L4_1" "$R12_L4_2" "$TAG12" "12S" "L4"
+process_lane "$R16_L1_1" "$R16_L1_2" "$TAG16" "16S" "L1"
+process_lane "$R16_L4_1" "$R16_L4_2" "$TAG16" "16S" "L4"
+
+echo "[ALL DONE]  Results under  ${DEMUX_ROOT}/"
