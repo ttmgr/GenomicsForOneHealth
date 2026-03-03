@@ -373,3 +373,4 @@ kraken2 --db kraken_nt_db --use-names dastool_out_DASTool_bins/bin.1.fa > kraken
 
 
  
+  

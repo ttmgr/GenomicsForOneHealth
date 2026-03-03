@@ -58,3 +58,4 @@ This document provides a detailed explanation of the primary tools used for anno
 - **Best for**: A highly accurate, targeted search for AMR genes that aligns with NCBI standards.
 
  
+  

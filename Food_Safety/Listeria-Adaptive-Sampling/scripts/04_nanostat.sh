@@ -31,3 +31,4 @@ mv "${OUTPUT_DIR}/${BASENAME}NanoStats.txt" "${OUTPUT_DIR}/nanostat_${BASENAME}.
 echo "Finished: $(date)"
 
  
+  

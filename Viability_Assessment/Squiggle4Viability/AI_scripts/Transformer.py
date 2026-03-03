@@ -85,3 +85,4 @@ class Transformer(nn.Module):
         x = self.classifier(x)
         return x
  
+  

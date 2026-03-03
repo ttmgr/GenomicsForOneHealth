@@ -75,3 +75,4 @@ vsearch --usearch_global otus.fasta --db MIDORI2_unique_266.fasta --id 0.98 \
 
 
  
+  

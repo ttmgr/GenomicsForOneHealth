@@ -594,3 +594,4 @@ kraken2 --db kraken_nt_db --use-names dastool_out_DASTool_bins/bin.1.fa > kraken
 This manual now covers upstream processing, binning with VAMB, COMEBin, and MetaBAT2, refinement with DAS Tool, quality assessment with CheckM, and downstream classification with GTDB-Tk or Kraken2. Adjust parameters based on dataset characteristics and computational resources.
 
  
+  

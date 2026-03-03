@@ -54,3 +54,4 @@ CMD+=(
 "${CMD[@]}" > "$OUTPUT_BAM"
 
  
+  

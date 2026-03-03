@@ -16,3 +16,4 @@ echo "  BAM: ${ALIGNED_BAM}"
 echo "  Mapping TSV: ${MAP_TSV}"
 
  
+  

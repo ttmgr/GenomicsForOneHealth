@@ -72,3 +72,4 @@ grep -i "Listeria" "$KRAKEN_REPORT" > "${OUTPUT_DIR}/listeria_report_${BASENAME}
 echo "Finished: $(date)"
 
  
+  
