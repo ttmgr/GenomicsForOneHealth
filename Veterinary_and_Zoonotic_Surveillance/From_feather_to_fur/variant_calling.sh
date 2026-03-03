@@ -63,3 +63,4 @@ bcftools view merge_output.vcf.gz > all_variants.vcf
 
  
   
+ 

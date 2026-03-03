@@ -22,3 +22,4 @@ if [ $duplex_count -gt 0 ]; then
 
  
   
+ 

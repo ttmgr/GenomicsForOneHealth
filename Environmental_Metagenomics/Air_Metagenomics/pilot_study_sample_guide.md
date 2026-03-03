@@ -128,3 +128,4 @@ cat guppy_output/barcode01/SQK-RBK114-24_naturalenvironment_3h_1_barcode01.fastq
 
  
   
+ 
