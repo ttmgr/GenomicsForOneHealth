@@ -10,12 +10,7 @@ Once Mamba and Dorado are set up from the master guide, return here to create th
 The pipeline uses one consolidated environment for all steps.
 
 ```bash
-mamba create -n listeria_as \
-  python=3.10 \
-  samtools porechop nanofilt nanostat kraken2 seqtk seqkit \
-  flye metamdbg myloasm minimap2 racon ncbi-amrfinderplus \
-  pandas numpy scipy matplotlib \
-  -c conda-forge -c bioconda --strict-channel-priority
+mamba env create -f env/environment.yaml
 ```
 
 Then activate it:

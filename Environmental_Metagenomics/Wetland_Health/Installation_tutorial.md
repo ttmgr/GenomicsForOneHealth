@@ -6,21 +6,20 @@ This guide provides instructions for creating Mamba environments for the necessa
 
 Once Mamba and Dorado are set up from the master guide, return here to create the project-specific environments.
 
-## 1. Mamba Environment Setup
+## 1. Unified Mamba Environment Setup
 
-Using separate Mamba environments for each tool or logical groups of tools helps manage dependencies and avoid conflicts.
+We provide a unified Conda environment that installs all the tools required for this pipeline simultaneously. This is the fastest and easiest way to get started.
 
-* **Creating an environment:** `mamba create -n <environment_name> -c <channel1> -c <channel2> <package_name>[=<version>]`
-* **Activating an environment:** `mamba activate <environment_name>`
-* **Deactivating an environment:** `mamba deactivate`
+```bash
+mamba env create -f env/environment.yaml
+mamba activate wetland_health
+```
 
-We will use the following primary channels:
-* `bioconda`
-* `conda-forge`
+If you encounter dependency conflicts or prefer to keep tools strictly isolated as they were originally run, you can optionally install each tool in its own individual environment as detailed in Section 2 below.
 
-## 2. Installation of Tools via Mamba
+## 2. (Optional) Individual Installation of Tools via Mamba
 
-Install each of the following tools in its own Mamba environment to ensure clean dependency management, unless specified otherwise. Versions are specified as used in the manuscript where available.
+If you chose not to use the unified `environment.yaml` above, you can install each of the following tools in its own Mamba environment to ensure strict version isolation. Versions are specified as used in the manuscript where available.
 
 ### Porechop
 * Used for adapter and barcode trimming of ONT reads[cite: 84].

@@ -1,0 +1,29 @@
+name: wetland_health
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - porechop=0.2.4
+  - nanofilt=2.8.0
+  - filtlong
+  - kraken2=2.1.2
+  - metaflye=2.9.6
+  - metamdbg=1.1.0
+  # Note: AIV alignment mentions 2.26, DNA mentions 2.28. 2.28 is standard here.
+  - minimap2=2.28
+  - racon=1.5.0
+  - ont-medaka=2.0.1
+  - amrfinderplus=3.12.8
+  - diamond
+  - seqkit=2.10.0
+  - samtools=1.17
+  - bcftools=1.17
+  
+  # Data processing and Python tools required for PCoA etc.
+  - python>=3.8
+  - scikit-bio=0.6.3
+  - matplotlib
+  - pandas
+  - numpy
