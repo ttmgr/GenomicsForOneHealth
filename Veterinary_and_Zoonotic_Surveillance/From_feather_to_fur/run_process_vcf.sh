@@ -24,3 +24,4 @@ python3 process_vcf.py --animal "$ANIMAL_VCF" --inoculum "$INOCULUM_VCF" \
 
  
   
+ 

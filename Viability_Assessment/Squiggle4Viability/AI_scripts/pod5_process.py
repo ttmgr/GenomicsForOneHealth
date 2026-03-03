@@ -104,3 +104,4 @@ def process_directory(directory_path, chunk_size=3000, start_index=1500):
         process_file(file_path, chunk_size, start_index)
  
   
+ 
