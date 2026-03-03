@@ -1,0 +1,25 @@
+name: listeria_as
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - python=3.10
+  - samtools
+  - porechop
+  - nanofilt
+  - nanostat
+  - kraken2
+  - seqtk
+  - seqkit
+  - flye
+  - metamdbg
+  - myloasm
+  - minimap2
+  - racon
+  - ncbi-amrfinderplus
+  - pandas
+  - numpy
+  - scipy
+  - matplotlib
