@@ -35,3 +35,4 @@ if __name__ == "__main__":
 
     extract_read_ids(args.input_dir, args.genus, args.output)
 
+ 

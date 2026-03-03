@@ -15,3 +15,4 @@ python3 "${WORK_DIR}/scripts/19_reads_report.py" "$WORK_DIR"
 echo "Finished: $(date)"
 echo "Report: ${WORK_DIR}/processing/report/reads_report.html"
 
+ 

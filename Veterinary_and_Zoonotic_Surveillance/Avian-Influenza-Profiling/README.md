@@ -80,3 +80,4 @@ Script to obtain consensus sequences using IRMA.
 bash irma.sh /path/to/fastq /path/to/output_dir
 ```
 
+ 

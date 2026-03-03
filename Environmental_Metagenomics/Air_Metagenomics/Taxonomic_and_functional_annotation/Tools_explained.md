@@ -57,3 +57,4 @@ This document provides a detailed explanation of the primary tools used for anno
 - **Output**: A detailed tab-delimited report on found AMR genes, including information on resistance mechanisms.
 - **Best for**: A highly accurate, targeted search for AMR genes that aligns with NCBI standards.
 
+ 

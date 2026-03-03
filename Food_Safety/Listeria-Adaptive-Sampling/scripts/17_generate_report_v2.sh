@@ -16,3 +16,4 @@ python3 "${WORK_DIR}/scripts/17_generate_report_v2.py" "$WORK_DIR"
 echo "Finished: $(date)"
 echo "Report: ${WORK_DIR}/processing/report/pipeline_report.html"
 
+ 

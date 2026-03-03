@@ -94,3 +94,4 @@ if __name__ == "__main__":
     process_folder(args.in_path, args.out_path, args)
     print(f"args: {args}", file=sys.stderr)
 
+ 

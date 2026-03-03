@@ -81,3 +81,4 @@ This section explains the command-line flags uniquely used in our core workflow.
 - `dorado polish <aligned.bam> <draft.fasta>`: runs the polishing model on aligned reads to produce a corrected consensus.
 - `--bacteria`: resolves a bacterial-specific polishing model automatically based on the input data type. Use this flag for any bacterial genome assembly.
 
+ 

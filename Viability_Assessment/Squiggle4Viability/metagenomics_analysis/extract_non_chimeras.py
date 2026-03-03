@@ -21,3 +21,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     extract_reads_without_pi_tag(args.bam, args.output)
 
+ 

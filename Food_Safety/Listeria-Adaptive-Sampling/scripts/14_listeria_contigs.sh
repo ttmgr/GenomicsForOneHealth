@@ -78,3 +78,4 @@ extract_listeria_contigs "myloasm" \
     "${OUTPUT_DIR}/contigs_myloasm/listeria_myloasm_${BASENAME}.fasta"
 echo "Finished: $(date)"
 
+ 

@@ -53,3 +53,4 @@ echo " Launching automated pipeline..."
 echo "========================================="
 bash bash_scripts/run_pipeline.sh
 
+ 

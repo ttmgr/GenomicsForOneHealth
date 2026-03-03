@@ -50,3 +50,4 @@ echo ""
 echo "All checks passed. Passing paths to the pipeline orchestrator..."
 cd "$WORK_DIR" && bash scripts/submit_pipeline.sh
 
+ 

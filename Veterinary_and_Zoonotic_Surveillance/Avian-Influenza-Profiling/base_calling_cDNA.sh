@@ -19,3 +19,4 @@ guppy_basecaller \
     -c dna_r10.4.1_e8.2_400bps_hac.cfg \
     -x "cuda:0"
 
+ 

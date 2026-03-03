@@ -78,3 +78,4 @@ diamond makedb --in nr --db /path/to/your_diamond_db/nr
 ```
 *Note: This database is extremely large and compilation takes significant time and resources.*
 
+ 

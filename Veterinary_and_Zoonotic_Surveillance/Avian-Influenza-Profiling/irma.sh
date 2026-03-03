@@ -18,3 +18,4 @@ for fastq_file in "$input_dir"/*.fastq; do
 done
 
 
+ 

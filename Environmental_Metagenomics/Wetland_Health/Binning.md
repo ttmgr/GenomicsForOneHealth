@@ -372,3 +372,4 @@ kraken2 --db kraken_nt_db --use-names dastool_out_DASTool_bins/bin.1.fa > kraken
 - Reporting. Always report completeness/contamination, N50/N90, number of contigs per bin, total bin size, and assigned taxonomy (with database release).
 
 
+ 
