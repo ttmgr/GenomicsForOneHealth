@@ -20,3 +20,4 @@ guppy_basecaller \
     -x "cuda:0"
 
  
+  

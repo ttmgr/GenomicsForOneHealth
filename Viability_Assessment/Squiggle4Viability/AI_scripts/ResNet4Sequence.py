@@ -117,3 +117,4 @@ class ResNet4Sequence(nn.Module):
 	def forward(self, x, label=None, return_cam=False):
 	  return self._forward_impl(x, label, return_cam)
  
+  

@@ -56,3 +56,4 @@ CMD+=("$INPUT_FASTA")
 "${CMD[@]}"
 
  
+  

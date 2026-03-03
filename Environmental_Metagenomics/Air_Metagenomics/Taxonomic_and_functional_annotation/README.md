@@ -19,3 +19,4 @@ A typical workflow involves the following steps:
 - **For detailed explanations of how each tool works**, refer to the **`Tools_Explained.md`** file. This document consolidates information on the primary tools used in this pipeline, giving you a deeper understanding of their methodologies and outputs.
 
  
+  

@@ -16,3 +16,4 @@ class SingleFileDataset(torch.utils.data.Dataset):
         y = self.label[index]
         return X, y
  
+  

@@ -27,3 +27,4 @@ mkdir -p "$(dirname "$OUT_TXT")"
 "$AMRFINDER_BIN" --nucleotide "$INPUT_FASTA" > "$OUT_TXT"
 
  
+  

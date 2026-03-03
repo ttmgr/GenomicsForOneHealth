@@ -35,3 +35,4 @@ kraken2 --db "$KRAKEN2_DB" \
 echo "Finished Kraken2: $(date)"
 
  
+  

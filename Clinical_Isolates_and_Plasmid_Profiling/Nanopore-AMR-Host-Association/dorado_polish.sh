@@ -46,3 +46,4 @@ CMD=(
 "${CMD[@]}" > "$OUT_FASTA"
 
  
+  

@@ -9,3 +9,4 @@ The dx tag in the BAM record for each read can be used to distinguish between si
 Dorado will report the duplex rate as the number of nucleotides in the duplex basecalls multiplied by two and divided by the total number of nucleotides in the simplex basecalls. This value is a close approximation for the proportion of nucleotides which participated in a duplex basecall.
 
  
+  

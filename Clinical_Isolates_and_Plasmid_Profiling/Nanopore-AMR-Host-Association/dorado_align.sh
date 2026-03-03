@@ -37,3 +37,4 @@ mkdir -p "$(dirname "$ALN_BAM")"
 "$SAMTOOLS_BIN" index -@ "$THREADS" "$ALN_BAM"
 
  
+  

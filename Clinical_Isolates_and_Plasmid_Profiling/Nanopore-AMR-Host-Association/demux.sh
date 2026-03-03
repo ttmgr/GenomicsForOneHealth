@@ -44,3 +44,4 @@ CMD+=("$INPUT_BAM")
 "${CMD[@]}"
 
  
+  

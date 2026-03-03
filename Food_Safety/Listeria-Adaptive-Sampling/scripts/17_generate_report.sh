@@ -16,3 +16,4 @@ echo "Finished: $(date)"
 echo "Report: ${WORK_DIR}/processing/report/pipeline_report.html"
 
  
+  

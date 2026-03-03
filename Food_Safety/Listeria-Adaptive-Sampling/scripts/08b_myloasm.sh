@@ -35,3 +35,4 @@ echo "Finished: $(date)"
 echo "Contigs: $(grep -c '>' ${SAMPLE_OUT}/assembly_primary.fa 2>/dev/null || echo 0)"
 
  
+  

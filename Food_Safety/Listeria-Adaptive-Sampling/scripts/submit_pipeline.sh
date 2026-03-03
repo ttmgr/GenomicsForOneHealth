@@ -308,3 +308,4 @@ echo ""
 echo "Monitor: squeue -u \$USER"
 
  
+  

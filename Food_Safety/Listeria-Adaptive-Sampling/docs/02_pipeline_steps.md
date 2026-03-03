@@ -82,3 +82,4 @@ This section explains the command-line flags uniquely used in our core workflow.
 - `--bacteria`: resolves a bacterial-specific polishing model automatically based on the input data type. Use this flag for any bacterial genome assembly.
 
  
+  

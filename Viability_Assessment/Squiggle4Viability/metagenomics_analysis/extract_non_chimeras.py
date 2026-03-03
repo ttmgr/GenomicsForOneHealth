@@ -22,3 +22,4 @@ if __name__ == "__main__":
     extract_reads_without_pi_tag(args.bam, args.output)
 
  
+  

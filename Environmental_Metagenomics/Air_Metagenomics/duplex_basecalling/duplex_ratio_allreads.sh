@@ -21,3 +21,4 @@ if [ $duplex_count -gt 0 ]; then
     echo "Ratio of Simplex to Duplex Reads: $ratio" >> $output_file
 
  
+  
