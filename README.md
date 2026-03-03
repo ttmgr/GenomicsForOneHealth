@@ -1,6 +1,6 @@
 <div align="center">
   
-# GenomicsForOneHealth
+# Genomics For OneHealth
 **A Bioinformatics Pipeline Collection for Genomic Surveillance & One Health**
 
 [![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
@@ -109,7 +109,7 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 #### [Avian Influenza Profiling Pipeline](./Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md)
 *Rapid avian influenza profiling from Latest RNA and DNA nanopores.*
-**First Authors:** Dr. Albert Perlas, Tim Reska | **Corresponding Author:** Dr. Lara Urban
+**First Authors:** Dr. Albert Perlas | **Corresponding Author:** Dr. Lara Urban
 
 > **Abstract:** Avian influenza virus (AIV) currently causes a panzootic with extensive mortality in wild birds, poultry, and wild mammals, underscoring the need for efficient monitoring. We systematically investigate AIV genetic characterization through rapid, portable nanopore sequencing by comparing the latest DNA and RNA nanopore sequencing approaches and various computational pipelines for viral consensus sequence generation and phylogenetic analysis. We show that the latest direct RNA nanopore sequencing updates improve consensus sequence generation, but that the application of the latest DNA nanopore chemistry after reverse transcription and amplification outperforms native viral RNA sequencing by achieving higher sequencing accuracy and throughput. We applied these sequencing approaches together with portable AIV diagnosis and quantification tools to environmental samples from a poultry farm.
 > **Publication:** [Virus Evolution, 2024](https://academic.oup.com/ve/article/11/1/veaf010/8020575)
