@@ -40,3 +40,4 @@ echo "(Total png files: $(ls -1 "$BASE_DIR/processing/listeria/overview/"*.png 2
 echo ""
 echo "Done."
 
+ 

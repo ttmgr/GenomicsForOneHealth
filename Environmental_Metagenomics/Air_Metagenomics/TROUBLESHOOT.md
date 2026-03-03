@@ -83,3 +83,4 @@ Problems with database paths or files are another frequent cause of pipeline fai
 
 If you encounter tool-specific errors not covered here, the best course of action is to copy the error message and consult the official documentation or GitHub page for that particular tool.
 
+ 

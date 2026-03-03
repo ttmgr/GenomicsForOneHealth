@@ -15,3 +15,4 @@ echo "[02] Done."
 echo "  BAM: ${ALIGNED_BAM}"
 echo "  Mapping TSV: ${MAP_TSV}"
 
+ 

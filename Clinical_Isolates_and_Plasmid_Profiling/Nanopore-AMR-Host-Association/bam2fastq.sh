@@ -31,3 +31,4 @@ mkdir -p "$(dirname "$OUTPUT_FASTQ")"
 # ------------------------------------------------------------
 "$SAMTOOLS_BIN" fastq -@ "$THREADS" "$INPUT_BAM" > "$OUTPUT_FASTQ"
 
+ 

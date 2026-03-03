@@ -34,3 +34,4 @@ mkdir -p "$OUT_DIR"
   --in-ont "$INPUT_FASTQ" \
   --threads "$THREADS"
 
+ 

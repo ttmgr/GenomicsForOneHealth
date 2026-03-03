@@ -36,3 +36,4 @@ fi
 echo "Finished: $(date)"
 echo "Contigs: $(grep -c '>' ${SAMPLE_OUT}/contigs.fasta 2>/dev/null || echo 0)"
 
+ 

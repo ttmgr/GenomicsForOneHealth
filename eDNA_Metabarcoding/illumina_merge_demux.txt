@@ -71,3 +71,4 @@ process_lane "$R16_L4_1" "$R16_L4_2" "$TAG16" "16S" "L4"
 
 echo "[ALL DONE]  Results under  ${DEMUX_ROOT}/"
 
+ 

@@ -307,3 +307,4 @@ echo "                                                     └─ 18 assembly st
 echo ""
 echo "Monitor: squeue -u \$USER"
 
+ 

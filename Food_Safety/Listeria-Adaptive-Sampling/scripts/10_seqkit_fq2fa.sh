@@ -26,3 +26,4 @@ seqkit fq2fa "$INPUT_FASTQ" -o "${OUTPUT_DIR}/${BASENAME}.fasta"
 echo "Finished: $(date)"
 echo "Output size: $(du -h ${OUTPUT_DIR}/${BASENAME}.fasta)"
 
+ 

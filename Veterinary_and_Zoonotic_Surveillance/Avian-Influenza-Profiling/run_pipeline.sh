@@ -69,3 +69,4 @@ echo " Initial guidance complete. Note that these scripts contain hardcoded vari
 echo " that you must edit per your data locations before execution, per developer design."
 echo "========================================="
 
+ 

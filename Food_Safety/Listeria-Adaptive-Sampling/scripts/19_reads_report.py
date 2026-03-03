@@ -277,3 +277,4 @@ with open(os.path.join(out_dir, 'reads_methods.md'), 'w') as f:
     f.write(pd.DataFrame(tool_versions).to_markdown(index=False))
 print(f"Saved: {os.path.join(out_dir, 'reads_methods.md')}")
 
+ 

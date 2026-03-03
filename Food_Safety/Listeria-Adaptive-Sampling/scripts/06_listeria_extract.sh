@@ -71,3 +71,4 @@ fi
 grep -i "Listeria" "$KRAKEN_REPORT" > "${OUTPUT_DIR}/listeria_report_${BASENAME}.txt" 2>/dev/null || true
 echo "Finished: $(date)"
 
+ 

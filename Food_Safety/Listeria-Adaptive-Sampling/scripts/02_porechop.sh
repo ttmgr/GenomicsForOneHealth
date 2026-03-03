@@ -28,3 +28,4 @@ porechop -i "$INPUT_FASTQ" \
 echo "Finished: $(date)"
 echo "Output size: $(du -h ${OUTPUT_DIR}/trimmed_${BASENAME}.fastq)"
 
+ 

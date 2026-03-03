@@ -16,3 +16,4 @@ echo "Start time: $(date)"
 python3 "${WORK_DIR}/scripts/plot_listeria.py" "$INPUT" "$OUTPUT"
 echo "Finished: $(date)"
 
+ 

@@ -136,3 +136,4 @@ Examples:
 * Mixed profiles are possible if multiple ties exist.
 
 This profile is derived **after RMSD**, using Kraken taxonomy of the matched chromosome contigs.
+ 

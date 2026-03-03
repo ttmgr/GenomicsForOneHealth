@@ -357,3 +357,4 @@ python metagenomics_analysis/extract_genus_read_ids.py -i /path/to/kraken2_outpu
 -g, --genus TEXT: Genus name to search for (e.g., "Chlamydia").
 -o, --output PATH: (Optional) Output text file to save matching read IDs.
 ```
+ 
