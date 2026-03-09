@@ -32,7 +32,7 @@ Learn more about our work at the [Urban Lab website](https://sites.google.com/vi
 - **Harika Ürel** (PhD Student): Plasmid and Viability
 
 
-## 🌟 Highlighted Publication: Real-time genomics for One Health
+## Highlighted Publication: Real-time genomics for One Health
 
 > **Title:** Real-time genomics for One Health
 > **Authors:** Lara Urban, Albert Perlas, Olga Francino, Joan Martí-Carreras, Brenda A Muga, Jenniffer W Mwangi, Laura Boykin Okalebo, Jo-Ann L Stanton, Amanda Black, Nick Waipara, Claudia Fontsere, David Eccles, Harika Ürel, Tim Reska, Hernán E Morales, Marc Palmada-Flores, Tomas Marques-Bonet, Mrinalini Watsa, Zane Libke, Gideon Erkenswick, Cock van Oosterhout
@@ -46,7 +46,7 @@ Learn more about our work at the [Urban Lab website](https://sites.google.com/vi
 
 This repository currently hosts 10 distinct, yet complementary, analytical pipelines clearly categorized across our core application domains:
 
-### 🌍 1. Environmental Metagenomics
+### 1. Environmental Metagenomics
 
 #### [Air Metagenomics Pipeline](./Environmental_Metagenomics/Air_Metagenomics/README.md)
 *Air monitoring by nanopore sequencing for the detection of bioaerosol communities.*
@@ -64,7 +64,7 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 ---
 
-### 🧬 2. eDNA Metabarcoding
+### 2. eDNA Metabarcoding
 
 #### [Zambia eDNA Pipeline](./eDNA_Metabarcoding/README.md)
 *Environmental DNA metabarcoding pipeline for tracking biodiversity and community structures in Zambia.*
@@ -75,7 +75,7 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 ---
 
-### 🍽️ 3. Food Safety
+### 3. Food Safety
 
 #### [Listeria Adaptive Sampling Pipeline](./Food_Safety/Listeria-Adaptive-Sampling/README.md)
 *High-resolution genomic analysis of Listeria monocytogenes from complex food safety samples using Oxford Nanopore Adaptive Sampling.*
@@ -83,7 +83,7 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 ---
 
-### 🏥 4. Clinical Isolates & Plasmid Profiling
+### 4. Clinical Isolates & Plasmid Profiling
 
 #### [AMR Nanopore Pipeline](./Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore/README.md)
 *Rapid and reliable clinical detection of Antimicrobial Resistance directly from nanopore sequencing data.*
@@ -105,7 +105,7 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 ---
 
-### 🦆 5. Veterinary & Zoonotic Surveillance (Virome)
+### 5. Veterinary & Zoonotic Surveillance (Virome)
 
 #### [Avian Influenza Profiling Pipeline](./Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md)
 *Rapid avian influenza profiling from Latest RNA and DNA nanopores.*
@@ -120,7 +120,7 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 ---
 
-### 🔬 6. Viability Assessment (Squiggle-level)
+### 6. Viability Assessment (Squiggle-level)
 
 #### [Squiggle4Viability Pipeline](./Viability_Assessment/Squiggle4Viability/README.md)
 *Assessing bacterial viability directly from raw nanopore electrical signals (FAST5/POD5).*
@@ -170,7 +170,7 @@ cd GenomicsForOneHealth
 
 ### Dependencies
 
-> ⚠️ **Start here:** For installing **Mamba**, the **Dorado** basecaller, and large databases (**Kraken2**, **AMRFinderPlus**, **DIAMOND**), please see the centralized **[INSTALL_AND_DATABASES.md](./INSTALL_AND_DATABASES.md)**.
+> **Start here:** For installing **Mamba**, the **Dorado** basecaller, and large databases (**Kraken2**, **AMRFinderPlus**, **DIAMOND**), please see the centralized **[INSTALL_AND_DATABASES.md](./INSTALL_AND_DATABASES.md)**.
 
 For a full list of all bioinformatics tools used across our pipelines (with GitHub links), see **[TOOLS.md](./TOOLS.md)**.
 

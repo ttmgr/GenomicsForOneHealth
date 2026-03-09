@@ -13,7 +13,7 @@ To interactively explore the available pipeline steps and obtain guidance on whi
 
 ---
 
-> ⚠️ **Installation:** For the general installation of **Dorado** and large databases, please see the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) at the root of the repository.
+> **Installation:** For the general installation of **Dorado** and large databases, please see the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) at the root of the repository.
 
 
 ## RNA_mod_base_calling_dRNA004.sh

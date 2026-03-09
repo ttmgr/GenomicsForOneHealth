@@ -2,7 +2,7 @@
 
 This pipeline is designed for Linux/macOS. For Windows, we recommend using WSL2.
 
-⚠️ **Important:** For the general installation of **Mamba**, **Dorado**, and large databases like **Kraken2** or **AMRFinderPlus**, please see the centralized [INSTALL_AND_DATABASES.md](../../../INSTALL_AND_DATABASES.md) at the root of the repository.
+**Important:** For the general installation of **Mamba**, **Dorado**, and large databases like **Kraken2** or **AMRFinderPlus**, please see the centralized [INSTALL_AND_DATABASES.md](../../../INSTALL_AND_DATABASES.md) at the root of the repository.
 
 Once Mamba and Dorado are set up from the master guide, return here to create the project-specific environment.
 

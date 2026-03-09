@@ -46,7 +46,7 @@ You should have the following tools available in your environment:
 
 ---
 
-> ⚠️ **Installation:** For setup of **Mamba**, **Dorado**, and large databases like **Kraken2**, please see the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) at the root of the repository.
+> **Installation:** For setup of **Mamba**, **Dorado**, and large databases like **Kraken2**, please see the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) at the root of the repository.
 
 ## Input data
 
