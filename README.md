@@ -131,6 +131,18 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 ---
 
+## The Analysis Stack
+
+Our analytical methodology treats metagenomic processing not as a monolithic pipeline, but as a stack composed of three distinct functional layers: **Confidence, Calibration, and Integrated Analysis**. 
+
+- 🛡️ **[Confidence Layer: Conifer](./tools/conifer.md)** - Post-classification scoring to filter noise and validate taxonomic calls.
+- ⚖️ **[Calibration Layer: MGCalibrator](./tools/mgcalibrator.md)** - Converting relative percentages to absolute biological quantities.
+- 🧩 **[Integrated Analysis Layer: anvi'o](./tools/anvio.md)** - Deep structural and functional contextualization through pangenomics and visualizations.
+
+Read more about how these interact in our **[Synthesis Pipeline Guide](./tools/synthesis.md)**.
+
+---
+
 ## Getting Started
 
 To use these pipelines, clone the repository to your local environment:
