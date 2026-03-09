@@ -3,7 +3,7 @@ This guide provides the core `bash` commands to execute the key steps of each pi
 
 ---
 
-## 🌍 1. Environmental Metagenomics
+## 1. Environmental Metagenomics
 
 ### Wetland Health (DNA Shotgun Metagenomics)
 Sequence environmental DNA for community analysis, assembly, and AMR/pathogen detection.
@@ -158,7 +158,7 @@ amrfinder --threads 20 -n polished.fasta -d /path/to/amrfinder_db > amrfinder_co
 
 ---
 
-## 🦓 2. eDNA Metabarcoding
+## 2. eDNA Metabarcoding
 
 ### Zambia eDNA
 Vertebrate eDNA metabarcoding of Zambian water samples using nanopore and Illumina sequencing.
@@ -208,7 +208,7 @@ vsearch --usearch_global otus.fa --db MIDORI2.udb --strand both --id 0.90 --quer
 
 ---
 
-## 🍽️ 3. Food Safety
+## 3. Food Safety
 
 ### Listeria Adaptive Sampling
 Perform high-resolution genomic profiling, assembly, and typing of *Listeria monocytogenes*.
@@ -244,7 +244,7 @@ amrfinder --plus -n polished.fasta --threads 8 > listeria_amr_virulence_report.t
 
 ---
 
-## 🏥 4. Clinical Isolates & Plasmid Profiling
+## 4. Clinical Isolates & Plasmid Profiling
 
 ### Nanopore AMR Host Association
 Nanopore metagenomic sequencing links clinically relevant resistance determinants to pathogens via DNA methylation patterns.
@@ -342,7 +342,7 @@ pling align --containment_distance 0.3 --cores 8 --sourmash plasmid_mash_list.tx
 
 ---
 
-## 🦆 5. Veterinary & Zoonotic Surveillance (Virome)
+## 5. Veterinary & Zoonotic Surveillance (Virome)
 
 ### Avian Influenza Profiling
 Detailed variant sequence generation and subtyping of viral genomes against reference databases using IRMA, BCFTools, and iVar.
@@ -407,7 +407,7 @@ wget https://flusurver.bii.a-star.edu.sg/tmp/flusurver_result.txt -O flusurver_m
 
 ---
 
-## 🔬 6. Viability Assessment (Squiggle-level)
+## 6. Viability Assessment (Squiggle-level)
 
 ### Squiggle4Viability
 Direct interrogation of raw Nanopore `POD5` signals via AI to deduce bacterial viability without full assembly.
