@@ -2,7 +2,7 @@
 
 This guide provides instructions for creating Mamba environments for the necessary bioinformatics tools for the Wetland Metagenomics & Viromics by Nanopore Sequencing project.
 
-⚠️ **Important:** For the general installation of **Mamba**, **Dorado**, and large databases like **Kraken2** or **AMRFinderPlus**, please see the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) at the root of the repository.
+**Important:** For the general installation of **Mamba**, **Dorado**, and large databases like **Kraken2** or **AMRFinderPlus**, please see the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) at the root of the repository.
 
 Once Mamba and Dorado are set up from the master guide, return here to create the project-specific environments.
 
@@ -125,7 +125,7 @@ If you chose not to use the unified `environment.yaml` above, you can install ea
 
 Several tools require specific databases.
 
-⚠️ Please refer to the [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) file at the root of the repository for centralized instructions on downloading the extremely large databases for **Kraken2**, **AMRFinderPlus**, and **DIAMOND**.
+Please refer to the [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) file at the root of the repository for centralized instructions on downloading the extremely large databases for **Kraken2**, **AMRFinderPlus**, and **DIAMOND**.
 
 Once you have downloaded them using the central instructions, configure your scripts to point to their paths.
 
