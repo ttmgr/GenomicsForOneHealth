@@ -131,15 +131,31 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 ---
 
-## The Analysis Stack
+## Methods / Tools I Am Currently Thinking With
 
-Our analytical methodology treats metagenomic processing not as a monolithic pipeline, but as a stack composed of three distinct functional layers: **Confidence, Calibration, and Integrated Analysis**. 
+Beyond the pipelines above, I track a set of upstream tools and ideas that shape how I interpret metagenomic data. These are not just software names—they represent three layers of the analytical stack: confidence in classification, calibration toward absolute quantities, and integrated exploration.
 
-- 🛡️ **[Confidence Layer: Conifer](./tools/conifer.md)** - Post-classification scoring to filter noise and validate taxonomic calls.
-- ⚖️ **[Calibration Layer: MGCalibrator](./tools/mgcalibrator.md)** - Converting relative percentages to absolute biological quantities.
-- 🧩 **[Integrated Analysis Layer: anvi'o](./tools/anvio.md)** - Deep structural and functional contextualization through pangenomics and visualizations.
+### [Conifer](./tools/conifer.md) — Post Hoc Confidence Scoring
 
-Read more about how these interact in our **[Synthesis Pipeline Guide](./tools/synthesis.md)**.
+Conifer is a post-classification scoring utility for Kraken2 output. It recomputes confidence and RTL scores from the k-mer evidence, letting me move from raw taxonomic labels to support-aware interpretation. It is most useful when species-level calls in noisy environmental metagenomes need scrutiny before they drive ecological conclusions.
+
+→ See also: [Kraken2 Confidence Thresholds](./notes/kraken-confidence.md) · [Score Mechanics](./reading-notes/conifer-score-notes.md) · [Thresholds vs Post Hoc Scoring](./comparisons/confidence-thresholds-vs-posthoc-scoring.md)
+
+### [MGCalibrator](./tools/mgcalibrator.md) — Absolute Abundance Calibration
+
+MGCalibrator bridges metagenomic compositionality and quantitative interpretation by calibrating coverage depth against measured DNA mass, with Monte Carlo-derived uncertainty. It addresses the problem that relative abundances can mask genuine changes in microbial load—a critical limitation in surveillance and time-series studies.
+
+→ See also: [Absolute Abundance](./notes/absolute-abundance.md) · [Implementation Notes](./reading-notes/mgcalibrator-implementation-notes.md) · [Relative vs Absolute Abundance](./comparisons/relative-vs-absolute-metagenomic-abundance.md)
+
+### [anvi'o](./tools/anvio.md) — Integrated Analysis Ecosystem
+
+anvi'o is an ecosystem—not a single tool—built around structured artifacts, a rich CLI surface, interactive visualization, and Snakemake workflows. It is where binning refinement, pangenomics, read recruitment, and functional exploration converge. Powerful precisely because it asks you to think in a richer data model.
+
+→ See also: [anvi'o Workflow Notes](./reading-notes/anvio-workflows.md)
+
+### The Full Picture
+
+Together, these three projects illustrate complementary concerns: how confidently reads are labeled, how relative observations become quantitative estimates, and how multi-layer results are organized, explored, and interpreted. For the full pipeline narrative, see **[From Classification to Calibration](./pipelines/from-classification-to-calibration.md)**.
 
 ---
 
