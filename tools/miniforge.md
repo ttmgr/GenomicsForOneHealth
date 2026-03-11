@@ -4,6 +4,16 @@
 
 [Miniforge / Mamba](https://github.com/conda-forge/miniforge) is a tool used for fast conda package manager.
 
+## Description
+
+Miniforge (often executing through Mamba) operates as a profoundly fast, fully independent drop-in replacement for the standard Conda package manager. By relying natively on the robust `conda-forge` and `bioconda` channels, it flawlessly maneuvers and resolves enormously complex bioinformatics dependency trees.
+
+## Basic Usage
+
+```bash
+mamba create -n myenv -c bioconda snakemake
+```
+
 ## Usage in This Repository
 
 This tool is integrated into the GenomicsForOneHealth pipelines for robust analysis. 

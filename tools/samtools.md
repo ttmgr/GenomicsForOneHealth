@@ -4,6 +4,17 @@
 
 [SAMtools](https://github.com/samtools/samtools) is a tool used for sam/bam file manipulation.
 
+## Description
+
+SAMtools represents standard computational plumbing for robustly manipulating SAM, BAM, and CRAM alignment files—the universal output specifications of virtually all genome aligners. Utilizing it is frequently required for binary sorting, indexing, viewing, and calculating basic sequencing metrics.
+
+## Basic Usage
+
+```bash
+samtools sort alignment.sam -o sorted.bam
+samtools index sorted.bam
+```
+
 ## Usage in This Repository
 
 This tool is integrated into the GenomicsForOneHealth pipelines for robust analysis. 

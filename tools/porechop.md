@@ -4,6 +4,16 @@
 
 [Porechop](https://github.com/rrwick/Porechop) is a tool used for adapter and barcode trimming.
 
+## Description
+
+Porechop is a widely used tool specifically designed for demultiplexing and adapter trimming of Oxford Nanopore reads. It works by aligning reads against a comprehensive database of known adapter sequences, ensuring clean contiguous sequences for downstream assembly and mapping steps.
+
+## Basic Usage
+
+```bash
+porechop -i input.fastq -o trimmed.fastq --discard_middle
+```
+
 ## Usage in This Repository
 
 This tool is integrated into the GenomicsForOneHealth pipelines for robust analysis. 
