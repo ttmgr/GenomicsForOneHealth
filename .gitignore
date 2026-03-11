@@ -1,0 +1,93 @@
+# ── macOS ────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# ── Python ───────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+*.egg
+pip-wheel-metadata/
+
+# ── Jupyter ──────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── Conda / Mamba ────────────────────────────────────────────
+# Do not ignore environment.yaml — that is committed intentionally
+*.conda
+pkgs/
+
+# ── Sequencing data (never commit raw/processed reads) ───────
+*.fast5
+*.pod5
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.bam.bai
+*.cram
+*.cram.crai
+
+# ── Large assembled/intermediate files ───────────────────────
+*.fasta.gz
+assembly/
+assemblies/
+flye_out/
+medaka_out/
+nanomdbg_assembly/
+
+# ── Kraken2 / databases ──────────────────────────────────────
+*.k2d
+kraken2_db/
+database/
+databases/
+db/
+
+# ── DIAMOND ──────────────────────────────────────────────────
+*.dmnd
+
+# ── AMRFinderPlus ────────────────────────────────────────────
+amrfinderplus_db/
+
+# ── MEGAN ────────────────────────────────────────────────────
+*.rma
+*.rma6
+*.daa
+
+# ── Log and temporary files ──────────────────────────────────
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ── R ────────────────────────────────────────────────────────
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj.user/
+
+# ── Outputs that should not be committed ─────────────────────
+results/
+output/
+outputs/
+reports/
+figures/
+
+# ── SLURM ────────────────────────────────────────────────────
+slurm-*.out
+slurm-*.err

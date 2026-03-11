@@ -1,0 +1,143 @@
+cff-version: 1.2.0
+message: >
+  If you use any pipeline from this repository in your research, please cite
+  the relevant primary publication listed below. To cite the repository itself,
+  use the metadata in this file.
+
+title: "GenomicsForOneHealth: A Bioinformatics Pipeline Collection for Genomic Surveillance & One Health"
+version: 1.0.0
+date-released: "2026-03-01"
+license: MIT
+repository-code: https://github.com/ttmgr/GenomicsForOneHealth
+url: https://sites.google.com/view/urban-lab/home
+
+authors:
+  - family-names: Urban
+    given-names: Lara
+    affiliation: >
+      Computational Health Center, Helmholtz Munich;
+      Department of Bioinformatics, University of Zurich
+    orcid: https://orcid.org/0000-0002-5859-1657
+  - family-names: Reska
+    given-names: Tim
+    affiliation: >
+      Computational Health Center, Helmholtz Munich;
+      Department of Bioinformatics, University of Zurich
+  - family-names: Sauerborn
+    given-names: Ela
+    affiliation: >
+      Computational Health Center, Helmholtz Munich;
+      Department of Bioinformatics, University of Zurich
+  - family-names: Ürel
+    given-names: Harika
+    affiliation: >
+      Computational Health Center, Helmholtz Munich;
+      Department of Bioinformatics, University of Zurich
+  - family-names: Gygax
+    given-names: Daniel
+    affiliation: >
+      Computational Health Center, Helmholtz Munich;
+      Department of Bioinformatics, University of Zurich
+  - family-names: Perlas
+    given-names: Albert
+    affiliation: >
+      Computational Health Center, Helmholtz Munich;
+      Department of Bioinformatics, University of Zurich
+
+abstract: >
+  A collection of complementary nanopore sequencing analysis pipelines for
+  genomic surveillance and One Health applications, spanning environmental
+  metagenomics, food safety, clinical diagnostics, veterinary virology, eDNA
+  metabarcoding, and viability assessment.
+
+keywords:
+  - nanopore sequencing
+  - metagenomics
+  - One Health
+  - antimicrobial resistance
+  - food safety
+  - environmental genomics
+  - eDNA metabarcoding
+  - avian influenza
+  - bioinformatics
+
+# ─── Primary & Pipeline Publications ────────────────────────────────────────
+# Please cite the most relevant paper(s) for the pipeline(s) you used.
+
+references:
+  - type: article
+    title: "Real-time genomics for One Health"
+    authors:
+      - family-names: Urban
+        given-names: Lara
+      - family-names: Perlas
+        given-names: Albert
+      - name: "et al."
+    journal: "Molecular Systems Biology"
+    year: 2023
+    doi: 10.15252/msb.202311686
+
+  - type: article
+    title: >
+      Nanopore metagenomics enables comprehensive assessment of the air
+      microbiome across two environments
+    authors:
+      - family-names: Reska
+        given-names: Tim
+      - family-names: Urban
+        given-names: Lara
+    journal: "ISME Communications"
+    year: 2024
+    doi: 10.1093/ismeco/ycae099
+
+  - type: article
+    title: >
+      Portable nanopore sequencing enables eDNA metabarcoding for biodiversity
+      assessment in Zambia
+    authors:
+      - family-names: Gygax
+        given-names: Daniel
+      - family-names: Urban
+        given-names: Lara
+    journal: "PLOS One"
+    year: 2025
+    doi: 10.1371/journal.pone.0333994
+
+  - type: article
+    title: >
+      Real-time genomics enhances antibiotic resistance profiling in complex
+      infection scenarios
+    authors:
+      - family-names: Sauerborn
+        given-names: Ela
+      - family-names: Urban
+        given-names: Lara
+    journal: "Nature Communications"
+    year: 2024
+    doi: 10.1038/s41467-024-49851-4
+
+  - type: article
+    title: >
+      Assessing microbial viability directly from raw nanopore signals using
+      deep learning
+    authors:
+      - family-names: Ürel
+        given-names: Harika
+      - family-names: Urban
+        given-names: Lara
+    journal: "GigaScience"
+    year: 2025
+    doi: 10.1093/gigascience/giaf100
+
+  - type: article
+    title: >
+      Rapid avian influenza profiling using the latest nanopore sequencing
+      chemistries and computational pipelines
+    authors:
+      - family-names: Perlas
+        given-names: Albert
+      - family-names: Urban
+        given-names: Lara
+    journal: "Virus Evolution"
+    year: 2024
+    doi: 10.1093/ve/veaf010
