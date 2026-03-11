@@ -39,8 +39,24 @@ flowchart TD
     class E input
 ```
 
+## Data Files
 
+The [`data/`](./data/) directory contains the sample demultiplexing reference tables used in this study:
 
- 
-  
- 
+| File | Description |
+|---|---|
+| `zambia_12_ngs_dmx_final.tsv` | Tag and primer definitions for 12S rRNA demultiplexing |
+| `zambia_16_ngs_dmx_final.tsv` | Tag and primer definitions for 16S rRNA demultiplexing |
+
+These files are passed directly to `obimultiplex` via the `-t` flag. They are included here so that the exact demultiplexing parameters used in the publication are fully reproducible.
+
+## Setup
+
+Install all pipeline tools via the unified environment at the repository root:
+```bash
+mamba env create -f ../environment.yaml
+conda activate genomics-onehealth
+```
+
+The MIDORI2 reference database for taxonomic assignment must be downloaded separately:
+- [MIDORI2 Download](https://www.reference-midori.info/download.php)
