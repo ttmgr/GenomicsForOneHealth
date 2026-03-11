@@ -131,34 +131,6 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 ---
 
-## Methods / Tools I Am Currently Thinking With
-
-Beyond the pipelines above, I track a set of upstream tools and ideas that shape how I interpret metagenomic data. These are not just software names—they represent three layers of the analytical stack: confidence in classification, calibration toward absolute quantities, and integrated exploration.
-
-### [Conifer](./tools/conifer.md) — Post Hoc Confidence Scoring
-
-Conifer is a post-classification scoring utility for Kraken2 output. It recomputes confidence and RTL scores from the k-mer evidence, letting me move from raw taxonomic labels to support-aware interpretation. It is most useful when species-level calls in noisy environmental metagenomes need scrutiny before they drive ecological conclusions.
-
-→ See also: [Kraken2 Confidence Thresholds](./notes/kraken-confidence.md) · [Score Mechanics](./reading-notes/conifer-score-notes.md) · [Thresholds vs Post Hoc Scoring](./comparisons/confidence-thresholds-vs-posthoc-scoring.md)
-
-### [MGCalibrator](./tools/mgcalibrator.md) — Absolute Abundance Calibration
-
-MGCalibrator bridges metagenomic compositionality and quantitative interpretation by calibrating coverage depth against measured DNA mass, with Monte Carlo-derived uncertainty. It addresses the problem that relative abundances can mask genuine changes in microbial load—a critical limitation in surveillance and time-series studies.
-
-→ See also: [Absolute Abundance](./notes/absolute-abundance.md) · [Implementation Notes](./reading-notes/mgcalibrator-implementation-notes.md) · [Relative vs Absolute Abundance](./comparisons/relative-vs-absolute-metagenomic-abundance.md)
-
-### [anvi'o](./tools/anvio.md) — Integrated Analysis Ecosystem
-
-anvi'o is an ecosystem—not a single tool—built around structured artifacts, a rich CLI surface, interactive visualization, and Snakemake workflows. It is where binning refinement, pangenomics, read recruitment, and functional exploration converge. Powerful precisely because it asks you to think in a richer data model.
-
-→ See also: [anvi'o Workflow Notes](./reading-notes/anvio-workflows.md)
-
-### The Full Picture
-
-Together, these three projects illustrate complementary concerns: how confidently reads are labeled, how relative observations become quantitative estimates, and how multi-layer results are organized, explored, and interpreted. For the full pipeline narrative, see **[From Classification to Calibration](./pipelines/from-classification-to-calibration.md)**.
-
----
-
 ## Getting Started
 
 To use these pipelines, clone the repository to your local environment:
@@ -172,9 +144,16 @@ cd GenomicsForOneHealth
 
 > **Start here:** For installing **Mamba**, the **Dorado** basecaller, and large databases (**Kraken2**, **AMRFinderPlus**, **DIAMOND**), please see the centralized **[INSTALL_AND_DATABASES.md](./INSTALL_AND_DATABASES.md)**.
 
-For a full list of all bioinformatics tools used across our pipelines (with GitHub links), see **[TOOLS.md](./TOOLS.md)**.
+A **unified environment file** covering all pipelines (except Squiggle4Viability) is provided at the root level:
 
-Each sub-pipeline maintains specific environment files and tool version requirements within its own directory:
+```bash
+mamba env create -f environment.yaml
+conda activate genomics-onehealth
+```
+
+For a full list of all bioinformatics tools used across our pipelines (with GitHub links), see **[TOOLS.md](./TOOLS.md)**. Per-tool reference sheets (flags, typical commands) are in **[tools/](./tools/)**.
+
+Each sub-pipeline also maintains its own environment file within its directory:
 
 *   [Air Metagenomics Setup Guide](./Environmental_Metagenomics/Air_Metagenomics/Installation_tutorial.md)
 *   [Wetland Health Setup Guide](./Environmental_Metagenomics/Wetland_Health/Installation_tutorial.md)
