@@ -148,7 +148,8 @@ for bc in $BCLIST; do
     -t "$THREADS" --bacteria
 done
 
-*Note: The --bacteria flag has been shown to improve the assembly quality and reduce the error rates of bacterial assemblies. Medaka models <v2 have not necessarily improved assembly quality, which meamt that polishing was not necessarily recommended previously. Thus, Medaka >v2 should be used. Dorado also includes polishing steps, which improve assembly quality (especially for hac basecalled data) and might replace Medaka polishing in the future, so it might be worth considering those. 
+> **Note:** The `--bacteria` flag improves assembly quality and reduces error rates in bacterial assemblies. Medaka v2+ is recommended; versions below v2 did not reliably improve assembly quality. Dorado also now includes polishing steps that may replace Medaka in future workflows.
+
 
 # Run depth estimation using minimap2 + samtools
 for bc in $BCLIST; do
