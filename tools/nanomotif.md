@@ -4,6 +4,16 @@
 
 [Nanomotif](https://github.com/MicrobialDarkMatter/nanomotif) is a tool used for methylation-based contig association.
 
+## Description
+
+Nanomotif intelligently utilizes Oxford Nanopore modified base calls (detectable methylation) to identify distinct bipartite motifs and establish contig associations. This proves exceptionally useful in metagenomic studies for securely linking separate plasmid contigs back to their correct host chromosomes.
+
+## Basic Usage
+
+```bash
+nanomotif find_motifs --bam mapped.bam --contigs assembly.fasta --out nanomotif_out
+```
+
 ## Usage in This Repository
 
 This tool is integrated into the GenomicsForOneHealth pipelines for robust analysis. 
