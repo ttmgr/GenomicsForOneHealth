@@ -1,0 +1,151 @@
+# ============================================================
+# GenomicsForOneHealth — Unified Conda/Mamba Environment
+# ============================================================
+# Covers all pipelines EXCEPT Squiggle4Viability (which has
+# its own GPU/PyTorch requirements — see Viability_Assessment/).
+#
+# Pipelines included:
+#   - Environmental Metagenomics (Air Metagenomics, Wetland Health)
+#   - eDNA Metabarcoding (Zambia)
+#   - Food Safety (Listeria Adaptive Sampling)
+#   - Clinical Isolates & Plasmid Profiling
+#       · AMR Nanopore
+#       · CRE Plasmid Clustering
+#       · Nanopore AMR Host Association
+#   - Veterinary & Zoonotic Surveillance
+#       · Avian Influenza Profiling
+#       · From Feather to Fur
+#
+# Installation:
+#   mamba env create -f environment.yaml
+#   conda activate genomics-onehealth
+#
+# Notes:
+#   - Dorado (ONT basecaller) must be installed separately:
+#       https://github.com/nanoporetech/dorado
+#   - Large databases (Kraken2, AMRFinderPlus, DIAMOND NR, MIDORI2)
+#     must be downloaded independently — see INSTALL_AND_DATABASES.md
+#   - Some pip packages below (e.g. anvi'o) have complex dependencies;
+#     if conflicts arise, install them in a separate child environment.
+# ============================================================
+
+name: genomics-onehealth
+
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+
+  # ── Python core ──────────────────────────────────────────
+  - python=3.10
+  - pip>=23.0
+  - numpy>=1.24
+  - pandas>=2.0
+  - scipy>=1.10
+  - matplotlib>=3.7
+  - seaborn>=0.12
+  - biopython>=1.81
+  - pyyaml>=6.0
+  - scikit-bio>=0.6.2   # wetland PCoA analysis
+
+  # ── Basecalling & signal processing ──────────────────────
+  # Dorado: install separately from https://github.com/nanoporetech/dorado
+  # Guppy (legacy): install from ONT community portal
+
+  # ── Read QC & preprocessing ──────────────────────────────
+  - porechop=0.2.4          # adapter trimming
+  - chopper>=0.7.0          # quality + length filtering (replaces NanoFilt for newer data)
+  - nanofilt=2.8.0          # quality + length filtering (legacy / Listeria pipeline)
+  - filtlong>=0.2.1         # long-read quality filtering
+  - nanostat>=1.6.0         # summary statistics for Nanopore runs
+  - fastqc>=0.12.1          # general QC
+  - multiqc>=1.18           # aggregate QC reporting
+  - seqkit>=2.8.0           # FASTQ/FASTA manipulation
+  - seqtk>=1.4              # sequence subsampling and conversion
+  - cutadapt>=4.4           # primer/adapter trimming (eDNA, 12S/16S)
+
+  # ── Alignment ────────────────────────────────────────────
+  - minimap2>=2.28          # read alignment / overlap
+  - samtools>=1.19          # BAM/SAM/CRAM manipulation
+  - bcftools>=1.19          # VCF manipulation and variant calling
+
+  # ── Assembly ─────────────────────────────────────────────
+  - flye>=2.9.4             # de novo long-read assembler (metagenome + isolate modes)
+  - metamdbg>=1.1.0         # high-accuracy metagenomic assembler
+  - racon>=1.5.0            # rapid consensus polishing
+  - ont-medaka>=2.0.1       # neural-network polishing
+
+  # ── Taxonomic classification ──────────────────────────────
+  - kraken2>=2.1.3          # k-mer-based classification
+  - bracken>=2.9            # Bayesian re-estimation of abundances from Kraken2
+  - diamond>=2.1.9          # translated alignment (BLASTx, virome)
+  - vsearch>=2.25.0         # eDNA OTU clustering and chimera detection
+  - obitools3>=3.0.0b28     # eDNA demultiplexing and filtering (OBITools4 CLI)
+
+  # ── Genome annotation ─────────────────────────────────────
+  - prokka>=1.14.6          # rapid prokaryotic annotation (legacy pipelines)
+  - bakta>=1.9.0            # rapid prokaryotic annotation (current standard)
+  - prodigal>=2.6.3         # ab initio gene prediction
+  - hmmer>=3.4              # profile HMM search
+  - infernal>=1.1.4         # RNA covariance model search
+
+  # ── AMR & virulence detection ─────────────────────────────
+  - ncbi-amrfinderplus>=3.12 # AMR + virulence gene detection (nucleotide + protein)
+  - abricate>=1.0.1         # multi-database AMR/virulence gene screening
+
+  # ── Plasmid analysis ──────────────────────────────────────
+  - mob-suite>=3.1.4        # plasmid reconstruction and typing (MOB-recon)
+  - mash>=2.3               # MinHash-based genome/plasmid distance
+  - plasmidfinder>=2.1.6    # replicon typing
+
+  # ── Metagenome binning ────────────────────────────────────
+  - metabat2>=2.15          # metagenomic binning
+  - maxbin2>=2.2.7          # metagenomic binning
+  - concoct>=1.1.0          # metagenomic binning
+  - checkm-genome>=1.2.3    # bin completeness and contamination QC
+  - vamb>=4.1.3             # variational autoencoder binning
+
+  # ── Functional annotation ─────────────────────────────────
+  - eggnog-mapper>=2.1.12   # COG/KEGG/GO annotation via eggNOG database
+
+  # ── DNA methylation / epigenomics ────────────────────────
+  - ont-modkit>=0.3.0       # base modification pileup from BAM
+  # nanomotif: install via pip (see below)
+
+  # ── Influenza-specific tools ──────────────────────────────
+  - irma>=1.1.4             # iterative influenza consensus assembly
+
+  # ── Visualization & reporting ─────────────────────────────
+  - plotly>=5.18
+  - bokeh>=3.3
+  - jupyter>=1.0
+  - ipython>=8.0
+  - r-base>=4.3             # R for ggplot2-based figures in wetland/avian pipelines
+  - r-ggplot2
+  - r-dplyr
+  - r-tidyr
+  - r-readr
+
+  # ── System utilities ──────────────────────────────────────
+  - pigz                    # parallel gzip
+  - wget
+  - curl
+  - git
+
+  # ── Pip-only packages ─────────────────────────────────────
+  - pip:
+    - nanomotif>=0.6.4      # methylation motif discovery + bin contamination scoring
+    - NanoPlot>=1.42.0      # Nanopore run visualization
+    - pycoQC>=2.5.2         # basecalling QC from sequencing summary
+    - pling>=1.0.0          # plasmid network construction and clustering
+
+# ── Manual install (not available via conda/pip) ──────────
+# metaMDBG (if conda package unavailable): https://github.com/GaetanBenoitDev/metaMDBG
+# Dorado: https://github.com/nanoporetech/dorado/releases
+# MEGAN-CE: https://github.com/husonlab/megan-ce/releases
+# MetaWRAP (if conflicting): install in a separate env per docs
+# anvi'o: install in a dedicated env: https://anvio.org/install/
+# Conifer: https://gitlab.com/conifer-metagenomics/conifer
+# MGCalibrator: https://github.com/rrwick/MGCalibrator (or equivalent)

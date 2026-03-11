@@ -103,7 +103,7 @@ None of this is a criticism. It is the cost of genuine analytical depth. But it 
 > [!CAUTION]
 > **Licensing and code integrity.** anvi'o is licensed under **GPL-3.0**. Given the scale of the codebase and the license terms, no part of the anvi'o code, documentation, or internal resources should be vendored into or partially absorbed by this repository. We summarize concepts, show illustrative commands, and link out. That is the boundary.
 
-## Related Notes
+## Related Resources
 
-- [anvi'o Workflow Notes](../reading-notes/anvio-workflows.md) — closer look at the Snakemake workflow families
-- [From Classification to Calibration](../pipelines/from-classification-to-calibration.md) — how anvi'o fits as the integrated analysis layer in the stack
+- [anvi'o Documentation](https://anvio.org/) — official docs, tutorials, and workflow guides
+- [anvi'o GitHub](https://github.com/merenlab/anvio) — source code and issue tracker
