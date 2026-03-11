@@ -4,6 +4,16 @@
 
 [Bakta](https://github.com/oschwengers/bakta) is a tool used for rapid genome annotation.
 
+## Description
+
+Bakta pushes forward rapid and standardized annotation of bacterial genomes and plasmids. It improves upon previous tools by ensuring highly robust functional and taxonomic cross-references, rendering annotation outputs instantly ready for powerful downstream pangenome applications.
+
+## Basic Usage
+
+```bash
+bakta --db /path/to/db --output bakta_out --prefix mygenome assembly.fasta
+```
+
 ## Usage in This Repository
 
 This tool is integrated into the GenomicsForOneHealth pipelines for robust analysis. 
