@@ -114,7 +114,7 @@ External dependencies: `samtools`, `coverm`, `pandas`, `numpy`, `pysam`.
 
 Licensed under **MIT**.
 
-## Related Notes
+## Related Resources
 
-- [Absolute Abundance in Metagenomics](../notes/absolute-abundance.md) — broader discussion of compositionality and quantification strategies
-- [From Classification to Calibration](../pipelines/from-classification-to-calibration.md) — how calibration fits into the full analytical stack
+- [MGCalibrator GitHub](https://github.com/NimroddeWit/MGCalibrator) — source code, installation, and usage documentation
+- [Aitchison (1986) — The Statistical Analysis of Compositional Data](https://doi.org/10.1007/978-94-009-4109-0) — foundational reference on compositionality in proportion data

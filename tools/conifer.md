@@ -81,7 +81,7 @@ The codebase is small, compiled C, with a clean separation between taxonomy pars
 
 Licensed under **BSD-2-Clause**.
 
-## Related Notes
+## Related Resources
 
-- [Kraken2 Confidence Thresholds](../notes/kraken-confidence.md) — broader discussion of when and how to threshold Kraken2 output
-- [From Classification to Calibration](../pipelines/from-classification-to-calibration.md) — how confidence scoring connects to downstream quantification
+- [Conifer GitHub](https://github.com/Ivarz/Conifer) — source code and usage documentation
+- [Kraken2 Manual](https://github.com/DerrickWood/kraken2/wiki) — background on confidence thresholds and classification

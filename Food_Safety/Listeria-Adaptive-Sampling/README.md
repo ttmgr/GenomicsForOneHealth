@@ -9,6 +9,8 @@ It is designed for high-performance computing batch execution (SLURM), but can a
 ## Why this matters for food safety
 *Listeria monocytogenes* is a foodborne pathogen that can survive in food-processing environments and cause severe disease. Rapidly detecting *Listeria* signal directly from sequencing data, without needing days of cell culturing, helps food safety teams act faster during contamination checks and outbreak investigations.
 
+This approach aligns closely with **quasi-metagenomics** — where an initial short enrichment step is used to push the pathogen to a higher relative abundance before sequencing. While this distorts the ecological composition of the sample, it allows for rapid structural recovery (e.g., circular chromosomes and plasmids) without waiting for a clean colony pick. For background, see [Calderón-Preciado et al. (2022)](https://doi.org/10.1128/spectrum.01923-21) for an example application in food safety.
+
 ## What is Adaptive Sampling?
 Adaptive sampling is a real-time enrichment approach during Nanopore sequencing. As DNA passes through a sequencing pore, the instrument basecalls the first part of the read, compares it to a target reference, and decides to either:
 - **Keep** sequencing the read if it looks like target DNA.
