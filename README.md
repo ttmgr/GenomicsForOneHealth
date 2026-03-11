@@ -24,7 +24,7 @@ As a signatory of the San Francisco Declaration on Research Assessment, we suppo
 Learn more about our work at the [Urban Lab website](https://sites.google.com/view/urban-lab/home).
 
 ### Our Team
-- **Dr. Lara Urban**: Principal Investigator & Supervisor (Helmholtz AI & University of Zurich)
+- **Prof. Dr. Lara Urban**: Principal Investigator & Supervisor (Helmholtz AI & University of Zurich)
 - **Dr. Albert Perlas** (former Postdoc): Virome and Avian Influenza Virus (AIV) 
 - **Tim Reska** (PhD Student): Metagenomics (Air and Wetland)
 - **Daniel Gygax** (PhD Student): eDNA Metabarcoding
