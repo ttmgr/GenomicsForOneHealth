@@ -4,6 +4,8 @@ This repository contains a full analysis workflow for Oxford Nanopore sequencing
 
 It is designed for high-performance computing batch execution (SLURM), but can also be run locally for smaller tests.
 
+> A polished personal overview of this project is maintained in [Tim_Reska](https://github.com/ttmgr/Tim_Reska/tree/main/pipelines/listeria-adaptive-sampling). Use this group repository for the full script scaffold, installation notes, execution guide, and adaptation details.
+
 ---
 
 ## Why this matters for food safety
