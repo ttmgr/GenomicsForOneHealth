@@ -2,11 +2,11 @@
 
 ## Project Overview
 
-This project investigates the microbial and viral communities, vertebrate biodiversity, and prevalence of antimicrobial resistance (AMR) genes in 12 European wetlands across Germany, France, and Spain, along the [east atlantic flyway](https://earth.google.com/web/@50.30246982,5.75732731,1000.86387688a,8521661.66667581d,30y,0h,0t,0r/data=CgRCAggBMikKJwolCiExOW5PaHAxTGtOWlFQSVVMaDVYazNhbHNuS1kwblpFTGQgAToDCgEwQgIIAEoICMvq4YQEEAE), a major bird migration corridor. Samples were collected from sites categorized by land use (anthropogenic vs. natural) using torpedo-shaped passive water samplers.
+This project investigates the microbial and viral communities, vertebrate biodiversity, and prevalence of antimicrobial resistance (AMR) genes in 12 European wetlands across Germany, France, and Spain, along the [East Atlantic Flyway](https://earth.google.com/web/@50.30246982,5.75732731,1000.86387688a,8521661.66667581d,30y,0h,0t,0r/data=CgRCAggBMikKJwolCiExOW5PaHAxTGtOWlFQSVVMaDVYazNhbHNuS1kwblpFTGQgAToDCgEwQgIIAEoICMvq4YQEEAE), a major bird migration corridor. Samples were collected from sites categorized by land use (anthropogenic vs. natural) using torpedo-shaped passive water samplers.
 From dual DNA/RNA extractions, four parallel analyses were conducted using Oxford Nanopore Technologies sequencing (MinION Mk1D/Mk1C, R10.4.1 flow cells):
 
 1.  **Shotgun Metagenomics (DNA):** Characterization of microbial communities and AMR genes.
-2.  **Vertebrate Metabarcoding (12S rRNA rRNA):** Identification of local vertebrate fauna using 12S rRNA rRNA amplicons.
+2.  **Vertebrate Metabarcoding (12S rRNA):** Identification of local vertebrate fauna using 12S rRNA amplicons.
 3.  **Avian Influenza Virus (AIV) Analysis (RNA):** Targeted whole-genome sequencing of AIV-positive samples.
 4.  **RNA Viromics (RNA):** Untargeted analysis of RNA virus communities.
 
@@ -14,6 +14,8 @@ This repository contains the bioinformatic workflows used to process the sequenc
 
 ## ENA Files: [https://www.ebi.ac.uk/ena/browser/view/PRJEB96272](https://www.ebi.ac.uk/ena/browser/view/PRJEB96272) for Metagenomic, 12S rRNA, and Virome data.
 ## AIV Files: GSAID EPI4628641 (Note: Account required for download!)
+
+> A polished personal overview of this shared first-author pipeline is maintained in [Tim_Reska](https://github.com/ttmgr/Tim_Reska/tree/main/pipelines/wetland-surveillance). Use this group repository for sample mapping, accession context, site descriptions, and track-specific execution detail.
 
 ---
 
@@ -71,8 +73,6 @@ Sites are coded using a **[Country][Environment][Number]** format:
 | SN1 | SN1.2 | BC13 | SQK-RBK114-24_barcode13.SN1.2.fastq.tar.gz |
 | SN2 | SN2.1 | BC15 | SQK-RBK114-24_barcode15.SN2.1.fastq.tar.gz |
 | SN2 | SN2.2 | BC15 | SQK-RBK114-24_barcode15.SN2.2.fastq.tar.gz |
-
-### 2. 12S rRNA Vertebrate Metabarcoding Samples
 
 ### 2. 12S rRNA Vertebrate Metabarcoding Samples
 **Raw Data:** `torpedo12s_all.fastq.gz` (multiplexed file containing all samples)
