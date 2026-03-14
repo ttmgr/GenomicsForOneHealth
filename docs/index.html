@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GenomicsForOneHealth Pipeline Selector</title>
   <meta name="description"
-    content="Static pipeline selector for the GenomicsForOneHealth collection. Start from higher-level workflow families, then receive the closest published workflow, preprocessing defaults, and Oxford Nanopore context for your sequencing data.">
+    content="Static pipeline selector for the GenomicsForOneHealth collection. Start from sequencing context, then kit or run mode, then analytic goal, then sample context, and receive the closest published workflow example plus preprocessing defaults and ONT setup guidance.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -24,9 +24,11 @@
         <p class="eyebrow">GenomicsForOneHealth</p>
         <h1>Pipeline Selector</h1>
         <p class="hero-text">
-          Start from a higher-level workflow family, then resolve to the closest published workflow in the collection.
-          The selector returns preprocessing defaults, compatibility notes, direct links to the exact documentation,
-          and Oxford Nanopore kit and Dorado basecalling context where relevant.
+          Start with what you are sequencing, then choose the library prep kit or run mode, then the main analytic
+          goal, and finally the sample context that best matches your data. The selector then maps that route to the
+          closest published workflow example in the collection and returns a practical action sheet with documented
+          entry points, preprocessing defaults, compatibility notes, and Oxford Nanopore setup guidance where
+          relevant.
         </p>
       </div>
       <div class="hero-meta">
@@ -36,7 +38,7 @@
         </div>
         <div class="meta-card">
           <p class="meta-label">Scope</p>
-          <p class="meta-value">High-level published routes</p>
+          <p class="meta-value">Sequencing -> kit -> goal -> sample</p>
         </div>
       </div>
     </header>
@@ -53,10 +55,9 @@
 
         <div class="panel-note">
           <p>
-            Stage 1 keeps the selector at the level most researchers decide from first: environmental metagenomic DNA,
-            clinical or isolate, 12S rRNA metabarcoding, virome, or food safety enrichment. Stage 2 then refines
-            preprocessing guidance such as basecalling, demultiplexing, and read filtering. The result pane returns a
-            lab-facing action sheet with documented entry points, prerequisites, and next-step guidance.
+            First choose sequencing context, then library prep kit or run mode, then the main goal, then the sample
+            context. Setup questions such as input format, multiplexing, demultiplexing, basecalling, and read
+            filtering are used afterward to refine the action sheet rather than to determine the route by themselves.
           </p>
         </div>
 
@@ -85,9 +86,9 @@
           <div class="support-card">
             <h3>What this tool does</h3>
             <p>
-              Routes researchers to the closest <strong>existing</strong> workflow in the collection and returns a
-              practical action sheet: fit assessment, entry points, preprocessing defaults, prerequisites, and direct
-              documentation links.
+              Routes researchers from a generalized sequencing decision tree to the closest <strong>existing</strong>
+              published workflow example in the collection and returns a practical action sheet: fit assessment,
+              entry points, preprocessing defaults, prerequisites, and documentation links.
             </p>
           </div>
           <div class="support-card">
@@ -100,8 +101,8 @@
           <div class="support-card">
             <h3>Oxford Nanopore quick reference</h3>
             <p>
-              The selector uses current ONT naming for common entry points such as rapid barcoding, native barcoding,
-              and Dorado FAST / HAC / SUP model tiers.
+              ONT terminology is treated as setup guidance rather than as the first routing layer. Kit/run-mode
+              consequences and Dorado tier notes appear after the main sequencing route is defined.
             </p>
             <ul class="support-links">
               <li><a href="https://store.nanoporetech.com/rapid-barcoding-sequencing-kit-24-v14.html" target="_blank" rel="noreferrer">Rapid Barcoding Kit 24 V14 (SQK-RBK114.24)</a></li>
@@ -115,7 +116,8 @@
           <div class="empty-state">
             <p class="empty-title">No recommendation yet</p>
             <p class="empty-text">
-              Answer the Stage 1 questions to narrow the collection to compatible workflows.
+              Answer the sequencing, kit, goal, and sample-context questions to narrow the collection to compatible
+              published examples.
             </p>
           </div>
         </div>

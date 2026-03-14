@@ -10,6 +10,7 @@ const PREPROCESSING_LABELS = {
 };
 
 const {
+  allQuestions,
   stageComplete,
   computeRecommendation
 } = globalThis.SelectorEngine || {};
@@ -38,8 +39,107 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;");
 }
 
+function questionById(questionId) {
+  return allQuestions?.(datasets.questionSpec).find((question) => question.id === questionId) || null;
+}
+
 function optionFor(question, value) {
-  return question.options.find((option) => option.value === value);
+  return question?.options.find((option) => option.value === value) || null;
+}
+
+function labelForAnswer(questionId, answerSet = answers) {
+  const question = questionById(questionId);
+  const value = answerSet[questionId];
+  return optionFor(question, value)?.label || value || "";
+}
+
+function isNeutralAnswer(questionId, value) {
+  return Boolean(optionFor(questionById(questionId), value)?.neutral);
+}
+
+function visibleOptionsForQuestion(question, answerSet = answers) {
+  const hasConditionalOptions = question.options.some((option) => option.visible_when);
+  if (!hasConditionalOptions) {
+    return question.options;
+  }
+
+  return question.options.filter((option) => {
+    if (!option.visible_when) {
+      return true;
+    }
+
+    return Object.entries(option.visible_when).every(([dependencyId, acceptedValues]) => {
+      const dependencyValue = answerSet[dependencyId];
+      if (!dependencyValue) {
+        return false;
+      }
+      if (isNeutralAnswer(dependencyId, dependencyValue)) {
+        return true;
+      }
+      return acceptedValues.includes(dependencyValue);
+    });
+  });
+}
+
+function pruneInvisibleAnswers(answerSet) {
+  const normalized = { ...answerSet };
+  let changed = true;
+
+  while (changed) {
+    changed = false;
+
+    for (const question of allQuestions(datasets.questionSpec)) {
+      const value = normalized[question.id];
+      if (!value) {
+        continue;
+      }
+
+      const visibleValues = new Set(visibleOptionsForQuestion(question, normalized).map((option) => option.value));
+      if (!visibleValues.has(value)) {
+        delete normalized[question.id];
+        changed = true;
+      }
+    }
+  }
+
+  return normalized;
+}
+
+function applyLibraryAutofill(answerSet) {
+  const normalized = { ...answerSet };
+  const libraryQuestion = questionById("library_mode");
+  const libraryOption = optionFor(libraryQuestion, normalized.library_mode);
+
+  if (!libraryOption?.autofill) {
+    return normalized;
+  }
+
+  for (const [questionId, value] of Object.entries(libraryOption.autofill)) {
+    if (!normalized[questionId]) {
+      normalized[questionId] = value;
+    }
+  }
+
+  return normalized;
+}
+
+function normalizeAnswers(nextAnswers, changedQuestionId = null) {
+  let normalized = { ...nextAnswers };
+
+  if (changedQuestionId === "library_mode") {
+    delete normalized.multiplexing;
+    delete normalized.demultiplexing;
+  }
+
+  normalized = pruneInvisibleAnswers(normalized);
+
+  if (!normalized.library_mode) {
+    delete normalized.multiplexing;
+    delete normalized.demultiplexing;
+  }
+
+  normalized = applyLibraryAutofill(normalized);
+  return normalized;
 }
 
 function isPresetActive(preset) {
@@ -48,23 +148,44 @@ function isPresetActive(preset) {
 
 function renderPresets() {
   const featuredPresets = datasets.presets.filter((preset) => preset.featured);
+  const groupOrder = ["Environmental examples", "Clinical / isolate examples", "Food safety examples"];
+  const groupedPresets = groupOrder
+    .map((group) => ({
+      group,
+      presets: featuredPresets.filter((preset) => preset.group === group)
+    }))
+    .filter((entry) => entry.presets.length > 0);
+
   presetRoot.innerHTML = `
     <section class="preset-panel">
       <div class="stage-head">
         <div>
-          <p class="section-label">Common Starting Scenarios</p>
-          <p class="stage-summary">Use a published starting pattern to prefill the selector, then adjust any answer manually.</p>
+          <p class="section-label">Published Examples</p>
+          <p class="stage-summary">These are published examples of broader sequencing routes. Apply one, then edit the answers if your own setup differs.</p>
         </div>
       </div>
-      <div class="preset-grid">
-        ${featuredPresets
+      <div class="preset-stack">
+        ${groupedPresets
           .map(
-            (preset) => `
-              <button class="preset-card ${isPresetActive(preset) ? "is-active" : ""}" type="button" data-preset-id="${preset.id}">
-                <span class="preset-audience">${preset.audience}</span>
-                <strong>${preset.title}</strong>
-                <span>${preset.summary}</span>
-              </button>
+            (entry) => `
+              <section class="preset-group">
+                <div class="preset-group-head">
+                  <p class="preset-group-title">${entry.group}</p>
+                </div>
+                <div class="preset-grid">
+                  ${entry.presets
+                    .map(
+                      (preset) => `
+                        <button class="preset-card ${isPresetActive(preset) ? "is-active" : ""}" type="button" data-preset-id="${preset.id}">
+                          <span class="preset-audience">${preset.audience}</span>
+                          <strong>${preset.title}</strong>
+                          <span>${preset.summary}</span>
+                        </button>
+                      `
+                    )
+                    .join("")}
+                </div>
+              </section>
             `
           )
           .join("")}
@@ -75,10 +196,38 @@ function renderPresets() {
   presetRoot.querySelectorAll("[data-preset-id]").forEach((button) => {
     button.addEventListener("click", () => {
       const preset = datasets.presets.find((entry) => entry.id === button.dataset.presetId);
-      answers = { ...preset.prefill_answers };
+      answers = normalizeAnswers({ ...preset.prefill_answers });
       render();
     });
   });
+}
+
+function renderOptionDetails(question, option) {
+  if (question.id !== "library_mode" || !option.consequences) {
+    return "";
+  }
+
+  const rows = [
+    ["Demux", option.consequences.demultiplexing],
+    ["Barcode trim", option.consequences.barcode_trimming],
+    ["Typical use", option.consequences.typical_use],
+    ["Route", option.consequences.route_implication]
+  ].filter(([, value]) => value);
+
+  return `
+    <div class="option-meta-list">
+      ${rows
+        .map(
+          ([label, value]) => `
+            <span class="option-meta-item">
+              <strong>${label}</strong>
+              <span>${value}</span>
+            </span>
+          `
+        )
+        .join("")}
+    </div>
+  `;
 }
 
 function renderStage(stage) {
@@ -98,15 +247,29 @@ function renderStage(stage) {
         ${stage.questions
           .map((question) => {
             const value = answers[question.id] || "";
+            const visibleOptions = visibleOptionsForQuestion(question);
+            const gridClass =
+              question.id === "sequencing_context"
+                ? "option-grid is-route-grid"
+                : question.id === "library_mode"
+                  ? "option-grid is-kit-grid"
+                  : "option-grid";
+            const cardClass =
+              question.id === "sequencing_context"
+                ? "question-card is-route-question"
+                : question.id === "library_mode"
+                  ? "question-card is-kit-question"
+                  : "";
+
             return `
-              <article class="question-card">
+              <article class="question-card ${cardClass}">
                 <h4>${question.label}</h4>
                 <p>${question.description}</p>
-                <div class="option-grid">
-                  ${question.options
+                <div class="${gridClass}">
+                  ${visibleOptions
                     .map(
                       (option, index) => `
-                        <div class="option-card">
+                        <div class="option-card ${question.id === "sequencing_context" ? "is-route-card" : ""} ${question.id === "library_mode" ? "is-kit-card" : ""}">
                           <input
                             type="radio"
                             id="${question.id}-${index}"
@@ -118,6 +281,7 @@ function renderStage(stage) {
                           <label for="${question.id}-${index}">
                             <span class="option-label">${option.label}</span>
                             <span class="option-help">${option.help}</span>
+                            ${renderOptionDetails(question, option)}
                           </label>
                         </div>
                       `
@@ -138,7 +302,13 @@ function renderSelector() {
 
   selectorRoot.querySelectorAll("input[type='radio']").forEach((input) => {
     input.addEventListener("change", (event) => {
-      answers[event.target.name] = event.target.value;
+      answers = normalizeAnswers(
+        {
+          ...answers,
+          [event.target.name]: event.target.value
+        },
+        event.target.name
+      );
       render();
     });
   });
@@ -147,7 +317,7 @@ function renderSelector() {
 function renderStatus(recommendation) {
   if (!stageComplete(datasets.questionSpec, answers, "stage1")) {
     statusBanner.className = "status-banner is-idle";
-    statusBanner.textContent = "Answer all Stage 1 questions to narrow the collection to biologically compatible workflows, or start from a preset above.";
+    statusBanner.textContent = "Start with sequencing context, then kit or run mode, goal, and sample context, or apply one of the published examples above.";
     return;
   }
 
@@ -159,28 +329,28 @@ function renderStatus(recommendation) {
 
   if (recommendation.status === "unsupported") {
     statusBanner.className = "status-banner is-warning";
-    statusBanner.textContent = "This scenario falls outside the currently published collection. The selector is showing the nearest documented starting point without claiming exact support.";
+    statusBanner.textContent = "This route falls outside the current published boundary. The action sheet below shows the nearest documented backend only.";
     return;
   }
 
   if (recommendation.status === "closest_supported") {
     statusBanner.className = recommendation.confidence === "low" ? "status-banner is-warning" : "status-banner is-success";
-    statusBanner.textContent = "No exact workflow matches all Stage 1 answers. The selector is showing the nearest documented starting point and the most relevant next actions.";
+    statusBanner.textContent = "The selector mapped your generalized route to the nearest published example backend in the repository.";
     return;
   }
 
-  if (recommendation.decision_trace.exactCandidateCount > 1) {
+  if (recommendation.status === "track_exact") {
     statusBanner.className = "status-banner is-success";
-    statusBanner.textContent = `${recommendation.decision_trace.exactCandidateCount} exact current workflows remain after Stage 1. The action sheet below shows the strongest practical fit and nearby alternatives.`;
+    statusBanner.textContent = "The selected route maps directly to a published workflow and a specific internal branch.";
     return;
   }
 
   statusBanner.className = "status-banner is-success";
-  statusBanner.textContent = "One exact current workflow matches your biological and analytical criteria. Use the action sheet below to start at the correct entry point.";
+  statusBanner.textContent = "The selected route maps directly to a published workflow example in the repository.";
 }
 
 function renderLinks(title, links) {
-  if (!links || links.length === 0) {
+  if (!links?.length) {
     return "";
   }
 
@@ -203,46 +373,8 @@ function renderLinks(title, links) {
   `;
 }
 
-function renderPreprocessingTable(preprocessing) {
-  const rows = Object.entries(PREPROCESSING_LABELS)
-    .filter(([key]) => preprocessing[key])
-    .map(
-      ([key, label]) => `
-        <tr>
-          <th scope="row">${label}</th>
-          <td>${preprocessing[key]}</td>
-        </tr>
-      `
-    )
-    .join("");
-
-  return `
-    <div class="sub-card">
-      <p class="section-label">Preprocessing Defaults</p>
-      <table class="preprocessing-table">
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-  `;
-}
-
-function renderBulletCard(title, items, className = "detail-list") {
-  if (!items || items.length === 0) {
-    return "";
-  }
-
-  return `
-    <div class="sub-card">
-      <p class="section-label">${title}</p>
-      <ul class="${className}">
-        ${items.map((item) => `<li>${item}</li>`).join("")}
-      </ul>
-    </div>
-  `;
-}
-
 function renderStructuredList(title, items) {
-  if (!items || items.length === 0) {
+  if (!items?.length) {
     return "";
   }
 
@@ -265,14 +397,184 @@ function renderStructuredList(title, items) {
   `;
 }
 
-function renderActions(actions) {
-  if (!actions || actions.length === 0) {
+function renderBulletCard(title, items, className = "detail-list") {
+  if (!items?.length) {
     return "";
   }
 
   return `
     <div class="sub-card">
-      <p class="section-label">What to Do Next</p>
+      <p class="section-label">${title}</p>
+      <ul class="${className}">
+        ${items.map((item) => `<li>${item}</li>`).join("")}
+      </ul>
+    </div>
+  `;
+}
+
+function renderPreprocessingTable(preprocessing) {
+  const rows = Object.entries(PREPROCESSING_LABELS)
+    .filter(([key]) => preprocessing[key])
+    .map(
+      ([key, label]) => `
+        <tr>
+          <th scope="row">${label}</th>
+          <td>${preprocessing[key]}</td>
+        </tr>
+      `
+    )
+    .join("");
+
+  return `
+    <div class="sub-card">
+      <p class="section-label">Preprocessing defaults</p>
+      <table class="preprocessing-table">
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderGeneralizedRouteCard(recommendation) {
+  const route = [
+    labelForAnswer("sequencing_context"),
+    labelForAnswer("library_mode"),
+    labelForAnswer("analysis_goal"),
+    labelForAnswer("sample_type")
+  ]
+    .filter(Boolean)
+    .join(" -> ");
+  const readiness = recommendation.primary.pipeline.readiness_level.replaceAll("_", " ");
+
+  return `
+    <div class="sub-card">
+      <p class="section-label">Recommended generalized route</p>
+      <div class="chip-row">
+        <span class="result-chip ${recommendation.status === "unsupported" || recommendation.status === "closest_supported" ? "is-nearest" : "is-exact"}">${recommendation.statusLabel}</span>
+        <span class="result-chip confidence-${recommendation.confidence}">${recommendation.confidenceLabel}</span>
+      </div>
+      <div class="route-callout">${route}</div>
+      <p>${recommendation.fitSummary}</p>
+      <div class="resource-list compact">
+        <div class="resource-item">
+          <strong>Readiness level</strong>
+          <span>${readiness}</span>
+        </div>
+        <div class="resource-item">
+          <strong>Execution model</strong>
+          <span>${recommendation.primary.pipeline.execution_model}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderPublishedBackendCard(recommendation) {
+  const primaryDoc = recommendation.primary.pipeline.primary_docs?.[0];
+  const alternative = recommendation.alternatives[0];
+  const alternativeDoc = alternative?.primary_docs?.[0];
+  const playbook = recommendation.primary.playbook;
+
+  return `
+    <div class="sub-card">
+      <p class="section-label">Published example backend</p>
+      <div class="example-list">
+        <div class="example-item example-item-primary">
+          <div class="chip-row">
+            <span class="result-chip is-exact">${playbook?.example_badge || "Published example"}</span>
+            ${playbook?.route_summary ? `<span class="example-route">${playbook.route_summary}</span>` : ""}
+          </div>
+          <strong>${recommendation.primary.pipeline.title}${recommendation.primary.track ? ` · ${recommendation.primary.track.title}` : ""}</strong>
+          <p>${recommendation.explanation}</p>
+          ${primaryDoc ? `<a href="${primaryDoc.url}" target="_blank" rel="noreferrer">Open primary example documentation</a>` : ""}
+        </div>
+        ${
+          alternative
+            ? `
+              <div class="example-item">
+                <div class="chip-row">
+                  <span class="result-chip is-nearest">Nearby example</span>
+                </div>
+                <strong>${alternative.title}</strong>
+                <p>${(alternative.decision_notes || alternative.notes || []).slice(0, 1).join(" ")}</p>
+                ${alternativeDoc ? `<a href="${alternativeDoc.url}" target="_blank" rel="noreferrer">Open nearby example</a>` : ""}
+              </div>
+            `
+            : ""
+        }
+      </div>
+    </div>
+  `;
+}
+
+function renderReasons(recommendation) {
+  if (!recommendation.decision_trace.reasons.length) {
+    return "";
+  }
+
+  return `
+    <div class="sub-card">
+      <p class="section-label">Why this example was chosen</p>
+      <div class="match-list">
+        ${recommendation.decision_trace.reasons
+          .map(
+            (reason) => `
+              <div class="match-item">
+                <strong>Matched field</strong>
+                <span>${reason}</span>
+              </div>
+            `
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderKitConsequencesCard() {
+  const libraryQuestion = questionById("library_mode");
+  const selectedLibrary = optionFor(libraryQuestion, answers.library_mode);
+  const consequences = selectedLibrary?.consequences;
+
+  if (!consequences) {
+    return "";
+  }
+
+  const rows = [
+    ["Demultiplexing", consequences.demultiplexing],
+    ["Barcode trimming", consequences.barcode_trimming],
+    ["Typical use", consequences.typical_use],
+    ["Route implication", consequences.route_implication],
+    ["First preprocessing steps", consequences.first_steps]
+  ].filter(([, value]) => value);
+
+  return `
+    <div class="sub-card">
+      <p class="section-label">What the selected kit changes</p>
+      <div class="kit-effects">
+        ${rows
+          .map(
+            ([label, value]) => `
+              <div class="resource-item">
+                <strong>${label}</strong>
+                <span>${value}</span>
+              </div>
+            `
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderActions(actions) {
+  if (!actions?.length) {
+    return "";
+  }
+
+  return `
+    <div class="sub-card">
+      <p class="section-label">What to do next</p>
       <ol class="step-list">
         ${actions
           .slice(0, 6)
@@ -293,7 +595,7 @@ function renderActions(actions) {
 
 function renderEntryCard(recommendation) {
   const command = recommendation.primary.curatedCommands[0];
-  const playbook = recommendation.primary.playbook;
+  const additionalCommands = recommendation.primary.curatedCommands.slice(1, 3);
   const fallbackAction = recommendation.primary.entryActions[0];
   const supportedEntryPoints = recommendation.primary.pipeline.supported_entry_points || [];
 
@@ -301,11 +603,9 @@ function renderEntryCard(recommendation) {
     return "";
   }
 
-  const additionalCommands = recommendation.primary.curatedCommands.slice(1, 3);
-
   return `
     <div class="sub-card">
-      <p class="section-label">Entry Point and Curated Command</p>
+      <p class="section-label">Entry point and documented command</p>
       ${
         command
           ? `
@@ -365,135 +665,18 @@ function renderEntryCard(recommendation) {
           `
           : ""
       }
-      ${
-        playbook?.required_inputs?.length
-          ? `
-            <div class="resource-list compact">
-              ${playbook.required_inputs
-                .map(
-                  (input) => `
-                    <div class="resource-item">
-                      <strong>Required input</strong>
-                      <span>${input}</span>
-                    </div>
-                  `
-                )
-                .join("")}
-            </div>
-          `
-          : ""
-      }
-    </div>
-  `;
-}
-
-function renderConfidenceCard(recommendation) {
-  const readiness = recommendation.primary.pipeline.readiness_level.replaceAll("_", " ");
-
-  return `
-    <div class="sub-card">
-      <p class="section-label">Confidence and Fit</p>
-      <div class="chip-row">
-        <span class="result-chip ${recommendation.status === "unsupported" ? "is-nearest" : "is-exact"}">${recommendation.statusLabel}</span>
-        <span class="result-chip confidence-${recommendation.confidence}">${recommendation.confidenceLabel} confidence</span>
-      </div>
-      <p>${recommendation.fitSummary}</p>
-      <div class="resource-list compact">
-        <div class="resource-item">
-          <strong>Readiness level</strong>
-          <span>${readiness}</span>
-        </div>
-        <div class="resource-item">
-          <strong>Execution model</strong>
-          <span>${recommendation.primary.pipeline.execution_model}</span>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function renderReasons(recommendation) {
-  if (!recommendation.decision_trace.reasons.length) {
-    return "";
-  }
-
-  return `
-    <div class="sub-card">
-      <p class="section-label">Why this matched</p>
-      <div class="match-list">
-        ${recommendation.decision_trace.reasons
-          .map(
-            (reason) => `
-              <div class="match-item">
-                <strong>Matched field</strong>
-                <span>${reason}</span>
-              </div>
-            `
-          )
-          .join("")}
-      </div>
-    </div>
-  `;
-}
-
-function renderWarnings(recommendation) {
-  const warnings = recommendation.warnings || [];
-  if (warnings.length === 0) {
-    return "";
-  }
-
-  return `
-    <div class="sub-card">
-      <p class="section-label">${recommendation.status === "unsupported" ? "Unsupported / Partial-Fit Warning" : "Warnings and Compatibility Notes"}</p>
-      <div class="warning-list">
-        ${warnings
-          .map(
-            (note) => `
-              <div class="warning-item">
-                <strong>${note.title}</strong>
-                <span>${note.text}</span>
-              </div>
-            `
-          )
-          .join("")}
-      </div>
-    </div>
-  `;
-}
-
-function renderTrackCard(recommendation) {
-  const track = recommendation.primary.track;
-  const playbook = recommendation.primary.playbook;
-  if (!track && !playbook) {
-    return "";
-  }
-
-  return `
-    <div class="sub-card">
-      <p class="section-label">Branch-Specific Notes</p>
-      ${
-        track
-          ? `
-            <h4>${track.title}</h4>
-            <p>${track.summary}</p>
-          `
-          : ""
-      }
-      ${playbook?.recommended_when?.length ? `<p><strong>Best used when:</strong> ${playbook.recommended_when.join(" ")}</p>` : ""}
-      ${playbook?.avoid_when?.length ? `<p><strong>Avoid when:</strong> ${playbook.avoid_when.join(" ")}</p>` : ""}
-      ${playbook?.runtime_notes?.length ? `<ul class="detail-list">${playbook.runtime_notes.map((note) => `<li>${note}</li>`).join("")}</ul>` : ""}
     </div>
   `;
 }
 
 function renderOntReferenceCard(recommendation) {
-  if (!recommendation.ontNotes || recommendation.ontNotes.length === 0) {
+  if (!recommendation.ontNotes?.length) {
     return "";
   }
 
   return `
     <div class="sub-card">
-      <p class="section-label">Oxford Nanopore Reference</p>
+      <p class="section-label">Oxford Nanopore reference</p>
       <div class="ont-list">
         ${recommendation.ontNotes
           .map(
@@ -511,22 +694,21 @@ function renderOntReferenceCard(recommendation) {
   `;
 }
 
-function renderAlternatives(recommendation) {
-  const shouldShow = recommendation.status === "unsupported" || recommendation.confidence !== "high" || recommendation.decision_trace.exactCandidateCount > 1;
-  if (!shouldShow || !recommendation.alternatives.length) {
+function renderWarnings(recommendation) {
+  if (!recommendation.warnings?.length) {
     return "";
   }
 
   return `
     <div class="sub-card">
-      <p class="section-label">Closest Alternatives</p>
-      <div class="resource-list">
-        ${recommendation.alternatives
+      <p class="section-label">Warnings / not-exact caveats</p>
+      <div class="warning-list">
+        ${recommendation.warnings
           .map(
-            (pipeline) => `
-              <div class="resource-item">
-                <strong>${pipeline.title}</strong>
-                <span>${(pipeline.decision_notes || pipeline.notes || []).slice(0, 1).join(" ")}</span>
+            (warning) => `
+              <div class="warning-item">
+                <strong>${warning.title}</strong>
+                <span>${warning.text}</span>
               </div>
             `
           )
@@ -541,7 +723,7 @@ function renderResult(recommendation) {
     resultRoot.innerHTML = `
       <div class="empty-state">
         <p class="empty-title">No recommendation yet</p>
-        <p class="empty-text">Answer the Stage 1 questions or apply a preset to generate the lab-ready action sheet.</p>
+        <p class="empty-text">Answer the sequencing context, kit or run mode, goal, and sample-context questions or start from a published example.</p>
       </div>
     `;
     return;
@@ -561,26 +743,22 @@ function renderResult(recommendation) {
       </div>
 
       <div class="sub-grid">
-        ${renderConfidenceCard(recommendation)}
-        ${renderTrackCard(recommendation)}
+        ${renderGeneralizedRouteCard(recommendation)}
+        ${renderPublishedBackendCard(recommendation)}
+        ${renderReasons(recommendation)}
+        ${renderKitConsequencesCard()}
         ${renderActions(recommendation.primary.entryActions)}
         ${renderEntryCard(recommendation)}
         ${renderPreprocessingTable(recommendation.primary.preprocessing)}
+        ${renderStructuredList("Required tools", playbook?.required_tools)}
+        ${renderStructuredList("Required databases", playbook?.required_databases)}
         ${renderOntReferenceCard(recommendation)}
-        ${renderStructuredList("Required Tools", playbook?.required_tools)}
-        ${renderStructuredList("Required Databases", playbook?.required_databases)}
-        ${renderBulletCard("Expected Outputs", playbook?.expected_outputs, "detail-list")}
-        ${renderReasons(recommendation)}
+        ${renderBulletCard("Expected outputs", playbook?.expected_outputs)}
         ${renderWarnings(recommendation)}
-        ${renderAlternatives(recommendation)}
         ${renderLinks("Primary documentation", recommendation.primary.pipeline.primary_docs)}
         ${renderLinks("Setup and execution", recommendation.primary.pipeline.setup_docs)}
         ${renderLinks("Evidence links", playbook?.evidence_links)}
-        ${
-          recommendation.outOfScopeRule?.read_first_links?.length
-            ? renderLinks("Read first", recommendation.outOfScopeRule.read_first_links)
-            : ""
-        }
+        ${recommendation.outOfScopeRule?.read_first_links?.length ? renderLinks("Read first", recommendation.outOfScopeRule.read_first_links) : ""}
       </div>
     </div>
   `;
@@ -599,7 +777,7 @@ function render() {
 }
 
 async function init() {
-  if (!stageComplete || !computeRecommendation) {
+  if (!allQuestions || !stageComplete || !computeRecommendation) {
     statusBanner.className = "status-banner is-warning";
     statusBanner.textContent = "The selector engine could not be loaded. Refresh the page or check that docs/selector-engine.js is available.";
     selectorRoot.innerHTML = `
@@ -620,6 +798,7 @@ async function init() {
     ]);
 
     datasets = { pipelines, questionSpec, playbooks, presets, outOfScopeRules };
+    answers = normalizeAnswers({});
     render();
   } catch (error) {
     statusBanner.className = "status-banner is-warning";
@@ -633,7 +812,7 @@ async function init() {
 }
 
 resetButton.addEventListener("click", () => {
-  answers = {};
+  answers = normalizeAnswers({});
   render();
 });
 

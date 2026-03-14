@@ -2,6 +2,7 @@
   {
     "pipeline_id": "air_metagenomics",
     "track_id": null,
+    "example_badge": "Published environmental example",
     "recommended_when": [
       "Low-biomass air or bioaerosol metagenomics from FAST5, POD5, or basecalled FASTQ.",
       "Environmental DNA studies focused on taxonomic profiling, assembly, binning, and functional annotation."
@@ -111,11 +112,13 @@
         "label": "Air installation tutorial",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Air_Metagenomics/Installation_tutorial.md"
       }
-    ]
+    ],
+    "route_summary": "Environmental metagenomics -> long-read DNA -> air"
   },
   {
     "pipeline_id": "wetland_health",
     "track_id": null,
+    "example_badge": "Published environmental example",
     "recommended_when": [
       "Passive wetland water studies where you still need to choose among the DNA metagenomics, RNA virome, or 12S metabarcoding branches.",
       "Basecalled FASTQ projects tied to the published wetland study context."
@@ -190,11 +193,13 @@
         "label": "Wetland Health README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
       }
-    ]
+    ],
+    "route_summary": "Environmental metagenomics -> choose the wetland branch"
   },
   {
     "pipeline_id": "wetland_health",
     "track_id": "dna_metagenomics",
+    "example_badge": "Published environmental example",
     "recommended_when": [
       "Passive wetland water DNA metagenomics for pathogen and AMR surveillance.",
       "Cases where microbial community profiling, pathogen detection, and assembly are the primary goals."
@@ -272,11 +277,13 @@
         "label": "Wetland DNA shotgun notes",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/dna_shotgun_analysis_pipeline.md"
       }
-    ]
+    ],
+    "route_summary": "Environmental metagenomics -> long-read DNA -> wetland"
   },
   {
     "pipeline_id": "wetland_health",
     "track_id": "rna_virome",
+    "example_badge": "Published environmental example",
     "recommended_when": [
       "Untargeted RNA virome discovery from passive wetland water samples.",
       "RNA-focused wetland analyses where the goal is viral community characterization rather than targeted influenza consensus."
@@ -349,11 +356,13 @@
         "label": "Wetland Health README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
       }
-    ]
+    ],
+    "route_summary": "Environmental metagenomics -> RNA virome -> wetland"
   },
   {
     "pipeline_id": "wetland_health",
     "track_id": "edna",
+    "example_badge": "Published environmental example",
     "recommended_when": [
       "Wetland 12S amplicon data used for vertebrate host-range inference in the passive water study.",
       "Barcoded amplicon runs that need OBITools4 demultiplexing and MIDORI2 mapping."
@@ -423,11 +432,13 @@
         "label": "Wetland Health README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
       }
-    ]
+    ],
+    "route_summary": "Environmental metagenomics -> amplicon workflow -> eDNA 12S -> wetland"
   },
   {
     "pipeline_id": "zambia_edna",
     "track_id": null,
+    "example_badge": "Published environmental example",
     "recommended_when": [
       "Water eDNA amplicon studies using 12S or 16S metabarcoding with Nanopore or Illumina input.",
       "Biodiversity-focused workflows needing OBITools4 and MIDORI2-based assignment."
@@ -497,11 +508,13 @@
         "label": "Zambia eDNA README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/eDNA_Metabarcoding/README.md"
       }
-    ]
+    ],
+    "route_summary": "Environmental metagenomics -> amplicon workflow -> eDNA 12S -> water eDNA"
   },
   {
     "pipeline_id": "listeria_adaptive_sampling",
     "track_id": null,
+    "example_badge": "Published food safety example",
     "recommended_when": [
       "Food safety datasets comparing adaptive sampling against native sequencing for Listeria recovery.",
       "Runs entering from basecalled BAM or downstream FASTQ in a SLURM-oriented environment."
@@ -609,11 +622,13 @@
         "label": "Listeria execution guide",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Food_Safety/Listeria-Adaptive-Sampling/docs/03_execution_guide.md"
       }
-    ]
+    ],
+    "route_summary": "Food safety -> adaptive sampling or control -> Listeria"
   },
   {
     "pipeline_id": "amr_nanopore",
     "track_id": null,
+    "example_badge": "Published clinical/isolate example",
     "recommended_when": [
       "Clinical isolate sequencing where the goal is rapid AMR profiling, assembly, and polishing.",
       "Single-isolate or isolate-dominant ONT datasets entering from FAST5 or FASTQ."
@@ -686,11 +701,13 @@
         "label": "AMR Nanopore README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore/README.md"
       }
-    ]
+    ],
+    "route_summary": "Clinical / isolate -> LSK114 -> single isolate"
   },
   {
     "pipeline_id": "cre_plasmid_clustering",
     "track_id": null,
+    "example_badge": "Published clinical/isolate example",
     "recommended_when": [
       "CRE isolate datasets where plasmid reconstruction, typing, and clustering are the main outputs.",
       "RBK114-based isolate sequencing on R10.4.1 where demultiplexing and per-barcode assembly are required."
@@ -776,11 +793,13 @@
         "label": "CRE plasmid README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/CRE-Plasmid-clustering/README.md"
       }
-    ]
+    ],
+    "route_summary": "Clinical / isolate -> RBK114.24 or NBD114.24 -> barcoded isolate"
   },
   {
     "pipeline_id": "nanopore_amr_host_association",
     "track_id": null,
+    "example_badge": "Published clinical/isolate example",
     "recommended_when": [
       "Clinical metagenomic or mixed datasets where the goal is linking AMR determinants to their host organisms.",
       "Projects entering from POD5 and using methylation-aware association rather than standard taxonomic profiling alone."
@@ -872,6 +891,7 @@
         "label": "AMR host association README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/Nanopore-AMR-Host-Association/README.md"
       }
-    ]
+    ],
+    "route_summary": "Clinical / isolate -> barcoded metagenome -> AMR host association"
   }
 ]

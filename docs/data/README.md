@@ -5,16 +5,16 @@ The selector data model is split so routing logic, operator guidance, and unsupp
 ## Files
 
 - `pipelines.json`
-  Routing metadata for each published workflow in the collection. This file should stay concise and should not become the main operator manual.
+  Routing metadata for each published workflow in the collection. This file now carries the main selector fields such as `sequencing_contexts`, `library_modes`, `analysis_goals`, and `sample_types`. It should stay concise and should not become the main operator manual.
 
 - `questions.json`
-  Ordered question flow and allowed option values. Treat this as the schema for user answers.
+  Ordered question flow and allowed option values. Treat this as the schema for user answers, including conditional visibility and kit-driven autofill defaults.
 
 - `playbooks.json`
   Action-sheet content for each supported workflow or track. This is where entry actions, curated commands, prerequisites, outputs, and workflow-specific notes belong.
 
 - `presets.json`
-  Common starting scenarios that prefill the selector for researchers who already know their broad use case.
+  Published example scenarios grouped by higher-level route. These prefill the selector for researchers who want to start from a concrete documented example.
 
 - `out_of_scope.json`
   Explicit unsupported or partial-fit rules. Use this file when a workflow is biologically adjacent to the collection but still not truly covered by the published repository.
@@ -25,7 +25,7 @@ The selector data model is split so routing logic, operator guidance, and unsupp
 
 1. Add the routing entry to `pipelines.json`.
 2. Add at least one matching playbook to `playbooks.json`.
-3. Add or update presets if the new workflow is a common starting scenario.
+3. Add or update presets if the new workflow should appear as a published example of a broader route.
 4. Add an out-of-scope rule only if the new workflow changes an existing unsupported boundary.
 
 ### Add a playbook
@@ -34,6 +34,8 @@ Every playbook must include:
 
 - `pipeline_id`
 - `track_id` (`null` for pipeline-level playbooks)
+- `example_badge`
+- `route_summary`
 - `recommended_when`
 - `avoid_when`
 - `required_inputs`
