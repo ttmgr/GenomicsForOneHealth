@@ -21,14 +21,19 @@
       "plasmid_reconstruction"
     ],
     "recommended_when": [
-      "You want an ONT-curated local workflow for bacterial isolate assembly and polishing.",
-      "The nearest internal isolate backend is informative, but you want a more general ONT-maintained workflow shell."
+      "Best fit for isolate assembly, polishing, and plasmid-aware bacterial genomics.",
+      "Useful when the internal isolate example is informative but still too study-specific."
     ],
     "avoid_when": [
       "The main task is environmental shotgun metagenomics or cloud-first pathogen discovery."
     ],
     "url": "https://epi2me.nanoporetech.com/epi2me-docs/workflows/wf-bacterial-genomes/",
-    "source_type": "ont_curated"
+    "source_type": "ont_curated",
+    "preferred_matrix_profile_ids": [
+      "single_isolate_long_read",
+      "barcoded_isolate_long_read",
+      "positive_blood_culture"
+    ]
   },
   {
     "id": "epi2me_metagenomics",
@@ -51,14 +56,22 @@
       "full_host_association_pipeline"
     ],
     "recommended_when": [
-      "You want an ONT-curated local metagenomics workflow with standard reporting and reproducible defaults.",
-      "The internal example is useful, but you need a more generic ONT-maintained metagenomics workflow."
+      "Best fit for local long-read metagenomics with ONT-curated defaults.",
+      "Useful when the internal example is approximate and you still want a reproducible ONT workflow shell."
     ],
     "avoid_when": [
       "The route is primarily amplicon-focused or single-isolate assembly."
     ],
     "url": "https://epi2me.nanoporetech.com/epi2me-docs/workflows/wf-metagenomics/",
-    "source_type": "ont_curated"
+    "source_type": "ont_curated",
+    "preferred_matrix_profile_ids": [
+      "wetland_passive_water_metagenomics",
+      "soil_long_read_metagenomics",
+      "other_environmental_long_read",
+      "clinical_metagenome_host_association",
+      "wastewater_surveillance",
+      "gut_clinical_metagenomics"
+    ]
   },
   {
     "id": "epi2me_amplicon",
@@ -76,14 +89,17 @@
       "full_amplicon_pipeline"
     ],
     "recommended_when": [
-      "You want an ONT-maintained amplicon workflow reference alongside the nearest internal 12S example.",
-      "The internal example is directionally useful, but you need a more generic ONT amplicon starting point."
+      "Best fit for ONT-maintained amplicon reference workflows.",
+      "Useful when the internal 12S example is directionally helpful but not an exact match."
     ],
     "avoid_when": [
       "The route is shotgun metagenomics or isolate assembly."
     ],
     "url": "https://epi2me.nanoporetech.com/epi2me-docs/workflows/wf-16s/",
-    "source_type": "ont_curated"
+    "source_type": "ont_curated",
+    "preferred_matrix_profile_ids": [
+      "edna_12s_water"
+    ]
   },
   {
     "id": "cz_id_long_read_metagenomics",
@@ -109,13 +125,25 @@
       "full_host_association_pipeline"
     ],
     "recommended_when": [
-      "You want cloud-based long-read metagenomic interpretation for a route the group repo does not cover exactly.",
-      "You need a secondary external reference when the nearest internal example is only approximate."
+      "Best fit for cloud-first long-read metagenomic interpretation.",
+      "Useful when the nearest internal example is approximate or the matrix needs stronger host-depletion-aware interpretation."
     ],
     "avoid_when": [
       "The route is isolate assembly or a small targeted amplicon assay."
     ],
     "url": "https://public.czid.org/",
-    "source_type": "cloud"
+    "source_type": "cloud",
+    "preferred_matrix_profile_ids": [
+      "air_aerobiome",
+      "soil_long_read_metagenomics",
+      "other_environmental_long_read",
+      "environmental_rna_virome",
+      "clinical_metagenome_host_association",
+      "wastewater_surveillance",
+      "blood_plasma_cfdna",
+      "bal_respiratory_metagenomics",
+      "csf_metagenomics",
+      "gut_clinical_metagenomics"
+    ]
   }
 ]

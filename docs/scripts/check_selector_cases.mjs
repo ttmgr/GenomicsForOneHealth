@@ -33,7 +33,8 @@ const datasets = {
   examples: readJson("examples.json"),
   expertRules: readJson("expert_rules.json"),
   nanoporeProfiles: readJson("nanopore_profiles.json"),
-  externalWorkflows: readJson("external_workflows.json")
+  externalWorkflows: readJson("external_workflows.json"),
+  matrixProfiles: readJson("matrix_profiles.json")
 };
 
 const exactCases = [
@@ -46,7 +47,8 @@ const exactCases = [
       example_context: "air_bioaerosol_example"
     },
     pipeline: "air_metagenomics",
-    status: "exact"
+    status: "exact",
+    matrix: "air_aerobiome"
   },
   {
     name: "wetland_dna_mag",
@@ -58,7 +60,8 @@ const exactCases = [
     },
     pipeline: "wetland_health",
     track: "dna_metagenomics",
-    status: "track_exact"
+    status: "track_exact",
+    matrix: "wetland_passive_water_metagenomics"
   },
   {
     name: "wetland_rna_virome",
@@ -70,7 +73,8 @@ const exactCases = [
     },
     pipeline: "wetland_health",
     track: "rna_virome",
-    status: "track_exact"
+    status: "track_exact",
+    matrix: "environmental_rna_virome"
   },
   {
     name: "wetland_edna",
@@ -82,7 +86,8 @@ const exactCases = [
     },
     pipeline: "wetland_health",
     track: "edna",
-    status: "track_exact"
+    status: "track_exact",
+    matrix: "edna_12s_water"
   },
   {
     name: "zambia_edna",
@@ -93,7 +98,8 @@ const exactCases = [
       example_context: "zambia_water_edna_example"
     },
     pipeline: "zambia_edna",
-    status: "exact"
+    status: "exact",
+    matrix: "edna_12s_water"
   },
   {
     name: "single_isolate_amr",
@@ -104,7 +110,8 @@ const exactCases = [
       example_context: "amr_nanopore_example"
     },
     pipeline: "amr_nanopore",
-    status: "exact"
+    status: "exact",
+    matrix: "single_isolate_long_read"
   },
   {
     name: "barcoded_isolate_cre",
@@ -115,7 +122,8 @@ const exactCases = [
       example_context: "cre_plasmid_example"
     },
     pipeline: "cre_plasmid_clustering",
-    status: "exact"
+    status: "exact",
+    matrix: "barcoded_isolate_long_read"
   },
   {
     name: "clinical_metagenome_host_association",
@@ -126,6 +134,7 @@ const exactCases = [
     },
     pipeline: "nanopore_amr_host_association",
     status: "exact",
+    matrix: "clinical_metagenome_host_association",
     requiresExamplePage: false
   },
   {
@@ -137,6 +146,7 @@ const exactCases = [
     },
     pipeline: "listeria_adaptive_sampling",
     status: "exact",
+    matrix: "food_safety_target_recovery",
     requiresExamplePage: false
   }
 ];
@@ -146,6 +156,7 @@ for (const testCase of exactCases) {
   assert(result, `${testCase.name}: expected a recommendation`);
   assert(result.backend.pipeline.id === testCase.pipeline, `${testCase.name}: expected ${testCase.pipeline}, got ${result.backend.pipeline.id}`);
   assert(result.status === testCase.status, `${testCase.name}: expected status ${testCase.status}, got ${result.status}`);
+  assert(result.matrix_profile?.id === testCase.matrix, `${testCase.name}: expected matrix profile ${testCase.matrix}`);
   if (testCase.track) {
     assert(result.backend.track?.id === testCase.track, `${testCase.name}: expected track ${testCase.track}`);
   }
@@ -165,7 +176,8 @@ const unsupportedCases = [
       example_context: "soil_unsupported_example"
     },
     pipeline: "air_metagenomics",
-    externalIds: ["epi2me_metagenomics", "cz_id_long_read_metagenomics"]
+    externalIds: ["epi2me_metagenomics", "cz_id_long_read_metagenomics"],
+    matrix: "soil_long_read_metagenomics"
   },
   {
     name: "other_environmental_matrix",
@@ -176,7 +188,8 @@ const unsupportedCases = [
       example_context: "other_environmental_unsupported_example"
     },
     pipeline: "air_metagenomics",
-    externalIds: ["epi2me_metagenomics", "cz_id_long_read_metagenomics"]
+    externalIds: ["epi2me_metagenomics", "cz_id_long_read_metagenomics"],
+    matrix: "other_environmental_long_read"
   },
   {
     name: "other_environmental_virome",
@@ -188,7 +201,8 @@ const unsupportedCases = [
     },
     pipeline: "wetland_health",
     track: "rna_virome",
-    externalIds: ["cz_id_long_read_metagenomics"]
+    externalIds: ["cz_id_long_read_metagenomics"],
+    matrix: "environmental_rna_virome"
   },
   {
     name: "other_edna_context",
@@ -199,7 +213,8 @@ const unsupportedCases = [
       example_context: "other_edna_unsupported_example"
     },
     pipeline: "zambia_edna",
-    externalIds: ["epi2me_amplicon"]
+    externalIds: ["epi2me_amplicon"],
+    matrix: "edna_12s_water"
   },
   {
     name: "other_single_isolate",
@@ -210,7 +225,8 @@ const unsupportedCases = [
       example_context: "other_single_isolate_example"
     },
     pipeline: "amr_nanopore",
-    externalIds: ["epi2me_bacterial_genomes"]
+    externalIds: ["epi2me_bacterial_genomes"],
+    matrix: "single_isolate_long_read"
   },
   {
     name: "other_barcoded_isolate",
@@ -221,7 +237,8 @@ const unsupportedCases = [
       example_context: "other_barcoded_isolate_example"
     },
     pipeline: "cre_plasmid_clustering",
-    externalIds: ["epi2me_bacterial_genomes"]
+    externalIds: ["epi2me_bacterial_genomes"],
+    matrix: "barcoded_isolate_long_read"
   }
 ];
 
@@ -230,12 +247,17 @@ for (const testCase of unsupportedCases) {
   assert(result, `${testCase.name}: expected a recommendation`);
   assert(result.status === "unsupported", `${testCase.name}: expected unsupported status`);
   assert(result.backend.pipeline.id === testCase.pipeline, `${testCase.name}: expected nearest pipeline ${testCase.pipeline}`);
+  assert(result.matrix_profile?.id === testCase.matrix, `${testCase.name}: expected matrix profile ${testCase.matrix}`);
+  assert(result.literature_links.length > 0, `${testCase.name}: expected literature links`);
   if (testCase.track) {
     assert(result.backend.track?.id === testCase.track, `${testCase.name}: expected nearest track ${testCase.track}`);
   }
   for (const workflowId of testCase.externalIds) {
     assert(result.external_fallbacks.some((workflow) => workflow.id === workflowId), `${testCase.name}: missing external fallback ${workflowId}`);
   }
+  const sortedIds = result.external_fallbacks.slice(0, testCase.externalIds.length).map((workflow) => workflow.id);
+  assert(JSON.stringify(sortedIds) === JSON.stringify(testCase.externalIds), `${testCase.name}: expected fallback order ${testCase.externalIds.join(", ")}`);
+  assert(result.guide_links.some((link) => link.url.includes(`#${result.matrix_profile.guide_section_id}`)), `${testCase.name}: expected anchored guide link`);
 }
 
 const multiExampleAnswers = {
@@ -246,6 +268,19 @@ const multiExampleAnswers = {
 
 assert(needsExampleSelection(multiExampleAnswers, datasets), "environmental long-read DNA should require example selection");
 assert(getWizardPageSequence(datasets.questionSpec, multiExampleAnswers, datasets).includes("example"), "example page should appear when multiple contexts fit");
+
+const airResult = computeRecommendation(
+  {
+    sample_context: "environmental",
+    material_class: "long_read_metagenomic_dna",
+    target_goal: "taxonomy_profiling",
+    example_context: "air_bioaerosol_example"
+  },
+  datasets
+);
+
+assert(airResult.matrix_notes.summary.includes("low-biomass"), "air result should include low-biomass matrix framing");
+assert(airResult.literature_links.length >= 1, "air result should expose literature links");
 
 const shortReadAssemblyResult = computeRecommendation(
   {
@@ -378,5 +413,17 @@ const supResult = computeRecommendation(
 );
 
 assert(supResult.setup_summary.recommendation.includes("SUP"), "SUP should appear in the setup recommendation");
+
+const clinicalMatrixResult = computeRecommendation(
+  {
+    sample_context: "clinical_isolate",
+    material_class: "clinical_metagenome",
+    target_goal: "amr_host_association"
+  },
+  datasets
+);
+
+assert(clinicalMatrixResult.matrix_notes.warnings.some((warning) => warning.includes("Plasma")), "clinical metagenome result should mention plasma guide-only variants");
+assert(clinicalMatrixResult.external_fallbacks[0].id === "cz_id_long_read_metagenomics", "clinical metagenome alternatives should prioritize CZ ID");
 
 console.log("Selector smoke tests passed.");

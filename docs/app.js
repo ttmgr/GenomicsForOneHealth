@@ -493,6 +493,24 @@ function renderLinks(links) {
   `;
 }
 
+function renderInlineLinks(links) {
+  if (!links.length) {
+    return "";
+  }
+
+  return `
+    <p class="inline-link-row">
+      ${links
+        .map(
+          (link) => `
+            <a href="${escapeHtml(linkHref(link.url))}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>
+          `
+        )
+        .join('<span class="inline-separator">&middot;</span>')}
+    </p>
+  `;
+}
+
 function renderDefinitionList(entries) {
   if (entries.length === 0) {
     return `<p class="muted">No structured details were attached for this section.</p>`;
@@ -573,6 +591,46 @@ function renderExternalWorkflows(recommendation) {
   `;
 }
 
+function renderMatrixNotes(recommendation) {
+  if (!recommendation.matrix_notes) {
+    return "";
+  }
+
+  const setupBiasRows = [
+    ["Kit framing", recommendation.matrix_notes.setup_biases.kit],
+    ["Flow cell framing", recommendation.matrix_notes.setup_biases.flowcell],
+    ["Basecalling framing", recommendation.matrix_notes.setup_biases.basecalling],
+    ["Analysis environment", recommendation.matrix_notes.setup_biases.analysis_environment]
+  ].filter(([, value]) => Boolean(value));
+
+  return `
+    <section class="result-block">
+      <div class="result-block-head">
+        <h3>Matrix notes</h3>
+        <span class="option-badge">${escapeHtml(recommendation.matrix_notes.label)}</span>
+      </div>
+      <p>${escapeHtml(recommendation.matrix_notes.summary)}</p>
+      ${
+        recommendation.matrix_notes.warnings.length > 0
+          ? `
+            <ul class="detail-list">
+              ${recommendation.matrix_notes.warnings
+                .map((warning) => `<li>${escapeHtml(warning)}</li>`)
+                .join("")}
+            </ul>
+          `
+          : ""
+      }
+      <div class="matrix-bias-panel">
+        <h4>How this shifts the setup advice</h4>
+        ${renderDefinitionList(setupBiasRows)}
+      </div>
+      <p class="muted"><strong>What this changes in the selector.</strong> ${escapeHtml(recommendation.matrix_notes.what_this_changes)}</p>
+      ${renderInlineLinks(recommendation.literature_links)}
+    </section>
+  `;
+}
+
 function renderResultsPage() {
   const recommendation = computeRecommendation(answers, datasets);
   if (!recommendation) {
@@ -631,6 +689,8 @@ function renderResultsPage() {
           <p class="summary-meta">Primary environment: ${escapeHtml(recommendation.analysis_environment.label)}</p>
         </article>
       </section>
+
+      ${renderMatrixNotes(recommendation)}
 
       <section class="result-block">
         <h3>Why this was chosen</h3>
@@ -862,9 +922,10 @@ Promise.all([
   fetchJson("data/examples.json"),
   fetchJson("data/expert_rules.json"),
   fetchJson("data/nanopore_profiles.json"),
-  fetchJson("data/external_workflows.json")
+  fetchJson("data/external_workflows.json"),
+  fetchJson("data/matrix_profiles.json")
 ])
-  .then(([questionSpec, pipelines, playbooks, examples, expertRules, nanoporeProfiles, externalWorkflows]) => {
+  .then(([questionSpec, pipelines, playbooks, examples, expertRules, nanoporeProfiles, externalWorkflows, matrixProfiles]) => {
     datasets = {
       questionSpec,
       pipelines,
@@ -872,7 +933,8 @@ Promise.all([
       examples,
       expertRules,
       nanoporeProfiles,
-      externalWorkflows
+      externalWorkflows,
+      matrixProfiles
     };
     render();
   })

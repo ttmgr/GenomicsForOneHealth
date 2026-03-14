@@ -24,6 +24,9 @@ Published examples and fallback workflows are attached after the route is narrow
 - `external_workflows.json`
   Stores the modeled fallback workflows used in the results page when the selector should also surface EPI2ME Labs or CZ ID options.
 
+- `matrix_profiles.json`
+  Stores matrix-specific guidance shared by the results page and the Nanopore guide: selector summaries, warnings, setup biases, fallback workflow hints, guide anchors, and compact linked citations.
+
 - `pipelines.json`
   Keeps the published workflow metadata: titles, docs, supported inputs, tracks, and routing-related fields that are still useful outside the wizard.
 
@@ -39,6 +42,7 @@ Published examples and fallback workflows are attached after the route is narrow
 3. Add one or more example routes in `examples.json`.
 4. Add or update `nanopore_profiles.json` only if the new route needs different setup defaults.
 5. Add expert rules only if the new backend needs route-specific heuristic tuning that does not change backend selection.
+6. Add or update `matrix_profiles.json` if the backend or example needs matrix-specific notes, literature links, or fallback ordering.
 
 ### Add a new wizard question
 
@@ -64,11 +68,13 @@ Exact examples must include:
 
 - `pipeline_id`
 - optional `track_id`
+- `matrix_profile_id`
 
 Unsupported examples must include:
 
 - `nearest_pipeline_id`
 - optional `nearest_track_id`
+- `matrix_profile_id`
 - `unsupported_reason`
 
 ### Curated command policy
@@ -87,7 +93,15 @@ Unsupported examples must include:
 
 - External workflows are secondary references, not replacements for the internal backends.
 - Use `route_compatibility` to distinguish exact-route alternatives from unsupported-route fallbacks.
+- Use `preferred_matrix_profile_ids` only to bias ordering when a matrix profile strongly favors one external workflow over another.
 - Do not overclaim an external workflow as an exact replacement when it is only directionally related.
+
+### Matrix profile policy
+
+- Route-attached matrix profiles must point to one or more example ids.
+- Guide-only matrix profiles extend the Nanopore guide without adding new selector routes.
+- Keep matrix notes compact: one summary, 2 to 4 warnings, 2 to 5 guide highlights, and 1 to 3 citations.
+- Use `fallback_workflow_ids` only for ordering and emphasis; they do not replace backend resolution.
 
 ## Review Expectations
 

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nanopore Guide</title>
   <meta name="description"
-    content="Compact Nanopore guide for the GenomicsForOneHealth selector: input material, flow cells, kits, basecalling tiers, and when to use EPI2ME Labs or CZ ID.">
+    content="Compact Nanopore guide for the GenomicsForOneHealth selector: setup defaults, matrix-specific notes, and linked 2024-2026 literature snapshots.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -163,6 +163,58 @@
       color: var(--warn-text);
     }
 
+    .matrix-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .matrix-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .matrix-head h2 {
+      margin-top: 8px;
+    }
+
+    .scope-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      background: rgba(29, 106, 85, 0.08);
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .citation-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .citation-row a {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      background: #f2f7f5;
+      color: var(--accent);
+      border: 1px solid rgba(29, 106, 85, 0.12);
+    }
+
+    .loading-note {
+      color: var(--muted);
+    }
+
     ul {
       padding-left: 20px;
     }
@@ -192,6 +244,7 @@
         <a href="#epi2me">EPI2ME Labs</a>
         <a href="#czid">CZ ID</a>
         <a href="#defaults">Practical defaults</a>
+        <a href="#matrix-snapshots">Matrix snapshots</a>
       </nav>
       <p><a class="back-link" href="index.html">Back to the selector</a></p>
     </header>
@@ -412,8 +465,93 @@
           </p>
         </div>
       </section>
+
+      <section id="matrix-snapshots">
+        <p class="section-label">Matrix snapshots</p>
+        <h2>Recent literature by sample type</h2>
+        <p>
+          These sections stay short on purpose. They are matrix-specific notes that the selector can point to when a
+          route is supported, approximate, or still guide-only.
+        </p>
+      </section>
+
+      <div id="matrix-sections" class="matrix-stack">
+        <section>
+          <p class="loading-note">Loading matrix-specific guide sections...</p>
+        </section>
+      </div>
     </div>
   </main>
+  <script>
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function renderMatrixProfile(profile) {
+      const scopeLabel = profile.scope === "route_attached" ? "Linked in selector" : "Guide only";
+      const highlights = (profile.guide_highlights || [])
+        .map((item) => `<li>${escapeHtml(item)}</li>`)
+        .join("");
+      const warnings = (profile.selector_warnings || [])
+        .map((item) => `<li>${escapeHtml(item)}</li>`)
+        .join("");
+      const citations = (profile.citations || [])
+        .map((citation) => `<a href="${escapeHtml(citation.url)}" target="_blank" rel="noreferrer">${escapeHtml(citation.label)}</a>`)
+        .join("");
+
+      return `
+        <section id="${escapeHtml(profile.guide_section_id)}">
+          <div class="matrix-head">
+            <div>
+              <p class="section-label">Matrix snapshot</p>
+              <h2>${escapeHtml(profile.label)}</h2>
+            </div>
+            <span class="scope-badge">${escapeHtml(scopeLabel)}</span>
+          </div>
+          <p>${escapeHtml(profile.selector_summary)}</p>
+          <div class="two-col">
+            <div class="subcard">
+              <h3>Study-backed highlights</h3>
+              <ul>${highlights}</ul>
+            </div>
+            <div class="subcard">
+              <h3>Selector-facing cautions</h3>
+              <ul>${warnings}</ul>
+            </div>
+          </div>
+          <div class="impact">
+            <p class="impact-label">What this changes in the selector</p>
+            <p>${escapeHtml(profile.what_this_changes)}</p>
+          </div>
+          <div class="citation-row">${citations}</div>
+        </section>
+      `;
+    }
+
+    fetch("data/matrix_profiles.json")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to load matrix profiles");
+        }
+        return response.json();
+      })
+      .then((profiles) => {
+        const matrixRoot = document.getElementById("matrix-sections");
+        matrixRoot.innerHTML = profiles.map(renderMatrixProfile).join("");
+      })
+      .catch((error) => {
+        const matrixRoot = document.getElementById("matrix-sections");
+        matrixRoot.innerHTML = `
+          <section>
+            <p class="warning">${escapeHtml(error.message)}</p>
+          </section>
+        `;
+      });
+  </script>
 </body>
 
 </html>

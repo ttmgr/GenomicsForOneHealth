@@ -251,7 +251,7 @@
         "basecalling_goal": "max_accuracy_sup",
         "analysis_environment": "group_repo_backend"
       },
-      "result_note": "Assembly- and AMR-heavy environmental DNA routes default to SUP-style accuracy framing."
+      "result_note": "Assembly- and AMR-heavy environmental DNA routes default to SUP-style accuracy framing, with deeper sequencing still worth considering for matrix-rich samples."
     },
     {
       "sample_contexts": [
@@ -353,7 +353,7 @@
         "basecalling_goal": "max_accuracy_sup",
         "analysis_environment": "group_repo_backend"
       },
-      "result_note": "Clinical metagenome host-association routes stay metagenomic and pooled rather than isolate-centric."
+      "result_note": "Clinical metagenome host-association routes stay metagenomic and pooled rather than isolate-centric, but matrix-specific guide notes still matter for plasma, BAL, and CSF."
     },
     {
       "sample_contexts": [
@@ -374,7 +374,7 @@
         "basecalling_goal": "max_accuracy_sup",
         "analysis_environment": "group_repo_backend"
       },
-      "result_note": "Food-safety target-recovery defaults to adaptive sampling plus a high-accuracy consensus framing."
+      "result_note": "Food-safety target-recovery defaults to adaptive sampling plus a high-accuracy consensus framing, with enrichment and matched-control interpretation kept visible."
     }
   ]
 }

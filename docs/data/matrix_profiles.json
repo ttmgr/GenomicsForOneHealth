@@ -1,0 +1,881 @@
+[
+  {
+    "id": "air_aerobiome",
+    "label": "Air / aerobiome",
+    "scope": "route_attached",
+    "applies_to": {
+      "example_ids": [
+        "air_bioaerosol_example"
+      ],
+      "sample_contexts": [
+        "environmental"
+      ],
+      "material_classes": [
+        "long_read_metagenomic_dna"
+      ],
+      "target_goals": [
+        "taxonomy_profiling",
+        "functional_profiling",
+        "mag_recovery",
+        "amr_surveillance",
+        "full_environmental_pipeline"
+      ]
+    },
+    "selector_summary": "Air metagenomes are low-biomass and background-heavy, so early run monitoring matters as much as the final backend choice.",
+    "selector_warnings": [
+      "Air samples often yield far more background DNA than microbial signal.",
+      "Assembly is possible, but low biomass can make shallow runs misleading.",
+      "Collection method matters: liquid impingement tends to preserve longer fragments better than filters."
+    ],
+    "setup_biases": {
+      "kit": "Keep low-input ligation or careful rapid DNA handling visible when biomass is limited.",
+      "flowcell": "MinION stays reasonable for moderate air runs; deeper PromethION framing only fits when background loss is expected.",
+      "basecalling": "FAST is useful during the run for triage, then HAC or SUP can support the final interpretation.",
+      "analysis_environment": "Kraken2-style live profiling is valuable early, but keep a metagenomic cloud fallback visible when the signal remains sparse."
+    },
+    "fallback_workflow_ids": [
+      "epi2me_metagenomics",
+      "cz_id_long_read_metagenomics"
+    ],
+    "guide_section_id": "air-aerobiome",
+    "citations": [
+      {
+        "label": "ISME Communications 2024 air metagenomics",
+        "url": "https://academic.oup.com/ismecommun/article/4/1/ycae099/7714796"
+      },
+      {
+        "label": "PMC low-biomass air workflow note",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11287864/"
+      }
+    ],
+    "guide_highlights": [
+      "Low-biomass air samples can still support taxonomic and genome-resolved analysis, but background DNA often dominates early yield.",
+      "Liquid impingement is favored over filters when the goal is higher-molecular-weight DNA recovery.",
+      "Real-time monitoring is worth surfacing because the run can be stopped early if non-microbial reads dominate."
+    ],
+    "what_this_changes": "The selector keeps the air backend, but it foregrounds low-biomass caution, real-time monitoring, and metagenomic fallback options."
+  },
+  {
+    "id": "wetland_passive_water_metagenomics",
+    "label": "Wetland / passive water metagenomics",
+    "scope": "route_attached",
+    "applies_to": {
+      "example_ids": [
+        "wetland_passive_water_example"
+      ],
+      "sample_contexts": [
+        "environmental"
+      ],
+      "material_classes": [
+        "long_read_metagenomic_dna"
+      ],
+      "target_goals": [
+        "taxonomy_profiling",
+        "functional_profiling",
+        "mag_recovery",
+        "amr_surveillance",
+        "full_environmental_pipeline"
+      ]
+    },
+    "selector_summary": "Water-like environmental metagenomes reward longer reads and contextual AMR analysis, but depth needs rise quickly when the community is diffuse.",
+    "selector_warnings": [
+      "Environmental water matrices vary sharply in biomass and inhibitor load across sites and timepoints.",
+      "AMR and mobile-element interpretation often benefit more from contextual long reads than from shallow abundance tables alone.",
+      "Do not treat this wetland example as a universal water meta-pipeline."
+    ],
+    "setup_biases": {
+      "kit": "Favor ligation-style DNA input when the goal includes MAG recovery or contextual AMR interpretation.",
+      "flowcell": "PromethION framing becomes more defensible once deeper surveillance or cohort-style water sampling is in scope.",
+      "basecalling": "HAC works for broad profiling, while SUP is more appropriate when assembly or AMR linkage matters.",
+      "analysis_environment": "Keep the internal backend primary, but show generic metagenomics fallbacks when the water system differs from the wetland study."
+    },
+    "fallback_workflow_ids": [
+      "epi2me_metagenomics",
+      "cz_id_long_read_metagenomics"
+    ],
+    "guide_section_id": "wetland-passive-water",
+    "citations": [
+      {
+        "label": "npj AMR review on wastewater long reads",
+        "url": "https://www.nature.com/articles/s44259-025-00157-5"
+      },
+      {
+        "label": "Frontiers 2025 wastewater early-warning study",
+        "url": "https://www.frontiersin.org/journals/public-health/articles/10.3389/fpubh.2025.1675080/full"
+      }
+    ],
+    "guide_highlights": [
+      "Long reads are especially useful when ARGs need to stay linked to mobile elements and taxonomic context in water surveillance.",
+      "Environmental water systems often need more depth than the route alone suggests, especially once assembly becomes the deliverable."
+    ],
+    "what_this_changes": "The selector keeps the published wetland branch, but it adds water-surveillance depth framing and general metagenomics fallbacks."
+  },
+  {
+    "id": "soil_long_read_metagenomics",
+    "label": "Soil long-read metagenomics",
+    "scope": "route_attached",
+    "applies_to": {
+      "example_ids": [
+        "soil_unsupported_example"
+      ],
+      "sample_contexts": [
+        "environmental"
+      ],
+      "material_classes": [
+        "long_read_metagenomic_dna"
+      ],
+      "target_goals": [
+        "taxonomy_profiling",
+        "functional_profiling",
+        "mag_recovery",
+        "amr_surveillance",
+        "full_environmental_pipeline"
+      ]
+    },
+    "selector_summary": "Soil is still one of the hardest long-read metagenomic matrices: inhibitor removal, biological replication, and sequencing depth all matter more than in cleaner water systems.",
+    "selector_warnings": [
+      "Humic acids and other inhibitors can reduce pore performance even when the library technically loads.",
+      "Soil diversity saturates slowly, so unsupported results should not imply shallow depth is enough.",
+      "Hybrid polishing remains a serious option when short reads are available."
+    ],
+    "setup_biases": {
+      "kit": "Favor clean ligation-style DNA when possible, but keep low-input PCR rescue logic visible for scarce biomass.",
+      "flowcell": "PromethION-style depth framing is often more realistic for rich soil communities than a small exploratory run.",
+      "basecalling": "HAC is fine for broad profiling, but SUP becomes more attractive once assembly and MAG quality matter.",
+      "analysis_environment": "Unsupported soil routes should surface both ONT-curated metagenomics and cloud interpretation as serious fallbacks."
+    },
+    "fallback_workflow_ids": [
+      "epi2me_metagenomics",
+      "cz_id_long_read_metagenomics"
+    ],
+    "guide_section_id": "soil",
+    "citations": [
+      {
+        "label": "GigaScience 2025 forest soil long-read study",
+        "url": "https://academic.oup.com/gigascience/article/doi/10.1093/gigascience/giaf135/8300805?searchresult=1"
+      },
+      {
+        "label": "PMC 2025 automated soil workflow",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12465296/"
+      },
+      {
+        "label": "Nature Microbiology 2025 environmental genome recovery",
+        "url": "https://www.nature.com/articles/s41564-025-02062-z"
+      }
+    ],
+    "guide_highlights": [
+      "Ultra-deep soil runs recovered hundreds of MAGs, but rarefaction still showed that only a fraction of diversity was captured.",
+      "Standardized extraction matters disproportionately in soil because inhibitors and spatial heterogeneity change yield and read length quickly.",
+      "The literature keeps hybrid polishing and careful cleanup in scope rather than treating soil as a drop-in copy of simpler environmental matrices."
+    ],
+    "what_this_changes": "Unsupported soil results now explain why deeper sequencing, inhibitor cleanup, and hybrid assembly deserve more weight than a generic nearest example would suggest."
+  },
+  {
+    "id": "other_environmental_long_read",
+    "label": "Other environmental long-read metagenomics",
+    "scope": "route_attached",
+    "applies_to": {
+      "example_ids": [
+        "other_environmental_unsupported_example"
+      ],
+      "sample_contexts": [
+        "environmental"
+      ],
+      "material_classes": [
+        "long_read_metagenomic_dna"
+      ],
+      "target_goals": [
+        "taxonomy_profiling",
+        "functional_profiling",
+        "mag_recovery",
+        "amr_surveillance",
+        "full_environmental_pipeline"
+      ]
+    },
+    "selector_summary": "Unsupported environmental matrices need honest fallback framing: nearest internal examples help, but water, wastewater, and soil systems behave differently in practice.",
+    "selector_warnings": [
+      "Do not assume a generic environmental matrix will behave like air or passive water.",
+      "Wastewater-style surveillance often emphasizes ARG context and epidemiology rather than direct study-to-study backend reuse.",
+      "Matrix-specific extraction and background removal can be more important than the nominal target goal."
+    ],
+    "setup_biases": {
+      "kit": "Keep the kit choice tied to biomass, inhibitors, and whether assembly is realistic.",
+      "flowcell": "Depth framing should follow matrix complexity rather than the label alone.",
+      "basecalling": "Use HAC for broad screening, then move to SUP when consensus or assembly quality becomes central.",
+      "analysis_environment": "Hybrid-reference outcomes should keep the nearest internal example visible while surfacing general metagenomics workflows."
+    },
+    "fallback_workflow_ids": [
+      "epi2me_metagenomics",
+      "cz_id_long_read_metagenomics"
+    ],
+    "guide_section_id": "other-environmental-long-read",
+    "citations": [
+      {
+        "label": "npj AMR review on wastewater long reads",
+        "url": "https://www.nature.com/articles/s44259-025-00157-5"
+      },
+      {
+        "label": "Frontiers 2025 wastewater early-warning study",
+        "url": "https://www.frontiersin.org/journals/public-health/articles/10.3389/fpubh.2025.1675080/full"
+      }
+    ],
+    "guide_highlights": [
+      "Wastewater studies show how long reads keep ARGs and mobile elements linked through complex environmental samples.",
+      "Generic environmental routes benefit from explicit fallback workflows because matrix behavior can diverge sharply across sites."
+    ],
+    "what_this_changes": "Unsupported environmental results now stay honest about matrix mismatch and cite wastewater-style surveillance as a representative fallback context."
+  },
+  {
+    "id": "environmental_rna_virome",
+    "label": "Environmental RNA virome",
+    "scope": "route_attached",
+    "applies_to": {
+      "example_ids": [
+        "wetland_rna_virome_example",
+        "other_environmental_virome_unsupported_example"
+      ],
+      "sample_contexts": [
+        "environmental"
+      ],
+      "material_classes": [
+        "rna_virome_material"
+      ],
+      "target_goals": [
+        "viral_discovery",
+        "full_virome_pipeline"
+      ]
+    },
+    "selector_summary": "Environmental RNA virome work remains matrix-specific, so the selector should treat the wetland branch as a documented anchor rather than a universal viral backend.",
+    "selector_warnings": [
+      "RNA integrity and viral load can drive yield more than route choice alone.",
+      "Do not overclaim generic environmental virome support from a single published wetland example.",
+      "Cloud metagenomic interpretation can be useful when viral discovery extends beyond the internal branch."
+    ],
+    "setup_biases": {
+      "kit": "Keep cDNA-style RNA handling as the default unless native direct RNA is a deliberate choice.",
+      "flowcell": "RNA-specific flow cells matter only for native direct RNA, not for every RNA virome route.",
+      "basecalling": "Balanced HAC is a reasonable default, with specialized reruns only when the biology really depends on them.",
+      "analysis_environment": "When the case is unsupported, prioritize cloud metagenomic interpretation before forcing a false exact match."
+    },
+    "fallback_workflow_ids": [
+      "cz_id_long_read_metagenomics"
+    ],
+    "guide_section_id": "environmental-rna-virome",
+    "citations": [
+      {
+        "label": "Water Research 2024 wastewater viral surveillance",
+        "url": "https://www.sciencedirect.com/science/article/abs/pii/S0043135424005244"
+      }
+    ],
+    "guide_highlights": [
+      "Environmental viral surveillance often shifts library and analysis design once the matrix fragments nucleic acids heavily.",
+      "The published literature still supports matrix-specific viral workflows more strongly than a single generic RNA virome recipe."
+    ],
+    "what_this_changes": "The selector keeps the wetland RNA branch but explains that unsupported environmental viromes should lean more on fallbacks than on exact backend claims."
+  },
+  {
+    "id": "edna_12s_water",
+    "label": "Water-derived 12S eDNA",
+    "scope": "route_attached",
+    "applies_to": {
+      "example_ids": [
+        "wetland_edna_example",
+        "zambia_water_edna_example",
+        "other_edna_unsupported_example"
+      ],
+      "sample_contexts": [
+        "environmental"
+      ],
+      "material_classes": [
+        "edna_12s_amplicon"
+      ],
+      "target_goals": [
+        "biodiversity_metabarcoding",
+        "host_range_inference",
+        "full_amplicon_pipeline"
+      ]
+    },
+    "selector_summary": "Water-derived 12S routes should stay amplicon-first and lower-throughput, even when the surrounding project also uses shotgun nanopore workflows elsewhere.",
+    "selector_warnings": [
+      "Targeted 12S interpretation should not inherit shotgun metagenomic assembly expectations.",
+      "Unsupported 12S contexts are best handled as approximate amplicon references, not as false exact replacements.",
+      "Pooled amplicons still need barcode- and primer-aware cleanup."
+    ],
+    "setup_biases": {
+      "kit": "Keep amplicon kits and primer-aware cleanup central to the recommendation.",
+      "flowcell": "Use lighter throughput assumptions than shotgun metagenomics unless the pool is unusually large.",
+      "basecalling": "Balanced HAC is generally enough for targeted barcode-aware amplicon work.",
+      "analysis_environment": "Use EPI2ME amplicon workflows only as a related ONT reference, not as an exact 12S replacement."
+    },
+    "fallback_workflow_ids": [
+      "epi2me_amplicon"
+    ],
+    "guide_section_id": "edna-12s-water",
+    "citations": [
+      {
+        "label": "Water Research 2024 short-amplicon wastewater surveillance",
+        "url": "https://www.sciencedirect.com/science/article/abs/pii/S0043135424005244"
+      }
+    ],
+    "guide_highlights": [
+      "Shorter targeted environmental surveillance strategies reinforce why amplicon routes should not be forced into shotgun defaults.",
+      "Water-derived amplicon work benefits more from careful pool handling and cleanup than from deeper untargeted sequencing."
+    ],
+    "what_this_changes": "The selector keeps 12S routes lighter-weight and frames external ONT amplicon workflows as related references rather than exact substitutes."
+  },
+  {
+    "id": "single_isolate_long_read",
+    "label": "Single-isolate long-read genomics",
+    "scope": "route_attached",
+    "applies_to": {
+      "example_ids": [
+        "amr_nanopore_example",
+        "other_single_isolate_example"
+      ],
+      "sample_contexts": [
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "single_isolate_long_read_dna"
+      ],
+      "target_goals": [
+        "complete_genome_assembly",
+        "annotation",
+        "hybrid_assembly",
+        "amr_virulence_profiling",
+        "full_isolate_pipeline"
+      ]
+    },
+    "selector_summary": "Single-isolate nanopore data are now strong enough for plasmid-aware AMR interpretation and high-quality assemblies, especially when ligation prep and SUP-style consensus are in scope.",
+    "selector_warnings": [
+      "Plasmid context is often the main reason long reads outperform short-read-only isolate workflows.",
+      "Hybrid polishing still remains a valid upgrade path when short reads are available.",
+      "Do not collapse isolate assembly logic into metagenomic fallback tooling."
+    ],
+    "setup_biases": {
+      "kit": "Ligation-style DNA prep stays the clean default when closed or high-confidence assemblies matter.",
+      "flowcell": "A standard MinION-style DNA run is usually enough unless the isolate set scales into larger batches.",
+      "basecalling": "SUP is worth keeping visible because assembly and AMR interpretation benefit directly from better per-read accuracy.",
+      "analysis_environment": "Keep the internal isolate backend primary, with EPI2ME bacterial genomes as the generic ONT-maintained alternative."
+    },
+    "fallback_workflow_ids": [
+      "epi2me_bacterial_genomes"
+    ],
+    "guide_section_id": "single-isolate-long-read",
+    "citations": [
+      {
+        "label": "Nature Communications 2024 plasmid resistance study",
+        "url": "https://www.nature.com/articles/s41467-024-49851-4"
+      },
+      {
+        "label": "PMC 2025 AMR surveillance in livestock isolates",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12382671/"
+      }
+    ],
+    "guide_highlights": [
+      "Long reads keep AMR genes linked to plasmids and mobile elements in a way short-read-only assemblies often lose.",
+      "Recent isolate work reinforces nanopore as a production-ready option for fast AMR characterization rather than only a pilot technology."
+    ],
+    "what_this_changes": "The selector keeps single-isolate workflows internal-first, but it now explains why long-read isolate genomics is especially strong for plasmid-aware AMR interpretation."
+  },
+  {
+    "id": "barcoded_isolate_long_read",
+    "label": "Barcoded isolate long-read genomics",
+    "scope": "route_attached",
+    "applies_to": {
+      "example_ids": [
+        "cre_plasmid_example",
+        "other_barcoded_isolate_example"
+      ],
+      "sample_contexts": [
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "barcoded_isolate_long_read_dna"
+      ],
+      "target_goals": [
+        "genome_assembly_annotation",
+        "amr_virulence_profiling",
+        "phylogenetics_outbreak_tracking",
+        "plasmid_reconstruction",
+        "full_isolate_pipeline"
+      ]
+    },
+    "selector_summary": "Barcoded isolate routes benefit from the same plasmid-aware long-read context as single isolates, but they also depend on clean demultiplexing and per-barcode assembly boundaries.",
+    "selector_warnings": [
+      "Per-barcode separation quality directly affects outbreak and plasmid comparisons.",
+      "Adaptive enrichment and plasmid-focused depth can help, but not if barcodes stay mixed downstream.",
+      "Unsupported barcoded isolate routes should still remain isolate-centric rather than drifting into metagenomic tooling."
+    ],
+    "setup_biases": {
+      "kit": "Native or rapid barcoding should keep demultiplexing and barcode trimming visible before any backend steps start.",
+      "flowcell": "Flow cell choice follows batch size more than biology here.",
+      "basecalling": "SUP remains useful when plasmid reconstruction or outbreak comparison is the deliverable.",
+      "analysis_environment": "The internal CRE-style backend stays primary, with EPI2ME bacterial genomes as the broader alternative."
+    },
+    "fallback_workflow_ids": [
+      "epi2me_bacterial_genomes"
+    ],
+    "guide_section_id": "barcoded-isolate-long-read",
+    "citations": [
+      {
+        "label": "Nature Communications 2024 plasmid resistance study",
+        "url": "https://www.nature.com/articles/s41467-024-49851-4"
+      },
+      {
+        "label": "PMC 2024 adaptive sampling for plasmid enrichment",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10949517/"
+      }
+    ],
+    "guide_highlights": [
+      "Barcoded isolate workflows still depend on long-read plasmid context for resistance interpretation.",
+      "Adaptive sampling can enrich plasmids, but it does not replace correct per-barcode separation and polishing."
+    ],
+    "what_this_changes": "The selector now explains barcoded isolate results in terms of plasmid context and demultiplexing quality, not only the nearest internal example."
+  },
+  {
+    "id": "clinical_metagenome_host_association",
+    "label": "Clinical metagenome host association",
+    "scope": "route_attached",
+    "applies_to": {
+      "example_ids": [
+        "amr_host_association_example"
+      ],
+      "sample_contexts": [
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "clinical_metagenome"
+      ],
+      "target_goals": [
+        "amr_host_association",
+        "full_host_association_pipeline"
+      ]
+    },
+    "selector_summary": "Clinical metagenomes are not one matrix: plasma, BAL, and CSF each need their own host-depletion and interpretation logic even when the selector still anchors to the published host-association backend.",
+    "selector_warnings": [
+      "Direct clinical metagenomes often require stronger host depletion than environmental routes.",
+      "Plasma cfDNA, BAL, and CSF remain guide-only variants in this version of the selector.",
+      "Cloud metagenomic interpretation can be more useful than forcing every clinical matrix into one internal route."
+    ],
+    "setup_biases": {
+      "kit": "Keep pooled metagenomic handling visible, but note that short-fragment clinical matrices can require specialized prep outside the current route set.",
+      "flowcell": "Throughput needs depend more on host background than on the route label alone.",
+      "basecalling": "SUP becomes attractive when host-depleted signal is scarce and per-read confidence matters.",
+      "analysis_environment": "Prefer CZ ID first as the external cloud alternative, with EPI2ME metagenomics second."
+    },
+    "fallback_workflow_ids": [
+      "cz_id_long_read_metagenomics",
+      "epi2me_metagenomics"
+    ],
+    "guide_section_id": "clinical-metagenome-host-association",
+    "citations": [
+      {
+        "label": "PMC 2025 plasma cfDNA nanopore assay",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12054037/"
+      },
+      {
+        "label": "PMC 2025 BAL targeted sequencing study",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11879936/"
+      },
+      {
+        "label": "Scientific Reports 2025 CSF nanopore mNGS study",
+        "url": "https://www.nature.com/articles/s41598-025-87858-z"
+      }
+    ],
+    "guide_highlights": [
+      "Plasma, BAL, and CSF each have their own host-background and fragment-length constraints.",
+      "The internal host-association backend remains useful, but the literature argues against treating all clinical metagenomes as one uniform input class."
+    ],
+    "what_this_changes": "The selector keeps the internal host-association backend, but it now says clearly that plasma, BAL, and CSF remain matrix-specific guide sections rather than route choices."
+  },
+  {
+    "id": "food_safety_target_recovery",
+    "label": "Food-safety target recovery",
+    "scope": "route_attached",
+    "applies_to": {
+      "example_ids": [
+        "listeria_adaptive_sampling_example"
+      ],
+      "sample_contexts": [
+        "food_safety"
+      ],
+      "material_classes": [
+        "listeria_enrichment_material"
+      ],
+      "target_goals": [
+        "listeria_target_recovery",
+        "as_vs_native_comparison",
+        "recovered_target_amr_profiling",
+        "full_food_safety_pipeline"
+      ]
+    },
+    "selector_summary": "Food-safety nanopore workflows are strongest when enrichment, adaptive sampling, and isolate-quality reconstruction are kept explicit rather than hidden behind generic metagenomics language.",
+    "selector_warnings": [
+      "Adaptive sampling results are easier to interpret with a matched control or baseline.",
+      "Enrichment culture changes the matrix assumptions compared with direct environmental metagenomes.",
+      "Hybrid confirmation remains a reasonable expectation for validated food-safety reporting."
+    ],
+    "setup_biases": {
+      "kit": "Keep enrichment and adaptive-sampling framing explicit in the setup note.",
+      "flowcell": "Standard MinION-style throughput is usually enough once the target is enriched.",
+      "basecalling": "SUP is a sensible default when the goal includes cluster tracking or recovered-target AMR profiling.",
+      "analysis_environment": "Keep the internal backend primary and treat external workflows only as secondary references."
+    },
+    "fallback_workflow_ids": [],
+    "guide_section_id": "food-safety-enrichment",
+    "citations": [
+      {
+        "label": "Annual Reviews 2025 nanopore food safety review",
+        "url": "https://www.annualreviews.org/content/journals/10.1146/annurev-food-072023-034549"
+      },
+      {
+        "label": "Journal of Clinical Microbiology 2024 Listeria WGS study",
+        "url": "https://journals.asm.org/doi/10.1128/jcm.01083-24"
+      }
+    ],
+    "guide_highlights": [
+      "Recent food-safety reviews reinforce adaptive sampling as a practical enrichment strategy in complex food matrices.",
+      "Modern ONT chemistry is now good enough for foodborne pathogen surveillance and cluster tracking workflows such as Listeria."
+    ],
+    "what_this_changes": "The selector stays internal-first for food safety, but it now explains why adaptive sampling and enrichment are central to the route."
+  },
+  {
+    "id": "wastewater_surveillance",
+    "label": "Wastewater and environmental surveillance",
+    "scope": "guide_only",
+    "applies_to": {
+      "example_ids": [],
+      "sample_contexts": [
+        "environmental"
+      ],
+      "material_classes": [
+        "long_read_metagenomic_dna"
+      ],
+      "target_goals": [
+        "taxonomy_profiling",
+        "functional_profiling",
+        "amr_surveillance",
+        "full_environmental_pipeline"
+      ]
+    },
+    "selector_summary": "Wastewater is not a first-class route yet, but it is a strong reference case for unsupported environmental surveillance and ARG contextualization.",
+    "selector_warnings": [
+      "Wastewater surveillance emphasizes temporal sampling, ARG linkage, and matrix-specific cleanup.",
+      "Early-warning use cases can justify cloud interpretation even when the internal repo does not have an exact backend."
+    ],
+    "setup_biases": {
+      "kit": "Favor ligation-style metagenomic prep when contextual ARG analysis matters.",
+      "flowcell": "Depth needs can rise quickly across treatment stages and time series.",
+      "basecalling": "HAC is serviceable for surveillance; SUP becomes more relevant when assembly and linkage matter.",
+      "analysis_environment": "Show both ONT-curated metagenomics and cloud interpretation as valid starting points."
+    },
+    "fallback_workflow_ids": [
+      "epi2me_metagenomics",
+      "cz_id_long_read_metagenomics"
+    ],
+    "guide_section_id": "wastewater-surveillance",
+    "citations": [
+      {
+        "label": "npj AMR review on wastewater long reads",
+        "url": "https://www.nature.com/articles/s44259-025-00157-5"
+      },
+      {
+        "label": "Frontiers 2025 wastewater early-warning study",
+        "url": "https://www.frontiersin.org/journals/public-health/articles/10.3389/fpubh.2025.1675080/full"
+      },
+      {
+        "label": "Water Research 2024 wastewater viral surveillance",
+        "url": "https://www.sciencedirect.com/science/article/abs/pii/S0043135424005244"
+      }
+    ],
+    "guide_highlights": [
+      "Wastewater long reads are especially useful for linking ARGs to mobile elements across treatment stages.",
+      "Community signals can lead metagenomic peaks, which is why surveillance framing differs from one-off environmental profiling.",
+      "Shorter targeted strategies remain relevant for fragmented viral material in water matrices."
+    ],
+    "what_this_changes": "Unsupported environmental results use wastewater as a representative cited matrix instead of pretending every environmental sample matches an internal backend."
+  },
+  {
+    "id": "blood_plasma_cfdna",
+    "label": "Blood plasma cfDNA",
+    "scope": "guide_only",
+    "applies_to": {
+      "example_ids": [],
+      "sample_contexts": [
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "clinical_metagenome"
+      ],
+      "target_goals": [
+        "amr_host_association",
+        "full_host_association_pipeline"
+      ]
+    },
+    "selector_summary": "Blood plasma cfDNA is a short-fragment clinical matrix and should not be treated like a standard long-fragment metagenome.",
+    "selector_warnings": [
+      "Specialized short-fragment library preparation is required.",
+      "Host depletion and strict downstream filtering are central, not optional."
+    ],
+    "setup_biases": {
+      "kit": "Use cfDNA-capable prep rather than default long-fragment ligation logic.",
+      "flowcell": "Higher-throughput runs are often justified once microbial cfDNA is rare relative to host background.",
+      "basecalling": "High-accuracy basecalling helps when the microbial signal is sparse.",
+      "analysis_environment": "Cloud or hybrid interpretation becomes attractive because strict host filtering dominates the workflow."
+    },
+    "fallback_workflow_ids": [
+      "cz_id_long_read_metagenomics"
+    ],
+    "guide_section_id": "blood-plasma-cfdna",
+    "citations": [
+      {
+        "label": "PMC 2025 plasma cfDNA nanopore assay",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12054037/"
+      },
+      {
+        "label": "Frontiers 2025 bloodstream infection review",
+        "url": "https://www.frontiersin.org/journals/microbiology/articles/10.3389/fmicb.2025.1554965/full"
+      }
+    ],
+    "guide_highlights": [
+      "Plasma cfDNA workflows rely on short-fragment retention, not standard HMW DNA assumptions.",
+      "Turnaround can still be clinically meaningful, but only after aggressive host depletion and strict alignment filtering."
+    ],
+    "what_this_changes": "This remains guide-only so the selector does not falsely imply that plasma cfDNA is covered by the current internal host-association backend."
+  },
+  {
+    "id": "positive_blood_culture",
+    "label": "Positive blood culture",
+    "scope": "guide_only",
+    "applies_to": {
+      "example_ids": [],
+      "sample_contexts": [
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "single_isolate_long_read_dna"
+      ],
+      "target_goals": [
+        "complete_genome_assembly",
+        "amr_virulence_profiling"
+      ]
+    },
+    "selector_summary": "Positive blood culture sits between metagenomics and isolate work: enrichment removes much of the host-background problem while preserving rapid plasmid-aware characterization.",
+    "selector_warnings": [
+      "The culture bottle already changes the matrix and enrichment state.",
+      "This is not equivalent to direct plasma sequencing."
+    ],
+    "setup_biases": {
+      "kit": "Standard rapid or ligation DNA kits are more realistic here than cfDNA prep.",
+      "flowcell": "MinION-style throughput is often enough once the culture is positive.",
+      "basecalling": "HAC or SUP both make sense depending on how much assembly quality is required.",
+      "analysis_environment": "A bacterial-genomes workflow is often a better reference than a pure metagenomics workflow."
+    },
+    "fallback_workflow_ids": [
+      "epi2me_bacterial_genomes"
+    ],
+    "guide_section_id": "positive-blood-culture",
+    "citations": [
+      {
+        "label": "Scientific Reports 2026 positive blood culture ONT study",
+        "url": "https://www.nature.com/articles/s41598-026-41247-2"
+      },
+      {
+        "label": "Frontiers 2025 bloodstream infection review",
+        "url": "https://www.frontiersin.org/journals/microbiology/articles/10.3389/fmicb.2025.1554965/full"
+      }
+    ],
+    "guide_highlights": [
+      "Positive blood culture sequencing avoids the extreme host-depletion burden of direct plasma workflows.",
+      "Recent studies support rapid bacterial and plasmid characterization before conventional AMR phenotyping finishes."
+    ],
+    "what_this_changes": "The guide separates positive blood cultures from plasma so the selector does not blur two very different clinical workflows."
+  },
+  {
+    "id": "bal_respiratory_metagenomics",
+    "label": "BAL / respiratory metagenomics",
+    "scope": "guide_only",
+    "applies_to": {
+      "example_ids": [],
+      "sample_contexts": [
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "clinical_metagenome"
+      ],
+      "target_goals": [
+        "amr_host_association",
+        "full_host_association_pipeline"
+      ]
+    },
+    "selector_summary": "BAL and lower-respiratory metagenomics are guide-only because host background, prior antibiotic exposure, and targeted-vs-shotgun choices change the workflow materially.",
+    "selector_warnings": [
+      "Respiratory samples can remain clinically informative even after antibiotic exposure.",
+      "Specificity can fall when commensals or upper-airway organisms dominate."
+    ],
+    "setup_biases": {
+      "kit": "Rapid DNA routes are plausible, but host depletion remains central.",
+      "flowcell": "Throughput needs depend on how much host DNA survives depletion.",
+      "basecalling": "High-accuracy models help when differentiating low-abundance respiratory organisms from noise.",
+      "analysis_environment": "Cloud metagenomic interpretation is often a sensible complement to internal host-association logic."
+    },
+    "fallback_workflow_ids": [
+      "cz_id_long_read_metagenomics",
+      "epi2me_metagenomics"
+    ],
+    "guide_section_id": "bal-respiratory",
+    "citations": [
+      {
+        "label": "PMC 2025 BAL targeted sequencing study",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11879936/"
+      },
+      {
+        "label": "Frontiers 2025 bloodstream and respiratory turnaround review",
+        "url": "https://www.frontiersin.org/journals/microbiology/articles/10.3389/fmicb.2025.1554965/full"
+      }
+    ],
+    "guide_highlights": [
+      "Respiratory nanopore workflows can stay clinically sensitive even when conventional culture loses sensitivity after antibiotics.",
+      "Specificity remains the harder problem, which is why careful interpretation and host depletion matter."
+    ],
+    "what_this_changes": "The selector points respiratory users to a guide section instead of pretending BAL is already a dedicated route."
+  },
+  {
+    "id": "csf_metagenomics",
+    "label": "CSF metagenomics",
+    "scope": "guide_only",
+    "applies_to": {
+      "example_ids": [],
+      "sample_contexts": [
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "clinical_metagenome"
+      ],
+      "target_goals": [
+        "amr_host_association",
+        "full_host_association_pipeline"
+      ]
+    },
+    "selector_summary": "CSF remains a sparse, guide-only clinical matrix because sensitivity and false-positive control are both harder than in richer isolate or culture-derived samples.",
+    "selector_warnings": [
+      "Very low biomass raises the cost of false positives.",
+      "Alignment-based interpretation often stays more defensible than broad assembly expectations."
+    ],
+    "setup_biases": {
+      "kit": "Low-input or concentrated workflows are often required.",
+      "flowcell": "Run size should follow yield expectations rather than generic clinical defaults.",
+      "basecalling": "High-accuracy basecalling is worth the compute cost when the signal is sparse.",
+      "analysis_environment": "Cloud or hybrid metagenomic interpretation can help, but only with strict filtering logic."
+    },
+    "fallback_workflow_ids": [
+      "cz_id_long_read_metagenomics"
+    ],
+    "guide_section_id": "csf",
+    "citations": [
+      {
+        "label": "Scientific Reports 2025 CSF nanopore mNGS study",
+        "url": "https://www.nature.com/articles/s41598-025-87858-z"
+      }
+    ],
+    "guide_highlights": [
+      "CSF sequencing can raise positivity beyond culture alone, but sparse signal makes interpretation conservative by necessity.",
+      "The literature emphasizes diagnostic lift and filtering discipline more than assembly-heavy outputs."
+    ],
+    "what_this_changes": "The selector keeps CSF as a guide-only clinical matrix instead of folding it into a generic internal host-association route."
+  },
+  {
+    "id": "gut_clinical_metagenomics",
+    "label": "Gut clinical metagenomics",
+    "scope": "guide_only",
+    "applies_to": {
+      "example_ids": [],
+      "sample_contexts": [
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "clinical_metagenome"
+      ],
+      "target_goals": [
+        "amr_host_association",
+        "full_host_association_pipeline"
+      ]
+    },
+    "selector_summary": "Gut clinical metagenomes are guide-only for now because inhibitor load, host background, and pathogen discovery framing differ from the current internal host-association example.",
+    "selector_warnings": [
+      "Stool and gut-associated samples often need extra cleanup for inhibitors.",
+      "Unexpected pathogens can be clinically useful even when culture misses them."
+    ],
+    "setup_biases": {
+      "kit": "Standard metagenomic prep is possible, but cleanup quality is often decisive.",
+      "flowcell": "Depth needs depend on inhibitor burden and host background.",
+      "basecalling": "Balanced or high-accuracy basecalling both make sense depending on whether broad discovery or confident interpretation is the priority.",
+      "analysis_environment": "General metagenomics fallbacks are more appropriate than claiming an exact internal backend."
+    },
+    "fallback_workflow_ids": [
+      "cz_id_long_read_metagenomics",
+      "epi2me_metagenomics"
+    ],
+    "guide_section_id": "gut-clinical-metagenomics",
+    "citations": [
+      {
+        "label": "PMC 2025 gut clinical metagenomics review",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12562794/"
+      }
+    ],
+    "guide_highlights": [
+      "Gut nanopore metagenomics is increasingly clinically useful for rare or unexpected pathogens missed by standard culture.",
+      "Cleanup and host-depletion logic can matter more than the nominal target once stool-associated inhibitors are present."
+    ],
+    "what_this_changes": "The selector keeps gut clinical metagenomics in the guide so unsupported users still get concrete matrix-specific advice."
+  },
+  {
+    "id": "veterinary_field_surveillance",
+    "label": "Veterinary field surveillance",
+    "scope": "guide_only",
+    "applies_to": {
+      "example_ids": [],
+      "sample_contexts": [
+        "environmental",
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "long_read_metagenomic_dna",
+        "single_isolate_long_read_dna"
+      ],
+      "target_goals": [
+        "taxonomy_profiling",
+        "amr_surveillance",
+        "complete_genome_assembly"
+      ]
+    },
+    "selector_summary": "Veterinary field surveillance is guide-only in this version, but it is a useful reference for low-infrastructure nanopore deployments and mixed surveillance objectives.",
+    "selector_warnings": [
+      "Field practicality can matter as much as pure throughput or consensus quality.",
+      "Mixed surveillance goals often blur environmental and isolate workflows."
+    ],
+    "setup_biases": {
+      "kit": "Favor practical prep routes when field deployment and turnaround drive the experiment.",
+      "flowcell": "Portable MinION-style runs fit the cited use cases better than high-throughput facility assumptions.",
+      "basecalling": "FAST and HAC remain especially useful where live monitoring matters.",
+      "analysis_environment": "Use the guide to choose between environmental and isolate fallbacks rather than assuming a single backend."
+    },
+    "fallback_workflow_ids": [
+      "epi2me_metagenomics",
+      "epi2me_bacterial_genomes"
+    ],
+    "guide_section_id": "veterinary-field-surveillance",
+    "citations": [
+      {
+        "label": "Frontiers 2025 veterinary nanopore review",
+        "url": "https://www.frontiersin.org/journals/cellular-and-infection-microbiology/articles/10.3389/fcimb.2025.1701570/full"
+      }
+    ],
+    "guide_highlights": [
+      "Veterinary nanopore use cases emphasize field deployment, zoonotic surveillance, and AMR monitoring under practical constraints.",
+      "Portable workflows matter here, even when the selector itself stays centered on internal repository backends."
+    ],
+    "what_this_changes": "The guide now covers veterinary field use without expanding the main selector beyond the current internal routes."
+  }
+]
