@@ -191,7 +191,7 @@
       return routeComplete(questionSpec, answers, datasets);
     }
 
-    if (page.page_type === "conditions" || pageId === "conditions") {
+    if (page.page_type === "conditions") {
       return routeComplete(questionSpec, answers, datasets);
     }
 
@@ -266,31 +266,6 @@
     return sequence[sequence.length - 1] || "sample";
   }
 
-  function resolveRouteExample(answers, datasets) {
-    return resolveSelectedExample(answers, datasets);
-  }
-
-  function matchesProfileApplicability(profile, answers, example) {
-    const appliesTo = profile?.applies_to || {};
-
-    if (example && Array.isArray(appliesTo.example_ids) && appliesTo.example_ids.includes(example.id)) {
-      return true;
-    }
-
-    const checks = [
-      ["sample_contexts", answers.sample_context],
-      ["material_classes", answers.material_class],
-      ["target_goals", answers.target_goal]
-    ];
-
-    return checks.every(([field, answerValue]) => {
-      if (!Array.isArray(appliesTo[field]) || appliesTo[field].length === 0) {
-        return true;
-      }
-      return appliesTo[field].includes(answerValue);
-    });
-  }
-
   function resolveMatrixProfile(answers, datasets, example) {
     if (!example) {
       return null;
@@ -300,7 +275,7 @@
       return findById(datasets.matrixProfiles, example.matrix_profile_id);
     }
 
-    return (datasets.matrixProfiles || []).find((profile) => matchesProfileApplicability(profile, answers, example)) || null;
+    return null;
   }
 
   function findMatchingRouteDefault(answers, datasets) {
@@ -671,22 +646,6 @@
       preprocessing,
       warnings: setupEffects.warnings,
       docs,
-      ont_notes: uniqueLinks([
-        {
-          label: "Nanopore guide",
-          url: "nanopore-guide.html"
-        },
-        matrixProfile?.guide_section_id
-          ? {
-              label: `${matrixProfile.label} matrix notes`,
-              url: `nanopore-guide.html#${matrixProfile.guide_section_id}`
-            }
-          : null,
-        ...(backend.pipeline.setup_docs || [])
-      ].filter(Boolean)).map((note) => ({
-        title: note.label,
-        url: note.url
-      })),
       preferred_tool_override: setupEffects.preferredTool,
       kit_consequences: nanoporeProfile.kit?.consequences
         ? {
@@ -712,11 +671,6 @@
     getEligibleExamples,
     needsExampleSelection,
     resolveSelectedExample,
-    resolveRouteExample,
-    resolveMatrixProfile,
-    resolveNanoporeProfile,
-    resolveExternalFallbacks,
-    applySetupHeuristics,
     getWizardPageSequence,
     canReachPage,
     firstReachablePage,

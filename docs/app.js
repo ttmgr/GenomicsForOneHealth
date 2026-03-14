@@ -210,18 +210,18 @@ function updateStatusBanner(pageId) {
 
   if (["setup", "kit", "flowcell", "basecalling", "analysis", "conditions"].includes(pageId)) {
     statusBanner.className = "status-banner is-success";
-    statusBanner.textContent = "Setup pages refine kit, flow cell, basecalling, and analysis environment without changing the selected backend.";
+    statusBanner.textContent = "Your workflow is selected. These pages help you choose the right Nanopore sequencing setup.";
     return;
   }
 
   if (pageId === "example") {
     statusBanner.className = "status-banner is-success";
-    statusBanner.textContent = "Choose the closest published study context. Unsupported options stay visible instead of being hidden behind a false exact match.";
+    statusBanner.textContent = "Multiple published workflows match your description. Pick the one closest to your project.";
     return;
   }
 
   statusBanner.className = "status-banner is-idle";
-  statusBanner.textContent = "Start sparse: sample, material, and target first. Repo-specific backends appear later.";
+  statusBanner.textContent = "Start by describing your samples. Published workflows will appear once the picture is clear enough.";
 }
 
 function renderProgress(pageId) {
@@ -388,13 +388,13 @@ function renderSetupIntroPage() {
     <section class="wizard-page">
       ${renderPageHeader("setup")}
       <div class="setup-intro">
-        <p class="setup-route-label">Route defined</p>
+        <p class="setup-route-label">Workflow matched</p>
         <h3>${escapeHtml(routeLabelSummary())}</h3>
         <p>
-          ${escapeHtml(example ? `Closest published example: ${example.label}.` : "The route is ready for setup refinement.")}
+          ${escapeHtml(example ? `Matched workflow: ${example.label}.` : "Ready for sequencing setup.")}
         </p>
         <p>
-          Next, refine the Nanopore setup and analysis environment. These pages do not change the selected backend.
+          Now choose how you want to sequence. The next pages cover library prep kit, flow cell, basecalling, and analysis environment.
         </p>
         <div class="setup-links">
           ${setupGuideLink()}
@@ -453,7 +453,7 @@ function renderConditionsPage() {
     <section class="wizard-page">
       ${renderPageHeader("conditions")}
       <div class="condition-note">
-        <p>Keep this page short. Leave any toggle untouched if you do not know the answer.</p>
+        <p>Optional fine-tuning. These toggles adjust warnings and recommendations. Skip any you are unsure about.</p>
         ${setupGuideLink()}
       </div>
       ${sectionNames
@@ -559,12 +559,12 @@ function renderCommands(commands) {
 
 function renderExternalWorkflows(recommendation) {
   if (!recommendation.external_fallbacks.length) {
-    return `<p class="muted">No external workflow options were surfaced for this route.</p>`;
+    return "";
   }
 
   const heading = recommendation.status === "unsupported"
-    ? "External fallback options"
-    : "Alternative analysis environments";
+    ? "Alternative workflows (no exact match)"
+    : "Related external pipelines";
 
   return `
     <section class="result-block">
@@ -577,7 +577,7 @@ function renderExternalWorkflows(recommendation) {
                 <div class="external-head">
                   <h4>${escapeHtml(workflow.label)}</h4>
                   <span class="option-badge ${workflow.emphasis === "fallback" ? "is-warning" : ""}">
-                    ${workflow.emphasis === "fallback" ? "Fallback" : "Alternative"}
+                    ${workflow.emphasis === "fallback" ? "No direct match" : "Alternative"}
                   </span>
                 </div>
                 <p>${escapeHtml((workflow.recommended_when || [])[0] || "")}</p>
@@ -591,24 +591,35 @@ function renderExternalWorkflows(recommendation) {
   `;
 }
 
-function renderMatrixNotes(recommendation) {
+function renderEvidenceSection(recommendation) {
   if (!recommendation.matrix_notes) {
     return "";
   }
 
-  const setupBiasRows = [
-    ["Kit framing", recommendation.matrix_notes.setup_biases.kit],
-    ["Flow cell framing", recommendation.matrix_notes.setup_biases.flowcell],
-    ["Basecalling framing", recommendation.matrix_notes.setup_biases.basecalling],
-    ["Analysis environment", recommendation.matrix_notes.setup_biases.analysis_environment]
-  ].filter(([, value]) => Boolean(value));
-
   return `
-    <section class="result-block">
+    <section class="result-block evidence-section">
       <div class="result-block-head">
-        <h3>Matrix notes</h3>
+        <h3>Sample-specific guidance</h3>
         <span class="option-badge">${escapeHtml(recommendation.matrix_notes.label)}</span>
       </div>
+      ${
+        recommendation.literature_links.length > 0
+          ? `
+            <div class="key-references">
+              <h4>Key references</h4>
+              <ul class="citation-list">
+                ${recommendation.literature_links
+                  .map(
+                    (link) => `
+                      <li><a class="citation-link" href="${escapeHtml(linkHref(link.url))}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a></li>
+                    `
+                  )
+                  .join("")}
+              </ul>
+            </div>
+          `
+          : ""
+      }
       <p>${escapeHtml(recommendation.matrix_notes.summary)}</p>
       ${
         recommendation.matrix_notes.warnings.length > 0
@@ -621,12 +632,6 @@ function renderMatrixNotes(recommendation) {
           `
           : ""
       }
-      <div class="matrix-bias-panel">
-        <h4>How this shifts the setup advice</h4>
-        ${renderDefinitionList(setupBiasRows)}
-      </div>
-      <p class="muted"><strong>What this changes in the selector.</strong> ${escapeHtml(recommendation.matrix_notes.what_this_changes)}</p>
-      ${renderInlineLinks(recommendation.literature_links)}
     </section>
   `;
 }
@@ -655,6 +660,15 @@ function renderResultsPage() {
     ["Additional preprocessing", recommendation.preprocessing.additional_preprocessing]
   ].filter(([, value]) => Boolean(value));
 
+  const setupBiasRows = recommendation.matrix_notes
+    ? [
+        ["Kit framing", recommendation.matrix_notes.setup_biases.kit],
+        ["Flow cell framing", recommendation.matrix_notes.setup_biases.flowcell],
+        ["Basecalling framing", recommendation.matrix_notes.setup_biases.basecalling],
+        ["Analysis environment", recommendation.matrix_notes.setup_biases.analysis_environment]
+      ].filter(([, value]) => Boolean(value))
+    : [];
+
   const tools = recommendation.backend.playbook.required_tools || [];
   const databases = recommendation.backend.playbook.required_databases || [];
 
@@ -662,62 +676,28 @@ function renderResultsPage() {
     <section class="wizard-page results-page">
       ${renderPageHeader("results")}
 
-      <section class="result-hero">
-        <div>
-          <p class="result-label">Recommendation status</p>
-          <h3>${escapeHtml(recommendation.status_label)}</h3>
-          <p class="result-text">${escapeHtml(recommendation.explanation)}</p>
-        </div>
-        <span class="result-chip ${recommendation.status === "unsupported" ? "is-warning" : "is-success"}">${escapeHtml(recommendation.status_label)}</span>
-      </section>
-
-      <section class="summary-grid">
-        <article class="summary-card">
-          <p class="summary-label">Generalized route</p>
+      <section class="match-comparison">
+        <article class="match-column match-yours">
+          <p class="match-column-label">Your project</p>
           <h3>${escapeHtml(routeLabelSummary())}</h3>
-          <p>${escapeHtml(recommendation.route.summary)}</p>
+          <dl class="match-facts">
+            <div class="match-fact"><dt>Sample</dt><dd>${escapeHtml(labelForValue("sample_context", answers.sample_context))}</dd></div>
+            <div class="match-fact"><dt>Material</dt><dd>${escapeHtml(labelForValue("material_class", answers.material_class))}</dd></div>
+            <div class="match-fact"><dt>Goal</dt><dd>${escapeHtml(labelForValue("target_goal", answers.target_goal))}</dd></div>
+          </dl>
+          <p class="match-setup">${escapeHtml(recommendation.setup_summary.recommendation)}</p>
+          <p class="match-env">Environment: ${escapeHtml(recommendation.analysis_environment.label)}</p>
         </article>
-        <article class="summary-card">
-          <p class="summary-label">Published example backend</p>
+        <div class="match-arrow">
+          <span class="result-chip ${recommendation.status === "unsupported" ? "is-warning" : "is-success"}">${escapeHtml(recommendation.status_label)}</span>
+        </div>
+        <article class="match-column match-ours">
+          <p class="match-column-label">Matched workflow</p>
           <h3>${escapeHtml(backendTitle)}</h3>
-          <p>${escapeHtml(recommendation.example.selection_help || recommendation.example.label)}</p>
+          <p class="match-explanation">${escapeHtml(recommendation.example.selection_help || recommendation.explanation)}</p>
+          ${recommendation.example.unsupported_reason ? `<p class="warning-inline">${escapeHtml(recommendation.example.unsupported_reason)}</p>` : ""}
+          <p class="muted">${escapeHtml(recommendation.setup_summary.result_note || "Setup defaults were resolved from the selected route.")}</p>
         </article>
-        <article class="summary-card">
-          <p class="summary-label">Nanopore setup recommendation</p>
-          <h3>${escapeHtml(recommendation.setup_summary.recommendation)}</h3>
-          <p>${escapeHtml(recommendation.setup_summary.result_note || "Setup defaults were resolved from the selected route.")}</p>
-          <p class="summary-meta">Primary environment: ${escapeHtml(recommendation.analysis_environment.label)}</p>
-        </article>
-      </section>
-
-      ${renderMatrixNotes(recommendation)}
-
-      <section class="result-block">
-        <h3>Why this was chosen</h3>
-        <p>${escapeHtml(recommendation.example.selection_help || recommendation.explanation)}</p>
-        ${recommendation.example.unsupported_reason ? `<p class="warning-inline">${escapeHtml(recommendation.example.unsupported_reason)}</p>` : ""}
-      </section>
-
-      <section class="result-block">
-        <h3>What your conditions changed</h3>
-        ${
-          recommendation.expert_effects.length > 0
-            ? `
-              <ul class="detail-list">
-                ${recommendation.expert_effects
-                  .map(
-                    (effect) => `
-                      <li>
-                        <strong>${escapeHtml(effect.title)}.</strong>
-                        ${escapeHtml(effect.summary)}
-                      </li>
-                    `
-                  )
-                  .join("")}
-              </ul>
-            `
-            : `<p class="muted">No extra condition-based changes were applied.</p>`
-        }
       </section>
 
       <section class="result-block">
@@ -737,38 +717,44 @@ function renderResultsPage() {
         </ol>
       </section>
 
-      ${renderExternalWorkflows(recommendation)}
+      ${renderEvidenceSection(recommendation)}
 
-      <details class="detail-panel" open>
-        <summary>Documented commands and docs</summary>
-        ${renderCommands(recommendation.curated_commands)}
-        ${renderLinks(recommendation.docs.primary)}
-      </details>
-
-      <details class="detail-panel">
-        <summary>Expandable details</summary>
-        <div class="detail-group">
-          <h4>Preprocessing defaults</h4>
-          ${renderDefinitionList(preprocessingRows)}
-        </div>
-        <div class="detail-group">
-          <h4>Kit consequences</h4>
-          ${
-            recommendation.kit_consequences
-              ? renderDefinitionList([
+      <section class="result-block setup-details-section">
+        <h3>Setup details</h3>
+        ${
+          setupBiasRows.length > 0
+            ? `
+              <div class="detail-group">
+                <h4>How your sample type shifts the setup advice</h4>
+                ${renderDefinitionList(setupBiasRows)}
+              </div>
+            `
+            : ""
+        }
+        ${
+          recommendation.kit_consequences
+            ? `
+              <div class="detail-group">
+                <h4>Kit consequences</h4>
+                ${renderDefinitionList([
                   ["Demultiplexing", recommendation.kit_consequences.demultiplexing],
                   ["Barcode trimming", recommendation.kit_consequences.barcode_trimming],
                   ["Route shape", recommendation.kit_consequences.route_shape],
                   ["Early preprocessing shift", recommendation.kit_consequences.first_changes]
-                ])
-              : `<p class="muted">No kit-specific consequences were attached.</p>`
-          }
-        </div>
+                ])}
+              </div>
+            `
+            : ""
+        }
         <div class="detail-group">
-          <h4>Warnings / caveats</h4>
-          ${
-            recommendation.warnings.length > 0
-              ? `
+          <h4>Preprocessing defaults</h4>
+          ${renderDefinitionList(preprocessingRows)}
+        </div>
+        ${
+          recommendation.warnings.length > 0
+            ? `
+              <div class="detail-group">
+                <h4>Warnings and caveats</h4>
                 <ul class="detail-list">
                   ${recommendation.warnings
                     .map(
@@ -781,9 +767,44 @@ function renderResultsPage() {
                     )
                     .join("")}
                 </ul>
-              `
-              : `<p class="muted">No extra caveats were attached.</p>`
-          }
+              </div>
+            `
+            : ""
+        }
+        ${
+          recommendation.expert_effects.length > 0
+            ? `
+              <div class="detail-group">
+                <h4>Condition-based adjustments</h4>
+                <ul class="detail-list">
+                  ${recommendation.expert_effects
+                    .map(
+                      (effect) => `
+                        <li>
+                          <strong>${escapeHtml(effect.title)}.</strong>
+                          ${escapeHtml(effect.summary)}
+                        </li>
+                      `
+                    )
+                    .join("")}
+                </ul>
+              </div>
+            `
+            : ""
+        }
+      </section>
+
+      ${renderExternalWorkflows(recommendation)}
+
+      <details class="detail-panel">
+        <summary>Technical reference</summary>
+        <div class="detail-group">
+          <h4>Documented commands</h4>
+          ${renderCommands(recommendation.curated_commands)}
+        </div>
+        <div class="detail-group">
+          <h4>Documentation</h4>
+          ${renderLinks(recommendation.docs.primary)}
         </div>
         <div class="detail-group two-column-detail">
           <div>
@@ -865,7 +886,7 @@ function updateControls(pageId) {
   }
 
   nextButton.hidden = false;
-  nextButton.textContent = pageId === "conditions" ? "Show results" : "Continue";
+  nextButton.textContent = pageId === "conditions" ? "Show my workflow" : "Continue";
   nextButton.disabled = !next || !pageComplete(datasets.questionSpec, answers, pageId, datasets);
   nextButton.onclick = () => {
     if (next) {
