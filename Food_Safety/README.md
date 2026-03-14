@@ -4,6 +4,8 @@ This category covers pipelines for genomic surveillance of foodborne pathogens u
 
 **Contact:** Tim Reska (PhD Student) & Dr. Lara Urban
 
+> **Pipeline Selector:** To route food-safety samples against the wider collection first, use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/).
+
 ---
 
 ## Pipelines

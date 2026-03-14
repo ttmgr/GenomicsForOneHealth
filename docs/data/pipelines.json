@@ -1,0 +1,705 @@
+[
+  {
+    "id": "air_metagenomics",
+    "title": "Air Metagenomics",
+    "category": "environmental_metagenomics",
+    "sample_types": [
+      "air_bioaerosol"
+    ],
+    "analysis_goals": [
+      "community_profiling",
+      "pathogen_amr_surveillance"
+    ],
+    "molecule_types": [
+      "dna"
+    ],
+    "input_formats": [
+      "fast5",
+      "pod5",
+      "fastq"
+    ],
+    "library_modes": [
+      "rbk114_24"
+    ],
+    "supports_multiplexing": true,
+    "default_preprocessing": {
+      "input_expectation": "Raw FAST5 or POD5, or already basecalled FASTQ for air metagenomics.",
+      "basecalling": "Use Guppy HAC for legacy FAST5 or Dorado HAC for POD5. The validated personal reference pipeline uses Dorado HAC v4.3.0 for POD5 inputs.",
+      "demultiplexing": "Required only when barcoded multiplexed runs have not yet been separated by sample.",
+      "adapter_trimming": "Trim adapters with Porechop after basecalling and before NanoFilt.",
+      "length_quality_filtering": "NanoFilt with Q >= 8 and minimum length 100 bp.",
+      "additional_preprocessing": "Phase-specific read subsampling with SeqKit before taxonomic comparison."
+    },
+    "execution_model": "Interactive wrapper and modular scripts in the group repo, plus a validated curated overview in Tim_Reska.",
+    "primary_docs": [
+      {
+        "label": "Group pipeline README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Environmental_Metagenomics/Air_Metagenomics",
+        "url_label": "Environmental_Metagenomics/Air_Metagenomics"
+      },
+      {
+        "label": "Curated personal overview",
+        "url": "https://github.com/ttmgr/Tim_Reska/tree/main/pipelines/aerobiome",
+        "url_label": "Tim_Reska/pipelines/aerobiome"
+      }
+    ],
+    "setup_docs": [
+      {
+        "label": "Repository-wide install guide",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/INSTALL_AND_DATABASES.md",
+        "url_label": "INSTALL_AND_DATABASES.md"
+      },
+      {
+        "label": "Interactive wrapper",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Air_Metagenomics/run_pipeline.sh",
+        "url_label": "Air_Metagenomics/run_pipeline.sh"
+      }
+    ],
+    "notes": [
+      "Optimized for ultra-low biomass air samples collected by liquid impingement.",
+      "Best fit when the objective includes taxonomic profiling, assembly, binning, and functional interpretation from environmental DNA."
+    ],
+    "constraints": [
+      "Not a dedicated soil metagenomics workflow.",
+      "Study-specific preprocessing differs between the greenhouse pilot and urban campaign."
+    ],
+    "track_notes": []
+  },
+  {
+    "id": "wetland_health",
+    "title": "Wetland Health",
+    "category": "environmental_metagenomics",
+    "sample_types": [
+      "wetland_or_passive_water_sample"
+    ],
+    "analysis_goals": [
+      "pathogen_amr_surveillance",
+      "viral_metagenomics",
+      "biodiversity_metabarcoding",
+      "aiv_consensus_subtyping_phylogeny"
+    ],
+    "molecule_types": [
+      "dna",
+      "rna",
+      "dna_rna",
+      "amplicon_dna"
+    ],
+    "input_formats": [
+      "fastq"
+    ],
+    "library_modes": [
+      "rbk114_24",
+      "amplicon"
+    ],
+    "supports_multiplexing": true,
+    "default_preprocessing": {
+      "input_expectation": "Raw input FASTQ directories for dual DNA/RNA wetland surveillance and related branches.",
+      "basecalling": "The published workflow assumes basecalled reads. The curated personal reference uses Dorado SUP v5.0.0 for the main wetland pipeline.",
+      "demultiplexing": "Required when raw data still contain pooled barcodes or multi-branch inputs that need per-sample separation.",
+      "adapter_trimming": "Use Porechop where the branch still requires adapter removal before downstream analysis.",
+      "length_quality_filtering": "Branch-specific thresholds apply; the track card below shows the relevant defaults.",
+      "additional_preprocessing": "Choose the correct branch: DNA metagenomics, RNA virome, eDNA metabarcoding, or AIV WGS."
+    },
+    "execution_model": "Interactive wrapper plus track-specific workflows, with a curated personal overview in Tim_Reska for the full multi-omics study.",
+    "primary_docs": [
+      {
+        "label": "Group pipeline README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Environmental_Metagenomics/Wetland_Health",
+        "url_label": "Environmental_Metagenomics/Wetland_Health"
+      },
+      {
+        "label": "Curated personal overview",
+        "url": "https://github.com/ttmgr/Tim_Reska/tree/main/pipelines/wetland-surveillance",
+        "url_label": "Tim_Reska/pipelines/wetland-surveillance"
+      }
+    ],
+    "setup_docs": [
+      {
+        "label": "Repository-wide install guide",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/INSTALL_AND_DATABASES.md",
+        "url_label": "INSTALL_AND_DATABASES.md"
+      },
+      {
+        "label": "Interactive wrapper",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/run_pipeline.sh",
+        "url_label": "Wetland_Health/run_pipeline.sh"
+      }
+    ],
+    "notes": [
+      "Best fit for passive wetland water sampling with multiple analytical branches.",
+      "Includes DNA metagenomics, RNA viromics, vertebrate eDNA metabarcoding, and AIV whole-genome sequencing."
+    ],
+    "constraints": [
+      "Not a generic environmental DNA workflow for arbitrary water or soil matrices.",
+      "The published group repo centers on basecalled FASTQ entry rather than raw POD5."
+    ],
+    "track_notes": [
+      {
+        "id": "dna_metagenomics",
+        "title": "Track 1: Shotgun Metagenomics (DNA)",
+        "when": {
+          "analysis_goals": [
+            "pathogen_amr_surveillance"
+          ],
+          "molecule_types": [
+            "dna",
+            "dna_rna"
+          ]
+        },
+        "summary": "Use the DNA branch when the goal is microbial community characterization, pathogen detection, AMR profiling, assembly, and plasmid screening from passive wetland water samples.",
+        "preprocessing_override": {
+          "basecalling": "Dorado SUP v5.0.0 in the curated personal reference pipeline.",
+          "demultiplexing": "Demultiplex if pooled samples are not yet separated.",
+          "adapter_trimming": "Porechop after demultiplexing.",
+          "length_quality_filtering": "NanoFilt with Q >= 9 and minimum length 100 bp.",
+          "additional_preprocessing": "SeqKit subsampling to 87k reads for the metagenomics comparison branch."
+        },
+        "notes": [
+          "This is the nearest branch for passive-water pathogen and AMR surveillance."
+        ]
+      },
+      {
+        "id": "rna_virome",
+        "title": "Track 2: RNA Virome",
+        "when": {
+          "analysis_goals": [
+            "viral_metagenomics"
+          ],
+          "molecule_types": [
+            "rna",
+            "dna_rna"
+          ]
+        },
+        "summary": "Use the RNA virome branch for untargeted viral community analysis from wetland RNA rather than targeted influenza reconstruction.",
+        "preprocessing_override": {
+          "basecalling": "Published workflow assumes basecalled FASTQ input for the RNA branch.",
+          "demultiplexing": "Demultiplex if the RNA libraries are still pooled.",
+          "adapter_trimming": "Use the published branch-specific read cleaning before assembly.",
+          "length_quality_filtering": "NanoFilt with Q >= 9 and minimum length 100 bp.",
+          "additional_preprocessing": "Proceed to nanoMDBG assembly, Medaka polishing, and DIAMOND BLASTx viral classification."
+        },
+        "notes": [
+          "Use this branch when you want viral-metagenome discovery rather than influenza-only consensus calling."
+        ]
+      },
+      {
+        "id": "edna",
+        "title": "Track 3: eDNA Metabarcoding",
+        "when": {
+          "analysis_goals": [
+            "biodiversity_metabarcoding"
+          ],
+          "molecule_types": [
+            "amplicon_dna"
+          ]
+        },
+        "summary": "Use the eDNA branch for vertebrate host-range inference from wetland passive water samples using tagged amplicon data.",
+        "preprocessing_override": {
+          "basecalling": "The documented branch assumes basecalled amplicon reads rather than raw-signal basecalling inside this workflow.",
+          "demultiplexing": "OBITools4 obimultiplex for barcoded 12S amplicon data.",
+          "adapter_trimming": "Cutadapt primer removal after demultiplexing.",
+          "length_quality_filtering": "VSEARCH quality filtering with maxEE 1.0, singleton removal, and downstream OTU clustering.",
+          "additional_preprocessing": "Global alignment against MIDORI2, then regional occurrence validation."
+        },
+        "notes": [
+          "Choose this branch only when the wetland study context applies. For broader water eDNA metabarcoding, Zambia eDNA may be the better fit."
+        ]
+      },
+      {
+        "id": "aiv_wgs",
+        "title": "Track 4: AIV Whole-Genome Sequencing",
+        "when": {
+          "analysis_goals": [
+            "aiv_consensus_subtyping_phylogeny"
+          ],
+          "molecule_types": [
+            "rna",
+            "viral_reads_or_variants"
+          ]
+        },
+        "summary": "Use the AIV branch when the wetland sample itself is the source of targeted avian-influenza genome reconstruction and segment-level interpretation.",
+        "preprocessing_override": {
+          "basecalling": "Published workflow assumes basecalled reads for the AIV branch.",
+          "demultiplexing": "Demultiplex if barcode pooling remains unresolved.",
+          "adapter_trimming": "Read cleaning follows the branch-specific preprocessing before minimap2 mapping.",
+          "length_quality_filtering": "NanoFilt with Q >= 8 and minimum length 150 bp.",
+          "additional_preprocessing": "Map to segment references, select the best reference with idxstats, then call consensus with BCFtools."
+        },
+        "notes": [
+          "If your entire project is dedicated to AIV chemistry benchmarking rather than wetland multi-omics, the Avian Influenza Profiling pipeline is usually the stronger exact fit."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "zambia_edna",
+    "title": "Zambia eDNA Metabarcoding Pipeline",
+    "category": "edna_metabarcoding",
+    "sample_types": [
+      "edna_water_sample"
+    ],
+    "analysis_goals": [
+      "biodiversity_metabarcoding"
+    ],
+    "molecule_types": [
+      "amplicon_dna"
+    ],
+    "input_formats": [
+      "fastq",
+      "paired_end_fastq"
+    ],
+    "library_modes": [
+      "amplicon"
+    ],
+    "supports_multiplexing": true,
+    "default_preprocessing": {
+      "input_expectation": "Basecalled Nanopore FASTQ or Illumina paired-end FASTQ for 12S / 16S metabarcoding.",
+      "basecalling": "The published repo starts from basecalled reads; raw-signal basecalling is outside the documented workflow.",
+      "demultiplexing": "Use obimultiplex with the provided demultiplexing reference tables.",
+      "adapter_trimming": "Cutadapt primer trimming after read merging or demultiplexing.",
+      "length_quality_filtering": "VSEARCH fastq filtering, followed by dereplication and chimera removal.",
+      "additional_preprocessing": "OTU clustering at 99 percent and taxonomic assignment against MIDORI2."
+    },
+    "execution_model": "README-driven workflow with reproducibility tables and shared environment setup from the repository root.",
+    "primary_docs": [
+      {
+        "label": "Pipeline README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/tree/main/eDNA_Metabarcoding",
+        "url_label": "eDNA_Metabarcoding"
+      }
+    ],
+    "setup_docs": [
+      {
+        "label": "Repository-wide environment",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/environment.yaml",
+        "url_label": "environment.yaml"
+      }
+    ],
+    "notes": [
+      "Best fit for water eDNA metabarcoding rather than shotgun metagenomics.",
+      "Explicitly documents both Nanopore single-end and Illumina paired-end amplicon entry points."
+    ],
+    "constraints": [
+      "Does not document a raw POD5 or FAST5 basecalling branch.",
+      "Not a general shotgun metagenomics workflow."
+    ],
+    "track_notes": []
+  },
+  {
+    "id": "listeria_adaptive_sampling",
+    "title": "Listeria Adaptive Sampling",
+    "category": "food_safety",
+    "sample_types": [
+      "food_safety_sample"
+    ],
+    "analysis_goals": [
+      "target_enrichment_and_listeria_recovery"
+    ],
+    "molecule_types": [
+      "dna"
+    ],
+    "input_formats": [
+      "bam",
+      "fastq"
+    ],
+    "library_modes": [
+      "adaptive_sampling"
+    ],
+    "supports_multiplexing": true,
+    "default_preprocessing": {
+      "input_expectation": "Typically starts from basecalled BAM files, but can be adapted to FASTQ inputs.",
+      "basecalling": "Raw-signal basecalling is not the main documented entry point; the published workflow usually starts from BAM produced upstream.",
+      "demultiplexing": "Handle sample separation upstream if barcoded BAMs or FASTQs are still pooled.",
+      "adapter_trimming": "Porechop after BAM to FASTQ conversion when trimming is still required.",
+      "length_quality_filtering": "NanoFilt length filtering removes reads below 100 bp; the workflow also compiles yield and read-length summaries.",
+      "additional_preprocessing": "Run Kraken2 before Listeria extraction, then compare AS versus native branches in the report."
+    },
+    "execution_model": "Script-based workflow oriented to SLURM, with a local wrapper and detailed supporting docs in the group repo plus a concise personal overview in Tim_Reska.",
+    "primary_docs": [
+      {
+        "label": "Group pipeline README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Food_Safety/Listeria-Adaptive-Sampling",
+        "url_label": "Food_Safety/Listeria-Adaptive-Sampling"
+      },
+      {
+        "label": "Curated personal overview",
+        "url": "https://github.com/ttmgr/Tim_Reska/tree/main/pipelines/listeria-adaptive-sampling",
+        "url_label": "Tim_Reska/pipelines/listeria-adaptive-sampling"
+      }
+    ],
+    "setup_docs": [
+      {
+        "label": "Project installation guide",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Food_Safety/Listeria-Adaptive-Sampling/docs/01_installation.md",
+        "url_label": "docs/01_installation.md"
+      },
+      {
+        "label": "Execution guide",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Food_Safety/Listeria-Adaptive-Sampling/docs/03_execution_guide.md",
+        "url_label": "docs/03_execution_guide.md"
+      }
+    ],
+    "notes": [
+      "Best fit for adaptive-sampling versus native-run comparison of Listeria recovery in complex food-safety samples.",
+      "Uses multiple assemblers and report generation tailored to target enrichment rather than generic metagenomics."
+    ],
+    "constraints": [
+      "Dedicated to Listeria-focused recovery, not a general-purpose food microbiome workflow.",
+      "Exact published setup assumes matched adaptive-sampling and native comparisons."
+    ],
+    "track_notes": []
+  },
+  {
+    "id": "amr_nanopore",
+    "title": "AMR Nanopore",
+    "category": "clinical_isolates_plasmids",
+    "sample_types": [
+      "bacterial_isolate"
+    ],
+    "analysis_goals": [
+      "clinical_amr_profiling"
+    ],
+    "molecule_types": [
+      "dna"
+    ],
+    "input_formats": [
+      "fast5",
+      "fastq"
+    ],
+    "library_modes": [
+      "standard_isolate"
+    ],
+    "supports_multiplexing": false,
+    "default_preprocessing": {
+      "input_expectation": "FAST5 or FASTQ from clinical isolate sequencing.",
+      "basecalling": "Use Guppy with dna_r9.4.1_450bps_hac when starting from FAST5.",
+      "demultiplexing": "Not a central published requirement for this example workflow.",
+      "adapter_trimming": "Porechop before downstream assembly.",
+      "length_quality_filtering": "NanoFilt with Q >= 9 and minimum length 200 bp.",
+      "additional_preprocessing": "Proceed to Flye assembly, Minimap2 realignment, and Racon polishing."
+    },
+    "execution_model": "Interactive wrapper plus README-documented commands for a clinical isolate example dataset.",
+    "primary_docs": [
+      {
+        "label": "Pipeline README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore",
+        "url_label": "Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore"
+      }
+    ],
+    "setup_docs": [
+      {
+        "label": "Repository-wide install guide",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/INSTALL_AND_DATABASES.md",
+        "url_label": "INSTALL_AND_DATABASES.md"
+      },
+      {
+        "label": "Interactive wrapper",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore/run_pipeline.sh",
+        "url_label": "AMR_nanopore/run_pipeline.sh"
+      }
+    ],
+    "notes": [
+      "Best fit for clinical isolate assembly and AMR profiling rather than metagenomic host-linkage analysis.",
+      "Documentation is example-driven around a Klebsiella pneumoniae KPC treatment study."
+    ],
+    "constraints": [
+      "Not a clinical metagenomics workflow.",
+      "Not designed for raw POD5 methylation-aware processing."
+    ],
+    "track_notes": []
+  },
+  {
+    "id": "cre_plasmid_clustering",
+    "title": "CRE Plasmid Clustering",
+    "category": "clinical_isolates_plasmids",
+    "sample_types": [
+      "bacterial_isolate"
+    ],
+    "analysis_goals": [
+      "plasmid_clustering"
+    ],
+    "molecule_types": [
+      "dna"
+    ],
+    "input_formats": [
+      "pod5",
+      "fastq"
+    ],
+    "library_modes": [
+      "rbk114_24"
+    ],
+    "supports_multiplexing": true,
+    "default_preprocessing": {
+      "input_expectation": "Raw POD5 or basecalled FASTQ from CRE isolate sequencing.",
+      "basecalling": "Dorado SUP v5.0.0 for R10.4.1 RBK114.24 data.",
+      "demultiplexing": "Dorado demux for barcode separation when pooled isolate data are still combined.",
+      "adapter_trimming": "Porechop after demultiplexing; can be optional if newer Dorado trimming is already used upstream.",
+      "length_quality_filtering": "NanoFilt with Q >= 8 and minimum length 200 bp.",
+      "additional_preprocessing": "Run Flye, Medaka with --bacteria, then MOB-Suite, AMRFinderPlus, Mash, and Pling."
+    },
+    "execution_model": "Interactive wrapper plus detailed README with command-level documentation for plasmid reconstruction and clustering.",
+    "primary_docs": [
+      {
+        "label": "Pipeline README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Clinical_Isolates_and_Plasmid_Profiling/CRE-Plasmid-clustering",
+        "url_label": "Clinical_Isolates_and_Plasmid_Profiling/CRE-Plasmid-clustering"
+      }
+    ],
+    "setup_docs": [
+      {
+        "label": "Repository-wide install guide",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/INSTALL_AND_DATABASES.md",
+        "url_label": "INSTALL_AND_DATABASES.md"
+      },
+      {
+        "label": "Interactive wrapper",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/CRE-Plasmid-clustering/run_pipeline.sh",
+        "url_label": "CRE-Plasmid-clustering/run_pipeline.sh"
+      }
+    ],
+    "notes": [
+      "Best fit for plasmid-focused relatedness analysis from CRE isolate data.",
+      "Explicitly documents RBK114.24 and barcode-based demultiplexing."
+    ],
+    "constraints": [
+      "Not a general metagenomic pathogen-surveillance workflow.",
+      "Focused on isolate-scale plasmid reconstruction and clustering."
+    ],
+    "track_notes": []
+  },
+  {
+    "id": "nanopore_amr_host_association",
+    "title": "Nanopore AMR Host Association",
+    "category": "clinical_isolates_plasmids",
+    "sample_types": [
+      "clinical_metagenome"
+    ],
+    "analysis_goals": [
+      "amr_host_association"
+    ],
+    "molecule_types": [
+      "dna"
+    ],
+    "input_formats": [
+      "pod5"
+    ],
+    "library_modes": [
+      "barcoded_metagenome"
+    ],
+    "supports_multiplexing": true,
+    "default_preprocessing": {
+      "input_expectation": "Raw POD5 metagenomic data with barcode-aware sample handling.",
+      "basecalling": "Dorado SUP branch from POD5 to basecalled BAM.",
+      "demultiplexing": "Demultiplex basecalled BAMs before BAM to FASTQ conversion.",
+      "adapter_trimming": "Use chopper / downstream filtering after BAM to FASTQ rather than the simpler isolate-style trim-only flow.",
+      "length_quality_filtering": "Read filtering is performed before assembly so FASTQ and BAM stay synchronized for methylation-aware downstream analysis.",
+      "additional_preprocessing": "Keep filtered BAM and FASTQ in sync, then assemble, polish, run Modkit, Nanomotif, MOB-Suite, AMRFinder, and Kraken2 annotation."
+    },
+    "execution_model": "Interactive wrapper plus standalone scripts run in a strict order from raw signal through methylation-based host association.",
+    "primary_docs": [
+      {
+        "label": "Pipeline README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Clinical_Isolates_and_Plasmid_Profiling/Nanopore-AMR-Host-Association",
+        "url_label": "Clinical_Isolates_and_Plasmid_Profiling/Nanopore-AMR-Host-Association"
+      }
+    ],
+    "setup_docs": [
+      {
+        "label": "Pipeline output notes",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/Nanopore-AMR-Host-Association/docs/amr_host_association_outputs.md",
+        "url_label": "docs/amr_host_association_outputs.md"
+      },
+      {
+        "label": "Interactive wrapper",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/Nanopore-AMR-Host-Association/run_pipeline.sh",
+        "url_label": "Nanopore-AMR-Host-Association/run_pipeline.sh"
+      }
+    ],
+    "notes": [
+      "Best fit for methylation-aware clinical metagenomics where AMR genes must be linked back to their hosts.",
+      "Kraken2 is used for annotation, while methylation signatures drive the host-association logic."
+    ],
+    "constraints": [
+      "Requires raw POD5 entry and methylation-aware downstream analysis.",
+      "Not the right workflow for purified clinical isolates or generic plasmid clustering."
+    ],
+    "track_notes": []
+  },
+  {
+    "id": "avian_influenza_profiling",
+    "title": "Avian Influenza Profiling",
+    "category": "veterinary_zoonotic_surveillance",
+    "sample_types": [
+      "avian_influenza_sample"
+    ],
+    "analysis_goals": [
+      "aiv_consensus_subtyping_phylogeny"
+    ],
+    "molecule_types": [
+      "rna",
+      "dna",
+      "viral_reads_or_variants"
+    ],
+    "input_formats": [
+      "pod5",
+      "fastq"
+    ],
+    "library_modes": [
+      "direct_rna002",
+      "direct_rna004",
+      "cdna_rbk"
+    ],
+    "supports_multiplexing": true,
+    "default_preprocessing": {
+      "input_expectation": "Raw POD5 or already basecalled FASTQ for AIV-focused branches.",
+      "basecalling": "Choose the branch that matches your chemistry: direct RNA002, direct RNA004, or cDNA plus RBK.",
+      "demultiplexing": "Demultiplex only when barcoded cDNA or pooled inputs are still combined.",
+      "adapter_trimming": "Follow the chemistry-specific branch before de novo or reference-based analysis.",
+      "length_quality_filtering": "Branch-specific read cleaning precedes Flye, BCFTools consensus, or IRMA depending on the chosen approach.",
+      "additional_preprocessing": "Use the exact basecalling script for your chemistry, then choose de novo, reference-based, or IRMA consensus assembly."
+    },
+    "execution_model": "Interactive wrapper that routes to chemistry-specific scripts for direct RNA, cDNA, and influenza-focused consensus workflows.",
+    "primary_docs": [
+      {
+        "label": "Pipeline README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling",
+        "url_label": "Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling"
+      }
+    ],
+    "setup_docs": [
+      {
+        "label": "Interactive wrapper",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/run_pipeline.sh",
+        "url_label": "Avian-Influenza-Profiling/run_pipeline.sh"
+      },
+      {
+        "label": "Repository-wide environment",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/environment.yaml",
+        "url_label": "environment.yaml"
+      }
+    ],
+    "notes": [
+      "Best fit for chemistry benchmarking and AIV-specific consensus generation, subtyping, and phylogeny.",
+      "Supports direct RNA and cDNA branches rather than only one influenza chemistry."
+    ],
+    "constraints": [
+      "Targeted to avian influenza rather than untargeted viral-metagenome discovery.",
+      "Choose the exact chemistry branch before running downstream scripts."
+    ],
+    "track_notes": []
+  },
+  {
+    "id": "from_feather_to_fur",
+    "title": "From Feather to Fur",
+    "category": "veterinary_zoonotic_surveillance",
+    "sample_types": [
+      "cross_host_aiv_pair"
+    ],
+    "analysis_goals": [
+      "cross_host_variant_tracking"
+    ],
+    "molecule_types": [
+      "viral_reads_or_variants"
+    ],
+    "input_formats": [
+      "fastq",
+      "vcf",
+      "fastq_and_vcf"
+    ],
+    "library_modes": [
+      "standard_isolate"
+    ],
+    "supports_multiplexing": false,
+    "default_preprocessing": {
+      "input_expectation": "Basecalled FASTQ and/or VCF files for avian-to-mammalian comparison workflows.",
+      "basecalling": "Basecalling is upstream of the documented variant-comparison workflow.",
+      "demultiplexing": "Usually not a central step in the documented downstream analysis.",
+      "adapter_trimming": "Perform any upstream read cleaning before variant calling with minimap2 and Clair3.",
+      "length_quality_filtering": "Apply read filtering before mapping if starting from FASTQ rather than VCF.",
+      "additional_preprocessing": "Generate filtered VCFs, consensus FASTA, FluSurver annotations, and merged variant interpretation tables."
+    },
+    "execution_model": "Interactive wrapper plus downstream variant-processing steps for comparative host-transition analysis.",
+    "primary_docs": [
+      {
+        "label": "Pipeline README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur",
+        "url_label": "Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur"
+      }
+    ],
+    "setup_docs": [
+      {
+        "label": "Interactive wrapper",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/run_pipeline.sh",
+        "url_label": "From_feather_to_fur/run_pipeline.sh"
+      }
+    ],
+    "notes": [
+      "Best fit for downstream variant interpretation across matched avian and mammalian host samples.",
+      "The published README assumes at least some upstream variant-calling or consensus-generation work is already understood."
+    ],
+    "constraints": [
+      "Not a general influenza-consensus pipeline.",
+      "FluSurver interpretation remains a manual downstream component in the documented workflow."
+    ],
+    "track_notes": []
+  },
+  {
+    "id": "squiggle4viability",
+    "title": "Squiggle4Viability",
+    "category": "viability_assessment",
+    "sample_types": [
+      "raw_signal"
+    ],
+    "analysis_goals": [
+      "viability_inference"
+    ],
+    "molecule_types": [
+      "raw_signal"
+    ],
+    "input_formats": [
+      "pod5",
+      "fast5"
+    ],
+    "library_modes": [
+      "signal_only"
+    ],
+    "supports_multiplexing": false,
+    "default_preprocessing": {
+      "input_expectation": "Raw FAST5 or POD5 files used directly for segmentation, preprocessing, model inference, or signal explainability.",
+      "basecalling": "Standard basecalling is not the primary entry point for the core viability model. Raw signal remains the central input.",
+      "demultiplexing": "Not part of the main AI viability branch, though the repository also contains a secondary metagenomics section.",
+      "adapter_trimming": "Not part of the main signal-level model entry point.",
+      "length_quality_filtering": "Signal segmentation and tensor preprocessing replace the standard read-level trimming and filtering logic.",
+      "additional_preprocessing": "Requires the dedicated GPU-capable requirements set for model training or inference."
+    },
+    "execution_model": "Interactive wrapper with a branch between AI inference on raw signal and the broader metagenomics-oriented utilities in the repo.",
+    "primary_docs": [
+      {
+        "label": "Pipeline README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Viability_Assessment/Squiggle4Viability",
+        "url_label": "Viability_Assessment/Squiggle4Viability"
+      }
+    ],
+    "setup_docs": [
+      {
+        "label": "Project requirements",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Viability_Assessment/Squiggle4Viability/requirements.txt",
+        "url_label": "Squiggle4Viability/requirements.txt"
+      },
+      {
+        "label": "Interactive wrapper",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Viability_Assessment/Squiggle4Viability/run_pipeline.sh",
+        "url_label": "Squiggle4Viability/run_pipeline.sh"
+      }
+    ],
+    "notes": [
+      "Best fit when the biological question is viability directly from nanopore signal rather than standard downstream assembly or taxonomic profiling.",
+      "Includes AI training, inference, explainability, and a secondary metagenomics section."
+    ],
+    "constraints": [
+      "Requires distinct dependencies and usually a GPU-capable environment.",
+      "Not a substitute for conventional basecalled-read pipelines when the main objective is standard metagenomic analysis."
+    ],
+    "track_notes": []
+  }
+]

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenomicsForOneHealth Pipeline Selector</title>
+  <meta name="description"
+    content="Static pipeline selector for the GenomicsForOneHealth collection. Choose the best existing workflow and preprocessing defaults for your nanopore or related sequencing data.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js"></script>
+</head>
+
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">GenomicsForOneHealth</p>
+        <h1>Pipeline Selector</h1>
+        <p class="hero-text">
+          Choose the closest published workflow in the collection and receive the main preprocessing defaults,
+          compatibility notes, and direct links to the exact documentation.
+        </p>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-card">
+          <p class="meta-label">Version</p>
+          <p class="meta-value">v1 · static Pages app</p>
+        </div>
+        <div class="meta-card">
+          <p class="meta-label">Scope</p>
+          <p class="meta-value">Published workflows only</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel selector-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-kicker">Decision Aid</p>
+            <h2>Select your use case</h2>
+          </div>
+          <button id="reset-button" class="ghost-button" type="button">Reset</button>
+        </div>
+
+        <div class="panel-note">
+          <p>
+            Stage 1 narrows the collection to biologically compatible workflows. Stage 2 refines preprocessing
+            guidance such as basecalling, demultiplexing, and read filtering.
+          </p>
+        </div>
+
+        <noscript>
+          <div class="error-box">
+            JavaScript is required for this selector. If you are reading the repository source on GitHub, open the
+            GitHub Pages URL instead.
+          </div>
+        </noscript>
+
+        <div id="status-banner" class="status-banner" aria-live="polite"></div>
+        <div id="selector-root" class="selector-root"></div>
+      </section>
+
+      <aside class="panel result-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-kicker">Recommendation</p>
+            <h2>Best-fit workflow</h2>
+          </div>
+        </div>
+
+        <div class="support-grid">
+          <div class="support-card">
+            <h3>What this tool does</h3>
+            <p>
+              Routes researchers to the closest <strong>existing</strong> workflow in the collection and shows the
+              main preprocessing defaults and documentation links.
+            </p>
+          </div>
+          <div class="support-card">
+            <h3>What it does not do</h3>
+            <p>
+              It does not generate full commands, inspect uploaded files, or claim an exact match when the collection
+              does not currently contain one.
+            </p>
+          </div>
+        </div>
+
+        <div id="result-root" class="result-root">
+          <div class="empty-state">
+            <p class="empty-title">No recommendation yet</p>
+            <p class="empty-text">
+              Answer the Stage 1 questions to narrow the collection to compatible workflows.
+            </p>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+</body>
+
+</html>
