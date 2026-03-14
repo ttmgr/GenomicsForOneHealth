@@ -4,6 +4,8 @@ This category covers nanopore-based pipelines for veterinary virology and zoonot
 
 **Contact:** Dr. Albert Perlas & Dr. Lara Urban
 
+> **Pipeline Selector:** If you need to decide between targeted AIV profiling and cross-host variant tracking, start with the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/).
+
 ---
 
 ## Pipelines

@@ -4,6 +4,8 @@ This category covers nanopore-based pipelines for clinical genomic diagnostics â
 
 **Contacts:** Ela Sauerborn (PhD Student), Harika Ãœrel (PhD Student) & Dr. Lara Urban
 
+> **Pipeline Selector:** Use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/) to distinguish isolate AMR profiling, plasmid clustering, and host-association workflows before diving into individual READMEs.
+
 ---
 
 ## Pipelines
