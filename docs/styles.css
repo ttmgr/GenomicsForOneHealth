@@ -974,6 +974,161 @@ a {
   margin: 2px 0 0;
 }
 
+/* --- Pipeline diagram 3-column layout --- */
+
+.pipeline-view {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.pipeline-col {
+  padding: 22px 24px;
+}
+
+.pipeline-col-left {
+  background: rgba(17, 75, 58, 0.03);
+  border-right: 1px solid var(--line);
+}
+
+.pipeline-col-center {
+  background: var(--panel-strong);
+}
+
+.pipeline-col-right {
+  background: rgba(242, 234, 219, 0.35);
+  border-left: 1px solid var(--line);
+}
+
+.pipeline-col h3 {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  line-height: 1.25;
+}
+
+.pipeline-status {
+  margin: 14px 0 6px;
+}
+
+/* Diagram flow */
+
+.diagram-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.diagram-step {
+  width: 100%;
+  max-width: 320px;
+}
+
+.diagram-node {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fcfbf8;
+}
+
+.diagram-node-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.diagram-step-label {
+  font-size: 0.92rem;
+}
+
+.diagram-tool-link {
+  display: inline-block;
+  margin-top: 4px;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.diagram-tool-name {
+  display: inline-block;
+  margin-top: 4px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.diagram-note {
+  margin: 4px 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.diagram-connector {
+  width: 2px;
+  height: 24px;
+  background: var(--line);
+}
+
+/* File type pills */
+
+.diagram-filetype {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ft-signal {
+  background: #e8d5b7;
+  color: #6b4e1f;
+}
+
+.ft-reads {
+  background: #d4ecd9;
+  color: #1f5a2e;
+}
+
+.ft-aligned {
+  background: #d5dff0;
+  color: #2a3e6b;
+}
+
+.ft-assembly {
+  background: #f0e0d5;
+  color: #6b3e1f;
+}
+
+.ft-report {
+  background: #e8e0f0;
+  color: #4a2e6b;
+}
+
+/* Rationale column */
+
+.rationale-list {
+  display: grid;
+  gap: 14px;
+}
+
+.rationale-item strong {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+}
+
+.rationale-item p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 @media (max-width: 960px) {
   .hero {
     grid-template-columns: 1fr;
@@ -994,6 +1149,20 @@ a {
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
     padding: 10px 0;
+  }
+
+  .pipeline-view {
+    grid-template-columns: 1fr;
+  }
+
+  .pipeline-col-left {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .pipeline-col-right {
+    border-left: none;
+    border-top: 1px solid var(--line);
   }
 }
 

@@ -26,12 +26,6 @@
               "value": "food_safety",
               "label": "Food safety",
               "help": "Enrichment and recovery workflows."
-            },
-            {
-              "value": "unsure",
-              "label": "Not sure",
-              "help": "Come back when clearer.",
-              "neutral": true
             }
           ]
         }
@@ -118,12 +112,6 @@
                   "food_safety"
                 ]
               }
-            },
-            {
-              "value": "unsure",
-              "label": "Not sure",
-              "help": "Return when the assay class is clearer.",
-              "neutral": true
             }
           ]
         }
@@ -454,12 +442,6 @@
                   "listeria_enrichment_material"
                 ]
               }
-            },
-            {
-              "value": "unsure",
-              "label": "Not sure",
-              "help": "Return when the main target is clearer.",
-              "neutral": true
             }
           ]
         }
@@ -601,12 +583,6 @@
                   "listeria_enrichment_material"
                 ]
               }
-            },
-            {
-              "value": "unsure",
-              "label": "Not sure",
-              "help": "Use the route default and adjust later if needed.",
-              "neutral": true
             }
           ]
         }
@@ -638,8 +614,7 @@
                   "rapid_pcr_amplicon",
                   "barcoded_metagenome",
                   "adaptive_sampling",
-                  "standard_control",
-                  "unsure"
+                  "standard_control"
                 ]
               }
             },
@@ -663,12 +638,6 @@
                   "direct_rna"
                 ]
               }
-            },
-            {
-              "value": "unsure",
-              "label": "Not sure",
-              "help": "Use the route default and adjust later if needed.",
-              "neutral": true
             }
           ]
         }
@@ -720,12 +689,6 @@
               "value": "already_basecalled",
               "label": "Already basecalled",
               "help": "Skip upstream basecalling suggestions and start from the documented entry format."
-            },
-            {
-              "value": "unsure",
-              "label": "Not sure",
-              "help": "Use the route default and adjust later if needed.",
-              "neutral": true
             }
           ]
         }
@@ -789,12 +752,6 @@
                   "listeria_enrichment_material"
                 ]
               }
-            },
-            {
-              "value": "unsure",
-              "label": "Not sure",
-              "help": "Use the route default and adjust later if needed.",
-              "neutral": true
             }
           ]
         }

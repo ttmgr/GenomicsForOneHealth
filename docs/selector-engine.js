@@ -625,6 +625,7 @@
       example,
       backend,
       composed_steps: example.recommended_steps || null,
+      pipeline_diagram: example.pipeline_diagram || backend.playbook.pipeline_diagram || null,
       status: status.value,
       status_label: status.label,
       explanation,
