@@ -21,6 +21,7 @@ const examples = readJson("examples.json");
 const expertRules = readJson("expert_rules.json");
 const nanoporeProfiles = readJson("nanopore_profiles.json");
 const externalWorkflows = readJson("external_workflows.json");
+const matrixProfiles = readJson("matrix_profiles.json");
 
 const expectedPageIds = [
   "sample",
@@ -41,6 +42,7 @@ const allowedExampleStatuses = new Set(["exact", "unsupported_nearest"]);
 const allowedRuleEffects = new Set(["tool_swap", "step_insert", "step_skip", "warning_only", "preprocessing_override"]);
 const allowedWorkflowCompat = new Set(["exact", "unsupported"]);
 const allowedWorkflowSources = new Set(["ont_curated", "cloud"]);
+const allowedMatrixScopes = new Set(["route_attached", "guide_only"]);
 
 if (!Array.isArray(questions.pages)) {
   fail("questions.json must define a top-level pages array");
@@ -288,6 +290,124 @@ for (const example of examples) {
   }
 }
 
+if (!Array.isArray(matrixProfiles) || matrixProfiles.length === 0) {
+  fail("matrix_profiles.json must define a non-empty array");
+}
+
+const matrixProfileIds = new Set();
+const guideSectionIds = new Set();
+const externalWorkflowIds = new Set(externalWorkflows.map((workflow) => workflow.id));
+
+for (const profile of matrixProfiles) {
+  for (const field of [
+    "id",
+    "label",
+    "scope",
+    "applies_to",
+    "selector_summary",
+    "selector_warnings",
+    "setup_biases",
+    "fallback_workflow_ids",
+    "guide_section_id",
+    "citations",
+    "guide_highlights",
+    "what_this_changes"
+  ]) {
+    if (!(field in profile)) {
+      fail(`Matrix profile ${profile.id || "<unknown>"} is missing ${field}`);
+    }
+  }
+
+  if (!allowedMatrixScopes.has(profile.scope)) {
+    fail(`Matrix profile ${profile.id} uses unsupported scope ${profile.scope}`);
+  }
+  if (matrixProfileIds.has(profile.id)) {
+    fail(`Duplicate matrix profile id ${profile.id}`);
+  }
+  if (guideSectionIds.has(profile.guide_section_id)) {
+    fail(`Duplicate matrix guide section id ${profile.guide_section_id}`);
+  }
+
+  matrixProfileIds.add(profile.id);
+  guideSectionIds.add(profile.guide_section_id);
+
+  if (!profile.applies_to || !Array.isArray(profile.applies_to.example_ids)) {
+    fail(`Matrix profile ${profile.id} must define applies_to.example_ids`);
+  }
+  if (profile.scope === "route_attached" && profile.applies_to.example_ids.length === 0) {
+    fail(`Route-attached matrix profile ${profile.id} must point to at least one example`);
+  }
+
+  for (const exampleId of profile.applies_to.example_ids) {
+    if (!exampleIds.has(exampleId)) {
+      fail(`Matrix profile ${profile.id} references unknown example ${exampleId}`);
+    }
+  }
+
+  for (const value of profile.applies_to.sample_contexts || []) {
+    if (!optionSets.get("sample_context").has(value)) {
+      fail(`Matrix profile ${profile.id} references invalid sample_context ${value}`);
+    }
+  }
+  for (const value of profile.applies_to.material_classes || []) {
+    if (!optionSets.get("material_class").has(value)) {
+      fail(`Matrix profile ${profile.id} references invalid material_class ${value}`);
+    }
+  }
+  for (const value of profile.applies_to.target_goals || []) {
+    if (!optionSets.get("target_goal").has(value)) {
+      fail(`Matrix profile ${profile.id} references invalid target_goal ${value}`);
+    }
+  }
+
+  if (!Array.isArray(profile.selector_warnings) || profile.selector_warnings.length < 2 || profile.selector_warnings.length > 4) {
+    fail(`Matrix profile ${profile.id} must include 2 to 4 selector_warnings`);
+  }
+  if (!Array.isArray(profile.guide_highlights) || profile.guide_highlights.length < 2 || profile.guide_highlights.length > 5) {
+    fail(`Matrix profile ${profile.id} must include 2 to 5 guide_highlights`);
+  }
+  if (!Array.isArray(profile.citations) || profile.citations.length === 0 || profile.citations.length > 3) {
+    fail(`Matrix profile ${profile.id} must include 1 to 3 citations`);
+  }
+
+  for (const field of ["kit", "flowcell", "basecalling", "analysis_environment"]) {
+    if (!profile.setup_biases[field]) {
+      fail(`Matrix profile ${profile.id} is missing setup_biases.${field}`);
+    }
+  }
+
+  for (const workflowId of profile.fallback_workflow_ids) {
+    if (!externalWorkflowIds.has(workflowId)) {
+      fail(`Matrix profile ${profile.id} references unknown fallback workflow ${workflowId}`);
+    }
+  }
+
+  for (const citation of profile.citations) {
+    if (!citation.label || !citation.url) {
+      fail(`Matrix profile ${profile.id} has an incomplete citation`);
+    }
+    if (!/^https?:\/\//.test(citation.url)) {
+      fail(`Matrix profile ${profile.id} must use absolute citation URLs`);
+    }
+  }
+}
+
+for (const example of examples) {
+  if (!example.matrix_profile_id) {
+    fail(`Example ${example.id} must include matrix_profile_id`);
+  }
+  if (!matrixProfileIds.has(example.matrix_profile_id)) {
+    fail(`Example ${example.id} references unknown matrix_profile_id ${example.matrix_profile_id}`);
+  }
+  const matrixProfile = matrixProfiles.find((profile) => profile.id === example.matrix_profile_id);
+  if (matrixProfile.scope !== "route_attached") {
+    fail(`Example ${example.id} must point to a route-attached matrix profile`);
+  }
+  if (!matrixProfile.applies_to.example_ids.includes(example.id)) {
+    fail(`Matrix profile ${matrixProfile.id} must explicitly include example ${example.id}`);
+  }
+}
+
 for (const collection of ["kits", "flow_cells", "basecalling_profiles", "route_defaults"]) {
   if (!Array.isArray(nanoporeProfiles[collection]) || nanoporeProfiles[collection].length === 0) {
     fail(`nanopore_profiles.json must include a non-empty ${collection} array`);
@@ -392,6 +512,16 @@ for (const workflow of externalWorkflows) {
   }
   if (!/^https?:\/\//.test(workflow.url)) {
     fail(`External workflow ${workflow.id} must use an absolute URL`);
+  }
+  if (workflow.preferred_matrix_profile_ids) {
+    if (!Array.isArray(workflow.preferred_matrix_profile_ids)) {
+      fail(`External workflow ${workflow.id} preferred_matrix_profile_ids must be an array`);
+    }
+    for (const profileId of workflow.preferred_matrix_profile_ids) {
+      if (!matrixProfileIds.has(profileId)) {
+        fail(`External workflow ${workflow.id} references unknown preferred matrix profile ${profileId}`);
+      }
+    }
   }
 }
 

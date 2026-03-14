@@ -55,6 +55,11 @@
     return (items || []).find((item) => item.id === id) || null;
   }
 
+  function preferredOrderIndex(id, orderedIds) {
+    const index = (orderedIds || []).indexOf(id);
+    return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+  }
+
   function matchesWhen(when, answers) {
     if (!when) {
       return true;
@@ -265,6 +270,39 @@
     return resolveSelectedExample(answers, datasets);
   }
 
+  function matchesProfileApplicability(profile, answers, example) {
+    const appliesTo = profile?.applies_to || {};
+
+    if (example && Array.isArray(appliesTo.example_ids) && appliesTo.example_ids.includes(example.id)) {
+      return true;
+    }
+
+    const checks = [
+      ["sample_contexts", answers.sample_context],
+      ["material_classes", answers.material_class],
+      ["target_goals", answers.target_goal]
+    ];
+
+    return checks.every(([field, answerValue]) => {
+      if (!Array.isArray(appliesTo[field]) || appliesTo[field].length === 0) {
+        return true;
+      }
+      return appliesTo[field].includes(answerValue);
+    });
+  }
+
+  function resolveMatrixProfile(answers, datasets, example) {
+    if (!example) {
+      return null;
+    }
+
+    if (example.matrix_profile_id) {
+      return findById(datasets.matrixProfiles, example.matrix_profile_id);
+    }
+
+    return (datasets.matrixProfiles || []).find((profile) => matchesProfileApplicability(profile, answers, example)) || null;
+  }
+
   function findMatchingRouteDefault(answers, datasets) {
     return (datasets.nanoporeProfiles?.route_defaults || []).find((profile) =>
       profile.sample_contexts.includes(answers.sample_context) &&
@@ -304,13 +342,15 @@
     };
   }
 
-  function resolveExternalFallbacks(answers, datasets, status, analysisEnvironment) {
+  function resolveExternalFallbacks(answers, datasets, status, analysisEnvironment, matrixProfile) {
     const compatibility = status === "unsupported" ? "unsupported" : "exact";
     const preferredSource = analysisEnvironment === "cz_id"
       ? "cloud"
       : analysisEnvironment === "epi2me_labs"
         ? "ont_curated"
         : null;
+    const explicitWorkflowOrder = matrixProfile?.fallback_workflow_ids || [];
+    const matrixProfileId = matrixProfile?.id || null;
 
     return (datasets.externalWorkflows || [])
       .filter((workflow) =>
@@ -319,9 +359,17 @@
         workflow.supported_target_goals.includes(answers.target_goal)
       )
       .sort((left, right) => {
+        const explicitLeft = preferredOrderIndex(left.id, explicitWorkflowOrder);
+        const explicitRight = preferredOrderIndex(right.id, explicitWorkflowOrder);
+        const leftMatrixMatch = matrixProfileId && (left.preferred_matrix_profile_ids || []).includes(matrixProfileId) ? 1 : 0;
+        const rightMatrixMatch = matrixProfileId && (right.preferred_matrix_profile_ids || []).includes(matrixProfileId) ? 1 : 0;
         const leftPreferred = preferredSource && left.source_type === preferredSource ? 1 : 0;
         const rightPreferred = preferredSource && right.source_type === preferredSource ? 1 : 0;
-        return rightPreferred - leftPreferred || left.label.localeCompare(right.label);
+
+        return explicitLeft - explicitRight ||
+          rightMatrixMatch - leftMatrixMatch ||
+          rightPreferred - leftPreferred ||
+          left.label.localeCompare(right.label);
       })
       .map((workflow) => ({
         ...workflow,
@@ -361,17 +409,26 @@
       .sort((left, right) => (right.priority || 0) - (left.priority || 0));
   }
 
-  function applySetupHeuristics(answers, datasets, example, nanoporeProfile, backend) {
+  function applySetupHeuristics(answers, datasets, example, nanoporeProfile, backend, matrixProfile) {
     const expertEffects = [];
     const warnings = [];
     const insertedActions = [];
     const setupNotes = [];
-    const guideLinks = [
+    const guideLinks = uniqueLinks([
       {
-        title: "Nanopore guide",
+        label: "Nanopore guide",
         url: "nanopore-guide.html"
-      }
-    ];
+      },
+      matrixProfile?.guide_section_id
+        ? {
+            label: `${matrixProfile.label} matrix notes`,
+            url: `nanopore-guide.html#${matrixProfile.guide_section_id}`
+          }
+        : null
+    ].filter(Boolean)).map((link) => ({
+      title: link.label,
+      url: link.url
+    }));
     let preferredTool = null;
 
     if (nanoporeProfile.basecalling && nanoporeProfile.effective.basecalling_goal !== "already_basecalled") {
@@ -506,6 +563,22 @@
     return optionFor(question, value)?.label || value || "";
   }
 
+  function buildMatrixNotes(matrixProfile) {
+    if (!matrixProfile) {
+      return null;
+    }
+
+    return {
+      id: matrixProfile.id,
+      label: matrixProfile.label,
+      summary: matrixProfile.selector_summary,
+      warnings: matrixProfile.selector_warnings || [],
+      setup_biases: matrixProfile.setup_biases || {},
+      what_this_changes: matrixProfile.what_this_changes,
+      guide_section_id: matrixProfile.guide_section_id
+    };
+  }
+
   function computeRecommendation(answers, datasets) {
     if (!routeComplete(datasets.questionSpec, answers, datasets)) {
       return null;
@@ -522,13 +595,15 @@
     }
 
     const status = buildStatus(example);
+    const matrixProfile = resolveMatrixProfile(answers, datasets, example);
     const nanoporeProfile = resolveNanoporeProfile(answers, datasets, example);
-    const setupEffects = applySetupHeuristics(answers, datasets, example, nanoporeProfile, backend);
+    const setupEffects = applySetupHeuristics(answers, datasets, example, nanoporeProfile, backend, matrixProfile);
     const externalFallbacks = resolveExternalFallbacks(
       answers,
       datasets,
       status.value,
-      nanoporeProfile.effective.analysis_environment
+      nanoporeProfile.effective.analysis_environment,
+      matrixProfile
     );
     const preprocessing = mergePreprocessing(backend);
     const docs = {
@@ -574,6 +649,9 @@
       status: status.value,
       status_label: status.label,
       explanation,
+      matrix_profile: matrixProfile,
+      matrix_notes: buildMatrixNotes(matrixProfile),
+      literature_links: uniqueLinks(matrixProfile?.citations || []),
       nanopore_profile: nanoporeProfile,
       setup_summary: {
         recommendation: setupRecommendation,
@@ -598,8 +676,14 @@
           label: "Nanopore guide",
           url: "nanopore-guide.html"
         },
+        matrixProfile?.guide_section_id
+          ? {
+              label: `${matrixProfile.label} matrix notes`,
+              url: `nanopore-guide.html#${matrixProfile.guide_section_id}`
+            }
+          : null,
         ...(backend.pipeline.setup_docs || [])
-      ]).map((note) => ({
+      ].filter(Boolean)).map((note) => ({
         title: note.label,
         url: note.url
       })),
@@ -629,6 +713,7 @@
     needsExampleSelection,
     resolveSelectedExample,
     resolveRouteExample,
+    resolveMatrixProfile,
     resolveNanoporeProfile,
     resolveExternalFallbacks,
     applySetupHeuristics,
