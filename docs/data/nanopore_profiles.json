@@ -7,7 +7,7 @@
       "consequences": {
         "demultiplexing": "Usually not needed.",
         "barcode_trimming": "Not expected by default.",
-        "typical_use": "Single-sample WGS, isolate assembly, or accuracy-focused metagenomics.",
+        "typical_use": "Single-sample WGS and isolate assembly.",
         "route_implication": "Best when read length and consensus quality matter more than speed."
       },
       "notes": [
@@ -226,12 +226,12 @@
         "functional_profiling"
       ],
       "defaults": {
-        "library_mode": "lsk114",
+        "library_mode": "rbk114_24",
         "flowcell_family": "minion_r10_4_1",
         "basecalling_goal": "balanced_hac",
         "analysis_environment": "group_repo_backend"
       },
-      "result_note": "Default to a current R10.4.1 DNA route with HAC basecalling for broad environmental profiling."
+      "result_note": "Default to R10.4.1 with rapid barcoding and HAC for broad environmental profiling."
     },
     {
       "sample_contexts": [
@@ -246,12 +246,12 @@
         "full_environmental_pipeline"
       ],
       "defaults": {
-        "library_mode": "lsk114",
+        "library_mode": "rbk114_24",
         "flowcell_family": "minion_r10_4_1",
         "basecalling_goal": "max_accuracy_sup",
         "analysis_environment": "group_repo_backend"
       },
-      "result_note": "Assembly- and AMR-heavy environmental DNA routes default to SUP-style accuracy framing, with deeper sequencing still worth considering for matrix-rich samples."
+      "result_note": "Assembly- and AMR-heavy environmental DNA routes default to rapid barcoding with SUP accuracy."
     },
     {
       "sample_contexts": [

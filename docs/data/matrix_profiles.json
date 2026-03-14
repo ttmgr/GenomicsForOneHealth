@@ -21,7 +21,7 @@
         "full_environmental_pipeline"
       ]
     },
-    "selector_summary": "Air metagenomes are low-biomass and background-heavy, so early run monitoring matters as much as the final backend choice.",
+    "selector_summary": "Low-biomass and background-heavy; monitor the run early.",
     "selector_warnings": [
       "Air samples often yield far more background DNA than microbial signal.",
       "Assembly is possible, but low biomass can make shallow runs misleading.",
@@ -77,7 +77,7 @@
         "full_environmental_pipeline"
       ]
     },
-    "selector_summary": "Water-like environmental metagenomes reward longer reads and contextual AMR analysis, but depth needs rise quickly when the community is diffuse.",
+    "selector_summary": "Long reads help contextual AMR analysis, but depth needs rise quickly in diffuse communities.",
     "selector_warnings": [
       "Environmental water matrices vary sharply in biomass and inhibitor load across sites and timepoints.",
       "AMR and mobile-element interpretation often benefit more from contextual long reads than from shallow abundance tables alone.",
@@ -132,7 +132,7 @@
         "full_environmental_pipeline"
       ]
     },
-    "selector_summary": "Soil is still one of the hardest long-read metagenomic matrices: inhibitor removal, biological replication, and sequencing depth all matter more than in cleaner water systems.",
+    "selector_summary": "Soil is one of the hardest matrices: inhibitors, replication, and depth all matter.",
     "selector_warnings": [
       "Humic acids and other inhibitors can reduce pore performance even when the library technically loads.",
       "Soil diversity saturates slowly, so unsupported results should not imply shallow depth is enough.",
@@ -192,7 +192,7 @@
         "full_environmental_pipeline"
       ]
     },
-    "selector_summary": "Unsupported environmental matrices need honest fallback framing: nearest internal examples help, but water, wastewater, and soil systems behave differently in practice.",
+    "selector_summary": "Nearest examples help, but environmental matrices differ sharply in practice.",
     "selector_warnings": [
       "Do not assume a generic environmental matrix will behave like air or passive water.",
       "Wastewater-style surveillance often emphasizes ARG context and epidemiology rather than direct study-to-study backend reuse.",
@@ -245,7 +245,7 @@
         "full_virome_pipeline"
       ]
     },
-    "selector_summary": "Environmental RNA virome work remains matrix-specific, so the selector should treat the wetland branch as a documented anchor rather than a universal viral backend.",
+    "selector_summary": "Matrix-specific; the wetland branch is a documented anchor, not a universal viral backend.",
     "selector_warnings": [
       "RNA integrity and viral load can drive yield more than route choice alone.",
       "Do not overclaim generic environmental virome support from a single published wetland example.",
@@ -295,7 +295,7 @@
         "full_amplicon_pipeline"
       ]
     },
-    "selector_summary": "Water-derived 12S routes should stay amplicon-first and lower-throughput, even when the surrounding project also uses shotgun nanopore workflows elsewhere.",
+    "selector_summary": "Amplicon-first and lower-throughput, even alongside shotgun workflows.",
     "selector_warnings": [
       "Targeted 12S interpretation should not inherit shotgun metagenomic assembly expectations.",
       "Unsupported 12S contexts are best handled as approximate amplicon references, not as false exact replacements.",
@@ -346,7 +346,7 @@
         "full_isolate_pipeline"
       ]
     },
-    "selector_summary": "Single-isolate nanopore data are now strong enough for plasmid-aware AMR interpretation and high-quality assemblies, especially when ligation prep and SUP-style consensus are in scope.",
+    "selector_summary": "Strong enough for plasmid-aware AMR and high-quality assemblies with SUP consensus.",
     "selector_warnings": [
       "Plasmid context is often the main reason long reads outperform short-read-only isolate workflows.",
       "Hybrid polishing still remains a valid upgrade path when short reads are available.",
@@ -401,7 +401,7 @@
         "full_isolate_pipeline"
       ]
     },
-    "selector_summary": "Barcoded isolate routes benefit from the same plasmid-aware long-read context as single isolates, but they also depend on clean demultiplexing and per-barcode assembly boundaries.",
+    "selector_summary": "Same plasmid-aware context as single isolates, but demultiplexing quality matters more.",
     "selector_warnings": [
       "Per-barcode separation quality directly affects outbreak and plasmid comparisons.",
       "Adaptive enrichment and plasmid-focused depth can help, but not if barcodes stay mixed downstream.",
@@ -452,7 +452,7 @@
         "full_host_association_pipeline"
       ]
     },
-    "selector_summary": "Clinical metagenomes are not one matrix: plasma, BAL, and CSF each need their own host-depletion and interpretation logic even when the selector still anchors to the published host-association backend.",
+    "selector_summary": "Not one matrix: plasma, BAL, and CSF each need distinct host-depletion logic.",
     "selector_warnings": [
       "Direct clinical metagenomes often require stronger host depletion than environmental routes.",
       "Plasma cfDNA, BAL, and CSF remain guide-only variants in this version of the selector.",
@@ -510,7 +510,7 @@
         "full_food_safety_pipeline"
       ]
     },
-    "selector_summary": "Food-safety nanopore workflows are strongest when enrichment, adaptive sampling, and isolate-quality reconstruction are kept explicit rather than hidden behind generic metagenomics language.",
+    "selector_summary": "Strongest when enrichment and adaptive sampling are kept explicit.",
     "selector_warnings": [
       "Adaptive sampling results are easier to interpret with a matched control or baseline.",
       "Enrichment culture changes the matrix assumptions compared with direct environmental metagenomes.",
@@ -559,7 +559,7 @@
         "full_environmental_pipeline"
       ]
     },
-    "selector_summary": "Wastewater is not a first-class route yet, but it is a strong reference case for unsupported environmental surveillance and ARG contextualization.",
+    "selector_summary": "Strong reference for unsupported environmental surveillance and ARG context.",
     "selector_warnings": [
       "Wastewater surveillance emphasizes temporal sampling, ARG linkage, and matrix-specific cleanup.",
       "Early-warning use cases can justify cloud interpretation even when the internal repo does not have an exact backend."
@@ -613,7 +613,7 @@
         "full_host_association_pipeline"
       ]
     },
-    "selector_summary": "Blood plasma cfDNA is a short-fragment clinical matrix and should not be treated like a standard long-fragment metagenome.",
+    "selector_summary": "Short-fragment clinical matrix; not a standard long-fragment metagenome.",
     "selector_warnings": [
       "Specialized short-fragment library preparation is required.",
       "Host depletion and strict downstream filtering are central, not optional."
@@ -661,7 +661,7 @@
         "amr_virulence_profiling"
       ]
     },
-    "selector_summary": "Positive blood culture sits between metagenomics and isolate work: enrichment removes much of the host-background problem while preserving rapid plasmid-aware characterization.",
+    "selector_summary": "Between metagenomics and isolate work; enrichment removes most host background.",
     "selector_warnings": [
       "The culture bottle already changes the matrix and enrichment state.",
       "This is not equivalent to direct plasma sequencing."
@@ -709,7 +709,7 @@
         "full_host_association_pipeline"
       ]
     },
-    "selector_summary": "BAL and lower-respiratory metagenomics are guide-only because host background, prior antibiotic exposure, and targeted-vs-shotgun choices change the workflow materially.",
+    "selector_summary": "Guide-only; host background and antibiotic exposure change the workflow materially.",
     "selector_warnings": [
       "Respiratory samples can remain clinically informative even after antibiotic exposure.",
       "Specificity can fall when commensals or upper-airway organisms dominate."
@@ -758,7 +758,7 @@
         "full_host_association_pipeline"
       ]
     },
-    "selector_summary": "CSF remains a sparse, guide-only clinical matrix because sensitivity and false-positive control are both harder than in richer isolate or culture-derived samples.",
+    "selector_summary": "Sparse guide-only matrix; sensitivity and false-positive control are both harder.",
     "selector_warnings": [
       "Very low biomass raises the cost of false positives.",
       "Alignment-based interpretation often stays more defensible than broad assembly expectations."
@@ -802,7 +802,7 @@
         "full_host_association_pipeline"
       ]
     },
-    "selector_summary": "Gut clinical metagenomes are guide-only for now because inhibitor load, host background, and pathogen discovery framing differ from the current internal host-association example.",
+    "selector_summary": "Guide-only; inhibitors and pathogen discovery framing differ from the internal example.",
     "selector_warnings": [
       "Stool and gut-associated samples often need extra cleanup for inhibitors.",
       "Unexpected pathogens can be clinically useful even when culture misses them."
@@ -850,7 +850,7 @@
         "complete_genome_assembly"
       ]
     },
-    "selector_summary": "Veterinary field surveillance is guide-only in this version, but it is a useful reference for low-infrastructure nanopore deployments and mixed surveillance objectives.",
+    "selector_summary": "Guide-only; useful reference for field deployments and mixed surveillance.",
     "selector_warnings": [
       "Field practicality can matter as much as pure throughput or consensus quality.",
       "Mixed surveillance goals often blur environmental and isolate workflows."
