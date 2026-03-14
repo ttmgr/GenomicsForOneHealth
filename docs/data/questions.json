@@ -30,7 +30,7 @@
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Keep the route neutral and decide on the next page.",
+              "help": "Return when the broad sample context is clearer.",
               "neutral": true
             }
           ]
@@ -122,7 +122,7 @@
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Keep the material class neutral.",
+              "help": "Return when the assay class is clearer.",
               "neutral": true
             }
           ]
@@ -458,7 +458,7 @@
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Keep the target neutral.",
+              "help": "Return when the main target is clearer.",
               "neutral": true
             }
           ]
@@ -469,260 +469,382 @@
       "id": "example",
       "page_type": "conditional_route",
       "title": "Published Example Context",
-      "summary": "Choose the published study context that is closest to your case. Unsupported contexts remain available and will map to the nearest published example backend.",
+      "summary": "Choose the published study context that is closest to your case. Unsupported contexts remain available and map to the nearest published example backend.",
       "questions": [
         {
           "id": "example_context",
           "field": "example_contexts",
           "label": "Which published study context is closest to your case?",
-          "description": "These options appear only after the generic route is narrowed.",
+          "description": "These options only appear after the generic route is narrowed.",
           "dynamic_options_from": "examples"
         }
       ]
     },
     {
-      "id": "expert",
-      "page_type": "expert",
-      "title": "Expert Tuning",
-      "summary": "These settings refine the recommendation inside the chosen backend. They do not reroute you to a different published example.",
+      "id": "setup",
+      "page_type": "info",
+      "title": "Nanopore Setup Advisor",
+      "summary": "Your route is now defined. Next, refine the sequencing setup and analysis environment without changing the selected published backend.",
+      "questions": []
+    },
+    {
+      "id": "kit",
+      "page_type": "setup",
+      "title": "Library Prep Kit",
+      "summary": "Choose the closest library prep kit or run mode. This mainly changes demultiplexing, trimming, throughput, and how the result frames the early preprocessing steps.",
       "questions": [
         {
           "id": "library_mode",
           "field": "library_modes",
-          "section": "Sequencing setup",
-          "label": "Library prep kit or run mode",
-          "description": "Use this to tune demultiplexing, barcode trimming, and ONT-specific guidance.",
-          "optional": true,
+          "label": "Which library prep kit or run mode is closest to your case?",
+          "description": "The card consequences stay short on purpose: demultiplexing, barcode trimming, typical use, and route implication.",
           "options": [
             {
               "value": "lsk114",
               "label": "LSK114",
-              "help": "Ligation-based single-sample DNA workflow."
+              "help": "Ligation-based route focused on read length and single-sample yield.",
+              "visible_when": {
+                "material_class": [
+                  "long_read_metagenomic_dna",
+                  "rna_virome_material",
+                  "single_isolate_long_read_dna",
+                  "clinical_metagenome"
+                ]
+              }
             },
             {
               "value": "rbk114_24",
               "label": "RBK114.24",
-              "help": "Rapid Barcoding Kit 24 V14."
+              "help": "Rapid barcoding for multiplexed long-read DNA workflows.",
+              "visible_when": {
+                "material_class": [
+                  "long_read_metagenomic_dna",
+                  "barcoded_isolate_long_read_dna"
+                ]
+              }
             },
             {
               "value": "nbd114_24",
               "label": "NBD114.24",
-              "help": "Native Barcoding Kit 24 V14."
+              "help": "Native barcoding for multiplexed long-read DNA workflows.",
+              "visible_when": {
+                "material_class": [
+                  "long_read_metagenomic_dna",
+                  "barcoded_isolate_long_read_dna"
+                ]
+              }
+            },
+            {
+              "value": "rapid_rna_or_cdna",
+              "label": "Rapid RNA or cDNA workflow",
+              "help": "cDNA-oriented RNA workflow rather than native direct RNA.",
+              "visible_when": {
+                "material_class": [
+                  "rna_virome_material"
+                ]
+              }
+            },
+            {
+              "value": "direct_rna",
+              "label": "Direct RNA",
+              "help": "Native RNA sequencing rather than cDNA conversion.",
+              "visible_when": {
+                "material_class": [
+                  "rna_virome_material"
+                ]
+              }
             },
             {
               "value": "amplicon_workflow",
               "label": "Amplicon workflow",
-              "help": "Amplicon-focused workflow."
+              "help": "Standard ONT-style amplicon workflow for 12S products.",
+              "visible_when": {
+                "material_class": [
+                  "edna_12s_amplicon"
+                ]
+              }
+            },
+            {
+              "value": "rapid_pcr_amplicon",
+              "label": "Rapid PCR amplicon",
+              "help": "PCR-biased rapid route for low-input or targeted amplicons.",
+              "visible_when": {
+                "material_class": [
+                  "edna_12s_amplicon"
+                ]
+              }
             },
             {
               "value": "barcoded_metagenome",
               "label": "Barcoded metagenome",
-              "help": "Multiplexed metagenomic route rather than isolate-only processing."
+              "help": "Multiplexed metagenomic route rather than isolate-only processing.",
+              "visible_when": {
+                "material_class": [
+                  "clinical_metagenome"
+                ]
+              }
             },
             {
               "value": "adaptive_sampling",
               "label": "Adaptive sampling",
-              "help": "Real-time enrichment or depletion during sequencing."
+              "help": "Real-time enrichment or depletion during sequencing.",
+              "visible_when": {
+                "material_class": [
+                  "listeria_enrichment_material"
+                ]
+              }
             },
             {
               "value": "standard_control",
               "label": "Standard control",
-              "help": "Matched non-adaptive sequencing control."
+              "help": "Matched non-adaptive sequencing control.",
+              "visible_when": {
+                "material_class": [
+                  "listeria_enrichment_material"
+                ]
+              }
             },
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Leave kit selection neutral.",
+              "help": "Use the route default and adjust later if needed.",
               "neutral": true
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "flowcell",
+      "page_type": "setup",
+      "title": "Flow Cell",
+      "summary": "Choose the flow cell family. This tunes throughput framing, compatibility notes, and where the selector suggests Flongle, MinION/GridION, PromethION, or RNA-specific paths.",
+      "questions": [
         {
-          "id": "input_format",
-          "field": "input_formats",
-          "section": "Sequencing setup",
-          "label": "Current input format",
-          "description": "Use this to tune the documented entry point.",
-          "optional": true,
+          "id": "flowcell_family",
+          "field": "flowcell_families",
+          "label": "Which flow cell family are you using?",
+          "description": "Keep this at the family level rather than a full catalogue number.",
           "options": [
             {
-              "value": "pod5",
-              "label": "POD5",
-              "help": "Raw signal data in POD5 format."
+              "value": "flongle",
+              "label": "Flongle",
+              "help": "Low-output pilot and targeted runs.",
+              "visible_when": {
+                "material_class": [
+                  "long_read_metagenomic_dna",
+                  "edna_12s_amplicon",
+                  "single_isolate_long_read_dna"
+                ]
+              }
             },
             {
-              "value": "fast5",
-              "label": "FAST5",
-              "help": "Legacy raw signal data."
+              "value": "minion_gridion_r10_4_1",
+              "label": "MinION or GridION R10.4.1",
+              "help": "Current general-purpose ONT DNA route.",
+              "visible_when": {
+                "library_mode": [
+                  "lsk114",
+                  "rbk114_24",
+                  "nbd114_24",
+                  "rapid_rna_or_cdna",
+                  "amplicon_workflow",
+                  "rapid_pcr_amplicon",
+                  "barcoded_metagenome",
+                  "adaptive_sampling",
+                  "standard_control",
+                  "unsure"
+                ]
+              }
             },
             {
-              "value": "bam",
-              "label": "BAM",
-              "help": "Basecalled or aligned BAM."
+              "value": "promethion_r10_4_1",
+              "label": "PromethION R10.4.1",
+              "help": "High-output ONT route for deeper runs or larger cohorts.",
+              "visible_when": {
+                "material_class": [
+                  "long_read_metagenomic_dna",
+                  "clinical_metagenome"
+                ]
+              }
             },
             {
-              "value": "fastq",
-              "label": "FASTQ",
-              "help": "Basecalled long reads."
+              "value": "rna_flow_cell",
+              "label": "RNA flow cell",
+              "help": "Direct RNA-specific flow cell family.",
+              "visible_when": {
+                "library_mode": [
+                  "direct_rna"
+                ]
+              }
             },
             {
-              "value": "paired_end_fastq",
-              "label": "Paired-end FASTQ",
-              "help": "Short-read support data, usually Illumina."
+              "value": "legacy_r9_4_1",
+              "label": "Legacy R9.4.1",
+              "help": "Compatibility route for older workflows or archived runs.",
+              "visible_when": {
+                "library_mode": [
+                  "lsk114",
+                  "rbk114_24",
+                  "nbd114_24",
+                  "rapid_rna_or_cdna",
+                  "amplicon_workflow",
+                  "rapid_pcr_amplicon",
+                  "barcoded_metagenome",
+                  "adaptive_sampling",
+                  "standard_control",
+                  "unsure"
+                ]
+              }
             },
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Leave input format neutral.",
+              "help": "Use the route default and adjust later if needed.",
               "neutral": true
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "basecalling",
+      "page_type": "setup",
+      "title": "Basecalling",
+      "summary": "Choose the basecalling intent. This determines whether the selector suggests live monitoring, balanced production settings, maximum-accuracy consensus, or no upstream basecalling step at all.",
+      "questions": [
         {
-          "id": "multiplexing",
-          "field": "multiplexing",
-          "section": "Sequencing setup",
-          "label": "Are the data multiplexed?",
-          "description": "Used to refine early preprocessing and routing assumptions inside the selected backend.",
-          "optional": true,
+          "id": "basecalling_goal",
+          "field": "basecalling_goals",
+          "label": "What is your basecalling goal?",
+          "description": "This keeps the selector sparse while still distinguishing FAST, HAC, SUP, modified-base, and already-basecalled routes.",
           "options": [
             {
-              "value": "yes",
-              "label": "Yes",
-              "help": "Barcodes are present or multiple samples were pooled."
+              "value": "real_time_fast",
+              "label": "FAST for real-time monitoring",
+              "help": "Prioritize rapid monitoring, triage, and field-style turnaround."
             },
             {
-              "value": "no",
-              "label": "No",
-              "help": "Single-sample or already-separated data."
+              "value": "balanced_hac",
+              "label": "Balanced HAC",
+              "help": "Use high accuracy as the general-purpose default."
             },
             {
-              "value": "unsure",
-              "label": "Not sure",
-              "help": "Leave multiplexing neutral.",
-              "neutral": true
-            }
-          ]
-        },
-        {
-          "id": "demultiplexing",
-          "field": "demultiplexing",
-          "section": "Sequencing setup",
-          "label": "Demultiplexing status",
-          "description": "Indicates whether demultiplexing still needs to happen before downstream analysis.",
-          "optional": true,
-          "options": [
-            {
-              "value": "needed",
-              "label": "Still needed",
-              "help": "The pooled data are not yet separated."
+              "value": "max_accuracy_sup",
+              "label": "Maximum-accuracy SUP",
+              "help": "Favor assembly, AMR, and high-confidence consensus."
             },
             {
-              "value": "already_done",
-              "label": "Already done",
-              "help": "Per-sample or per-barcode files already exist."
-            },
-            {
-              "value": "not_needed",
-              "label": "Not needed",
-              "help": "Single-sample or already-separated input."
-            },
-            {
-              "value": "unsure",
-              "label": "Not sure",
-              "help": "Leave demultiplexing neutral.",
-              "neutral": true
-            }
-          ]
-        },
-        {
-          "id": "basecalling_state",
-          "field": "basecalling_state",
-          "section": "Sequencing setup",
-          "label": "Basecalling state or Dorado preference",
-          "description": "Used to insert or suppress basecalling steps and ONT notes.",
-          "optional": true,
-          "options": [
-            {
-              "value": "raw_signal_not_basecalled",
-              "label": "Raw data, not basecalled yet",
-              "help": "Basecalling still needs to happen."
-            },
-            {
-              "value": "prefer_fast",
-              "label": "Prefer FAST",
-              "help": "Prioritize turnaround time."
-            },
-            {
-              "value": "prefer_hac",
-              "label": "Prefer HAC",
-              "help": "Balanced accuracy and compute cost."
-            },
-            {
-              "value": "prefer_sup",
-              "label": "Prefer SUP",
-              "help": "Highest accuracy and highest compute cost."
+              "value": "modified_base_calling",
+              "label": "Modified-base calling",
+              "help": "Keep modification-aware basecalling in scope when it is biologically relevant.",
+              "visible_when": {
+                "material_class": [
+                  "long_read_metagenomic_dna",
+                  "rna_virome_material",
+                  "single_isolate_long_read_dna",
+                  "barcoded_isolate_long_read_dna",
+                  "clinical_metagenome",
+                  "listeria_enrichment_material"
+                ]
+              }
             },
             {
               "value": "already_basecalled",
               "label": "Already basecalled",
-              "help": "Reads are already in FASTQ or BAM."
-            },
-            {
-              "value": "not_applicable",
-              "label": "Not applicable",
-              "help": "Use when no basecalling decision is relevant here."
+              "help": "Skip upstream basecalling suggestions and start from the documented entry format."
             },
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Leave basecalling neutral.",
+              "help": "Use the route default and adjust later if needed.",
               "neutral": true
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "analysis",
+      "page_type": "setup",
+      "title": "Analysis Environment",
+      "summary": "Choose whether the recommendation should stay fully inside the group repository or also surface ONT-curated and cloud-based fallback environments.",
+      "questions": [
         {
-          "id": "preprocessing_state",
-          "field": "preprocessing_state",
-          "section": "Sequencing setup",
-          "label": "Adapter trimming and filtering",
-          "description": "Used to tune whether early cleaning steps are still needed.",
-          "optional": true,
+          "id": "analysis_environment",
+          "field": "analysis_environments",
+          "label": "Where should the analysis primarily happen?",
+          "description": "Unsupported routes default to a hybrid reference view: nearest internal example plus external fallback options.",
           "options": [
             {
-              "value": "need_trim_and_filter",
-              "label": "Need trimming and filtering",
-              "help": "Adapters and filtering are still pending."
+              "value": "group_repo_backend",
+              "label": "Group repo backend",
+              "help": "Stay primarily inside the published workflows in this repository."
             },
             {
-              "value": "need_trim_only",
-              "label": "Need trimming only",
-              "help": "Adapters still need removal."
+              "value": "epi2me_labs",
+              "label": "EPI2ME Labs",
+              "help": "Use ONT-curated Nextflow workflows as the main analysis environment.",
+              "visible_when": {
+                "material_class": [
+                  "long_read_metagenomic_dna",
+                  "edna_12s_amplicon",
+                  "single_isolate_long_read_dna",
+                  "barcoded_isolate_long_read_dna",
+                  "clinical_metagenome"
+                ]
+              }
             },
             {
-              "value": "need_filter_only",
-              "label": "Need filtering only",
-              "help": "Reads are trimmed but still need Q or length filtering."
+              "value": "cz_id",
+              "label": "CZ ID",
+              "help": "Use cloud-based metagenomic interpretation where that is a better fit.",
+              "visible_when": {
+                "material_class": [
+                  "long_read_metagenomic_dna",
+                  "rna_virome_material",
+                  "clinical_metagenome"
+                ]
+              }
             },
             {
-              "value": "already_trimmed_and_filtered",
-              "label": "Already trimmed and filtered",
-              "help": "The data already passed through early read cleaning."
+              "value": "hybrid_reference",
+              "label": "Hybrid reference",
+              "help": "Show the nearest internal example together with external workflow options.",
+              "visible_when": {
+                "material_class": [
+                  "long_read_metagenomic_dna",
+                  "rna_virome_material",
+                  "edna_12s_amplicon",
+                  "single_isolate_long_read_dna",
+                  "barcoded_isolate_long_read_dna",
+                  "clinical_metagenome",
+                  "listeria_enrichment_material"
+                ]
+              }
             },
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Leave preprocessing neutral.",
+              "help": "Use the route default and adjust later if needed.",
               "neutral": true
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "conditions",
+      "page_type": "conditions",
+      "title": "Conditions",
+      "summary": "Only a few route-specific conditions appear here. Use them to adjust warnings, preprocessing emphasis, and a small number of heuristics such as short-read metagenomic assembly.",
+      "questions": [
         {
           "id": "median_read_length_below_1000",
           "field": "median_read_length_below_1000",
-          "section": "Route-specific heuristics",
-          "label": "Are the long reads mostly short, with a median below 1000 bp?",
-          "description": "This can affect assembler preference in environmental long-read DNA workflows.",
+          "section": "Environmental long-read DNA",
+          "label": "Median read length below 1000 bp",
+          "description": "Use this to switch the preferred environmental assembly heuristic toward nanoMDBG.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -736,21 +858,21 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "Median read length is below 1000 bp."
+              "help": "Most reads are short for a long-read metagenomic run."
             },
             {
               "value": "no",
               "label": "No",
-              "help": "Median read length is 1000 bp or higher."
+              "help": "Read lengths are comfortably above that threshold."
             }
           ]
         },
         {
           "id": "very_low_biomass_sample",
           "field": "very_low_biomass_sample",
-          "section": "Route-specific heuristics",
-          "label": "Is this a very low-biomass environmental sample?",
-          "description": "Use this to add conservative interpretation notes for sparse environmental data.",
+          "section": "Environmental long-read DNA",
+          "label": "Very low-biomass sample",
+          "description": "Adds more conservative interpretation notes for sparse environmental material.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -764,21 +886,21 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "The material is sparse or low-yield."
+              "help": "The sample is sparse or low-yield."
             },
             {
               "value": "no",
               "label": "No",
-              "help": "The material is not unusually sparse."
+              "help": "The sample is not unusually sparse."
             }
           ]
         },
         {
           "id": "assembly_is_priority",
           "field": "assembly_is_priority",
-          "section": "Route-specific heuristics",
-          "label": "Is genome assembly the main deliverable?",
-          "description": "Use this to emphasize assembly-centric interpretation.",
+          "section": "Environmental long-read DNA",
+          "label": "Assembly is the main deliverable",
+          "description": "Use this to emphasize assembly-centered interpretation over quick screening.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -792,21 +914,21 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "Assembly and recovered genomes matter most."
+              "help": "Recovered genomes matter most."
             },
             {
               "value": "no",
               "label": "No",
-              "help": "Assembly is not the primary deliverable."
+              "help": "Assembly is not the main endpoint."
             }
           ]
         },
         {
           "id": "low_viral_load_expected",
           "field": "low_viral_load_expected",
-          "section": "Route-specific heuristics",
-          "label": "Do you expect low viral load?",
-          "description": "Adds conservative notes for sparse RNA virome material.",
+          "section": "Environmental RNA virome",
+          "label": "Low viral load expected",
+          "description": "Adds conservative notes for sparse environmental RNA virome material.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -832,9 +954,9 @@
         {
           "id": "assembled_contigs_already_available",
           "field": "assembled_contigs_already_available",
-          "section": "Route-specific heuristics",
-          "label": "Do you already have assembled contigs?",
-          "description": "Use this to suppress redundant assembly guidance when contigs already exist.",
+          "section": "Environmental RNA virome",
+          "label": "Contigs already available",
+          "description": "Use this to suppress redundant assembly emphasis when contigs already exist.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -860,9 +982,9 @@
         {
           "id": "barcoded_amplicon_pool",
           "field": "barcoded_amplicon_pool",
-          "section": "Route-specific heuristics",
-          "label": "Is this a barcoded amplicon pool?",
-          "description": "Highlights demultiplexing and primer/barcode cleanup for amplicon workflows.",
+          "section": "Environmental 12S amplicon",
+          "label": "Barcoded amplicon pool",
+          "description": "Adds a reminder that pooled amplicons need barcode-aware handling.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -876,21 +998,21 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "Barcoded amplicon pool."
+              "help": "Multiple amplicon samples are pooled."
             },
             {
               "value": "no",
               "label": "No",
-              "help": "Not a barcoded amplicon pool."
+              "help": "This is not a pooled amplicon set."
             }
           ]
         },
         {
           "id": "illumina_support_reads_present",
           "field": "illumina_support_reads_present",
-          "section": "Route-specific heuristics",
-          "label": "Are Illumina support reads also available?",
-          "description": "Adds a note when paired-end short-read support exists alongside ONT 12S data.",
+          "section": "Environmental 12S amplicon",
+          "label": "Illumina support reads present",
+          "description": "Adds a short note that short-read support may be used for cross-checking the amplicon interpretation.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -904,21 +1026,21 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "Illumina support data are available."
+              "help": "Short-read support data are available."
             },
             {
               "value": "no",
               "label": "No",
-              "help": "Only one sequencing source is available."
+              "help": "Only the ONT amplicon data are available."
             }
           ]
         },
         {
           "id": "short_reads_available_for_hybrid",
           "field": "short_reads_available_for_hybrid",
-          "section": "Route-specific heuristics",
-          "label": "Are short reads available for hybrid assembly?",
-          "description": "Adds hybrid-assembly guidance when short-read support exists.",
+          "section": "Clinical single isolate",
+          "label": "Short reads available for hybrid assembly",
+          "description": "Use this to foreground hybrid assembly when Illumina support is available.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -932,7 +1054,7 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "Short-read data are available."
+              "help": "Short-read support is available."
             },
             {
               "value": "no",
@@ -944,9 +1066,9 @@
         {
           "id": "closed_genome_is_priority",
           "field": "closed_genome_is_priority",
-          "section": "Route-specific heuristics",
-          "label": "Is a closed genome the priority?",
-          "description": "Adds finishing and circularization emphasis.",
+          "section": "Clinical single isolate",
+          "label": "Closed genome is the priority",
+          "description": "Adds stronger guidance toward circularization and complete-genome framing.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -960,21 +1082,21 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "Closed or near-closed genome is the main deliverable."
+              "help": "Closed chromosomes or plasmids matter most."
             },
             {
               "value": "no",
               "label": "No",
-              "help": "Closed assembly is not the main priority."
+              "help": "A draft genome is sufficient."
             }
           ]
         },
         {
           "id": "per_barcode_isolates_not_yet_split",
           "field": "per_barcode_isolates_not_yet_split",
-          "section": "Route-specific heuristics",
-          "label": "Are per-barcode isolates not yet split out?",
-          "description": "Adds comparative-isolate handling notes when the barcoded outputs are still pooled.",
+          "section": "Clinical barcoded isolate",
+          "label": "Per-barcode isolates not yet split",
+          "description": "Adds stronger demultiplexing and barcode bookkeeping emphasis for multiplexed isolates.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -988,21 +1110,21 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "Per-barcode splitting still needs attention."
+              "help": "The pooled isolate set still needs separation."
             },
             {
               "value": "no",
               "label": "No",
-              "help": "Per-barcode isolate outputs already exist."
+              "help": "Per-barcode inputs already exist."
             }
           ]
         },
         {
           "id": "comparative_phylogeny_is_priority",
           "field": "comparative_phylogeny_is_priority",
-          "section": "Route-specific heuristics",
-          "label": "Is comparative phylogeny a main deliverable?",
-          "description": "Adds comparative isolate interpretation emphasis.",
+          "section": "Clinical barcoded isolate",
+          "label": "Comparative phylogeny is the priority",
+          "description": "Adds stronger interpretation notes for comparative isolate outputs.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -1016,21 +1138,21 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "Comparative isolate outputs matter most."
+              "help": "Comparative relatedness matters most."
             },
             {
               "value": "no",
               "label": "No",
-              "help": "Comparative phylogeny is secondary."
+              "help": "The focus is not primarily comparative phylogeny."
             }
           ]
         },
         {
           "id": "host_association_is_primary_deliverable",
           "field": "host_association_is_primary_deliverable",
-          "section": "Route-specific heuristics",
-          "label": "Is host association the primary deliverable?",
-          "description": "Adds emphasis to methylation-aware host linkage outputs.",
+          "section": "Clinical metagenome",
+          "label": "Host association is the primary deliverable",
+          "description": "Confirms that linking AMR or plasmids to hosts is the main endpoint.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -1044,21 +1166,21 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "Host-association output is the main priority."
+              "help": "Host association is the main objective."
             },
             {
               "value": "no",
               "label": "No",
-              "help": "Host association is not the main priority."
+              "help": "Host association is not the only deliverable."
             }
           ]
         },
         {
           "id": "matched_control_available",
           "field": "matched_control_available",
-          "section": "Route-specific heuristics",
-          "label": "Is a matched control available?",
-          "description": "Adds AS-vs-control interpretation emphasis when matched control data exist.",
+          "section": "Food safety",
+          "label": "Matched control available",
+          "description": "Adds stronger adaptive-sampling comparison framing when the control is available.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -1072,7 +1194,7 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "Adaptive-sampling output can be compared against a control."
+              "help": "A matched non-adaptive comparison exists."
             },
             {
               "value": "no",
@@ -1084,9 +1206,9 @@
         {
           "id": "target_reads_already_enriched",
           "field": "target_reads_already_enriched",
-          "section": "Route-specific heuristics",
-          "label": "Do the target reads already appear enriched?",
-          "description": "Adds a note when enrichment may already be sufficient before deeper recovery analysis.",
+          "section": "Food safety",
+          "label": "Target reads already enriched",
+          "description": "Use this when enrichment has already occurred and the result should focus on downstream comparison and target analysis.",
           "optional": true,
           "visible_when": {
             "sample_context": [
@@ -1100,7 +1222,7 @@
             {
               "value": "yes",
               "label": "Yes",
-              "help": "The target looks enriched already."
+              "help": "The target fraction is already enriched."
             },
             {
               "value": "no",
@@ -1115,7 +1237,7 @@
       "id": "results",
       "page_type": "results",
       "title": "Results",
-      "summary": "Review the recommended route, the selected published backend, and the expert-tuned action sheet.",
+      "summary": "Review the generalized route, the selected published backend, and the Nanopore setup recommendation.",
       "questions": []
     }
   ]

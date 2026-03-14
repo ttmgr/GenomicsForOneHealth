@@ -1,0 +1,397 @@
+{
+  "kits": [
+    {
+      "id": "lsk114",
+      "label": "LSK114",
+      "summary": "Ligation sequencing for longer fragments and higher-yield single-sample DNA workflows.",
+      "consequences": {
+        "demultiplexing": "Usually not needed.",
+        "barcode_trimming": "Not expected by default.",
+        "typical_use": "Single-sample WGS, isolate assembly, or accuracy-focused metagenomics.",
+        "route_implication": "Best when read length and consensus quality matter more than speed."
+      },
+      "notes": [
+        "Best fit for high-molecular-weight DNA and consensus-focused workflows.",
+        "A sensible default when no barcoding is needed."
+      ]
+    },
+    {
+      "id": "rbk114_24",
+      "label": "RBK114.24",
+      "summary": "Rapid barcoding for multiplexed DNA runs with fast library preparation.",
+      "consequences": {
+        "demultiplexing": "Usually needed.",
+        "barcode_trimming": "Expected before downstream analysis.",
+        "typical_use": "Fast multiplexing and field-oriented turnaround.",
+        "route_implication": "Biases the setup toward pooled sample handling and per-barcode separation."
+      },
+      "notes": [
+        "Strong fit for rapid multiplexed DNA workflows.",
+        "Use when turnaround matters more than maximum fragment preservation."
+      ]
+    },
+    {
+      "id": "nbd114_24",
+      "label": "NBD114.24",
+      "summary": "Native barcoding for multiplexed DNA runs where read quality matters more than prep speed.",
+      "consequences": {
+        "demultiplexing": "Usually needed.",
+        "barcode_trimming": "Expected before downstream analysis.",
+        "typical_use": "Multiplexed DNA with stronger emphasis on read quality.",
+        "route_implication": "Keeps the setup barcode-oriented while staying closer to ligation-style quality."
+      },
+      "notes": [
+        "Sensible when you want multiplexing without giving up too much read quality."
+      ]
+    },
+    {
+      "id": "rapid_rna_or_cdna",
+      "label": "Rapid RNA or cDNA workflow",
+      "summary": "RNA-derived workflow that behaves more like DNA library handling than native direct RNA.",
+      "consequences": {
+        "demultiplexing": "Only if pooled upstream.",
+        "barcode_trimming": "Depends on the exact barcoding strategy.",
+        "typical_use": "RNA virome routes that are cDNA-based rather than direct RNA.",
+        "route_implication": "Keeps the route RNA-focused without forcing a native-RNA-only assumption."
+      },
+      "notes": [
+        "Useful when RNA quality or throughput constraints make cDNA workflows more practical than native direct RNA."
+      ]
+    },
+    {
+      "id": "direct_rna",
+      "label": "Direct RNA",
+      "summary": "Native RNA sequencing that preserves strand and modification information at the cost of stricter input requirements.",
+      "consequences": {
+        "demultiplexing": "Usually not the first concern.",
+        "barcode_trimming": "Depends on the exact protocol.",
+        "typical_use": "Native RNA when transcript structure or modifications matter.",
+        "route_implication": "Pushes the selector toward RNA-specific flow cells and more cautious throughput expectations."
+      },
+      "notes": [
+        "Best when native RNA features matter and the input RNA quality is high enough."
+      ]
+    },
+    {
+      "id": "amplicon_workflow",
+      "label": "Amplicon workflow",
+      "summary": "Standard ONT-style amplicon route for shorter targeted products such as 12S.",
+      "consequences": {
+        "demultiplexing": "Only if pooled upstream.",
+        "barcode_trimming": "Primer or adapter cleanup is usually still relevant.",
+        "typical_use": "Targeted microbial or biodiversity amplicons.",
+        "route_implication": "Steers the setup toward lighter throughput and amplicon-aware downstream interpretation."
+      },
+      "notes": [
+        "This is the cleanest default for 12S-like ONT amplicon work."
+      ]
+    },
+    {
+      "id": "rapid_pcr_amplicon",
+      "label": "Rapid PCR amplicon",
+      "summary": "PCR-based amplicon route for low-input targeted material where speed or input scarcity dominates.",
+      "consequences": {
+        "demultiplexing": "Depends on pool design.",
+        "barcode_trimming": "Primer cleanup is usually required.",
+        "typical_use": "Low-input or fast targeted amplicon workflows.",
+        "route_implication": "Adds more caution around amplification bias and shorter effective read structure."
+      },
+      "notes": [
+        "Best treated as an amplicon adaptation rather than a drop-in replacement for shotgun workflows."
+      ]
+    },
+    {
+      "id": "barcoded_metagenome",
+      "label": "Barcoded metagenome",
+      "summary": "Multiplexed metagenomic handling rather than one-isolate-per-barcode handling.",
+      "consequences": {
+        "demultiplexing": "Usually needed.",
+        "barcode_trimming": "Expected before downstream analysis.",
+        "typical_use": "Pooled metagenomic samples where host association or broad profiling is still the goal.",
+        "route_implication": "Keeps the setup metagenomic and pooled rather than isolate-centric."
+      },
+      "notes": [
+        "Use this when the dataset is complex metagenomic material rather than per-barcode isolates."
+      ]
+    },
+    {
+      "id": "adaptive_sampling",
+      "label": "Adaptive sampling",
+      "summary": "Real-time enrichment or depletion during sequencing rather than a passive control run.",
+      "consequences": {
+        "demultiplexing": "Only if barcodes were also introduced.",
+        "barcode_trimming": "Depends on upstream barcoding.",
+        "typical_use": "Target recovery and AS-vs-control benchmarking.",
+        "route_implication": "Frames the analysis around enrichment efficiency and matched-control interpretation."
+      },
+      "notes": [
+        "Best interpreted together with a matched control when possible."
+      ]
+    },
+    {
+      "id": "standard_control",
+      "label": "Standard control",
+      "summary": "Matched non-adaptive comparison route for food-safety target recovery.",
+      "consequences": {
+        "demultiplexing": "Only if barcodes were introduced.",
+        "barcode_trimming": "Depends on upstream barcoding.",
+        "typical_use": "Control arm for adaptive-sampling comparisons.",
+        "route_implication": "Keeps the interpretation anchored to the non-adaptive baseline."
+      },
+      "notes": [
+        "Use this when the key question is comparison against adaptive sampling."
+      ]
+    }
+  ],
+  "flow_cells": [
+    {
+      "id": "flongle",
+      "label": "Flongle",
+      "summary": "Low-output, low-cost pilot route.",
+      "notes": [
+        "Best for targeted runs, testing, and low-throughput pilots.",
+        "Less suitable for deep environmental metagenomics."
+      ]
+    },
+    {
+      "id": "minion_gridion_r10_4_1",
+      "label": "MinION or GridION R10.4.1",
+      "summary": "Current general-purpose ONT DNA route for most microbial genomics and moderate-depth metagenomics.",
+      "notes": [
+        "Good default for most new DNA runs.",
+        "Pairs well with Kit 14-era workflows and HAC or SUP basecalling."
+      ]
+    },
+    {
+      "id": "promethion_r10_4_1",
+      "label": "PromethION R10.4.1",
+      "summary": "High-output route for deeper metagenomics or larger cohorts.",
+      "notes": [
+        "Strong fit for deep environmental metagenomics and large study batches.",
+        "Usually overkill for small pilot runs."
+      ]
+    },
+    {
+      "id": "rna_flow_cell",
+      "label": "RNA flow cell",
+      "summary": "RNA-specific route required for native direct RNA sequencing.",
+      "notes": [
+        "Use this only for native direct RNA workflows."
+      ]
+    },
+    {
+      "id": "legacy_r9_4_1",
+      "label": "Legacy R9.4.1",
+      "summary": "Compatibility path for older ONT runs or archived analyses.",
+      "notes": [
+        "Keep this only for compatibility and reproduction of older runs."
+      ]
+    }
+  ],
+  "basecalling_profiles": [
+    {
+      "id": "real_time_fast",
+      "label": "FAST for real-time monitoring",
+      "summary": "Use FAST when rapid monitoring matters more than maximum per-read accuracy.",
+      "notes": [
+        "Good for live run assessment, field-style monitoring, or quick taxonomic triage."
+      ]
+    },
+    {
+      "id": "balanced_hac",
+      "label": "Balanced HAC",
+      "summary": "Use HAC as the standard production default when you want a balance of throughput and read accuracy.",
+      "notes": [
+        "Best general-purpose default for many microbial genomics and metagenomics workflows."
+      ]
+    },
+    {
+      "id": "max_accuracy_sup",
+      "label": "Maximum-accuracy SUP",
+      "summary": "Use SUP when assembly, AMR interpretation, or high-confidence consensus matters most.",
+      "notes": [
+        "Best fit for assembly-heavy routes, isolate genomics, and high-stringency consensus work."
+      ]
+    },
+    {
+      "id": "modified_base_calling",
+      "label": "Modified-base calling",
+      "summary": "Keep modification-aware basecalling in scope when methylation or modified bases matter biologically.",
+      "notes": [
+        "Use only when the downstream question really depends on modification-aware interpretation."
+      ]
+    },
+    {
+      "id": "already_basecalled",
+      "label": "Already basecalled",
+      "summary": "Skip upstream basecalling guidance and start from the documented input state.",
+      "notes": [
+        "Best when FASTQ or BAM already exists and you mainly need route-specific downstream guidance."
+      ]
+    }
+  ],
+  "route_defaults": [
+    {
+      "sample_contexts": [
+        "environmental"
+      ],
+      "material_classes": [
+        "long_read_metagenomic_dna"
+      ],
+      "target_goals": [
+        "taxonomy_profiling",
+        "functional_profiling"
+      ],
+      "defaults": {
+        "library_mode": "lsk114",
+        "flowcell_family": "minion_gridion_r10_4_1",
+        "basecalling_goal": "balanced_hac",
+        "analysis_environment": "group_repo_backend"
+      },
+      "result_note": "Default to a current R10.4.1 DNA route with HAC basecalling for broad environmental profiling."
+    },
+    {
+      "sample_contexts": [
+        "environmental"
+      ],
+      "material_classes": [
+        "long_read_metagenomic_dna"
+      ],
+      "target_goals": [
+        "mag_recovery",
+        "amr_surveillance",
+        "full_environmental_pipeline"
+      ],
+      "defaults": {
+        "library_mode": "lsk114",
+        "flowcell_family": "minion_gridion_r10_4_1",
+        "basecalling_goal": "max_accuracy_sup",
+        "analysis_environment": "group_repo_backend"
+      },
+      "result_note": "Assembly- and AMR-heavy environmental DNA routes default to SUP-style accuracy framing."
+    },
+    {
+      "sample_contexts": [
+        "environmental"
+      ],
+      "material_classes": [
+        "rna_virome_material"
+      ],
+      "target_goals": [
+        "viral_discovery",
+        "full_virome_pipeline"
+      ],
+      "defaults": {
+        "library_mode": "rapid_rna_or_cdna",
+        "flowcell_family": "minion_gridion_r10_4_1",
+        "basecalling_goal": "balanced_hac",
+        "analysis_environment": "group_repo_backend"
+      },
+      "result_note": "Environmental RNA virome routes default to a cDNA-style RNA workflow unless native direct RNA is explicitly selected."
+    },
+    {
+      "sample_contexts": [
+        "environmental"
+      ],
+      "material_classes": [
+        "edna_12s_amplicon"
+      ],
+      "target_goals": [
+        "biodiversity_metabarcoding",
+        "host_range_inference",
+        "full_amplicon_pipeline"
+      ],
+      "defaults": {
+        "library_mode": "amplicon_workflow",
+        "flowcell_family": "minion_gridion_r10_4_1",
+        "basecalling_goal": "balanced_hac",
+        "analysis_environment": "group_repo_backend"
+      },
+      "result_note": "Targeted 12S routes default to an amplicon-first ONT setup rather than a shotgun one."
+    },
+    {
+      "sample_contexts": [
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "single_isolate_long_read_dna"
+      ],
+      "target_goals": [
+        "complete_genome_assembly",
+        "annotation",
+        "hybrid_assembly",
+        "amr_virulence_profiling",
+        "full_isolate_pipeline"
+      ],
+      "defaults": {
+        "library_mode": "lsk114",
+        "flowcell_family": "minion_gridion_r10_4_1",
+        "basecalling_goal": "max_accuracy_sup",
+        "analysis_environment": "group_repo_backend"
+      },
+      "result_note": "Single-isolate genomics defaults to a ligation-based DNA route with SUP-style consensus emphasis."
+    },
+    {
+      "sample_contexts": [
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "barcoded_isolate_long_read_dna"
+      ],
+      "target_goals": [
+        "genome_assembly_annotation",
+        "amr_virulence_profiling",
+        "phylogenetics_outbreak_tracking",
+        "plasmid_reconstruction",
+        "full_isolate_pipeline"
+      ],
+      "defaults": {
+        "library_mode": "nbd114_24",
+        "flowcell_family": "minion_gridion_r10_4_1",
+        "basecalling_goal": "max_accuracy_sup",
+        "analysis_environment": "group_repo_backend"
+      },
+      "result_note": "Barcoded isolates default to native barcoding with stronger emphasis on per-barcode quality and downstream comparison."
+    },
+    {
+      "sample_contexts": [
+        "clinical_isolate"
+      ],
+      "material_classes": [
+        "clinical_metagenome"
+      ],
+      "target_goals": [
+        "amr_host_association",
+        "full_host_association_pipeline"
+      ],
+      "defaults": {
+        "library_mode": "barcoded_metagenome",
+        "flowcell_family": "minion_gridion_r10_4_1",
+        "basecalling_goal": "max_accuracy_sup",
+        "analysis_environment": "group_repo_backend"
+      },
+      "result_note": "Clinical metagenome host-association routes stay metagenomic and pooled rather than isolate-centric."
+    },
+    {
+      "sample_contexts": [
+        "food_safety"
+      ],
+      "material_classes": [
+        "listeria_enrichment_material"
+      ],
+      "target_goals": [
+        "listeria_target_recovery",
+        "as_vs_native_comparison",
+        "recovered_target_amr_profiling",
+        "full_food_safety_pipeline"
+      ],
+      "defaults": {
+        "library_mode": "adaptive_sampling",
+        "flowcell_family": "minion_gridion_r10_4_1",
+        "basecalling_goal": "max_accuracy_sup",
+        "analysis_environment": "group_repo_backend"
+      },
+      "result_note": "Food-safety target-recovery defaults to adaptive sampling plus a high-accuracy consensus framing."
+    }
+  ]
+}

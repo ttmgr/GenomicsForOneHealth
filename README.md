@@ -25,9 +25,11 @@ Learn more about our work at the [Urban Lab website](https://sites.google.com/vi
 
 ## Pipeline Selector
 
-> **Start here:** Use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/) to move through a wizard-style decision flow and receive a lab-facing action sheet with documented entry points, preprocessing defaults, prerequisites, warnings, and next-step guidance.
+> **Start here:** Use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/) to move through a sparse route wizard and then a separate Nanopore setup advisor.
 >
-> The selector is a static GitHub Pages app built from the published repository only. It now starts with the sample, then the material class, then the main analytical target. Only after that does it expose the closest published study examples in the repository, followed by expert tuning inputs that refine preprocessing and tool suggestions without changing the selected backend. If your use case falls outside the current collection, it returns the nearest published example rather than a false exact match.
+> The selector is a static GitHub Pages app built from the published repository only. It now starts with sample, material, and target, then shows the closest published study example only when that choice is actually needed. After the route is fixed, the setup advisor handles kit or run mode, flow cell family, basecalling intent, analysis environment, and a short route-specific conditions page. If your use case falls outside the current collection, the result shows the nearest published internal example together with secondary external fallbacks such as EPI2ME Labs or CZ ID where appropriate.
+>
+> A compact [Nanopore guide](https://ttmgr.github.io/GenomicsForOneHealth/nanopore-guide.html) is linked from the setup pages so the selector can stay sparse without hiding the reasoning behind kit, flow-cell, or basecalling recommendations.
 
 ### Our Team
 - **Prof. Dr. Lara Urban**: Principal Investigator & Supervisor (Helmholtz AI & University of Zurich)
