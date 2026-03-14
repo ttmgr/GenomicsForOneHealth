@@ -703,17 +703,22 @@ function renderPipelineDiagram(steps) {
           const fileTypePill = step.file_type
             ? `<span class="diagram-filetype ${fileTypeClass(step.file_type)}">${escapeHtml(step.file_type)}</span>`
             : "";
+          const tooltipParts = [step.note, step.rationale].filter(Boolean);
+          const tooltipMarkup = tooltipParts.length > 0
+            ? `<div class="diagram-tooltip">${tooltipParts.map((t) => `<p>${escapeHtml(t)}</p>`).join("")}</div>`
+            : "";
+          const hasTooltip = tooltipParts.length > 0 ? " has-tooltip" : "";
           return `
             ${index > 0 ? '<div class="diagram-connector"></div>' : ""}
-            <div class="diagram-step">
+            <div class="diagram-step${hasTooltip}">
               <div class="diagram-node">
                 <div class="diagram-node-head">
                   <strong class="diagram-step-label">${escapeHtml(step.step)}</strong>
+                  ${toolMarkup}
                   ${fileTypePill}
                 </div>
-                ${toolMarkup}
-                ${step.note ? `<p class="diagram-note">${escapeHtml(step.note)}</p>` : ""}
               </div>
+              ${tooltipMarkup}
             </div>
           `;
         })
@@ -722,25 +727,6 @@ function renderPipelineDiagram(steps) {
   `;
 }
 
-function renderDiagramRationale(steps) {
-  if (!steps || steps.length === 0) {
-    return "";
-  }
-
-  return `
-    <div class="rationale-list">
-      ${steps
-        .filter((step) => step.rationale)
-        .map((step) => `
-          <div class="rationale-item">
-            <strong>${escapeHtml(step.step)}${step.tool ? ` (${escapeHtml(step.tool)})` : ""}</strong>
-            <p>${escapeHtml(step.rationale)}</p>
-          </div>
-        `)
-        .join("")}
-    </div>
-  `;
-}
 
 function renderResultsPage() {
   const recommendation = computeRecommendation(answers, datasets);
@@ -781,22 +767,22 @@ function renderResultsPage() {
 
   return `
     <section class="wizard-page results-page">
-      ${renderPageHeader("results")}
+      <div class="page-header">
+        <h2>Results</h2>
+      </div>
 
       <div class="pipeline-view">
         <aside class="pipeline-col pipeline-col-left">
           <p class="match-column-label">Your project</p>
-          <h3>${escapeHtml(routeLabelSummary())}</h3>
+          <div class="pipeline-status">
+            <span class="result-chip ${recommendation.status === "unsupported" ? "is-warning" : "is-success"}">${escapeHtml(recommendation.status_label)}</span>
+          </div>
           <dl class="match-facts">
             <div class="match-fact"><dt>Sample</dt><dd>${escapeHtml(labelForValue("sample_context", answers.sample_context))}</dd></div>
             <div class="match-fact"><dt>Material</dt><dd>${escapeHtml(labelForValue("material_class", answers.material_class))}</dd></div>
             <div class="match-fact"><dt>Goal</dt><dd>${escapeHtml(labelForValue("target_goal", answers.target_goal))}</dd></div>
           </dl>
-          <p class="match-setup">${escapeHtml(recommendation.setup_summary.recommendation)}</p>
-          <p class="match-env">Environment: ${escapeHtml(recommendation.analysis_environment.label)}</p>
-          <div class="pipeline-status">
-            <span class="result-chip ${recommendation.status === "unsupported" ? "is-warning" : "is-success"}">${escapeHtml(recommendation.status_label)}</span>
-          </div>
+          <p class="match-setup">${escapeHtml(recommendation.setup_summary.recommendation)} · ${escapeHtml(recommendation.analysis_environment.label)}</p>
           ${recommendation.example.unsupported_reason ? `<p class="warning-inline">${escapeHtml(recommendation.example.unsupported_reason)}</p>` : ""}
         </aside>
 
@@ -805,11 +791,6 @@ function renderResultsPage() {
           <h3>${recommendation.composed_steps ? "Composed from published workflows" : escapeHtml(backendTitle)}</h3>
           ${renderPipelineDiagram(diagramSteps)}
         </div>
-
-        <aside class="pipeline-col pipeline-col-right">
-          <p class="match-column-label">Why these tools</p>
-          ${renderDiagramRationale(diagramSteps)}
-        </aside>
       </div>
 
       <details class="detail-panel">
@@ -847,7 +828,6 @@ function renderResultsPage() {
                 (action) => `
                   <li>
                     <strong>${escapeHtml(action.title)}</strong>
-                    <p>${escapeHtml(action.summary)}</p>
                     <a href="${escapeHtml(linkHref(action.doc_url))}" target="_blank" rel="noreferrer">${escapeHtml(action.entry_file)}</a>
                   </li>
                 `
@@ -939,12 +919,7 @@ function renderResultsPage() {
                   <ul class="detail-list">
                     ${recommendation.warnings
                       .map(
-                        (warning) => `
-                          <li>
-                            <strong>${escapeHtml(warning.title)}.</strong>
-                            ${escapeHtml(warning.text)}
-                          </li>
-                        `
+                        (warning) => `<li>${escapeHtml(warning.text)}</li>`
                       )
                       .join("")}
                   </ul>
@@ -988,7 +963,7 @@ function renderResultsPage() {
             <h4>Required tools</h4>
             ${
               tools.length > 0
-                ? `<ul class="detail-list">${tools.map((tool) => `<li><strong>${tool.url ? `<a href="${escapeHtml(tool.url)}" target="_blank" rel="noreferrer">${escapeHtml(tool.name)}</a>` : escapeHtml(tool.name)}.</strong> ${escapeHtml(tool.note)}</li>`).join("")}</ul>`
+                ? `<p class="inline-tool-list">${tools.map((tool) => tool.url ? `<a href="${escapeHtml(tool.url)}" target="_blank" rel="noreferrer">${escapeHtml(tool.name)}</a>` : escapeHtml(tool.name)).join(", ")}</p>`
                 : `<p class="muted">No route-specific tool list was attached.</p>`
             }
           </div>
@@ -996,7 +971,7 @@ function renderResultsPage() {
             <h4>Required databases</h4>
             ${
               databases.length > 0
-                ? `<ul class="detail-list">${databases.map((database) => `<li><strong>${escapeHtml(database.name)}.</strong> ${escapeHtml(database.note)}</li>`).join("")}</ul>`
+                ? `<p class="inline-tool-list">${databases.map((database) => escapeHtml(database.name)).join(", ")}</p>`
                 : `<p class="muted">No route-specific database list was attached.</p>`
             }
           </div>
