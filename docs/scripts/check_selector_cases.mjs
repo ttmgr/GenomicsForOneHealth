@@ -14,6 +14,12 @@ function readJson(filename) {
   return JSON.parse(fs.readFileSync(path.join(dataDir, filename), "utf8"));
 }
 
+function assert(condition, message) {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
+
 const datasets = {
   pipelines: readJson("pipelines.json"),
   questionSpec: readJson("questions.json"),
@@ -22,22 +28,15 @@ const datasets = {
   outOfScopeRules: readJson("out_of_scope.json")
 };
 
-function assert(condition, message) {
-  if (!condition) {
-    throw new Error(message);
-  }
-}
-
 const cases = [
   {
-    name: "air_pod5_rbk114",
+    name: "env_air_rbk",
     answers: {
-      workflow_family: "environmental_metagenomic_dna",
-      sample_type: "air_bioaerosol",
-      molecule_type: "dna",
-      analysis_goal: "community_profiling",
-      input_format: "pod5",
+      sequencing_context: "environmental_metagenomics",
       library_mode: "rbk114_24",
+      analysis_goal: "taxonomy_profiling",
+      sample_type: "air_bioaerosol",
+      input_format: "pod5",
       multiplexing: "yes",
       demultiplexing: "needed",
       basecalling_state: "prefer_hac",
@@ -48,14 +47,13 @@ const cases = [
     confidence: "high"
   },
   {
-    name: "wetland_dna",
+    name: "wetland_dna_nbd",
     answers: {
-      workflow_family: "environmental_metagenomic_dna",
+      sequencing_context: "environmental_metagenomics",
+      library_mode: "nbd114_24",
+      analysis_goal: "mag_recovery",
       sample_type: "wetland_or_passive_water_sample",
-      molecule_type: "dna",
-      analysis_goal: "pathogen_amr_surveillance",
       input_format: "fastq",
-      library_mode: "rbk114_24",
       multiplexing: "yes",
       demultiplexing: "already_done",
       basecalling_state: "already_basecalled",
@@ -66,14 +64,13 @@ const cases = [
     track: "dna_metagenomics"
   },
   {
-    name: "wetland_rna_virome",
+    name: "wetland_rna_rbk",
     answers: {
-      workflow_family: "virome",
-      sample_type: "wetland_or_passive_water_sample",
-      molecule_type: "rna",
-      analysis_goal: "viral_metagenomics",
-      input_format: "fastq",
+      sequencing_context: "environmental_metagenomics",
       library_mode: "rbk114_24",
+      analysis_goal: "rna_virome",
+      sample_type: "wetland_or_passive_water_sample",
+      input_format: "fastq",
       multiplexing: "yes",
       demultiplexing: "already_done",
       basecalling_state: "already_basecalled",
@@ -84,14 +81,13 @@ const cases = [
     track: "rna_virome"
   },
   {
-    name: "wetland_edna",
+    name: "wetland_edna_amplicon",
     answers: {
-      workflow_family: "edna_12s_rrna_metabarcoding",
+      sequencing_context: "environmental_metagenomics",
+      library_mode: "amplicon_workflow",
+      analysis_goal: "edna_12s_biodiversity",
       sample_type: "wetland_or_passive_water_sample",
-      molecule_type: "amplicon_dna",
-      analysis_goal: "biodiversity_metabarcoding",
       input_format: "fastq",
-      library_mode: "amplicon",
       multiplexing: "yes",
       demultiplexing: "needed",
       basecalling_state: "already_basecalled",
@@ -102,48 +98,45 @@ const cases = [
     track: "edna"
   },
   {
-    name: "listeria_bam",
+    name: "zambia_edna_amplicon",
     answers: {
-      workflow_family: "food_safety_enrichment",
-      sample_type: "food_safety_sample",
-      molecule_type: "dna",
-      analysis_goal: "target_enrichment_and_listeria_recovery",
-      input_format: "bam",
-      library_mode: "adaptive_sampling",
+      sequencing_context: "environmental_metagenomics",
+      library_mode: "amplicon_workflow",
+      analysis_goal: "edna_12s_biodiversity",
+      sample_type: "edna_water_sample",
+      input_format: "fastq",
       multiplexing: "yes",
-      demultiplexing: "already_done",
+      demultiplexing: "needed",
       basecalling_state: "already_basecalled",
       preprocessing_state: "need_trim_and_filter"
     },
-    pipeline: "listeria_adaptive_sampling",
+    pipeline: "zambia_edna",
     status: "exact"
   },
   {
-    name: "amr_isolate",
+    name: "clinical_single_isolate_lsk",
     answers: {
-      workflow_family: "clinical_isolate",
+      sequencing_context: "clinical_isolate",
+      library_mode: "lsk114",
+      analysis_goal: "complete_genome_assembly",
       sample_type: "bacterial_isolate",
-      molecule_type: "dna",
-      analysis_goal: "clinical_amr_profiling",
-      input_format: "fast5",
-      library_mode: "standard_isolate",
+      input_format: "pod5",
       multiplexing: "no",
       demultiplexing: "not_needed",
-      basecalling_state: "prefer_hac",
+      basecalling_state: "prefer_sup",
       preprocessing_state: "need_trim_and_filter"
     },
     pipeline: "amr_nanopore",
     status: "exact"
   },
   {
-    name: "cre_plasmid",
+    name: "clinical_barcoded_isolate_rbk",
     answers: {
-      workflow_family: "clinical_isolate",
-      sample_type: "bacterial_isolate",
-      molecule_type: "dna",
-      analysis_goal: "plasmid_clustering",
-      input_format: "pod5",
+      sequencing_context: "clinical_isolate",
       library_mode: "rbk114_24",
+      analysis_goal: "plasmid_reconstruction",
+      sample_type: "bacterial_isolate",
+      input_format: "pod5",
       multiplexing: "yes",
       demultiplexing: "needed",
       basecalling_state: "prefer_sup",
@@ -153,14 +146,13 @@ const cases = [
     status: "exact"
   },
   {
-    name: "amr_host_association",
+    name: "clinical_host_association",
     answers: {
-      workflow_family: "clinical_isolate",
-      sample_type: "clinical_metagenome",
-      molecule_type: "dna",
-      analysis_goal: "amr_host_association",
-      input_format: "pod5",
+      sequencing_context: "clinical_isolate",
       library_mode: "barcoded_metagenome",
+      analysis_goal: "amr_host_association",
+      sample_type: "clinical_metagenome",
+      input_format: "pod5",
       multiplexing: "yes",
       demultiplexing: "needed",
       basecalling_state: "raw_signal_not_basecalled",
@@ -170,22 +162,85 @@ const cases = [
     status: "exact"
   },
   {
+    name: "food_listeria_adaptive_sampling",
+    answers: {
+      sequencing_context: "food_safety",
+      library_mode: "adaptive_sampling",
+      analysis_goal: "listeria_target_recovery",
+      sample_type: "food_safety_sample",
+      input_format: "bam",
+      multiplexing: "unsure",
+      demultiplexing: "already_done",
+      basecalling_state: "already_basecalled",
+      preprocessing_state: "need_trim_and_filter"
+    },
+    pipeline: "listeria_adaptive_sampling",
+    status: "exact"
+  },
+  {
     name: "soil_unsupported",
     answers: {
-      workflow_family: "environmental_metagenomic_dna",
-      sample_type: "soil",
-      molecule_type: "dna",
-      analysis_goal: "community_profiling",
-      input_format: "fastq",
+      sequencing_context: "environmental_metagenomics",
       library_mode: "rbk114_24",
-      multiplexing: "no",
-      demultiplexing: "not_needed",
+      analysis_goal: "taxonomy_profiling",
+      sample_type: "soil",
+      input_format: "fastq",
+      multiplexing: "yes",
+      demultiplexing: "already_done",
       basecalling_state: "already_basecalled",
       preprocessing_state: "already_trimmed_and_filtered"
     },
     pipeline: "air_metagenomics",
     status: "unsupported",
     confidence: "low"
+  },
+  {
+    name: "clinical_metagenome_non_host_route",
+    answers: {
+      sequencing_context: "clinical_isolate",
+      library_mode: "rbk114_24",
+      analysis_goal: "amr_virulence_profiling",
+      sample_type: "clinical_metagenome",
+      input_format: "fastq",
+      multiplexing: "yes",
+      demultiplexing: "already_done",
+      basecalling_state: "already_basecalled",
+      preprocessing_state: "need_trim_and_filter"
+    },
+    pipeline: "nanopore_amr_host_association",
+    status: "unsupported"
+  },
+  {
+    name: "food_general_case_unsupported",
+    answers: {
+      sequencing_context: "food_safety",
+      library_mode: "standard_control",
+      analysis_goal: "unsure",
+      sample_type: "food_safety_sample",
+      input_format: "fastq",
+      multiplexing: "unsure",
+      demultiplexing: "unsure",
+      basecalling_state: "already_basecalled",
+      preprocessing_state: "need_trim_and_filter"
+    },
+    pipeline: "listeria_adaptive_sampling",
+    status: "unsupported"
+  },
+  {
+    name: "multiplex_override_does_not_reroute",
+    answers: {
+      sequencing_context: "environmental_metagenomics",
+      library_mode: "rbk114_24",
+      analysis_goal: "taxonomy_profiling",
+      sample_type: "air_bioaerosol",
+      input_format: "pod5",
+      multiplexing: "no",
+      demultiplexing: "not_needed",
+      basecalling_state: "prefer_hac",
+      preprocessing_state: "need_trim_and_filter"
+    },
+    pipeline: "air_metagenomics",
+    status: "exact"
   }
 ];
 

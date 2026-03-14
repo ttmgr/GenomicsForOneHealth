@@ -2,130 +2,188 @@
   "stages": [
     {
       "id": "stage1",
-      "title": "Stage 1 · Biological and analytical intent",
-      "summary": "Use these answers to narrow the collection to workflows that are biologically and analytically compatible with your study before the action sheet adds operational detail.",
+      "title": "Stage 1 · Sequencing context, kit, goal, and sample context",
+      "summary": "Start with what you are sequencing, then choose the library prep kit or run mode, then the main analytic goal, and finally the sample context that best matches the closest published example in this repository.",
       "questions": [
         {
-          "id": "workflow_family",
+          "id": "sequencing_context",
           "stage": "stage1",
-          "field": "selector_groups",
-          "label": "Workflow family",
-          "description": "Choose the broad workflow family that best matches your study. This selector is intentionally higher level than the underlying repository structure.",
+          "field": "sequencing_contexts",
+          "label": "What are you sequencing?",
+          "description": "Choose the broad sequencing context first. Repo-specific workflows appear later as published examples rather than as the first conceptual layer.",
           "options": [
             {
-              "value": "environmental_metagenomic_dna",
-              "label": "Environmental metagenomic samples (DNA)",
-              "help": "Air or passive-water DNA metagenomics, including community and pathogen / AMR surveillance."
+              "value": "environmental_metagenomics",
+              "label": "Environmental metagenomics",
+              "help": "Environmental DNA or RNA community sequencing, including shotgun metagenomics, virome work, and 12S metabarcoding branches."
             },
             {
               "value": "clinical_isolate",
               "label": "Clinical / isolate",
-              "help": "Clinical isolates, plasmid-focused work, or clinical metagenomes needing AMR host association."
+              "help": "Purified isolates, barcoded isolate collections, or clinical metagenomes linked to host-association analysis."
             },
             {
-              "value": "edna_12s_rrna_metabarcoding",
-              "label": "eDNA 12S rRNA metabarcoding",
-              "help": "Amplicon-based 12S biodiversity or host-range workflows."
-            },
-            {
-              "value": "virome",
-              "label": "Virome",
-              "help": "Untargeted RNA virome characterization."
-            },
-            {
-              "value": "food_safety_enrichment",
-              "label": "Food safety enrichment",
-              "help": "Target-enrichment and Listeria-focused food safety workflows."
+              "value": "food_safety",
+              "label": "Food safety",
+              "help": "Food-associated enrichment and Listeria-focused adaptive-sampling or control workflows."
             },
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Do not use workflow family as a hard filter yet.",
+              "help": "Keep the first routing step neutral and let the later answers narrow the route.",
               "neutral": true
             }
           ]
         },
         {
-          "id": "sample_type",
+          "id": "library_mode",
           "stage": "stage1",
-          "field": "sample_types",
-          "label": "Sample or material type",
-          "description": "Pick the sample class that best reflects the material you actually sequenced.",
+          "field": "library_modes",
+          "label": "Which library prep kit or run mode did you use?",
+          "description": "The kit or run mode changes early preprocessing and often determines whether the route is single-sample, barcoded, amplicon-based, or adaptive-sampling oriented.",
           "options": [
             {
-              "value": "air_bioaerosol",
-              "label": "Air / bioaerosol sample",
-              "help": "Liquid impingement or other air microbiome sampling."
+              "value": "lsk114",
+              "label": "LSK114",
+              "help": "Ligation-based ONT workflow for single-sample, high-yield DNA sequencing.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics",
+                  "clinical_isolate"
+                ]
+              },
+              "autofill": {
+                "multiplexing": "no",
+                "demultiplexing": "not_needed"
+              },
+              "consequences": {
+                "demultiplexing": "Usually not required for single-sample ligation runs.",
+                "barcode_trimming": "Barcode trimming is not usually expected.",
+                "typical_use": "Single-sample runs with maximal read length and yield.",
+                "route_implication": "In clinical / isolate contexts, this defaults toward a single-isolate assembly and AMR route.",
+                "first_steps": "Basecall, trim adapters, then continue into QC and downstream analysis."
+              }
             },
             {
-              "value": "wetland_or_passive_water_sample",
-              "label": "Passive water / wetland sample",
-              "help": "Water samples from wetland or passive environmental collection."
+              "value": "rbk114_24",
+              "label": "RBK114.24",
+              "help": "Rapid Barcoding Kit 24 V14 for up to 24 DNA samples.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics",
+                  "clinical_isolate"
+                ]
+              },
+              "autofill": {
+                "multiplexing": "yes",
+                "demultiplexing": "needed"
+              },
+              "consequences": {
+                "demultiplexing": "Demultiplexing is usually required.",
+                "barcode_trimming": "Barcode trimming is expected after demultiplexing.",
+                "typical_use": "Rapid multiplexed DNA sequencing with fast turnaround.",
+                "route_implication": "In clinical / isolate contexts, this defaults toward a barcoded-isolate route rather than a single-sample isolate route.",
+                "first_steps": "Basecall, demultiplex, trim barcodes and adapters, then run QC and filtering."
+              }
             },
             {
-              "value": "edna_water_sample",
-              "label": "Water eDNA amplicon sample",
-              "help": "Amplicon-based biodiversity sequencing from water."
+              "value": "nbd114_24",
+              "label": "NBD114.24",
+              "help": "Native Barcoding Kit 24 V14 for multiplexed ligation-based DNA libraries.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics",
+                  "clinical_isolate"
+                ]
+              },
+              "autofill": {
+                "multiplexing": "yes",
+                "demultiplexing": "needed"
+              },
+              "consequences": {
+                "demultiplexing": "Demultiplexing is usually required.",
+                "barcode_trimming": "Barcode trimming is expected after demultiplexing.",
+                "typical_use": "Multiplexed ligation workflow that preserves fragment length better than rapid barcoding.",
+                "route_implication": "In clinical / isolate contexts, this also defaults toward a barcoded-isolate route.",
+                "first_steps": "Basecall, demultiplex, trim barcodes and adapters, then proceed to QC and downstream analysis."
+              }
             },
             {
-              "value": "food_safety_sample",
-              "label": "Food safety or enrichment sample",
-              "help": "Complex food-associated sample with pathogen enrichment or adaptive sampling."
+              "value": "amplicon_workflow",
+              "label": "Amplicon workflow",
+              "help": "Amplicon-oriented ONT workflow used here for eDNA 12S metabarcoding branches.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ]
+              },
+              "consequences": {
+                "demultiplexing": "Demultiplexing depends on whether barcoded amplicon pools were used.",
+                "barcode_trimming": "Barcode or primer trimming is branch-specific.",
+                "typical_use": "Targeted 12S amplicons rather than shotgun long-read metagenomics.",
+                "route_implication": "Routes environmental cases toward the published eDNA 12S examples.",
+                "first_steps": "Start from basecalled amplicon reads, then follow branch-specific trimming and classification steps."
+              }
             },
             {
-              "value": "bacterial_isolate",
-              "label": "Bacterial isolate",
-              "help": "Single-isolate or isolate-dominant sequencing for assembly, AMR, or plasmid work."
+              "value": "barcoded_metagenome",
+              "label": "Barcoded metagenome",
+              "help": "Multiplexed metagenomic sequencing rather than purified isolate sequencing.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ]
+              },
+              "autofill": {
+                "multiplexing": "yes",
+                "demultiplexing": "needed"
+              },
+              "consequences": {
+                "demultiplexing": "Demultiplexing is usually required.",
+                "barcode_trimming": "Barcode trimming is expected if pooled libraries are still combined.",
+                "typical_use": "Clinical metagenomes or pooled complex samples rather than isolate assemblies.",
+                "route_implication": "Routes clinical metagenome cases toward the AMR host-association example.",
+                "first_steps": "Basecall, demultiplex if needed, then continue to contig-level host-association analysis."
+              }
             },
             {
-              "value": "clinical_metagenome",
-              "label": "Clinical metagenome or swab",
-              "help": "Complex clinical sample rather than a purified isolate."
+              "value": "adaptive_sampling",
+              "label": "Adaptive sampling",
+              "help": "Real-time ONT enrichment or depletion during sequencing.",
+              "visible_when": {
+                "sequencing_context": [
+                  "food_safety"
+                ]
+              },
+              "consequences": {
+                "demultiplexing": "Demultiplexing depends on how the adaptive-sampling run was configured.",
+                "barcode_trimming": "Barcode trimming depends on the paired library design.",
+                "typical_use": "Target recovery or enrichment comparisons during sequencing.",
+                "route_implication": "Routes food safety cases toward the published Listeria adaptive-sampling example.",
+                "first_steps": "Preserve the adaptive-sampling run outputs, then compare target recovery against the matched control branch."
+              }
             },
             {
-              "value": "soil",
-              "label": "Soil metagenomic DNA",
-              "help": "Useful for nearest-starting-point guidance only if no exact workflow exists."
+              "value": "standard_control",
+              "label": "Standard sequencing control",
+              "help": "Matched non-adaptive sequencing control for food-safety comparisons.",
+              "visible_when": {
+                "sequencing_context": [
+                  "food_safety"
+                ]
+              },
+              "consequences": {
+                "demultiplexing": "Demultiplexing depends on the control-library design.",
+                "barcode_trimming": "Barcode trimming is library-dependent.",
+                "typical_use": "Control arm for adaptive-sampling comparisons and target recovery benchmarking.",
+                "route_implication": "Keeps food safety cases inside the published Listeria comparison framework without implying broader food-safety coverage.",
+                "first_steps": "Keep control BAM or FASTQ outputs paired with the adaptive-sampling arm for direct comparison."
+              }
             },
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Do not use sample type as a hard filter yet.",
-              "neutral": true
-            }
-          ]
-        },
-        {
-          "id": "molecule_type",
-          "stage": "stage1",
-          "field": "molecule_types",
-          "label": "Target molecule or signal type",
-          "description": "Choose the molecule or signal that best reflects the data and analytical branch you care about.",
-          "options": [
-            {
-              "value": "dna",
-              "label": "DNA",
-              "help": "Shotgun DNA, isolate DNA, or DNA-focused metagenomics."
-            },
-            {
-              "value": "rna",
-              "label": "RNA",
-              "help": "RNA sequencing or workflows centered on viral RNA."
-            },
-            {
-              "value": "dna_rna",
-              "label": "DNA + RNA",
-              "help": "Dual-extraction workflows where both nucleic acids matter."
-            },
-            {
-              "value": "amplicon_dna",
-              "label": "Amplicon DNA",
-              "help": "12S, 16S, or other targeted metabarcoding amplicons."
-            },
-            {
-              "value": "unsure",
-              "label": "Not sure",
-              "help": "Do not use molecule type as a hard filter yet.",
+              "help": "Keep kit selection neutral and refine the route with goal and sample context.",
               "neutral": true
             }
           ]
@@ -134,53 +192,427 @@
           "id": "analysis_goal",
           "stage": "stage1",
           "field": "analysis_goals",
-          "label": "Main analytical objective",
-          "description": "Choose the primary reason you need the workflow. This is the strongest route to a specific published pipeline.",
+          "label": "What do you want to do with the data?",
+          "description": "Choose one main analytic goal. Use the full-pipeline option when you want the broadest documented action sheet for that route.",
           "options": [
             {
-              "value": "community_profiling",
-              "label": "Environmental DNA community profiling",
-              "help": "Taxonomic composition, assembly, binning, and environmental characterization from DNA metagenomics."
+              "value": "taxonomy_profiling",
+              "label": "Taxonomy profiling",
+              "help": "Determine which organisms are present in the sample.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ],
+                "library_mode": [
+                  "lsk114",
+                  "rbk114_24",
+                  "nbd114_24"
+                ]
+              }
             },
             {
-              "value": "pathogen_amr_surveillance",
-              "label": "Pathogen / AMR surveillance",
-              "help": "Pathogen detection and AMR-oriented screening from environmental or clinical sequencing."
+              "value": "functional_profiling",
+              "label": "Functional profiling",
+              "help": "Profile genes, pathways, and functional potential from environmental long reads.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ],
+                "library_mode": [
+                  "lsk114",
+                  "rbk114_24",
+                  "nbd114_24"
+                ]
+              }
             },
             {
-              "value": "viral_metagenomics",
-              "label": "Virome characterization",
-              "help": "Untargeted viral community analysis from RNA-focused workflows."
+              "value": "mag_recovery",
+              "label": "MAG recovery",
+              "help": "Assemble and recover metagenome-assembled genomes.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ],
+                "library_mode": [
+                  "lsk114",
+                  "rbk114_24",
+                  "nbd114_24"
+                ]
+              }
             },
             {
-              "value": "biodiversity_metabarcoding",
-              "label": "12S rRNA biodiversity / host-range",
-              "help": "Amplicon-based biodiversity or vertebrate host-range detection using 12S data."
+              "value": "amr_surveillance",
+              "label": "AMR surveillance",
+              "help": "Screen environmental sequencing data for pathogen and resistance signals.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ],
+                "library_mode": [
+                  "lsk114",
+                  "rbk114_24",
+                  "nbd114_24"
+                ]
+              }
             },
             {
-              "value": "target_enrichment_and_listeria_recovery",
-              "label": "Food safety enrichment / Listeria",
-              "help": "Adaptive sampling, target extraction, and Listeria-focused recovery."
+              "value": "rna_virome",
+              "label": "RNA virome",
+              "help": "Characterize untargeted RNA viral diversity from environmental samples.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ],
+                "library_mode": [
+                  "lsk114",
+                  "rbk114_24",
+                  "nbd114_24"
+                ]
+              }
             },
             {
-              "value": "clinical_amr_profiling",
-              "label": "Clinical isolate AMR profiling",
-              "help": "AMR detection and assembly in clinical isolate sequencing."
+              "value": "full_environmental_pipeline",
+              "label": "Full environmental pipeline",
+              "help": "Receive the broadest action sheet for environmental long-read DNA workflows.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ],
+                "library_mode": [
+                  "lsk114",
+                  "rbk114_24",
+                  "nbd114_24"
+                ]
+              }
             },
             {
-              "value": "plasmid_clustering",
-              "label": "Plasmid clustering",
-              "help": "Plasmid typing, clustering, and relatedness analysis."
+              "value": "edna_12s_biodiversity",
+              "label": "eDNA 12S biodiversity",
+              "help": "Amplicon-based 12S metabarcoding for biodiversity and host-range inference.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ],
+                "library_mode": [
+                  "amplicon_workflow"
+                ]
+              }
+            },
+            {
+              "value": "full_amplicon_pipeline",
+              "label": "Full amplicon pipeline",
+              "help": "Receive the broadest 12S metabarcoding action sheet.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ],
+                "library_mode": [
+                  "amplicon_workflow"
+                ]
+              }
+            },
+            {
+              "value": "complete_genome_assembly",
+              "label": "Complete genome assembly",
+              "help": "Aim for near-complete or closed isolate genomes.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ],
+                "library_mode": [
+                  "lsk114"
+                ]
+              }
+            },
+            {
+              "value": "annotation",
+              "label": "Annotation",
+              "help": "Genome annotation and downstream isolate interpretation.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ],
+                "library_mode": [
+                  "lsk114"
+                ]
+              }
+            },
+            {
+              "value": "hybrid_assembly",
+              "label": "Hybrid assembly",
+              "help": "Combine ONT and short-read data for isolate assembly refinement.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ],
+                "library_mode": [
+                  "lsk114"
+                ]
+              }
+            },
+            {
+              "value": "amr_virulence_profiling",
+              "label": "AMR / virulence profiling",
+              "help": "Profile antimicrobial resistance and virulence determinants.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ],
+                "library_mode": [
+                  "lsk114",
+                  "rbk114_24",
+                  "nbd114_24"
+                ]
+              }
+            },
+            {
+              "value": "full_isolate_pipeline",
+              "label": "Full isolate pipeline",
+              "help": "Receive the broadest action sheet for the current isolate route.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ],
+                "library_mode": [
+                  "lsk114",
+                  "rbk114_24",
+                  "nbd114_24"
+                ]
+              }
+            },
+            {
+              "value": "genome_assembly_annotation",
+              "label": "Genome assembly + annotation",
+              "help": "Per-isolate assembly and annotation from barcoded isolate runs.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ],
+                "library_mode": [
+                  "rbk114_24",
+                  "nbd114_24"
+                ]
+              }
+            },
+            {
+              "value": "phylogenetics_outbreak_tracking",
+              "label": "Phylogenetics / outbreak tracking",
+              "help": "Comparative isolate analysis after per-barcode assembly.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ],
+                "library_mode": [
+                  "rbk114_24",
+                  "nbd114_24"
+                ]
+              }
+            },
+            {
+              "value": "plasmid_reconstruction",
+              "label": "Plasmid reconstruction",
+              "help": "Resolve plasmids and related isolate structures from barcoded runs.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ],
+                "library_mode": [
+                  "rbk114_24",
+                  "nbd114_24"
+                ]
+              }
             },
             {
               "value": "amr_host_association",
               "label": "AMR host association",
-              "help": "Link AMR genes or plasmids to their hosts using methylation-aware data."
+              "help": "Associate AMR genes or plasmids with hosts in clinical metagenomes.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ],
+                "library_mode": [
+                  "barcoded_metagenome"
+                ]
+              }
+            },
+            {
+              "value": "full_host_association_pipeline",
+              "label": "Full host-association pipeline",
+              "help": "Receive the broadest action sheet for the AMR host-association route.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ],
+                "library_mode": [
+                  "barcoded_metagenome"
+                ]
+              }
+            },
+            {
+              "value": "listeria_target_recovery",
+              "label": "Listeria target recovery",
+              "help": "Recover and analyze Listeria targets from food-associated samples.",
+              "visible_when": {
+                "sequencing_context": [
+                  "food_safety"
+                ],
+                "library_mode": [
+                  "adaptive_sampling",
+                  "standard_control"
+                ]
+              }
+            },
+            {
+              "value": "as_vs_native_comparison",
+              "label": "AS vs native comparison",
+              "help": "Compare adaptive sampling against the matched non-adaptive control.",
+              "visible_when": {
+                "sequencing_context": [
+                  "food_safety"
+                ],
+                "library_mode": [
+                  "adaptive_sampling",
+                  "standard_control"
+                ]
+              }
+            },
+            {
+              "value": "recovered_target_amr_profiling",
+              "label": "Recovered target AMR profiling",
+              "help": "Profile AMR features after target recovery from food-associated sequencing.",
+              "visible_when": {
+                "sequencing_context": [
+                  "food_safety"
+                ],
+                "library_mode": [
+                  "adaptive_sampling",
+                  "standard_control"
+                ]
+              }
+            },
+            {
+              "value": "full_food_safety_pipeline",
+              "label": "Full food safety pipeline",
+              "help": "Receive the broadest action sheet for the published food-safety route.",
+              "visible_when": {
+                "sequencing_context": [
+                  "food_safety"
+                ],
+                "library_mode": [
+                  "adaptive_sampling",
+                  "standard_control"
+                ]
+              }
             },
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Do not use analytical objective as a hard filter yet.",
+              "help": "Keep the analytic goal neutral and let the route map to the nearest published example.",
+              "neutral": true
+            }
+          ]
+        },
+        {
+          "id": "sample_type",
+          "stage": "stage1",
+          "field": "sample_types",
+          "label": "Which sample context best matches your data?",
+          "description": "This is where the selector maps a generalized route to the closest published example backend already present in the repository.",
+          "options": [
+            {
+              "value": "air_bioaerosol",
+              "label": "Air / bioaerosol",
+              "help": "Low-biomass air or impinger-derived samples.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ]
+              }
+            },
+            {
+              "value": "wetland_or_passive_water_sample",
+              "label": "Wetland or passive water sample",
+              "help": "Passive water or wetland surveillance samples in the current published system.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ]
+              }
+            },
+            {
+              "value": "edna_water_sample",
+              "label": "Water eDNA sample",
+              "help": "Water-based eDNA metabarcoding outside the wetland passive-sampling branch.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ]
+              }
+            },
+            {
+              "value": "soil",
+              "label": "Soil",
+              "help": "Used to trigger honest nearest-example guidance because no soil workflow is published here.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ]
+              }
+            },
+            {
+              "value": "other_environmental_sample",
+              "label": "Other environmental sample",
+              "help": "Environmental matrix outside the published air, wetland, or water-eDNA examples.",
+              "visible_when": {
+                "sequencing_context": [
+                  "environmental_metagenomics"
+                ]
+              }
+            },
+            {
+              "value": "bacterial_isolate",
+              "label": "Bacterial isolate",
+              "help": "Purified isolate for assembly, typing, plasmid work, or AMR profiling.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ]
+              }
+            },
+            {
+              "value": "clinical_metagenome",
+              "label": "Clinical metagenome",
+              "help": "Complex clinical material rather than a purified isolate.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ]
+              }
+            },
+            {
+              "value": "other_isolate",
+              "label": "Other isolate",
+              "help": "Isolate context that is not exactly the published bacterial-isolate examples.",
+              "visible_when": {
+                "sequencing_context": [
+                  "clinical_isolate"
+                ]
+              }
+            },
+            {
+              "value": "food_safety_sample",
+              "label": "Food safety sample",
+              "help": "Food-associated enrichment or target-recovery material.",
+              "visible_when": {
+                "sequencing_context": [
+                  "food_safety"
+                ]
+              }
+            },
+            {
+              "value": "unsure",
+              "label": "Not sure",
+              "help": "Keep sample context neutral.",
               "neutral": true
             }
           ]
@@ -189,8 +621,8 @@
     },
     {
       "id": "stage2",
-      "title": "Stage 2 · Preprocessing and entry point",
-      "summary": "These answers refine the action sheet: which documented entry point to use, whether basecalling or demultiplexing should still happen, and which read-cleaning defaults to prioritize.",
+      "title": "Stage 2 · Setup and entry point",
+      "summary": "These setup questions refine the action sheet. They do not decide the biological route by themselves.",
       "questions": [
         {
           "id": "input_format",
@@ -202,77 +634,32 @@
             {
               "value": "pod5",
               "label": "POD5",
-              "help": "Raw signal container."
+              "help": "Raw current-signal input in POD5 format."
             },
             {
               "value": "fast5",
               "label": "FAST5",
-              "help": "Legacy raw signal container."
+              "help": "Legacy raw current-signal input."
             },
             {
               "value": "bam",
               "label": "Basecalled BAM",
-              "help": "Aligned or basecalled BAM input."
+              "help": "Basecalled BAM or sequencing-aligned BAM."
             },
             {
               "value": "fastq",
               "label": "FASTQ",
-              "help": "Basecalled reads in single-end FASTQ."
+              "help": "Basecalled reads in FASTQ format."
             },
             {
               "value": "paired_end_fastq",
               "label": "Paired-end FASTQ",
-              "help": "Typical for Illumina amplicon input."
+              "help": "Typical for short-read amplicon or hybrid-assembly support data."
             },
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Do not use input format as a strict differentiator.",
-              "neutral": true
-            }
-          ]
-        },
-        {
-          "id": "library_mode",
-          "stage": "stage2",
-          "field": "library_modes",
-          "label": "Library or run mode",
-          "description": "Select the main Oxford Nanopore kit or sequencing setup that best matches your dataset.",
-          "options": [
-            {
-              "value": "rbk114_24",
-              "label": "Rapid Barcoding Kit 24 V14 (SQK-RBK114.24)",
-              "help": "Rapid, transposase-based barcoding for up to 24 DNA samples."
-            },
-            {
-              "value": "nbd114_24",
-              "label": "Native Barcoding Kit 24 V14 (SQK-NBD114.24)",
-              "help": "Ligation-based barcoding that preserves fragment length and aligns with Q20+ chemistry."
-            },
-            {
-              "value": "adaptive_sampling",
-              "label": "Adaptive sampling",
-              "help": "Real-time read rejection / enrichment."
-            },
-            {
-              "value": "standard_isolate",
-              "label": "Standard isolate workflow",
-              "help": "Single-isolate or standard ONT bacterial sequencing."
-            },
-            {
-              "value": "barcoded_metagenome",
-              "label": "Barcoded metagenome",
-              "help": "Multiplexed metagenomic sequencing rather than a single isolate."
-            },
-            {
-              "value": "amplicon",
-              "label": "Amplicon workflow",
-              "help": "12S / 16S or similar amplicon library."
-            },
-            {
-              "value": "unsure",
-              "label": "Not sure",
-              "help": "Do not use library mode as a strict differentiator.",
+              "help": "Keep input format neutral.",
               "neutral": true
             }
           ]
@@ -282,22 +669,22 @@
           "stage": "stage2",
           "field": "supports_multiplexing",
           "label": "Are your data multiplexed?",
-          "description": "Use this to highlight whether a documented demultiplexing branch is likely to matter.",
+          "description": "This refines entry-point wording and kit consequences. It does not choose the route on its own.",
           "options": [
             {
               "value": "yes",
               "label": "Yes",
-              "help": "Barcodes are present and samples still need per-sample handling."
+              "help": "Barcoded pooled samples still need per-sample handling."
             },
             {
               "value": "no",
               "label": "No",
-              "help": "Single-sample or already separated inputs."
+              "help": "Single-sample data or already separated outputs."
             },
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Treat multiplexing as neutral.",
+              "help": "Keep multiplexing neutral.",
               "neutral": true
             }
           ]
@@ -307,22 +694,22 @@
           "stage": "stage2",
           "field": "demultiplexing",
           "label": "Demultiplexing status",
-          "description": "This does not choose the pipeline, but it changes how the recommendation is phrased.",
+          "description": "Use this to clarify whether the first steps should still separate pooled reads.",
           "options": [
             {
               "value": "needed",
               "label": "Still needed",
-              "help": "The reads are not yet separated by sample or barcode."
+              "help": "The reads are not yet separated by barcode or sample."
             },
             {
               "value": "already_done",
               "label": "Already done",
-              "help": "Per-sample files are already available."
+              "help": "Per-sample or per-barcode outputs already exist."
             },
             {
               "value": "not_needed",
               "label": "Not needed",
-              "help": "Single-sample data or workflow branch without demultiplexing."
+              "help": "Single-sample route or already unpooled data."
             },
             {
               "value": "unsure",
@@ -337,7 +724,7 @@
           "stage": "stage2",
           "field": "basecalling_state",
           "label": "Basecalling state or preferred Dorado tier",
-          "description": "Use this to tailor the recommended entry point and ONT Dorado guidance.",
+          "description": "Refines ONT setup guidance and the documented entry point.",
           "options": [
             {
               "value": "raw_signal_not_basecalled",
@@ -347,27 +734,27 @@
             {
               "value": "prefer_fast",
               "label": "Prefer FAST",
-              "help": "Fastest and least compute-intensive; best for quick turnaround when compute is limited."
+              "help": "Fastest Dorado tier with the lowest compute cost."
             },
             {
               "value": "prefer_hac",
               "label": "Prefer HAC",
-              "help": "ONT's general recommendation for most users as the balance between accuracy and compute cost."
+              "help": "Balanced accuracy and compute cost."
             },
             {
               "value": "prefer_sup",
               "label": "Prefer SUP",
-              "help": "Highest accuracy and highest compute cost; often useful when assembly or difficult calls matter most."
+              "help": "Accuracy-first Dorado tier with the highest compute demand."
             },
             {
               "value": "already_basecalled",
               "label": "Already basecalled",
-              "help": "Reads are already in FASTQ or BAM."
+              "help": "Reads are already available in FASTQ or BAM."
             },
             {
               "value": "not_applicable",
               "label": "Not applicable",
-              "help": "Use this only if the chosen entry point does not depend on a basecalling decision."
+              "help": "Use this when the selected entry point no longer depends on basecalling."
             },
             {
               "value": "unsure",
@@ -382,27 +769,27 @@
           "stage": "stage2",
           "field": "preprocessing_state",
           "label": "Adapter trimming and read filtering",
-          "description": "Use this to tailor whether the workflow should start before or after trimming and filtering.",
+          "description": "Use this to refine whether the action sheet should begin before or after trimming and filtering.",
           "options": [
             {
               "value": "need_trim_and_filter",
               "label": "Need trimming and filtering",
-              "help": "Adapters and length / quality filtering are still pending."
+              "help": "Adapter trimming and read filtering are still pending."
             },
             {
               "value": "need_trim_only",
               "label": "Need trimming only",
-              "help": "Adapters still need to be removed, but filtering may already be done."
+              "help": "Adapters still need to be removed."
             },
             {
               "value": "need_filter_only",
               "label": "Need filtering only",
-              "help": "Reads are trimmed but still need Q / length filtering."
+              "help": "Reads are trimmed but still need quality or length filtering."
             },
             {
               "value": "already_trimmed_and_filtered",
               "label": "Already trimmed and filtered",
-              "help": "Use the workflow after preprocessing if thresholds still match."
+              "help": "You are entering after read cleaning."
             },
             {
               "value": "unsure",

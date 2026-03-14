@@ -4,16 +4,16 @@
     "title": "Air Metagenomics",
     "short_title": "Air",
     "readiness_level": "published",
-    "selector_groups": [
-      "environmental_metagenomic_dna"
-    ],
     "category": "environmental_metagenomics",
     "sample_types": [
       "air_bioaerosol"
     ],
     "analysis_goals": [
-      "community_profiling",
-      "pathogen_amr_surveillance"
+      "taxonomy_profiling",
+      "functional_profiling",
+      "mag_recovery",
+      "amr_surveillance",
+      "full_environmental_pipeline"
     ],
     "molecule_types": [
       "dna"
@@ -24,7 +24,9 @@
       "fastq"
     ],
     "library_modes": [
-      "rbk114_24"
+      "lsk114",
+      "rbk114_24",
+      "nbd114_24"
     ],
     "supports_multiplexing": true,
     "supported_entry_points": [
@@ -95,26 +97,34 @@
     ],
     "maintainer": "Tim Reska",
     "last_reviewed": "2026-03-14",
-    "track_notes": []
+    "track_notes": [],
+    "sequencing_contexts": [
+      "environmental_metagenomics"
+    ],
+    "route_labels": [
+      "Environmental metagenomics",
+      "Long-read DNA",
+      "Air / bioaerosol"
+    ]
   },
   {
     "id": "wetland_health",
     "title": "Wetland Health",
     "short_title": "Wetland",
     "readiness_level": "preprint_multi_track",
-    "selector_groups": [
-      "environmental_metagenomic_dna",
-      "edna_12s_rrna_metabarcoding",
-      "virome"
-    ],
     "category": "environmental_metagenomics",
     "sample_types": [
       "wetland_or_passive_water_sample"
     ],
     "analysis_goals": [
-      "pathogen_amr_surveillance",
-      "viral_metagenomics",
-      "biodiversity_metabarcoding"
+      "taxonomy_profiling",
+      "functional_profiling",
+      "mag_recovery",
+      "amr_surveillance",
+      "rna_virome",
+      "edna_12s_biodiversity",
+      "full_environmental_pipeline",
+      "full_amplicon_pipeline"
     ],
     "molecule_types": [
       "dna",
@@ -126,8 +136,10 @@
       "fastq"
     ],
     "library_modes": [
+      "lsk114",
       "rbk114_24",
-      "amplicon"
+      "nbd114_24",
+      "amplicon_workflow"
     ],
     "supports_multiplexing": true,
     "supported_entry_points": [
@@ -196,11 +208,14 @@
         "title": "Track 1: Shotgun Metagenomics (DNA)",
         "when": {
           "analysis_goals": [
-            "pathogen_amr_surveillance"
+            "taxonomy_profiling",
+            "functional_profiling",
+            "mag_recovery",
+            "amr_surveillance",
+            "full_environmental_pipeline"
           ],
-          "molecule_types": [
-            "dna",
-            "dna_rna"
+          "sample_types": [
+            "wetland_or_passive_water_sample"
           ]
         },
         "summary": "Use the DNA branch when the goal is microbial community characterization, pathogen detection, AMR profiling, assembly, and plasmid screening from passive wetland water samples.",
@@ -220,11 +235,10 @@
         "title": "Track 2: RNA Virome",
         "when": {
           "analysis_goals": [
-            "viral_metagenomics"
+            "rna_virome"
           ],
-          "molecule_types": [
-            "rna",
-            "dna_rna"
+          "sample_types": [
+            "wetland_or_passive_water_sample"
           ]
         },
         "summary": "Use the RNA virome branch for untargeted viral community analysis from wetland RNA rather than targeted influenza reconstruction.",
@@ -244,10 +258,11 @@
         "title": "Track 3: eDNA Metabarcoding",
         "when": {
           "analysis_goals": [
-            "biodiversity_metabarcoding"
+            "edna_12s_biodiversity",
+            "full_amplicon_pipeline"
           ],
-          "molecule_types": [
-            "amplicon_dna"
+          "sample_types": [
+            "wetland_or_passive_water_sample"
           ]
         },
         "summary": "Use the eDNA branch for vertebrate host-range inference from wetland passive water samples using tagged amplicon data.",
@@ -262,6 +277,13 @@
           "Choose this branch only when the wetland study context applies. For broader water eDNA metabarcoding, Zambia eDNA may be the better fit."
         ]
       }
+    ],
+    "sequencing_contexts": [
+      "environmental_metagenomics"
+    ],
+    "route_labels": [
+      "Environmental metagenomics",
+      "Wetland / passive water"
     ]
   },
   {
@@ -269,15 +291,13 @@
     "title": "Zambia eDNA Metabarcoding Pipeline",
     "short_title": "Zambia eDNA",
     "readiness_level": "published",
-    "selector_groups": [
-      "edna_12s_rrna_metabarcoding"
-    ],
     "category": "edna_metabarcoding",
     "sample_types": [
       "edna_water_sample"
     ],
     "analysis_goals": [
-      "biodiversity_metabarcoding"
+      "edna_12s_biodiversity",
+      "full_amplicon_pipeline"
     ],
     "molecule_types": [
       "amplicon_dna"
@@ -287,7 +307,7 @@
       "paired_end_fastq"
     ],
     "library_modes": [
-      "amplicon"
+      "amplicon_workflow"
     ],
     "supports_multiplexing": true,
     "supported_entry_points": [
@@ -347,22 +367,30 @@
     ],
     "maintainer": "Daniel Gygax",
     "last_reviewed": "2026-03-14",
-    "track_notes": []
+    "track_notes": [],
+    "sequencing_contexts": [
+      "environmental_metagenomics"
+    ],
+    "route_labels": [
+      "Environmental metagenomics",
+      "Amplicon workflow",
+      "Water eDNA"
+    ]
   },
   {
     "id": "listeria_adaptive_sampling",
     "title": "Listeria Adaptive Sampling",
     "short_title": "Listeria AS",
     "readiness_level": "documented_project",
-    "selector_groups": [
-      "food_safety_enrichment"
-    ],
     "category": "food_safety",
     "sample_types": [
       "food_safety_sample"
     ],
     "analysis_goals": [
-      "target_enrichment_and_listeria_recovery"
+      "listeria_target_recovery",
+      "as_vs_native_comparison",
+      "recovered_target_amr_profiling",
+      "full_food_safety_pipeline"
     ],
     "molecule_types": [
       "dna"
@@ -372,7 +400,8 @@
       "fastq"
     ],
     "library_modes": [
-      "adaptive_sampling"
+      "adaptive_sampling",
+      "standard_control"
     ],
     "supports_multiplexing": true,
     "supported_entry_points": [
@@ -442,32 +471,43 @@
     ],
     "maintainer": "Tim Reska",
     "last_reviewed": "2026-03-14",
-    "track_notes": []
+    "track_notes": [],
+    "sequencing_contexts": [
+      "food_safety"
+    ],
+    "route_labels": [
+      "Food safety",
+      "Adaptive sampling or control",
+      "Listeria target recovery"
+    ]
   },
   {
     "id": "amr_nanopore",
     "title": "AMR Nanopore",
     "short_title": "AMR Nanopore",
     "readiness_level": "published",
-    "selector_groups": [
-      "clinical_isolate"
-    ],
     "category": "clinical_isolates_plasmids",
     "sample_types": [
-      "bacterial_isolate"
+      "bacterial_isolate",
+      "other_isolate"
     ],
     "analysis_goals": [
-      "clinical_amr_profiling"
+      "complete_genome_assembly",
+      "annotation",
+      "hybrid_assembly",
+      "amr_virulence_profiling",
+      "full_isolate_pipeline"
     ],
     "molecule_types": [
       "dna"
     ],
     "input_formats": [
       "fast5",
+      "pod5",
       "fastq"
     ],
     "library_modes": [
-      "standard_isolate"
+      "lsk114"
     ],
     "supports_multiplexing": false,
     "supported_entry_points": [
@@ -531,22 +571,32 @@
     ],
     "maintainer": "Ela Sauerborn",
     "last_reviewed": "2026-03-14",
-    "track_notes": []
+    "track_notes": [],
+    "sequencing_contexts": [
+      "clinical_isolate"
+    ],
+    "route_labels": [
+      "Clinical / isolate",
+      "LSK114",
+      "Single isolate"
+    ]
   },
   {
     "id": "cre_plasmid_clustering",
     "title": "CRE Plasmid Clustering",
     "short_title": "CRE Plasmids",
     "readiness_level": "documented_project",
-    "selector_groups": [
-      "clinical_isolate"
-    ],
     "category": "clinical_isolates_plasmids",
     "sample_types": [
-      "bacterial_isolate"
+      "bacterial_isolate",
+      "other_isolate"
     ],
     "analysis_goals": [
-      "plasmid_clustering"
+      "genome_assembly_annotation",
+      "amr_virulence_profiling",
+      "phylogenetics_outbreak_tracking",
+      "plasmid_reconstruction",
+      "full_isolate_pipeline"
     ],
     "molecule_types": [
       "dna"
@@ -556,7 +606,8 @@
       "fastq"
     ],
     "library_modes": [
-      "rbk114_24"
+      "rbk114_24",
+      "nbd114_24"
     ],
     "supports_multiplexing": true,
     "supported_entry_points": [
@@ -620,22 +671,28 @@
     ],
     "maintainer": "Ela Sauerborn",
     "last_reviewed": "2026-03-14",
-    "track_notes": []
+    "track_notes": [],
+    "sequencing_contexts": [
+      "clinical_isolate"
+    ],
+    "route_labels": [
+      "Clinical / isolate",
+      "RBK114.24 or NBD114.24",
+      "Barcoded isolate"
+    ]
   },
   {
     "id": "nanopore_amr_host_association",
     "title": "Nanopore AMR Host Association",
     "short_title": "AMR Host Association",
     "readiness_level": "preprint",
-    "selector_groups": [
-      "clinical_isolate"
-    ],
     "category": "clinical_isolates_plasmids",
     "sample_types": [
       "clinical_metagenome"
     ],
     "analysis_goals": [
-      "amr_host_association"
+      "amr_host_association",
+      "full_host_association_pipeline"
     ],
     "molecule_types": [
       "dna"
@@ -702,6 +759,14 @@
     ],
     "maintainer": "Harika Urel and Ela Sauerborn",
     "last_reviewed": "2026-03-14",
-    "track_notes": []
+    "track_notes": [],
+    "sequencing_contexts": [
+      "clinical_isolate"
+    ],
+    "route_labels": [
+      "Clinical / isolate",
+      "Barcoded metagenome",
+      "AMR host association"
+    ]
   }
 ]

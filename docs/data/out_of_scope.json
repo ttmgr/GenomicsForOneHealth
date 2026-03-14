@@ -1,16 +1,21 @@
 [
   {
-    "id": "soil_shotgun_dna",
+    "id": "environmental_soil_unsupported",
     "when": {
+      "sequencing_context": [
+        "environmental_metagenomics"
+      ],
+      "library_mode": [
+        "lsk114",
+        "rbk114_24",
+        "nbd114_24"
+      ],
       "sample_type": [
         "soil"
-      ],
-      "molecule_type": [
-        "dna"
       ]
     },
-    "message": "Soil shotgun metagenomic DNA is not a published exact workflow in this repository. The environmental DNA workflows here are built around air and passive wetland sampling, not soil matrices.",
-    "why_not_exact": "The collection does not currently include a soil-specific extraction, QC, assembly, and annotation workflow with validated thresholds for this sample class.",
+    "message": "Soil long-read metagenomic DNA is not a published exact workflow in this repository. The environmental long-read examples documented here are centered on air and passive-water sampling rather than soil matrices.",
+    "why_not_exact": "The collection does not currently include a soil-specific extraction, preprocessing, assembly, binning, and annotation workflow with validated thresholds for this sample class.",
     "primary_nearest_pipeline": "air_metagenomics",
     "secondary_nearest_pipelines": [
       "wetland_health"
@@ -27,22 +32,59 @@
     ]
   },
   {
-    "id": "clinical_metagenome_unsupported_combo",
+    "id": "environmental_other_matrix_unsupported",
     "when": {
-      "sample_type": [
-        "clinical_metagenome"
+      "sequencing_context": [
+        "environmental_metagenomics"
       ],
-      "analysis_goal": [
-        "community_profiling",
-        "pathogen_amr_surveillance",
-        "viral_metagenomics"
+      "sample_type": [
+        "other_environmental_sample"
       ]
     },
-    "message": "Clinical metagenomic use cases in this repository are currently centered on AMR host association rather than a general-purpose clinical metagenome workflow.",
-    "why_not_exact": "The documented clinical workflows here focus on isolate AMR profiling, plasmid clustering, or methylation-aware AMR-host linkage rather than generic clinical metagenomics.",
+    "message": "This environmental sample type falls outside the exact air, wetland, and water-eDNA examples currently published in the repository.",
+    "why_not_exact": "The public environmental workflows here are example backends for air, passive-water wetland, and water-eDNA use cases rather than a generic environmental meta-pipeline for all matrices.",
+    "primary_nearest_pipeline": "air_metagenomics",
+    "secondary_nearest_pipelines": [
+      "wetland_health",
+      "zambia_edna"
+    ],
+    "read_first_links": [
+      {
+        "label": "Air Metagenomics README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Air_Metagenomics/README.md"
+      },
+      {
+        "label": "Wetland Health README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
+      },
+      {
+        "label": "Zambia eDNA README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/eDNA_Metabarcoding/README.md"
+      }
+    ]
+  },
+  {
+    "id": "clinical_metagenome_without_host_association",
+    "when": {
+      "sequencing_context": [
+        "clinical_isolate"
+      ],
+      "sample_type": [
+        "clinical_metagenome"
+      ]
+    },
+    "unless": {
+      "analysis_goal": [
+        "amr_host_association",
+        "full_host_association_pipeline"
+      ]
+    },
+    "message": "Clinical metagenomic use cases in this repository are currently represented by the AMR host-association workflow rather than by generic isolate-style AMR profiling, assembly, or plasmid-clustering routes.",
+    "why_not_exact": "The documented clinical metagenome route here focuses on methylation-aware AMR host linkage, not a general-purpose clinical metagenome workflow for every isolate-derived goal.",
     "primary_nearest_pipeline": "nanopore_amr_host_association",
     "secondary_nearest_pipelines": [
-      "amr_nanopore"
+      "amr_nanopore",
+      "cre_plasmid_clustering"
     ],
     "read_first_links": [
       {
@@ -52,6 +94,32 @@
       {
         "label": "AMR Nanopore README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore/README.md"
+      }
+    ]
+  },
+  {
+    "id": "food_safety_non_listeria_general_case",
+    "when": {
+      "sequencing_context": [
+        "food_safety"
+      ],
+      "sample_type": [
+        "food_safety_sample"
+      ],
+      "analysis_goal": [
+        "unsure"
+      ]
+    },
+    "message": "The published food-safety route in this repository is the Listeria adaptive-sampling comparison workflow. More general food-safety use cases are not yet represented by a dedicated public pipeline here.",
+    "why_not_exact": "The current collection provides a Listeria-focused target-recovery and adaptive-sampling example backend rather than a broader food-safety workflow family.",
+    "primary_nearest_pipeline": "listeria_adaptive_sampling",
+    "secondary_nearest_pipelines": [
+      "amr_nanopore"
+    ],
+    "read_first_links": [
+      {
+        "label": "Listeria Adaptive Sampling README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Food_Safety/Listeria-Adaptive-Sampling/README.md"
       }
     ]
   }
