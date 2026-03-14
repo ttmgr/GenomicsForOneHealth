@@ -109,8 +109,8 @@ EPI2ME Desktop App provides local or cloud-based (AWS) workflow processing for F
 
 ## 7. Compatibility
 
-The MinION Mk1D is compatible with the latest chemistry for MinION/GridION Flow Cells:
-*   **Flow Cells**: R10 Series (FLO-MIN114), RNA004 (FLO-MIN004RA), Flongle R10 Series (FLO-FLG114)
+The MinION Mk1D is compatible with the latest chemistry for current MinION flow cells:
+*   **Flow Cells**: R10 Series (FLO-MIN114), RNA004 (FLO-MIN004RA)
 *   **Kits**: All V14 chemistry kits (ligation, multiplex, rapid, barcoding, ultra-long, PCR, cDNA, 16S, Direct RNA).
 *   **Software**: MinKNOW, Dorado Basecall Server, EPI2ME.
 
