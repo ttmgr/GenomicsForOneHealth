@@ -25,6 +25,7 @@ const requiredPipelineFields = [
   "title",
   "short_title",
   "readiness_level",
+  "selector_groups",
   "category",
   "sample_types",
   "analysis_goals",

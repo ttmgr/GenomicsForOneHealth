@@ -7,7 +7,7 @@
   root.SelectorEngine = factory();
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   const WEIGHTS = {
-    category: 60,
+    selector_groups: 60,
     sample_types: 42,
     molecule_types: 34,
     analysis_goals: 44,
@@ -52,10 +52,6 @@
   function matchesFieldValue(pipeline, field, value) {
     if (!value) {
       return false;
-    }
-
-    if (field === "category") {
-      return pipeline.category === value;
     }
 
     if (field === "supports_multiplexing") {
@@ -327,24 +323,6 @@
         url: "https://store.nanoporetech.com/native-barcoding-kit-24-v14.html",
         urlLabel: "Official kit page"
       },
-      direct_rna002: {
-        title: "Direct RNA002 legacy chemistry",
-        description: "RNA002 is an older native-RNA branch and should be treated as a legacy chemistry condition.",
-        url: "https://nanoporetech.com/document/direct-rna-sequencing-sqk-rna002",
-        urlLabel: "Legacy protocol"
-      },
-      direct_rna004: {
-        title: "Direct RNA Sequencing Kit (SQK-RNA004)",
-        description: "Oxford Nanopore positions SQK-RNA004 for sequencing native RNA directly, without cDNA conversion or PCR.",
-        url: "https://store.nanoporetech.com/us/direct-rna-sequencing-kit-004.html",
-        urlLabel: "Official kit page"
-      },
-      cdna_rbk: {
-        title: "PCR-cDNA Sequencing V14 - Barcoding",
-        description: "This branch is distinct from native direct RNA and uses reverse transcription, cDNA amplification, and barcode primers before loading.",
-        url: "https://nanoporetech.com/document/pcr-cdna-sequencing-v14-barcoding-sqk-pcb114-24",
-        urlLabel: "Official protocol"
-      }
     };
 
     const doradoReference = {

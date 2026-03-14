@@ -6,46 +6,41 @@
       "summary": "Use these answers to narrow the collection to workflows that are biologically and analytically compatible with your study before the action sheet adds operational detail.",
       "questions": [
         {
-          "id": "category",
+          "id": "workflow_family",
           "stage": "stage1",
-          "field": "category",
-          "label": "High-level use case",
-          "description": "Choose the broad application domain that best matches your study. If you are unsure, use the neutral option.",
+          "field": "selector_groups",
+          "label": "Workflow family",
+          "description": "Choose the broad workflow family that best matches your study. This selector is intentionally higher level than the underlying repository structure.",
           "options": [
             {
-              "value": "environmental_metagenomics",
-              "label": "Environmental metagenomics",
-              "help": "Air or passive water metagenomics, pathogen surveillance, or environmental AMR work."
+              "value": "environmental_metagenomic_dna",
+              "label": "Environmental metagenomic samples (DNA)",
+              "help": "Air or passive-water DNA metagenomics, including community and pathogen / AMR surveillance."
             },
             {
-              "value": "edna_metabarcoding",
-              "label": "eDNA metabarcoding",
-              "help": "Amplicon-based biodiversity or taxonomic assignment workflows."
+              "value": "clinical_isolate",
+              "label": "Clinical / isolate",
+              "help": "Clinical isolates, plasmid-focused work, or clinical metagenomes needing AMR host association."
             },
             {
-              "value": "food_safety",
-              "label": "Food safety",
-              "help": "Targeted pathogen recovery from food-associated complex samples."
+              "value": "edna_12s_rrna_metabarcoding",
+              "label": "eDNA 12S rRNA metabarcoding",
+              "help": "Amplicon-based 12S biodiversity or host-range workflows."
             },
             {
-              "value": "clinical_isolates_plasmids",
-              "label": "Clinical isolates / plasmids",
-              "help": "Clinical AMR profiling, plasmid clustering, or host-association analysis."
+              "value": "virome",
+              "label": "Virome",
+              "help": "Untargeted RNA virome characterization."
             },
             {
-              "value": "veterinary_zoonotic_surveillance",
-              "label": "Veterinary / zoonotic surveillance",
-              "help": "Avian influenza consensus generation, virology, or host-spillover tracking."
-            },
-            {
-              "value": "viability_assessment",
-              "label": "Viability assessment",
-              "help": "Raw-signal inference of microbial viability using POD5 or FAST5."
+              "value": "food_safety_enrichment",
+              "label": "Food safety enrichment",
+              "help": "Target-enrichment and Listeria-focused food safety workflows."
             },
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Do not use category as a hard filter yet.",
+              "help": "Do not use workflow family as a hard filter yet.",
               "neutral": true
             }
           ]
@@ -88,21 +83,6 @@
               "help": "Complex clinical sample rather than a purified isolate."
             },
             {
-              "value": "avian_influenza_sample",
-              "label": "Avian influenza sample",
-              "help": "AIV-positive or influenza-targeted sequencing sample."
-            },
-            {
-              "value": "cross_host_aiv_pair",
-              "label": "Cross-host AIV comparison set",
-              "help": "Matched avian and mammalian host samples for spillover/spillback analysis."
-            },
-            {
-              "value": "raw_signal",
-              "label": "Raw nanopore signal only",
-              "help": "POD5 or FAST5 used directly for signal-level inference."
-            },
-            {
               "value": "soil",
               "label": "Soil metagenomic DNA",
               "help": "Useful for nearest-starting-point guidance only if no exact workflow exists."
@@ -143,16 +123,6 @@
               "help": "12S, 16S, or other targeted metabarcoding amplicons."
             },
             {
-              "value": "raw_signal",
-              "label": "Raw electrical signal",
-              "help": "FAST5 or POD5 signal used directly rather than only after basecalling."
-            },
-            {
-              "value": "viral_reads_or_variants",
-              "label": "Viral reads or variants",
-              "help": "Basecalled viral reads, consensus work, or variant files."
-            },
-            {
               "value": "unsure",
               "label": "Not sure",
               "help": "Do not use molecule type as a hard filter yet.",
@@ -169,32 +139,32 @@
           "options": [
             {
               "value": "community_profiling",
-              "label": "Community profiling",
-              "help": "Taxonomic composition, assembly, binning, and environmental characterization."
+              "label": "Environmental DNA community profiling",
+              "help": "Taxonomic composition, assembly, binning, and environmental characterization from DNA metagenomics."
             },
             {
               "value": "pathogen_amr_surveillance",
               "label": "Pathogen / AMR surveillance",
-              "help": "Pathogen detection, AMR profiling, or environmental pathogen screening."
+              "help": "Pathogen detection and AMR-oriented screening from environmental or clinical sequencing."
             },
             {
               "value": "viral_metagenomics",
-              "label": "Viral metagenomics",
-              "help": "Untargeted viral community analysis rather than a single influenza workflow."
+              "label": "Virome characterization",
+              "help": "Untargeted viral community analysis from RNA-focused workflows."
             },
             {
               "value": "biodiversity_metabarcoding",
-              "label": "Biodiversity metabarcoding",
-              "help": "Amplicon-based biodiversity or vertebrate host-range detection."
+              "label": "12S rRNA biodiversity / host-range",
+              "help": "Amplicon-based biodiversity or vertebrate host-range detection using 12S data."
             },
             {
               "value": "target_enrichment_and_listeria_recovery",
-              "label": "Target enrichment / Listeria recovery",
+              "label": "Food safety enrichment / Listeria",
               "help": "Adaptive sampling, target extraction, and Listeria-focused recovery."
             },
             {
               "value": "clinical_amr_profiling",
-              "label": "Clinical AMR profiling",
+              "label": "Clinical isolate AMR profiling",
               "help": "AMR detection and assembly in clinical isolate sequencing."
             },
             {
@@ -206,21 +176,6 @@
               "value": "amr_host_association",
               "label": "AMR host association",
               "help": "Link AMR genes or plasmids to their hosts using methylation-aware data."
-            },
-            {
-              "value": "aiv_consensus_subtyping_phylogeny",
-              "label": "AIV consensus / subtyping / phylogeny",
-              "help": "Targeted avian-influenza consensus generation and segment interpretation."
-            },
-            {
-              "value": "cross_host_variant_tracking",
-              "label": "Cross-host variant tracking",
-              "help": "Variant comparison between avian and mammalian hosts."
-            },
-            {
-              "value": "viability_inference",
-              "label": "Viability inference",
-              "help": "Signal-level inference of living versus dead microbial material."
             },
             {
               "value": "unsure",
@@ -270,16 +225,6 @@
               "help": "Typical for Illumina amplicon input."
             },
             {
-              "value": "vcf",
-              "label": "VCF",
-              "help": "Variant file already called upstream."
-            },
-            {
-              "value": "fastq_and_vcf",
-              "label": "FASTQ + VCF",
-              "help": "You have basecalled reads and variant files together."
-            },
-            {
               "value": "unsure",
               "label": "Not sure",
               "help": "Do not use input format as a strict differentiator.",
@@ -310,21 +255,6 @@
               "help": "Real-time read rejection / enrichment."
             },
             {
-              "value": "direct_rna002",
-              "label": "Direct RNA002 legacy chemistry",
-              "help": "Legacy native-RNA workflow for older direct RNA conditions."
-            },
-            {
-              "value": "direct_rna004",
-              "label": "Direct RNA Sequencing Kit (SQK-RNA004)",
-              "help": "Native RNA sequencing without cDNA conversion or PCR."
-            },
-            {
-              "value": "cdna_rbk",
-              "label": "cDNA branch / barcoded cDNA",
-              "help": "PCR-cDNA barcoding workflow rather than native direct RNA."
-            },
-            {
               "value": "standard_isolate",
               "label": "Standard isolate workflow",
               "help": "Single-isolate or standard ONT bacterial sequencing."
@@ -338,11 +268,6 @@
               "value": "amplicon",
               "label": "Amplicon workflow",
               "help": "12S / 16S or similar amplicon library."
-            },
-            {
-              "value": "signal_only",
-              "label": "Signal-only AI workflow",
-              "help": "Raw-signal modeling rather than standard basecalled analysis."
             },
             {
               "value": "unsure",
@@ -442,7 +367,7 @@
             {
               "value": "not_applicable",
               "label": "Not applicable",
-              "help": "Use this for VCF- or signal-only cases where standard basecalling is not the focus."
+              "help": "Use this only if the chosen entry point does not depend on a basecalling decision."
             },
             {
               "value": "unsure",
