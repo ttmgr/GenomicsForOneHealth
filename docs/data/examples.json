@@ -22,6 +22,7 @@
     "status_class": "exact",
     "route_summary": "Environmental sample -> long-read metagenomic DNA -> air / bioaerosol",
     "selection_help": "Use this when the sample is most similar to the published air metagenomics study context.",
+    "matrix_profile_id": "air_aerobiome",
     "unsupported_reason": null
   },
   {
@@ -47,6 +48,7 @@
     "status_class": "exact",
     "route_summary": "Environmental sample -> long-read metagenomic DNA -> wetland / passive water",
     "selection_help": "Use this when the sample is most similar to the passive-water wetland surveillance system.",
+    "matrix_profile_id": "wetland_passive_water_metagenomics",
     "unsupported_reason": null
   },
   {
@@ -72,6 +74,7 @@
     "status_class": "unsupported_nearest",
     "route_summary": "Environmental sample -> long-read metagenomic DNA -> soil",
     "selection_help": "Use this when your sample is soil and you want the nearest published environmental backend rather than a false exact match.",
+    "matrix_profile_id": "soil_long_read_metagenomics",
     "unsupported_reason": "No soil-specific long-read metagenomic workflow is currently published in this repository."
   },
   {
@@ -97,6 +100,7 @@
     "status_class": "unsupported_nearest",
     "route_summary": "Environmental sample -> long-read metagenomic DNA -> other environmental matrix",
     "selection_help": "Use this when the sample is environmental but not close to the published air or passive-water systems.",
+    "matrix_profile_id": "other_environmental_long_read",
     "unsupported_reason": "The public environmental DNA backends here are example-specific rather than a generic meta-pipeline for every matrix."
   },
   {
@@ -119,6 +123,7 @@
     "status_class": "exact",
     "route_summary": "Environmental sample -> RNA virome material -> wetland RNA virome",
     "selection_help": "Use this when the RNA virome material is closest to the wetland passive-water study context.",
+    "matrix_profile_id": "environmental_rna_virome",
     "unsupported_reason": null
   },
   {
@@ -141,6 +146,7 @@
     "status_class": "unsupported_nearest",
     "route_summary": "Environmental sample -> RNA virome material -> other environmental RNA virome",
     "selection_help": "Use this when your RNA virome case is not close to the published wetland passive-water example.",
+    "matrix_profile_id": "environmental_rna_virome",
     "unsupported_reason": "The repository does not currently contain a general-purpose environmental RNA virome backend beyond the wetland branch."
   },
   {
@@ -164,6 +170,7 @@
     "status_class": "exact",
     "route_summary": "Environmental sample -> eDNA 12S amplicon -> wetland 12S eDNA",
     "selection_help": "Use this when the 12S material is closest to the wetland host-range and passive-water system.",
+    "matrix_profile_id": "edna_12s_water",
     "unsupported_reason": null
   },
   {
@@ -187,6 +194,7 @@
     "status_class": "exact",
     "route_summary": "Environmental sample -> eDNA 12S amplicon -> water eDNA example",
     "selection_help": "Use this when the 12S route is closer to general water-eDNA metabarcoding than to the wetland host-range branch.",
+    "matrix_profile_id": "edna_12s_water",
     "unsupported_reason": null
   },
   {
@@ -210,6 +218,7 @@
     "status_class": "unsupported_nearest",
     "route_summary": "Environmental sample -> eDNA 12S amplicon -> other 12S context",
     "selection_help": "Use this when your 12S case is not close to either the wetland branch or the Zambia water-eDNA example.",
+    "matrix_profile_id": "edna_12s_water",
     "unsupported_reason": "The repository does not currently include a general-purpose 12S backend outside these two published study contexts."
   },
   {
@@ -235,6 +244,7 @@
     "status_class": "exact",
     "route_summary": "Clinical / isolate -> single isolate long-read DNA -> AMR Nanopore example",
     "selection_help": "Use this when your isolate route is closest to the published single-isolate AMR nanopore workflow.",
+    "matrix_profile_id": "single_isolate_long_read",
     "unsupported_reason": null
   },
   {
@@ -260,6 +270,7 @@
     "status_class": "unsupported_nearest",
     "route_summary": "Clinical / isolate -> single isolate long-read DNA -> other single-isolate context",
     "selection_help": "Use this when your single-isolate workflow is not a close match to the published AMR Nanopore example.",
+    "matrix_profile_id": "single_isolate_long_read",
     "unsupported_reason": "The repository currently exposes one published single-isolate backend rather than a broader single-isolate workflow family."
   },
   {
@@ -285,6 +296,7 @@
     "status_class": "exact",
     "route_summary": "Clinical / isolate -> barcoded isolate long-read DNA -> CRE plasmid example",
     "selection_help": "Use this when your barcoded isolate route is closest to the published CRE plasmid clustering workflow.",
+    "matrix_profile_id": "barcoded_isolate_long_read",
     "unsupported_reason": null
   },
   {
@@ -310,6 +322,7 @@
     "status_class": "unsupported_nearest",
     "route_summary": "Clinical / isolate -> barcoded isolate long-read DNA -> other barcoded-isolate context",
     "selection_help": "Use this when your barcoded isolate route is not a close match to the published CRE example.",
+    "matrix_profile_id": "barcoded_isolate_long_read",
     "unsupported_reason": "The repository currently exposes one published barcoded-isolate backend rather than a broader barcoded-isolate workflow family."
   },
   {
@@ -332,6 +345,7 @@
     "status_class": "exact",
     "route_summary": "Clinical / isolate -> clinical metagenome -> AMR host association",
     "selection_help": "This is the published clinical metagenome backend in the repository.",
+    "matrix_profile_id": "clinical_metagenome_host_association",
     "unsupported_reason": null
   },
   {
@@ -356,6 +370,7 @@
     "status_class": "exact",
     "route_summary": "Food safety -> Listeria enrichment / recovery -> adaptive-sampling example",
     "selection_help": "This is the published food-safety backend currently available in the repository.",
+    "matrix_profile_id": "food_safety_target_recovery",
     "unsupported_reason": null
   }
 ]
