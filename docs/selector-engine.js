@@ -6,547 +6,631 @@
 
   root.SelectorEngine = factory();
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
-  const WEIGHTS = {
-    sequencing_contexts: 80,
-    library_modes: 60,
-    analysis_goals: 48,
-    sample_types: 36,
-    input_formats: 18,
-    supports_multiplexing: 6
-  };
+  const WIZARD_ORDER = ["sample", "material", "target", "example", "expert", "results"];
+  const ROUTE_PAGE_IDS = ["sample", "material", "target"];
+  const ROUTE_QUESTION_IDS = ["sample_context", "material_class", "target_goal"];
+  const GENERIC_OPTION_DOC_LABEL = "Selected backend documentation";
 
   function allQuestions(questionSpec) {
-    return questionSpec.stages.flatMap((stage) => stage.questions);
+    return (questionSpec?.pages || []).flatMap((page) => page.questions || []);
   }
 
-  function stageQuestions(questionSpec, stageId) {
-    return questionSpec.stages.find((stage) => stage.id === stageId)?.questions || [];
+  function pageById(questionSpec, pageId) {
+    return (questionSpec?.pages || []).find((page) => page.id === pageId) || null;
   }
 
   function questionById(questionSpec, questionId) {
     return allQuestions(questionSpec).find((question) => question.id === questionId) || null;
   }
 
-  function questionByField(questionSpec, field) {
-    return allQuestions(questionSpec).find((question) => question.field === field) || null;
-  }
-
   function optionFor(question, value) {
-    return question?.options.find((option) => option.value === value) || null;
+    return (question?.options || []).find((option) => option.value === value) || null;
   }
 
   function isNeutral(question, value) {
     return Boolean(optionFor(question, value)?.neutral);
   }
 
-  function stageComplete(questionSpec, answers, stageId) {
-    return stageQuestions(questionSpec, stageId)
-      .filter((question) => !question.optional)
-      .every((question) => Boolean(answers[question.id]));
-  }
-
-  function matchesFieldValue(pipeline, field, value) {
-    if (!value) {
-      return false;
-    }
-
-    if (field === "supports_multiplexing") {
-      if (value === "yes") {
-        return pipeline.supports_multiplexing;
-      }
-      if (value === "no") {
-        return !pipeline.supports_multiplexing;
-      }
-      return false;
-    }
-
-    const collection = pipeline[field];
-    return Array.isArray(collection) ? collection.includes(value) : false;
-  }
-
-  function stage1Questions(questionSpec) {
-    return stageQuestions(questionSpec, "stage1");
-  }
-
-  function allSpecificStage1Answers(questionSpec, answers) {
-    return stage1Questions(questionSpec).every((question) => {
-      const value = answers[question.id];
-      return Boolean(value) && !isNeutral(question, value);
-    });
-  }
-
-  function passesHardFilters(pipeline, answers, questionSpec) {
-    for (const question of stage1Questions(questionSpec)) {
-      if (question.hard_filter === false || question.optional) {
-        continue;
-      }
-
-      const value = answers[question.id];
-      if (!value || isNeutral(question, value)) {
-        continue;
-      }
-
-      if (!matchesFieldValue(pipeline, question.field, value)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  function scorePipeline(pipeline, answers, questionSpec) {
-    let score = 0;
-    const reasons = [];
-
-    for (const question of allQuestions(questionSpec)) {
-      const value = answers[question.id];
-      if (!value || isNeutral(question, value)) {
-        continue;
-      }
-
-      if (question.field === "supports_multiplexing") {
-        if (matchesFieldValue(pipeline, question.field, value)) {
-          score += WEIGHTS.supports_multiplexing;
-          reasons.push(`${question.label}: ${optionFor(question, value)?.label || value}`);
-        }
-        continue;
-      }
-
-      const weight = WEIGHTS[question.field];
-      if (!weight) {
-        continue;
-      }
-
-      if (matchesFieldValue(pipeline, question.field, value)) {
-        score += weight;
-        reasons.push(`${question.label}: ${optionFor(question, value)?.label || value}`);
-      }
-    }
-
-    return { score, reasons };
-  }
-
-  function chooseTrack(pipeline, answers, questionSpec) {
-    if (!Array.isArray(pipeline.track_notes) || pipeline.track_notes.length === 0) {
-      return null;
-    }
-
-    let bestTrack = null;
-    let bestScore = -1;
-
-    for (const track of pipeline.track_notes) {
-      let score = 0;
-      let failed = false;
-
-      for (const [field, acceptedValues] of Object.entries(track.when || {})) {
-        const question = questionByField(questionSpec, field);
-        const value = question ? answers[question.id] : null;
-
-        if (!value || isNeutral(question, value)) {
-          continue;
-        }
-
-        if (!acceptedValues.includes(value)) {
-          failed = true;
-          break;
-        }
-
-        score += 1;
-      }
-
-      if (!failed && score > bestScore) {
-        bestScore = score;
-        bestTrack = score > 0 ? track : null;
-      }
-    }
-
-    return bestTrack;
-  }
-
-  function matchesAnswerRule(answers, conditions) {
-    if (!conditions) {
+  function matchesVisibleWhen(questionSpec, answers, visibleWhen) {
+    if (!visibleWhen) {
       return true;
     }
 
-    return Object.entries(conditions).every(([questionId, acceptedValues]) => {
-      const value = answers[questionId];
-      return Boolean(value) && acceptedValues.includes(value);
+    return Object.entries(visibleWhen).every(([questionId, acceptedValues]) => {
+      const dependencyValue = answers[questionId];
+      if (!dependencyValue) {
+        return false;
+      }
+      return acceptedValues.includes(dependencyValue);
     });
   }
 
-  function resolveOutOfScopeCase(answers, outOfScopeRules) {
-    for (const rule of outOfScopeRules) {
-      if (!matchesAnswerRule(answers, rule.when)) {
-        continue;
-      }
+  function isQuestionVisible(questionSpec, question, answers) {
+    return matchesVisibleWhen(questionSpec, answers, question?.visible_when || null);
+  }
 
-      if (rule.unless && matchesAnswerRule(answers, rule.unless)) {
-        continue;
-      }
+  function visibleOptionsForQuestion(questionSpec, question, answers) {
+    if (question?.dynamic_options_from) {
+      return [];
+    }
 
-      return rule;
+    const options = question?.options || [];
+    if (!options.some((option) => option.visible_when)) {
+      return options;
+    }
+
+    return options.filter((option) => matchesVisibleWhen(questionSpec, answers, option.visible_when || null));
+  }
+
+  function hasConcreteAnswer(questionSpec, answers, questionId) {
+    const question = questionById(questionSpec, questionId);
+    const value = answers[questionId];
+    if (!value) {
+      return false;
+    }
+    return !isNeutral(question, value);
+  }
+
+  function routeComplete(questionSpec, answers) {
+    return ROUTE_QUESTION_IDS.every((questionId) => hasConcreteAnswer(questionSpec, answers, questionId));
+  }
+
+  function exampleMatches(example, answers) {
+    const mappings = [
+      ["sample_context", "sample_contexts"],
+      ["material_class", "material_classes"],
+      ["target_goal", "target_goals"]
+    ];
+
+    return mappings.every(([questionId, field]) => {
+      const value = answers[questionId];
+      return Boolean(value) && (example[field] || []).includes(value);
+    });
+  }
+
+  function getEligibleExamples(answers, datasets) {
+    if (!routeComplete(datasets.questionSpec, answers)) {
+      return [];
+    }
+
+    return (datasets.examples || []).filter((example) => exampleMatches(example, answers));
+  }
+
+  function needsExampleSelection(answers, datasets) {
+    return getEligibleExamples(answers, datasets).length > 1;
+  }
+
+  function resolveSelectedExample(answers, datasets) {
+    const eligibleExamples = getEligibleExamples(answers, datasets);
+    if (eligibleExamples.length === 0) {
+      return null;
+    }
+
+    if (eligibleExamples.length === 1) {
+      return eligibleExamples[0];
+    }
+
+    const exampleId = answers.example_context;
+    if (!exampleId) {
+      return null;
+    }
+
+    return eligibleExamples.find((example) => example.id === exampleId) || null;
+  }
+
+  function resolveBackend(selectedExample, datasets) {
+    if (!selectedExample) {
+      return null;
+    }
+
+    const pipelinesById = new Map((datasets.pipelines || []).map((pipeline) => [pipeline.id, pipeline]));
+    const pipelineId = selectedExample.status_class === "exact" ? selectedExample.pipeline_id : selectedExample.nearest_pipeline_id;
+    const trackId = selectedExample.status_class === "exact" ? selectedExample.track_id : selectedExample.nearest_track_id;
+    const pipeline = pipelinesById.get(pipelineId) || null;
+    const track = pipeline?.track_notes?.find((entry) => entry.id === trackId) || null;
+
+    return { pipeline, track };
+  }
+
+  function resolvePlaybook(playbooks, pipelineId, trackId) {
+    return (
+      (playbooks || []).find((playbook) => playbook.pipeline_id === pipelineId && playbook.track_id === trackId) ||
+      (playbooks || []).find((playbook) => playbook.pipeline_id === pipelineId && playbook.track_id === null) ||
+      null
+    );
+  }
+
+  function derivePreprocessing(pipeline, track, playbook) {
+    if (playbook?.preprocessing_defaults) {
+      return { ...playbook.preprocessing_defaults };
+    }
+
+    return {
+      ...(pipeline?.default_preprocessing || {}),
+      ...(track?.preprocessing_override || {})
+    };
+  }
+
+  function fallbackDoc(pipeline, playbook) {
+    return playbook?.evidence_links?.[0] || pipeline?.setup_docs?.[0] || pipeline?.primary_docs?.[0] || null;
+  }
+
+  function ruleMatchesAnswers(answers, when) {
+    if (!when) {
+      return true;
+    }
+
+    return Object.entries(when).every(([questionId, acceptedValues]) => {
+      const answer = answers[questionId];
+      return Boolean(answer) && acceptedValues.includes(answer);
+    });
+  }
+
+  function matchingRules(selectedExample, answers, expertRules) {
+    if (!selectedExample) {
+      return [];
+    }
+
+    return (expertRules || [])
+      .filter((rule) => (rule.applies_to_example_ids || []).includes(selectedExample.id))
+      .filter((rule) => ruleMatchesAnswers(answers, rule.when))
+      .sort((left, right) => (right.priority || 0) - (left.priority || 0));
+  }
+
+  function genericCleaningAction(answers, pipeline, playbook) {
+    const state = answers.preprocessing_state;
+    const doc = fallbackDoc(pipeline, playbook);
+    const base = {
+      id: "generic_read_cleaning",
+      priority: 60,
+      doc_url: doc?.url || "",
+      entry_file: doc?.label || GENERIC_OPTION_DOC_LABEL
+    };
+
+    if (state === "need_trim_and_filter") {
+      return {
+        ...base,
+        title: "Trim adapters and filter reads",
+        summary: "Run the route-appropriate adapter cleanup and read-length or quality filtering before downstream workflow entry."
+      };
+    }
+
+    if (state === "need_trim_only") {
+      return {
+        ...base,
+        title: "Trim adapters before downstream analysis",
+        summary: "Adapter or primer cleanup is still needed before entering the documented backend."
+      };
+    }
+
+    if (state === "need_filter_only") {
+      return {
+        ...base,
+        title: "Filter reads before downstream analysis",
+        summary: "Apply the route-appropriate quality or length filtering before continuing."
+      };
     }
 
     return null;
   }
 
-  function resolvePlaybook(playbooks, pipelineId, trackId) {
-    return (
-      playbooks.find((playbook) => playbook.pipeline_id === pipelineId && playbook.track_id === trackId) ||
-      playbooks.find((playbook) => playbook.pipeline_id === pipelineId && playbook.track_id === null) ||
-      null
-    );
+  function dedupeById(items) {
+    return items.filter((item, index, collection) => collection.findIndex((candidate) => candidate.id === item.id) === index);
   }
 
-  function filterConditionalItems(items, answers) {
-    return (items || []).filter((item) => !item.when || matchesAnswerRule(answers, item.when));
-  }
+  function applyExpertRules(answers, selectedExample, pipeline, track, playbook, datasets) {
+    const rules = matchingRules(selectedExample, answers, datasets.expertRules);
+    const genericCleaning = genericCleaningAction(answers, pipeline, playbook);
+    const insertedActions = genericCleaning ? [genericCleaning] : [];
+    const skippedIds = new Set();
+    const warnings = [];
+    const expertEffects = [];
+    const preprocessingOverrides = {};
+    const toolOverrides = [];
+    const doc = fallbackDoc(pipeline, playbook);
 
-  function derivePreprocessing(pipeline, track, playbook) {
-    if (playbook?.preprocessing_defaults) {
-      return playbook.preprocessing_defaults;
+    for (const rule of rules) {
+      expertEffects.push({
+        title: rule.title,
+        summary: rule.summary,
+        effect_type: rule.effect_type
+      });
+
+      if (rule.warning) {
+        warnings.push({
+          title: rule.title,
+          text: rule.warning
+        });
+      }
+
+      if (rule.effect_type === "tool_swap" && rule.tool_override) {
+        toolOverrides.push(`${rule.tool_override.from} -> ${rule.tool_override.to}`);
+      }
+
+      if (rule.effect_type === "preprocessing_override" && rule.preprocessing_override) {
+        Object.assign(preprocessingOverrides, rule.preprocessing_override);
+      }
+
+      if (rule.effect_type === "step_insert" && rule.step_insertion) {
+        insertedActions.push({
+          id: rule.step_insertion.id,
+          title: rule.step_insertion.title,
+          summary: rule.step_insertion.summary,
+          priority: rule.priority || 0,
+          doc_url: doc?.url || "",
+          entry_file: doc?.label || GENERIC_OPTION_DOC_LABEL
+        });
+      }
+
+      if (rule.effect_type === "step_skip") {
+        for (const stepId of rule.target_step_ids || []) {
+          skippedIds.add(stepId);
+        }
+      }
+    }
+
+    if (toolOverrides.length > 0) {
+      const current = preprocessingOverrides.additional_preprocessing || playbook?.preprocessing_defaults?.additional_preprocessing || pipeline?.default_preprocessing?.additional_preprocessing || "";
+      preprocessingOverrides.additional_preprocessing = [
+        `Expert heuristic overrides: ${toolOverrides.join("; ")}.`,
+        current
+      ].filter(Boolean).join(" ");
     }
 
     return {
-      ...pipeline.default_preprocessing,
-      ...(track?.preprocessing_override || {})
+      expertEffects,
+      warnings,
+      insertedActions: dedupeById(
+        insertedActions
+          .filter((action) => !skippedIds.has(action.id))
+          .sort((left, right) => (right.priority || 0) - (left.priority || 0))
+      ),
+      preprocessingOverrides
     };
   }
 
-  function labelForValue(questionSpec, questionId, value) {
-    const question = questionById(questionSpec, questionId);
-    return optionFor(question, value)?.label || value;
+  function filterCommands(commands, answers) {
+    return (commands || []).filter((command) => ruleMatchesAnswers(answers, command.when));
   }
 
-  function formatFieldValues(questionSpec, field, values) {
-    const question = questionByField(questionSpec, field);
-    return values.map((value) => (question ? optionFor(question, value)?.label || value : value)).join(", ");
-  }
+  function buildKitConsequences(answers) {
+    const map = {
+      lsk114: {
+        title: "LSK114 consequences",
+        demultiplexing: "Not expected by default.",
+        barcode_trimming: "Not expected unless barcodes were introduced upstream.",
+        route_shape: "Single-sample or isolate-oriented handling.",
+        first_changes: "Start from basecalling or adapter trimming, then continue into the selected backend."
+      },
+      rbk114_24: {
+        title: "RBK114.24 consequences",
+        demultiplexing: "Usually required when reads are still pooled.",
+        barcode_trimming: "Expected as part of early preprocessing.",
+        route_shape: "Barcoded, multiplexed handling.",
+        first_changes: "Basecall if needed, then demultiplex, trim barcodes or adapters, and continue."
+      },
+      nbd114_24: {
+        title: "NBD114.24 consequences",
+        demultiplexing: "Usually required when reads are still pooled.",
+        barcode_trimming: "Expected as part of early preprocessing.",
+        route_shape: "Barcoded, multiplexed handling with ligation-based prep.",
+        first_changes: "Basecall if needed, then demultiplex, trim barcodes or adapters, and continue."
+      },
+      amplicon_workflow: {
+        title: "Amplicon workflow consequences",
+        demultiplexing: "Depends on how the pool was prepared.",
+        barcode_trimming: "Primer or adapter cleanup is usually still relevant.",
+        route_shape: "Amplicon-focused entry rather than shotgun processing.",
+        first_changes: "Use amplicon-aware cleanup and keep branch-specific interpretation in mind."
+      },
+      barcoded_metagenome: {
+        title: "Barcoded metagenome consequences",
+        demultiplexing: "Expected if pooled clinical metagenomes are not yet split.",
+        barcode_trimming: "Expected before host-association analysis.",
+        route_shape: "Multiplexed metagenomic handling.",
+        first_changes: "Separate pooled reads before downstream host-association interpretation."
+      },
+      adaptive_sampling: {
+        title: "Adaptive-sampling consequences",
+        demultiplexing: "Only needed if barcodes were added upstream.",
+        barcode_trimming: "Depends on whether barcodes are present.",
+        route_shape: "Real-time enrichment or depletion framing.",
+        first_changes: "Preserve target-enrichment context and keep matched controls aligned when available."
+      },
+      standard_control: {
+        title: "Standard-control consequences",
+        demultiplexing: "Only needed if barcodes were added upstream.",
+        barcode_trimming: "Depends on whether barcodes are present.",
+        route_shape: "Matched non-adaptive comparison framing.",
+        first_changes: "Keep the control comparable to the adaptive-sampling branch when interpreting outputs."
+      }
+    };
 
-  function buildCompatibilityWarnings(pipeline, track, status, answers, questionSpec, rule) {
-    const warnings = [];
-
-    if (status === "unsupported" && rule) {
-      warnings.push({
-        title: "Unsupported scenario",
-        text: rule.message
-      });
-      warnings.push({
-        title: "Why this is not exact",
-        text: rule.why_not_exact
-      });
-    } else if (status === "closest_supported") {
-      warnings.push({
-        title: "Generalized route, nearest backend",
-        text: "The current repository does not contain an exact published example for all Stage 1 answers. This recommendation is the nearest documented backend already present in the collection."
-      });
-    }
-
-    const inputQuestion = questionById(questionSpec, "input_format");
-    const inputValue = answers.input_format;
-    if (
-      inputValue &&
-      inputQuestion &&
-      !isNeutral(inputQuestion, inputValue) &&
-      Array.isArray(pipeline.input_formats) &&
-      pipeline.input_formats.length > 0 &&
-      !matchesFieldValue(pipeline, "input_formats", inputValue)
-    ) {
-      warnings.push({
-        title: "Input-format adaptation required",
-        text: `You selected ${labelForValue(questionSpec, "input_format", inputValue)}, but this published backend is documented primarily for ${formatFieldValues(questionSpec, "input_formats", pipeline.input_formats)}.`
-      });
-    }
-
-    const libraryQuestion = questionById(questionSpec, "library_mode");
-    const libraryValue = answers.library_mode;
-    if (
-      libraryValue &&
-      libraryQuestion &&
-      !isNeutral(libraryQuestion, libraryValue) &&
-      Array.isArray(pipeline.library_modes) &&
-      pipeline.library_modes.length > 0 &&
-      !matchesFieldValue(pipeline, "library_modes", libraryValue)
-    ) {
-      warnings.push({
-        title: "Kit or run-mode mismatch",
-        text: `You selected ${labelForValue(questionSpec, "library_mode", libraryValue)}, but this published backend is documented mainly for ${formatFieldValues(questionSpec, "library_modes", pipeline.library_modes)}.`
-      });
-    }
-
-    if (answers.demultiplexing === "needed" && !pipeline.supports_multiplexing) {
-      warnings.push({
-        title: "Demultiplexing is not central here",
-        text: "You indicated that demultiplexing is still needed, but multiplexing is not a central documented mode for this published backend."
-      });
-    }
-
-    if (answers.basecalling_state === "already_basecalled") {
-      warnings.push({
-        title: "Basecalling can likely be skipped",
-        text: "You indicated that reads are already basecalled. Start at the read-level preprocessing stage and confirm that the current files still match the documented thresholds."
-      });
-    } else if (answers.basecalling_state === "raw_signal_not_basecalled") {
-      warnings.push({
-        title: "Raw-data entry point",
-        text: "This recommendation assumes a raw-data entry path. Start with the published basecalling branch before trimming, filtering, or downstream analysis."
-      });
-    } else if (answers.basecalling_state === "prefer_fast") {
-      warnings.push({
-        title: "FAST tier selected",
-        text: "FAST favors turnaround time over accuracy. That can be reasonable for screening, but it is less conservative for assembly-sensitive workflows."
-      });
-    } else if (answers.basecalling_state === "prefer_sup") {
-      warnings.push({
-        title: "SUP tier selected",
-        text: "SUP favors accuracy over compute efficiency and is often sensible for assembly and variant-sensitive analyses."
-      });
-    }
-
-    if (answers.preprocessing_state === "already_trimmed_and_filtered") {
-      warnings.push({
-        title: "Read preprocessing may already be complete",
-        text: "You indicated that trimming and filtering are already done. Confirm that the documented thresholds still match your processed reads before skipping those steps."
-      });
-    }
-
-    for (const note of track?.notes || []) {
-      warnings.push({
-        title: track.title,
-        text: note
-      });
-    }
-
-    return warnings;
+    return map[answers.library_mode] || null;
   }
 
   function buildOntNotes(answers) {
-    const libraryReference = {
-      rbk114_24: {
+    const notes = [];
+
+    if (answers.library_mode === "rbk114_24") {
+      notes.push({
         title: "Rapid Barcoding Kit 24 V14",
-        description: "SQK-RBK114.24 is Oxford Nanopore's rapid, PCR-free barcoding workflow for multiplexed DNA sequencing.",
+        description: "Oxford Nanopore rapid barcoding workflow for multiplexed DNA sequencing.",
         url: "https://store.nanoporetech.com/rapid-barcoding-sequencing-kit-24-v14.html",
         urlLabel: "Official kit page"
-      },
-      nbd114_24: {
+      });
+    }
+
+    if (answers.library_mode === "nbd114_24") {
+      notes.push({
         title: "Native Barcoding Kit 24 V14",
-        description: "SQK-NBD114.24 is Oxford Nanopore's ligation-based barcoding workflow for multiplexed DNA sequencing with preserved fragment length.",
+        description: "Oxford Nanopore ligation-based barcoding workflow for multiplexed DNA sequencing.",
         url: "https://store.nanoporetech.com/native-barcoding-kit-24-v14.html",
         urlLabel: "Official kit page"
-      }
-    };
+      });
+    }
 
-    const doradoReference = {
-      raw_signal_not_basecalled: {
+    if (answers.basecalling_state === "raw_signal_not_basecalled") {
+      notes.push({
         title: "Dorado simplex basecalling",
-        description: "Use Dorado simplex basecalling guidance if you are entering from POD5 or FAST5 and still need a basecalling step.",
+        description: "Use Dorado basecalling before demultiplexing, trimming, or downstream analysis when starting from POD5 or FAST5.",
         url: "https://software-docs.nanoporetech.com/dorado/latest/basecaller/simplex/",
         urlLabel: "Simplex basecalling docs"
-      },
-      prefer_fast: {
-        title: "Dorado FAST",
-        description: "FAST is the quickest standard Dorado tier and the least computationally expensive.",
-        url: "https://software-docs.nanoporetech.com/dorado/latest/models/models/",
-        urlLabel: "Model selection guide"
-      },
-      prefer_hac: {
-        title: "Dorado HAC",
-        description: "HAC is the balanced Dorado tier for most users when accuracy and compute cost both matter.",
-        url: "https://software-docs.nanoporetech.com/dorado/latest/models/models/",
-        urlLabel: "Model selection guide"
-      },
-      prefer_sup: {
-        title: "Dorado SUP",
-        description: "SUP is the most accurate standard Dorado tier and is useful when downstream accuracy matters most.",
-        url: "https://software-docs.nanoporetech.com/dorado/latest/models/models/",
-        urlLabel: "Model selection guide"
-      }
-    };
+      });
+    }
 
-    const notes = [];
-    if (libraryReference[answers.library_mode]) {
-      notes.push(libraryReference[answers.library_mode]);
+    const modelGuideStates = ["prefer_fast", "prefer_hac", "prefer_sup"];
+    if (modelGuideStates.includes(answers.basecalling_state)) {
+      notes.push({
+        title: `Dorado ${answers.basecalling_state.replace("prefer_", "").toUpperCase()} model guidance`,
+        description: "Use the official Dorado model guide to match accuracy tier to chemistry and compute budget.",
+        url: "https://software-docs.nanoporetech.com/dorado/latest/models/models/",
+        urlLabel: "Dorado model guide"
+      });
     }
-    if (doradoReference[answers.basecalling_state]) {
-      notes.push(doradoReference[answers.basecalling_state]);
-    }
+
     return notes;
   }
 
-  function statusLabel(status) {
-    if (status === "exact") {
-      return "Published example match";
+  function buildCompatibilityWarnings(answers, selectedExample, pipeline, expertWarnings) {
+    const warnings = [...expertWarnings];
+
+    if (selectedExample?.status_class === "unsupported_nearest") {
+      warnings.unshift({
+        title: "Unsupported route",
+        text: selectedExample.unsupported_reason
+      });
     }
-    if (status === "track_exact") {
+
+    if (
+      answers.input_format &&
+      answers.input_format !== "unsure" &&
+      Array.isArray(pipeline?.input_formats) &&
+      pipeline.input_formats.length > 0 &&
+      !pipeline.input_formats.includes(answers.input_format)
+    ) {
+      warnings.push({
+        title: "Input-format adaptation required",
+        text: `The selected backend is documented primarily for ${pipeline.input_formats.join(", ")} input rather than ${answers.input_format}.`
+      });
+    }
+
+    return dedupeById(
+      warnings.map((warning, index) => ({
+        id: `warning_${index}_${warning.title}`,
+        ...warning
+      }))
+    ).map(({ id, ...warning }) => warning);
+  }
+
+  function statusLabel(selectedExample, backend) {
+    if (!selectedExample || !backend?.pipeline) {
+      return "";
+    }
+    if (selectedExample.status_class === "unsupported_nearest") {
+      return "Unsupported / nearest published example";
+    }
+    if (backend.track) {
       return "Published example + branch";
     }
-    if (status === "closest_supported") {
-      return "Generalized route -> nearest published example";
-    }
-    return "Unsupported / nearest published example";
+    return "Published example match";
   }
 
-  function chooseConfidence(status, ranked, warnings) {
-    const scoreGap = ranked.length > 1 ? ranked[0].score - ranked[1].score : ranked[0]?.score || 0;
-
-    if (status === "unsupported") {
-      return "low";
+  function explanationText(selectedExample, backend) {
+    if (!selectedExample || !backend?.pipeline) {
+      return "";
     }
-
-    if (status === "closest_supported") {
-      return warnings.length >= 3 || scoreGap < 20 ? "low" : "moderate";
+    if (selectedExample.status_class === "unsupported_nearest") {
+      return `${selectedExample.label} is not a published exact backend in this repository, so the wizard is using ${backend.pipeline.title}${backend.track ? ` (${backend.track.title})` : ""} as the nearest documented starting point.`;
     }
-
-    if (warnings.length === 0 && scoreGap >= 24) {
-      return "high";
-    }
-
-    return "moderate";
-  }
-
-  function confidenceSummary(status, confidence, exactCandidateCount, scoreGap) {
-    if (status === "unsupported") {
-      return "This case falls outside the published selector boundary. The action sheet below shows the nearest documented backend without claiming exact support.";
-    }
-
-    if (status === "closest_supported") {
-      if (confidence === "low") {
-        return "This is a generalized route with multiple adaptations likely required. Treat the recommended backend as a starting point rather than a validated protocol match.";
-      }
-      return "This is a generalized route mapped to the nearest published example currently available in the repository.";
-    }
-
-    if (status === "track_exact") {
-      return "The selected workflow is an exact published match, and a specific internal wetland branch can be chosen directly from your answers.";
-    }
-
-    if (exactCandidateCount > 1 && scoreGap < 20) {
-      return "More than one published example remains plausible, but the selector still found one dominant backend.";
-    }
-
-    return "The selected workflow is an exact published example match for the sequencing context, kit or run mode, goal, and sample context you provided.";
-  }
-
-  function explainRecommendation(status, pipeline, track) {
-    if (status === "unsupported") {
-      return `${pipeline.title} is the nearest published backend in the collection, but your stated route is outside the workflows that are currently documented here.`;
-    }
-
-    if (status === "closest_supported") {
-      return `${pipeline.title} is the nearest published backend for the generalized route you selected. Use it as a documented starting point rather than as an exact one-to-one protocol match.`;
-    }
-
-    if (track) {
-      return `${pipeline.title} is the exact published example for your route, and ${track.title} is the matching internal branch.`;
-    }
-
-    return `${pipeline.title} is the exact published example backend for the route you selected.`;
-  }
-
-  function buildAlternatives(primary, ranked, exactCandidates, pipelinesById, outOfScopeRule) {
-    if (outOfScopeRule) {
-      return (outOfScopeRule.secondary_nearest_pipelines || [])
-        .map((pipelineId) => pipelinesById.get(pipelineId))
-        .filter(Boolean)
-        .slice(0, 2);
-    }
-
-    const rankedAlternatives = ranked
-      .map((entry) => entry.pipeline)
-      .filter((pipeline) => pipeline.id !== primary.id);
-
-    const fallbackAlternatives = (primary.closest_alternatives || [])
-      .map((pipelineId) => pipelinesById.get(pipelineId))
-      .filter(Boolean);
-
-    return [...rankedAlternatives, ...fallbackAlternatives]
-      .filter((pipeline, index, collection) => collection.findIndex((candidate) => candidate.id === pipeline.id) === index)
-      .slice(0, exactCandidates.length > 1 ? 2 : 1);
+    return `${backend.pipeline.title}${backend.track ? ` (${backend.track.title})` : ""} is the published example backend selected for this route.`;
   }
 
   function computeRecommendation(answers, datasets) {
-    const { pipelines, questionSpec, playbooks, outOfScopeRules } = datasets;
-
-    if (!stageComplete(questionSpec, answers, "stage1")) {
+    if (!routeComplete(datasets.questionSpec, answers)) {
       return null;
     }
 
-    const pipelinesById = new Map(pipelines.map((pipeline) => [pipeline.id, pipeline]));
-    const outOfScopeRule = resolveOutOfScopeCase(answers, outOfScopeRules);
-    const exactCandidates = pipelines.filter((pipeline) => passesHardFilters(pipeline, answers, questionSpec));
-    const candidatePool = exactCandidates.length > 0 ? exactCandidates : pipelines;
-    const ranked = candidatePool
-      .map((pipeline) => ({
-        pipeline,
-        ...scorePipeline(pipeline, answers, questionSpec)
-      }))
-      .sort((left, right) => {
-        if (right.score !== left.score) {
-          return right.score - left.score;
-        }
-        return left.pipeline.title.localeCompare(right.pipeline.title);
-      });
-
-    let primary = ranked[0]?.pipeline || pipelines[0];
-    let track = chooseTrack(primary, answers, questionSpec);
-    let status = "closest_supported";
-    const stage1Specific = allSpecificStage1Answers(questionSpec, answers);
-
-    if (outOfScopeRule) {
-      primary = pipelinesById.get(outOfScopeRule.primary_nearest_pipeline) || primary;
-      track = chooseTrack(primary, answers, questionSpec);
-      status = "unsupported";
-    } else if (exactCandidates.length > 0 && stage1Specific && exactCandidates.length === 1) {
-      status = track ? "track_exact" : "exact";
+    const selectedExample = resolveSelectedExample(answers, datasets);
+    if (!selectedExample) {
+      return null;
     }
 
-    const playbook = resolvePlaybook(playbooks, primary.id, track?.id || null);
-    const preprocessing = derivePreprocessing(primary, track, playbook);
-    const warnings = buildCompatibilityWarnings(primary, track, status, answers, questionSpec, outOfScopeRule);
-    const confidence = chooseConfidence(status, ranked, warnings);
-    const scoreGap = ranked.length > 1 ? ranked[0].score - ranked[1].score : ranked[0]?.score || 0;
+    const backend = resolveBackend(selectedExample, datasets);
+    if (!backend?.pipeline) {
+      return null;
+    }
+
+    const playbook = resolvePlaybook(datasets.playbooks || [], backend.pipeline.id, backend.track?.id || null);
+    const preprocessing = derivePreprocessing(backend.pipeline, backend.track, playbook);
+    const expert = applyExpertRules(answers, selectedExample, backend.pipeline, backend.track, playbook, datasets);
+    const entryActions = dedupeById([
+      ...expert.insertedActions,
+      ...(playbook?.entry_actions || [])
+    ]);
+    const finalPreprocessing = {
+      ...preprocessing,
+      ...expert.preprocessingOverrides
+    };
 
     return {
-      status,
-      statusLabel: statusLabel(status),
-      confidence,
-      confidenceLabel: `${confidence.charAt(0).toUpperCase()}${confidence.slice(1)} confidence`,
-      fitSummary: confidenceSummary(status, confidence, exactCandidates.length, scoreGap),
-      explanation: explainRecommendation(status, primary, track),
-      primary: {
-        pipeline: primary,
-        track,
-        playbook,
-        preprocessing,
-        entryActions: filterConditionalItems(playbook?.entry_actions, answers),
-        curatedCommands: filterConditionalItems(playbook?.curated_commands, answers)
+      route: {
+        sample_context: answers.sample_context,
+        material_class: answers.material_class,
+        target_goal: answers.target_goal,
+        summary: selectedExample.route_summary || ROUTE_QUESTION_IDS.map((questionId) => answers[questionId]).join(" -> ")
       },
-      alternatives: buildAlternatives(primary, ranked, exactCandidates, pipelinesById, outOfScopeRule),
-      decision_trace: {
-        exactCandidateCount: exactCandidates.length,
-        scoreGap,
-        stage1Specific,
-        reasons: (ranked[0]?.reasons || []).slice(0, 6)
+      example: selectedExample,
+      backend: {
+        pipeline: backend.pipeline,
+        track: backend.track,
+        playbook
       },
-      warnings,
-      ontNotes: buildOntNotes(answers),
-      outOfScopeRule
+      status: selectedExample.status_class === "unsupported_nearest" ? "unsupported" : backend.track ? "track_exact" : "exact",
+      status_label: statusLabel(selectedExample, backend),
+      explanation: explanationText(selectedExample, backend),
+      expert_effects: expert.expertEffects,
+      entry_actions: entryActions,
+      curated_commands: filterCommands(playbook?.curated_commands || [], answers),
+      preprocessing: finalPreprocessing,
+      warnings: buildCompatibilityWarnings(answers, selectedExample, backend.pipeline, expert.warnings),
+      docs: {
+        primary: backend.pipeline.primary_docs || [],
+        setup: backend.pipeline.setup_docs || [],
+        evidence: playbook?.evidence_links || []
+      },
+      ont_notes: buildOntNotes(answers),
+      kit_consequences: buildKitConsequences(answers)
     };
   }
 
+  function questionComplete(questionSpec, answers, questionId) {
+    return hasConcreteAnswer(questionSpec, answers, questionId);
+  }
+
+  function pageComplete(questionSpec, answers, pageId, datasets) {
+    const page = pageById(questionSpec, pageId);
+    if (!page) {
+      return false;
+    }
+
+    if (pageId === "example") {
+      if (!needsExampleSelection(answers, datasets)) {
+        return true;
+      }
+      return Boolean(resolveSelectedExample(answers, datasets));
+    }
+
+    if (pageId === "expert") {
+      return Boolean(resolveSelectedExample(answers, datasets) || (!needsExampleSelection(answers, datasets) && getEligibleExamples(answers, datasets).length === 1));
+    }
+
+    if (pageId === "results") {
+      return Boolean(computeRecommendation(answers, datasets));
+    }
+
+    return (page.questions || [])
+      .filter((question) => isQuestionVisible(questionSpec, question, answers))
+      .every((question) => questionComplete(questionSpec, answers, question.id));
+  }
+
+  function canReachPage(pageId, answers, datasets) {
+    const questionSpec = datasets.questionSpec;
+
+    if (pageId === "sample") {
+      return true;
+    }
+
+    if (pageId === "material") {
+      return pageComplete(questionSpec, answers, "sample", datasets);
+    }
+
+    if (pageId === "target") {
+      return pageComplete(questionSpec, answers, "sample", datasets) && pageComplete(questionSpec, answers, "material", datasets);
+    }
+
+    if (pageId === "example") {
+      return routeComplete(questionSpec, answers) && needsExampleSelection(answers, datasets);
+    }
+
+    if (pageId === "expert") {
+      if (!routeComplete(questionSpec, answers)) {
+        return false;
+      }
+      if (needsExampleSelection(answers, datasets)) {
+        return pageComplete(questionSpec, answers, "example", datasets);
+      }
+      return getEligibleExamples(answers, datasets).length === 1;
+    }
+
+    if (pageId === "results") {
+      return Boolean(computeRecommendation(answers, datasets));
+    }
+
+    return false;
+  }
+
+  function getWizardPageSequence(questionSpec, answers, datasets) {
+    const sequence = ["sample"];
+
+    if (canReachPage("material", answers, datasets)) {
+      sequence.push("material");
+    }
+    if (canReachPage("target", answers, datasets)) {
+      sequence.push("target");
+    }
+    if (canReachPage("example", answers, datasets)) {
+      sequence.push("example");
+    }
+    if (canReachPage("expert", answers, datasets)) {
+      sequence.push("expert");
+    }
+    if (canReachPage("results", answers, datasets)) {
+      sequence.push("results");
+    }
+
+    return sequence.filter((pageId, index, collection) => collection.indexOf(pageId) === index && pageById(questionSpec, pageId));
+  }
+
+  function firstReachablePage(questionSpec, answers, datasets) {
+    if (!pageComplete(questionSpec, answers, "sample", datasets)) {
+      return "sample";
+    }
+    if (!pageComplete(questionSpec, answers, "material", datasets)) {
+      return "material";
+    }
+    if (!pageComplete(questionSpec, answers, "target", datasets)) {
+      return "target";
+    }
+    if (needsExampleSelection(answers, datasets) && !pageComplete(questionSpec, answers, "example", datasets)) {
+      return "example";
+    }
+    if (canReachPage("expert", answers, datasets) && !canReachPage("results", answers, datasets)) {
+      return "expert";
+    }
+    return "results";
+  }
+
   return {
+    ROUTE_PAGE_IDS,
+    WIZARD_ORDER,
     allQuestions,
-    stageQuestions,
-    stageComplete,
+    pageById,
     questionById,
-    questionByField,
     optionFor,
     isNeutral,
-    passesHardFilters,
-    scorePipeline,
-    chooseTrack,
-    classifyRecommendation: chooseConfidence,
-    resolveOutOfScopeCase,
+    matchesVisibleWhen,
+    isQuestionVisible,
+    visibleOptionsForQuestion,
+    routeComplete,
+    questionComplete,
+    pageComplete,
+    getEligibleExamples,
+    needsExampleSelection,
+    resolveSelectedExample,
+    getWizardPageSequence,
+    canReachPage,
+    firstReachablePage,
     computeRecommendation
   };
 });

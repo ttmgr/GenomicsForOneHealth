@@ -17,15 +17,14 @@ function fail(message) {
 const pipelines = readJson("pipelines.json");
 const questions = readJson("questions.json");
 const playbooks = readJson("playbooks.json");
-const presets = readJson("presets.json");
-const outOfScopeRules = readJson("out_of_scope.json");
+const examples = readJson("examples.json");
+const expertRules = readJson("expert_rules.json");
 
 const requiredPipelineFields = [
   "id",
   "title",
   "short_title",
   "readiness_level",
-  "sequencing_contexts",
   "category",
   "sample_types",
   "analysis_goals",
@@ -61,48 +60,106 @@ const requiredPlaybookFields = [
   "evidence_links"
 ];
 
+const allowedPageTypes = new Set(["route", "conditional_route", "expert", "results"]);
+const allowedExampleStatuses = new Set(["exact", "unsupported_nearest"]);
+const allowedRuleEffects = new Set(["tool_swap", "step_insert", "step_skip", "warning_only", "preprocessing_override"]);
+const expectedPageIds = ["sample", "material", "target", "example", "expert", "results"];
+
 const questionOptions = new Map();
 const questionsById = new Map();
-for (const stage of questions.stages) {
-  for (const question of stage.questions) {
-    questionsById.set(question.id, question);
-    questionOptions.set(
-      question.id,
-      new Set(question.options.map((option) => option.value))
-    );
+const questionOrder = [];
+
+if (!Array.isArray(questions.pages)) {
+  fail("questions.json must define a top-level pages array");
+}
+
+for (const page of questions.pages) {
+  if (!page.id || !page.title || !page.summary || !page.page_type) {
+    fail(`Question page ${page.id || "<unknown>"} is missing required metadata`);
   }
+  if (!allowedPageTypes.has(page.page_type)) {
+    fail(`Question page ${page.id} has unsupported page_type ${page.page_type}`);
+  }
+
+  if (!Array.isArray(page.questions)) {
+    fail(`Question page ${page.id} must define a questions array`);
+  }
+
+  for (const question of page.questions) {
+    if (!question.id || !question.field || !question.label) {
+      fail(`Question in page ${page.id} is missing required fields`);
+    }
+
+    questionsById.set(question.id, question);
+    questionOrder.push(question.id);
+    if (question.dynamic_options_from) {
+      questionOptions.set(question.id, new Set());
+    } else {
+      questionOptions.set(question.id, new Set((question.options || []).map((option) => option.value)));
+    }
+  }
+}
+
+if (expectedPageIds.some((pageId) => !questions.pages.find((page) => page.id === pageId))) {
+  fail(`questions.json must include the exact wizard pages ${expectedPageIds.join(", ")}`);
 }
 
 const pipelineIds = new Set(pipelines.map((pipeline) => pipeline.id));
 const tracksByPipeline = new Map(
   pipelines.map((pipeline) => [pipeline.id, new Set((pipeline.track_notes || []).map((track) => track.id))])
 );
+const exampleIds = new Set(examples.map((example) => example.id));
+
+function validateVisibilityDependency(ownerLabel, visibleWhen, currentQuestionId) {
+  if (!visibleWhen) {
+    return;
+  }
+
+  for (const [dependencyId, acceptedValues] of Object.entries(visibleWhen)) {
+    if (!questionsById.has(dependencyId)) {
+      fail(`${ownerLabel} references unknown dependency question ${dependencyId}`);
+    }
+
+    if (currentQuestionId) {
+      const dependencyIndex = questionOrder.indexOf(dependencyId);
+      const currentIndex = questionOrder.indexOf(currentQuestionId);
+      if (dependencyIndex >= currentIndex) {
+        fail(`${ownerLabel} depends on ${dependencyId}, which is not an earlier question`);
+      }
+    }
+
+    if (acceptedValues.length === 0) {
+      fail(`${ownerLabel} must include at least one accepted value for ${dependencyId}`);
+    }
+
+    const allowedValues = questionOptions.get(dependencyId);
+    for (const value of acceptedValues) {
+      if (allowedValues.size > 0 && !allowedValues.has(value)) {
+        fail(`${ownerLabel} references invalid option ${dependencyId}:${value}`);
+      }
+    }
+  }
+}
 
 for (const question of questionsById.values()) {
-  for (const option of question.options) {
-    if (option.visible_when) {
-      for (const [dependencyId, acceptedValues] of Object.entries(option.visible_when)) {
-        if (!questionOptions.has(dependencyId)) {
-          fail(`Question ${question.id} option ${option.value} references unknown dependency ${dependencyId}`);
-        }
-        for (const value of acceptedValues) {
-          if (!questionOptions.get(dependencyId).has(value)) {
-            fail(`Question ${question.id} option ${option.value} references invalid dependency value ${dependencyId}:${value}`);
-          }
-        }
-      }
-    }
+  validateVisibilityDependency(`Question ${question.id}`, question.visible_when, question.id);
 
-    if (option.autofill) {
-      for (const [questionId, value] of Object.entries(option.autofill)) {
-        if (!questionOptions.has(questionId)) {
-          fail(`Question ${question.id} option ${option.value} autofills unknown question ${questionId}`);
-        }
-        if (!questionOptions.get(questionId).has(value)) {
-          fail(`Question ${question.id} option ${option.value} autofills invalid value ${questionId}:${value}`);
-        }
-      }
+  if (question.dynamic_options_from) {
+    if (question.dynamic_options_from !== "examples") {
+      fail(`Question ${question.id} references unsupported dynamic source ${question.dynamic_options_from}`);
     }
+    continue;
+  }
+
+  if (!Array.isArray(question.options) || question.options.length === 0) {
+    fail(`Question ${question.id} must include static options or a dynamic source`);
+  }
+
+  for (const option of question.options) {
+    if (!option.value || !option.label) {
+      fail(`Question ${question.id} has an incomplete option`);
+    }
+    validateVisibilityDependency(`Question ${question.id} option ${option.value}`, option.visible_when, question.id);
   }
 }
 
@@ -119,7 +176,7 @@ for (const pipeline of pipelines) {
 
   for (const link of [...pipeline.primary_docs, ...pipeline.setup_docs]) {
     if (!link.label || !link.url) {
-      fail(`Pipeline ${pipeline.id} has an incomplete link entry`);
+      fail(`Pipeline ${pipeline.id} has an incomplete doc link`);
     }
   }
 
@@ -133,7 +190,7 @@ for (const pipeline of pipelines) {
 for (const playbook of playbooks) {
   for (const field of requiredPlaybookFields) {
     if (!(field in playbook)) {
-      fail(`Playbook for ${playbook.pipeline_id}/${playbook.track_id} is missing ${field}`);
+      fail(`Playbook ${playbook.pipeline_id}/${playbook.track_id} is missing ${field}`);
     }
   }
 
@@ -145,7 +202,7 @@ for (const playbook of playbooks) {
     fail(`Playbook ${playbook.pipeline_id}/${playbook.track_id} references an unknown track`);
   }
 
-  if (playbook.entry_actions.length === 0) {
+  if (!Array.isArray(playbook.entry_actions) || playbook.entry_actions.length === 0) {
     fail(`Playbook ${playbook.pipeline_id}/${playbook.track_id} must include at least one entry action`);
   }
 
@@ -160,18 +217,11 @@ for (const playbook of playbooks) {
       fail(`Playbook ${playbook.pipeline_id}/${playbook.track_id} has an incomplete curated command`);
     }
 
-    if (command.when) {
-      for (const [questionId, values] of Object.entries(command.when)) {
-        if (!questionOptions.has(questionId)) {
-          fail(`Curated command in ${playbook.pipeline_id}/${playbook.track_id} references unknown question ${questionId}`);
-        }
-        for (const value of values) {
-          if (!questionOptions.get(questionId).has(value)) {
-            fail(`Curated command in ${playbook.pipeline_id}/${playbook.track_id} references invalid value ${questionId}:${value}`);
-          }
-        }
-      }
-    }
+    validateVisibilityDependency(
+      `Curated command ${playbook.pipeline_id}/${playbook.track_id}`,
+      command.when,
+      null
+    );
   }
 
   for (const link of playbook.evidence_links) {
@@ -181,56 +231,115 @@ for (const playbook of playbooks) {
   }
 }
 
-for (const preset of presets) {
-  if (!preset.id || !preset.group || !preset.title || !preset.summary || !preset.audience || typeof preset.featured !== "boolean") {
-    fail(`Preset ${preset.id || "<unknown>"} is incomplete`);
+for (const example of examples) {
+  const requiredFields = [
+    "id",
+    "label",
+    "sample_contexts",
+    "material_classes",
+    "target_goals",
+    "status_class",
+    "route_summary",
+    "selection_help"
+  ];
+  for (const field of requiredFields) {
+    if (!(field in example)) {
+      fail(`Example ${example.id || "<unknown>"} is missing ${field}`);
+    }
   }
 
-  for (const [questionId, value] of Object.entries(preset.prefill_answers)) {
-    if (!questionOptions.has(questionId)) {
-      fail(`Preset ${preset.id} references unknown question ${questionId}`);
+  if (!allowedExampleStatuses.has(example.status_class)) {
+    fail(`Example ${example.id} has unsupported status_class ${example.status_class}`);
+  }
+
+  for (const [questionId, values] of [
+    ["sample_context", example.sample_contexts],
+    ["material_class", example.material_classes],
+    ["target_goal", example.target_goals]
+  ]) {
+    if (!Array.isArray(values) || values.length === 0) {
+      fail(`Example ${example.id} must define ${questionId}-compatible values`);
     }
-    if (!questionOptions.get(questionId).has(value)) {
-      fail(`Preset ${preset.id} references invalid option ${questionId}:${value}`);
+
+    for (const value of values) {
+      if (!questionOptions.get(questionId).has(value)) {
+        fail(`Example ${example.id} references invalid ${questionId}:${value}`);
+      }
+    }
+  }
+
+  if (example.status_class === "exact") {
+    if (!example.pipeline_id) {
+      fail(`Exact example ${example.id} must define pipeline_id`);
+    }
+    if (!pipelineIds.has(example.pipeline_id)) {
+      fail(`Exact example ${example.id} references unknown pipeline ${example.pipeline_id}`);
+    }
+    if (example.track_id !== null && !tracksByPipeline.get(example.pipeline_id).has(example.track_id)) {
+      fail(`Exact example ${example.id} references unknown track ${example.track_id}`);
+    }
+  }
+
+  if (example.status_class === "unsupported_nearest") {
+    if (!example.nearest_pipeline_id) {
+      fail(`Unsupported example ${example.id} must define nearest_pipeline_id`);
+    }
+    if (!pipelineIds.has(example.nearest_pipeline_id)) {
+      fail(`Unsupported example ${example.id} references unknown nearest pipeline ${example.nearest_pipeline_id}`);
+    }
+    if (example.nearest_track_id !== null && !tracksByPipeline.get(example.nearest_pipeline_id).has(example.nearest_track_id)) {
+      fail(`Unsupported example ${example.id} references unknown nearest track ${example.nearest_track_id}`);
+    }
+    if (!example.unsupported_reason) {
+      fail(`Unsupported example ${example.id} must define unsupported_reason`);
     }
   }
 }
 
-for (const rule of outOfScopeRules) {
-  if (!rule.id || !rule.when || !rule.message || !rule.why_not_exact || !rule.primary_nearest_pipeline) {
-    fail(`Out-of-scope rule ${rule.id || "<unknown>"} is incomplete`);
-  }
-
-  if (!pipelineIds.has(rule.primary_nearest_pipeline)) {
-    fail(`Out-of-scope rule ${rule.id} references unknown primary pipeline ${rule.primary_nearest_pipeline}`);
-  }
-
-  for (const pipelineId of rule.secondary_nearest_pipelines || []) {
-    if (!pipelineIds.has(pipelineId)) {
-      fail(`Out-of-scope rule ${rule.id} references unknown secondary pipeline ${pipelineId}`);
+for (const rule of expertRules) {
+  const requiredFields = [
+    "id",
+    "applies_to_example_ids",
+    "when",
+    "effect_type",
+    "title",
+    "summary",
+    "priority"
+  ];
+  for (const field of requiredFields) {
+    if (!(field in rule)) {
+      fail(`Expert rule ${rule.id || "<unknown>"} is missing ${field}`);
     }
   }
 
-  for (const conditionSet of [rule.when, rule.unless]) {
-    if (!conditionSet) {
-      continue;
-    }
-    for (const [questionId, values] of Object.entries(conditionSet)) {
-      if (!questionOptions.has(questionId)) {
-        fail(`Out-of-scope rule ${rule.id} references unknown question ${questionId}`);
-      }
-      for (const value of values) {
-        if (!questionOptions.get(questionId).has(value)) {
-          fail(`Out-of-scope rule ${rule.id} references invalid value ${questionId}:${value}`);
-        }
-      }
+  if (!allowedRuleEffects.has(rule.effect_type)) {
+    fail(`Expert rule ${rule.id} has unsupported effect_type ${rule.effect_type}`);
+  }
+
+  if ("pipeline_id" in rule || "track_id" in rule || "reroute_to" in rule) {
+    fail(`Expert rule ${rule.id} may not reroute the backend`);
+  }
+
+  for (const exampleId of rule.applies_to_example_ids) {
+    if (!exampleIds.has(exampleId)) {
+      fail(`Expert rule ${rule.id} references unknown example ${exampleId}`);
     }
   }
 
-  for (const link of rule.read_first_links || []) {
-    if (!link.label || !link.url) {
-      fail(`Out-of-scope rule ${rule.id} has an incomplete read_first_links entry`);
+  validateVisibilityDependency(`Expert rule ${rule.id}`, rule.when, null);
+
+  if (rule.effect_type === "tool_swap" && !rule.tool_override) {
+    fail(`Expert rule ${rule.id} must define tool_override`);
+  }
+
+  if (rule.effect_type === "step_insert") {
+    if (!rule.step_insertion?.id || !rule.step_insertion?.title || !rule.step_insertion?.summary) {
+      fail(`Expert rule ${rule.id} must define a complete step_insertion`);
     }
+  }
+
+  if (rule.effect_type === "step_skip" && (!Array.isArray(rule.target_step_ids) || rule.target_step_ids.length === 0)) {
+    fail(`Expert rule ${rule.id} must define target_step_ids`);
   }
 }
 

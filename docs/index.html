@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GenomicsForOneHealth Pipeline Selector</title>
   <meta name="description"
-    content="Static pipeline selector for the GenomicsForOneHealth collection. Start from sequencing context, then kit or run mode, then analytic goal, then sample context, and receive the closest published workflow example plus preprocessing defaults and ONT setup guidance.">
+    content="Wizard-style pipeline selector for the GenomicsForOneHealth collection. Start with sample context, then material, then target, then refine the recommendation with expert tuning and published example backends.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -24,104 +24,49 @@
         <p class="eyebrow">GenomicsForOneHealth</p>
         <h1>Pipeline Selector</h1>
         <p class="hero-text">
-          Start with what you are sequencing, then choose the library prep kit or run mode, then the main analytic
-          goal, and finally the sample context that best matches your data. The selector then maps that route to the
-          closest published workflow example in the collection and returns a practical action sheet with documented
-          entry points, preprocessing defaults, compatibility notes, and Oxford Nanopore setup guidance where
-          relevant.
+          Start with the sample, then choose the material class, then the main analytical target. Published repository
+          workflows appear later as example backends, and expert settings are applied afterward to refine
+          preprocessing, tool emphasis, and entry guidance without changing the selected backend.
         </p>
       </div>
       <div class="hero-meta">
         <div class="meta-card">
-          <p class="meta-label">Version</p>
-          <p class="meta-value">v2 · action sheet</p>
+          <p class="meta-label">Flow</p>
+          <p class="meta-value">Sample -> Material -> Target -> Example -> Expert -> Results</p>
         </div>
         <div class="meta-card">
-          <p class="meta-label">Scope</p>
-          <p class="meta-value">Sequencing -> kit -> goal -> sample</p>
+          <p class="meta-label">Mode</p>
+          <p class="meta-value">Wizard, not a dense form</p>
         </div>
       </div>
     </header>
 
-    <main class="layout">
-      <section class="panel selector-panel">
+    <main class="wizard-shell">
+      <section class="wizard-panel">
         <div class="panel-head">
           <div>
             <p class="panel-kicker">Decision Aid</p>
-            <h2>Select your use case</h2>
+            <h2>Route your sequencing case</h2>
           </div>
           <button id="reset-button" class="ghost-button" type="button">Reset</button>
         </div>
 
         <div class="panel-note">
           <p>
-            First choose sequencing context, then library prep kit or run mode, then the main goal, then the sample
-            context. Setup questions such as input format, multiplexing, demultiplexing, basecalling, and read
-            filtering are used afterward to refine the action sheet rather than to determine the route by themselves.
+            The first three pages stay generic and do not expose repository workflow names. Published study examples
+            only appear once the route has been narrowed enough to make that choice meaningful.
           </p>
         </div>
 
-        <div id="preset-root" class="preset-root"></div>
+        <div id="progress-root" class="progress-root" aria-label="Wizard progress"></div>
+        <div id="status-banner" class="status-banner is-idle" aria-live="polite"></div>
+        <div id="page-root" class="page-root"></div>
 
-        <noscript>
-          <div class="error-box">
-            JavaScript is required for this selector. If you are reading the repository source on GitHub, open the
-            GitHub Pages URL instead.
-          </div>
-        </noscript>
-
-        <div id="status-banner" class="status-banner" aria-live="polite"></div>
-        <div id="selector-root" class="selector-root"></div>
+        <div class="wizard-controls">
+          <button id="back-button" class="ghost-button" type="button">Back</button>
+          <button id="next-button" class="primary-button" type="button">Continue</button>
+        </div>
       </section>
-
-      <aside class="panel result-panel">
-        <div class="panel-head">
-          <div>
-            <p class="panel-kicker">Recommendation</p>
-            <h2>Best-fit workflow</h2>
-          </div>
-        </div>
-
-        <div class="support-grid">
-          <div class="support-card">
-            <h3>What this tool does</h3>
-            <p>
-              Routes researchers from a generalized sequencing decision tree to the closest <strong>existing</strong>
-              published workflow example in the collection and returns a practical action sheet: fit assessment,
-              entry points, preprocessing defaults, prerequisites, and documentation links.
-            </p>
-          </div>
-          <div class="support-card">
-            <h3>What it does not do</h3>
-            <p>
-              It does not inspect uploaded files, replace project-specific judgment, or pretend unsupported scenarios
-              are exact workflow matches.
-            </p>
-          </div>
-          <div class="support-card">
-            <h3>Oxford Nanopore quick reference</h3>
-            <p>
-              ONT terminology is treated as setup guidance rather than as the first routing layer. Kit/run-mode
-              consequences and Dorado tier notes appear after the main sequencing route is defined.
-            </p>
-            <ul class="support-links">
-              <li><a href="https://store.nanoporetech.com/rapid-barcoding-sequencing-kit-24-v14.html" target="_blank" rel="noreferrer">Rapid Barcoding Kit 24 V14 (SQK-RBK114.24)</a></li>
-              <li><a href="https://store.nanoporetech.com/native-barcoding-kit-24-v14.html" target="_blank" rel="noreferrer">Native Barcoding Kit 24 V14 (SQK-NBD114.24)</a></li>
-              <li><a href="https://software-docs.nanoporetech.com/dorado/latest/models/models/" target="_blank" rel="noreferrer">Dorado model guide</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div id="result-root" class="result-root">
-          <div class="empty-state">
-            <p class="empty-title">No recommendation yet</p>
-            <p class="empty-text">
-              Answer the sequencing, kit, goal, and sample-context questions to narrow the collection to compatible
-              published examples.
-            </p>
-          </div>
-        </div>
-      </aside>
     </main>
   </div>
 </body>
