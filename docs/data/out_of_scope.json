@@ -27,37 +27,6 @@
     ]
   },
   {
-    "id": "generic_direct_rna_outside_published_context",
-    "when": {
-      "library_mode": [
-        "direct_rna002",
-        "direct_rna004"
-      ]
-    },
-    "unless": {
-      "sample_type": [
-        "wetland_or_passive_water_sample",
-        "avian_influenza_sample"
-      ]
-    },
-    "message": "Direct RNA sequencing is only documented here in the wetland and avian influenza projects. Generic direct-RNA use outside those contexts is not yet a published exact workflow in this collection.",
-    "why_not_exact": "The repo does not contain a general native-RNA workflow spanning arbitrary sample classes, extraction models, and downstream analyses.",
-    "primary_nearest_pipeline": "avian_influenza_profiling",
-    "secondary_nearest_pipelines": [
-      "wetland_health"
-    ],
-    "read_first_links": [
-      {
-        "label": "Avian Influenza Profiling README",
-        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md"
-      },
-      {
-        "label": "Wetland Health README",
-        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
-      }
-    ]
-  },
-  {
     "id": "clinical_metagenome_unsupported_combo",
     "when": {
       "sample_type": [

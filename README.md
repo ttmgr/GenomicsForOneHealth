@@ -27,7 +27,7 @@ Learn more about our work at the [Urban Lab website](https://sites.google.com/vi
 
 > **Start here:** Use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/) to choose the closest existing workflow in this collection and receive a lab-facing action sheet with fit classification, documented entry points, preprocessing defaults, prerequisites, and next-step guidance.
 >
-> The selector is a static GitHub Pages app built from the published repository only. It includes common presets for typical Oxford Nanopore starting scenarios, and if your use case falls outside the current collection, it will return the nearest documented starting point rather than a false exact match.
+> The selector is a static GitHub Pages app built from the published repository only. It now starts from higher-level workflow families such as environmental metagenomic DNA, clinical or isolate sequencing, eDNA 12S rRNA metabarcoding, virome, and food safety enrichment. If your use case falls outside the current collection, it returns the nearest documented starting point rather than a false exact match.
 
 ### Our Team
 - **Prof. Dr. Lara Urban**: Principal Investigator & Supervisor (Helmholtz AI & University of Zurich)

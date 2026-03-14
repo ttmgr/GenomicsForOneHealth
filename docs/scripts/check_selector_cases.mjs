@@ -32,7 +32,7 @@ const cases = [
   {
     name: "air_pod5_rbk114",
     answers: {
-      category: "environmental_metagenomics",
+      workflow_family: "environmental_metagenomic_dna",
       sample_type: "air_bioaerosol",
       molecule_type: "dna",
       analysis_goal: "community_profiling",
@@ -50,7 +50,7 @@ const cases = [
   {
     name: "wetland_dna",
     answers: {
-      category: "environmental_metagenomics",
+      workflow_family: "environmental_metagenomic_dna",
       sample_type: "wetland_or_passive_water_sample",
       molecule_type: "dna",
       analysis_goal: "pathogen_amr_surveillance",
@@ -68,7 +68,7 @@ const cases = [
   {
     name: "wetland_rna_virome",
     answers: {
-      category: "environmental_metagenomics",
+      workflow_family: "virome",
       sample_type: "wetland_or_passive_water_sample",
       molecule_type: "rna",
       analysis_goal: "viral_metagenomics",
@@ -86,7 +86,7 @@ const cases = [
   {
     name: "wetland_edna",
     answers: {
-      category: "environmental_metagenomics",
+      workflow_family: "edna_12s_rrna_metabarcoding",
       sample_type: "wetland_or_passive_water_sample",
       molecule_type: "amplicon_dna",
       analysis_goal: "biodiversity_metabarcoding",
@@ -104,7 +104,7 @@ const cases = [
   {
     name: "listeria_bam",
     answers: {
-      category: "food_safety",
+      workflow_family: "food_safety_enrichment",
       sample_type: "food_safety_sample",
       molecule_type: "dna",
       analysis_goal: "target_enrichment_and_listeria_recovery",
@@ -121,7 +121,7 @@ const cases = [
   {
     name: "amr_isolate",
     answers: {
-      category: "clinical_isolates_plasmids",
+      workflow_family: "clinical_isolate",
       sample_type: "bacterial_isolate",
       molecule_type: "dna",
       analysis_goal: "clinical_amr_profiling",
@@ -138,7 +138,7 @@ const cases = [
   {
     name: "cre_plasmid",
     answers: {
-      category: "clinical_isolates_plasmids",
+      workflow_family: "clinical_isolate",
       sample_type: "bacterial_isolate",
       molecule_type: "dna",
       analysis_goal: "plasmid_clustering",
@@ -155,7 +155,7 @@ const cases = [
   {
     name: "amr_host_association",
     answers: {
-      category: "clinical_isolates_plasmids",
+      workflow_family: "clinical_isolate",
       sample_type: "clinical_metagenome",
       molecule_type: "dna",
       analysis_goal: "amr_host_association",
@@ -170,60 +170,9 @@ const cases = [
     status: "exact"
   },
   {
-    name: "aiv_direct_rna",
-    answers: {
-      category: "veterinary_zoonotic_surveillance",
-      sample_type: "avian_influenza_sample",
-      molecule_type: "rna",
-      analysis_goal: "aiv_consensus_subtyping_phylogeny",
-      input_format: "pod5",
-      library_mode: "direct_rna004",
-      multiplexing: "no",
-      demultiplexing: "not_needed",
-      basecalling_state: "raw_signal_not_basecalled",
-      preprocessing_state: "need_trim_and_filter"
-    },
-    pipeline: "avian_influenza_profiling",
-    status: "exact"
-  },
-  {
-    name: "feather_to_fur",
-    answers: {
-      category: "veterinary_zoonotic_surveillance",
-      sample_type: "cross_host_aiv_pair",
-      molecule_type: "viral_reads_or_variants",
-      analysis_goal: "cross_host_variant_tracking",
-      input_format: "fastq_and_vcf",
-      library_mode: "standard_isolate",
-      multiplexing: "no",
-      demultiplexing: "not_needed",
-      basecalling_state: "already_basecalled",
-      preprocessing_state: "already_trimmed_and_filtered"
-    },
-    pipeline: "from_feather_to_fur",
-    status: "exact"
-  },
-  {
-    name: "viability_signal",
-    answers: {
-      category: "viability_assessment",
-      sample_type: "raw_signal",
-      molecule_type: "raw_signal",
-      analysis_goal: "viability_inference",
-      input_format: "pod5",
-      library_mode: "signal_only",
-      multiplexing: "no",
-      demultiplexing: "not_needed",
-      basecalling_state: "not_applicable",
-      preprocessing_state: "unsure"
-    },
-    pipeline: "squiggle4viability",
-    status: "exact"
-  },
-  {
     name: "soil_unsupported",
     answers: {
-      category: "environmental_metagenomics",
+      workflow_family: "environmental_metagenomic_dna",
       sample_type: "soil",
       molecule_type: "dna",
       analysis_goal: "community_profiling",
