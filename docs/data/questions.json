@@ -292,17 +292,17 @@
           "stage": "stage2",
           "field": "library_modes",
           "label": "Library or run mode",
-          "description": "Select the main ONT mode or sequencing setup that best matches your dataset.",
+          "description": "Select the main Oxford Nanopore kit or sequencing setup that best matches your dataset.",
           "options": [
             {
               "value": "rbk114_24",
-              "label": "RBK114.24",
-              "help": "Rapid barcoding kit on R10.4.1."
+              "label": "Rapid Barcoding Kit 24 V14 (SQK-RBK114.24)",
+              "help": "Rapid, transposase-based barcoding for up to 24 DNA samples."
             },
             {
               "value": "nbd114_24",
-              "label": "NBD114.24",
-              "help": "Native barcoding kit on R10.4.1."
+              "label": "Native Barcoding Kit 24 V14 (SQK-NBD114.24)",
+              "help": "Ligation-based barcoding that preserves fragment length and aligns with Q20+ chemistry."
             },
             {
               "value": "adaptive_sampling",
@@ -311,18 +311,18 @@
             },
             {
               "value": "direct_rna002",
-              "label": "Direct RNA002",
-              "help": "Legacy direct-RNA branch."
+              "label": "Direct RNA002 legacy chemistry",
+              "help": "Legacy native-RNA workflow for older direct RNA conditions."
             },
             {
               "value": "direct_rna004",
-              "label": "Direct RNA004",
-              "help": "Latest direct-RNA branch."
+              "label": "Direct RNA Sequencing Kit (SQK-RNA004)",
+              "help": "Native RNA sequencing without cDNA conversion or PCR."
             },
             {
               "value": "cdna_rbk",
-              "label": "cDNA + RBK",
-              "help": "cDNA workflow paired with rapid barcoding."
+              "label": "cDNA branch / barcoded cDNA",
+              "help": "PCR-cDNA barcoding workflow rather than native direct RNA."
             },
             {
               "value": "standard_isolate",
@@ -411,8 +411,8 @@
           "id": "basecalling_state",
           "stage": "stage2",
           "field": "basecalling_state",
-          "label": "Basecalling state or desired tier",
-          "description": "Use this to tailor the recommended entry point and basecalling note.",
+          "label": "Basecalling state or preferred Dorado tier",
+          "description": "Use this to tailor the recommended entry point and ONT Dorado guidance.",
           "options": [
             {
               "value": "raw_signal_not_basecalled",
@@ -420,14 +420,19 @@
               "help": "You still need a basecalling step."
             },
             {
+              "value": "prefer_fast",
+              "label": "Prefer FAST",
+              "help": "Fastest and least compute-intensive; best for quick turnaround when compute is limited."
+            },
+            {
               "value": "prefer_hac",
               "label": "Prefer HAC",
-              "help": "You want high-accuracy basecalling guidance."
+              "help": "ONT's general recommendation for most users as the balance between accuracy and compute cost."
             },
             {
               "value": "prefer_sup",
               "label": "Prefer SUP",
-              "help": "You want super-accuracy basecalling guidance."
+              "help": "Highest accuracy and highest compute cost; often useful when assembly or difficult calls matter most."
             },
             {
               "value": "already_basecalled",

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GenomicsForOneHealth Pipeline Selector</title>
   <meta name="description"
-    content="Static pipeline selector for the GenomicsForOneHealth collection. Choose the best existing workflow and preprocessing defaults for your nanopore or related sequencing data.">
+    content="Static pipeline selector for the GenomicsForOneHealth collection. Choose the best existing workflow, preprocessing defaults, and official Oxford Nanopore kit/basecalling context for your sequencing data.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -24,7 +24,8 @@
         <h1>Pipeline Selector</h1>
         <p class="hero-text">
           Choose the closest published workflow in the collection and receive the main preprocessing defaults,
-          compatibility notes, and direct links to the exact documentation.
+          compatibility notes, direct links to the exact documentation, and official Oxford Nanopore kit and Dorado
+          basecalling context where relevant.
         </p>
       </div>
       <div class="hero-meta">
@@ -52,7 +53,8 @@
         <div class="panel-note">
           <p>
             Stage 1 narrows the collection to biologically compatible workflows. Stage 2 refines preprocessing
-            guidance such as basecalling, demultiplexing, and read filtering.
+            guidance such as basecalling, demultiplexing, and read filtering. Kit names and basecalling tiers are
+            aligned to current Oxford Nanopore terminology where possible.
           </p>
         </div>
 
@@ -89,6 +91,19 @@
               It does not generate full commands, inspect uploaded files, or claim an exact match when the collection
               does not currently contain one.
             </p>
+          </div>
+          <div class="support-card">
+            <h3>Oxford Nanopore quick reference</h3>
+            <p>
+              The selector uses current ONT naming for common entry points such as rapid barcoding, native barcoding,
+              direct RNA, and Dorado FAST / HAC / SUP model tiers.
+            </p>
+            <ul class="support-links">
+              <li><a href="https://store.nanoporetech.com/rapid-barcoding-sequencing-kit-24-v14.html" target="_blank" rel="noreferrer">Rapid Barcoding Kit 24 V14 (SQK-RBK114.24)</a></li>
+              <li><a href="https://store.nanoporetech.com/native-barcoding-kit-24-v14.html" target="_blank" rel="noreferrer">Native Barcoding Kit 24 V14 (SQK-NBD114.24)</a></li>
+              <li><a href="https://store.nanoporetech.com/us/direct-rna-sequencing-kit-004.html" target="_blank" rel="noreferrer">Direct RNA Sequencing Kit (SQK-RNA004)</a></li>
+              <li><a href="https://software-docs.nanoporetech.com/dorado/latest/models/models/" target="_blank" rel="noreferrer">Dorado model guide</a></li>
+            </ul>
           </div>
         </div>
 

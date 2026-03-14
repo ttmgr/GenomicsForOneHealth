@@ -19,6 +19,66 @@ const PREPROCESSING_LABELS = {
   additional_preprocessing: "Additional preprocessing"
 };
 
+const ONT_LIBRARY_REFERENCE = {
+  rbk114_24: {
+    title: "Rapid Barcoding Kit 24 V14",
+    description: "Oxford Nanopore positions SQK-RBK114.24 as a rapid, PCR-free, transposase-based workflow for multiplexing up to 24 genomic DNA samples.",
+    url: "https://store.nanoporetech.com/rapid-barcoding-sequencing-kit-24-v14.html",
+    urlLabel: "Official kit page"
+  },
+  nbd114_24: {
+    title: "Native Barcoding Kit 24 V14",
+    description: "Oxford Nanopore positions SQK-NBD114.24 as a PCR-free ligation workflow that preserves full fragment length and aligns with Q20+ chemistry.",
+    url: "https://store.nanoporetech.com/native-barcoding-kit-24-v14.html",
+    urlLabel: "Official kit page"
+  },
+  direct_rna002: {
+    title: "Direct RNA002 legacy chemistry",
+    description: "RNA002 is an older native-RNA branch. Current Dorado model guidance treats RNA002 as a legacy condition, so chemistry-specific legacy handling may still matter.",
+    url: "https://nanoporetech.com/document/direct-rna-sequencing-sqk-rna002",
+    urlLabel: "Legacy protocol"
+  },
+  direct_rna004: {
+    title: "Direct RNA Sequencing Kit (SQK-RNA004)",
+    description: "Oxford Nanopore positions SQK-RNA004 for sequencing native RNA directly, without cDNA conversion or PCR, to reduce reverse-transcription and amplification bias.",
+    url: "https://store.nanoporetech.com/us/direct-rna-sequencing-kit-004.html",
+    urlLabel: "Official kit page"
+  },
+  cdna_rbk: {
+    title: "PCR-cDNA Sequencing V14 - Barcoding",
+    description: "This branch is distinct from native direct RNA. The official ONT protocol uses reverse transcription, cDNA amplification, and barcode primers before loading.",
+    url: "https://nanoporetech.com/document/pcr-cdna-sequencing-v14-barcoding-sqk-pcb114-24",
+    urlLabel: "Official protocol"
+  }
+};
+
+const DORADO_REFERENCE = {
+  raw_signal_not_basecalled: {
+    title: "Dorado simplex basecalling",
+    description: "If you are entering from POD5 or FAST5, use Dorado's simplex basecalling documentation to select the latest compatible model for your chemistry and pore type.",
+    url: "https://software-docs.nanoporetech.com/dorado/latest/basecaller/simplex/",
+    urlLabel: "Simplex basecalling docs"
+  },
+  prefer_fast: {
+    title: "Dorado FAST",
+    description: "FAST is the quickest Dorado tier and the least computationally expensive, but it is also the least accurate of the standard simplex options.",
+    url: "https://software-docs.nanoporetech.com/dorado/latest/models/models/",
+    urlLabel: "Model selection guide"
+  },
+  prefer_hac: {
+    title: "Dorado HAC",
+    description: "Oxford Nanopore recommends HAC for most users because it provides the best balance between basecalling accuracy and computational cost.",
+    url: "https://software-docs.nanoporetech.com/dorado/latest/models/models/",
+    urlLabel: "Model selection guide"
+  },
+  prefer_sup: {
+    title: "Dorado SUP",
+    description: "SUP is the most accurate standard simplex tier, with the highest computational cost. It is often a sensible choice when assembly quality or difficult calls are the priority.",
+    url: "https://software-docs.nanoporetech.com/dorado/latest/models/models/",
+    urlLabel: "Model selection guide"
+  }
+};
+
 const selectorRoot = document.getElementById("selector-root");
 const resultRoot = document.getElementById("result-root");
 const statusBanner = document.getElementById("status-banner");
@@ -50,6 +110,18 @@ function isNeutral(question, value) {
 
 function stageQuestions(stageId) {
   return questionSpec.stages.find((stage) => stage.id === stageId)?.questions || [];
+}
+
+function allQuestions() {
+  return questionSpec.stages.flatMap((stage) => stage.questions);
+}
+
+function questionById(questionId) {
+  return allQuestions().find((question) => question.id === questionId);
+}
+
+function questionByField(field) {
+  return allQuestions().find((question) => question.field === field);
 }
 
 function stageComplete(stageId) {
@@ -144,7 +216,7 @@ function chooseTrack(pipeline) {
     let score = 0;
 
     for (const [field, acceptedValues] of Object.entries(when)) {
-      const question = questionSpec.stages.flatMap((stage) => stage.questions).find((item) => item.field === field);
+      const question = questionByField(field);
       const value = question ? answers[question.id] : null;
       if (!value || (question && isNeutral(question, value))) {
         continue;
@@ -173,9 +245,20 @@ function derivePreprocessing(pipeline, track) {
   };
 }
 
+function labelForValue(question, value) {
+  if (!question) {
+    return value;
+  }
+  return optionFor(question, value)?.label || value;
+}
+
+function formatFieldValues(field, values) {
+  const question = questionByField(field);
+  return values.map((value) => labelForValue(question, value)).join(", ");
+}
+
 function buildCompatibilityNotes(pipeline, exactMatch, track) {
   const notes = [];
-  const questions = questionSpec.stages.flatMap((stage) => stage.questions);
 
   if (!exactMatch) {
     notes.push({
@@ -184,21 +267,21 @@ function buildCompatibilityNotes(pipeline, exactMatch, track) {
     });
   }
 
-  const inputQuestion = questions.find((question) => question.id === "input_format");
+  const inputQuestion = questionById("input_format");
   const inputValue = answers.input_format;
   if (inputValue && !isNeutral(inputQuestion, inputValue) && !matchesFieldValue(pipeline, "input_formats", inputValue)) {
     notes.push({
       title: "Input-format adaptation required",
-      text: `Your current input format is ${optionFor(inputQuestion, inputValue).label}. The documented workflow is written primarily for ${pipeline.input_formats.join(", ")}. Some adaptation may be required before you can run it exactly as published.`
+      text: `Your current input format is ${labelForValue(inputQuestion, inputValue)}. The documented workflow is written primarily for ${formatFieldValues("input_formats", pipeline.input_formats)}. Some adaptation may be required before you can run it exactly as published.`
     });
   }
 
-  const libraryQuestion = questions.find((question) => question.id === "library_mode");
+  const libraryQuestion = questionById("library_mode");
   const libraryValue = answers.library_mode;
   if (libraryValue && !isNeutral(libraryQuestion, libraryValue) && pipeline.library_modes.length > 0 && !matchesFieldValue(pipeline, "library_modes", libraryValue)) {
     notes.push({
       title: "Library-mode mismatch",
-      text: `You selected ${optionFor(libraryQuestion, libraryValue).label}, but this workflow is documented mainly for ${pipeline.library_modes.join(", ")}. Treat the recommendation as a starting point rather than an exact protocol match.`
+      text: `You selected ${labelForValue(libraryQuestion, libraryValue)}, but this workflow is documented mainly for ${formatFieldValues("library_modes", pipeline.library_modes)}. Treat the recommendation as a starting point rather than an exact protocol match.`
     });
   }
 
@@ -218,7 +301,17 @@ function buildCompatibilityNotes(pipeline, exactMatch, track) {
   } else if (answers.basecalling_state === "raw_signal_not_basecalled") {
     notes.push({
       title: "Raw-data entry point",
-      text: `This recommendation assumes a raw-data entry point that is compatible with ${pipeline.input_formats.join(", ")}. Use the documented basecalling branch before downstream preprocessing.`
+      text: `This recommendation assumes a raw-data entry point that is compatible with ${formatFieldValues("input_formats", pipeline.input_formats)}. Use the documented basecalling branch before downstream preprocessing.`
+    });
+  } else if (answers.basecalling_state === "prefer_fast") {
+    notes.push({
+      title: "FAST tier selected",
+      text: "FAST is appropriate when turnaround time or available compute matters most, but it is the lowest-accuracy standard Dorado tier. Treat it as a speed-first choice."
+    });
+  } else if (answers.basecalling_state === "prefer_sup") {
+    notes.push({
+      title: "SUP tier selected",
+      text: "SUP can be a sensible accuracy-first choice for harder datasets or assembly-sensitive work, but it has the highest compute cost among the standard simplex tiers."
     });
   }
 
@@ -236,6 +329,22 @@ function buildCompatibilityNotes(pipeline, exactMatch, track) {
         text: note
       });
     }
+  }
+
+  return notes;
+}
+
+function buildOntNotes() {
+  const notes = [];
+
+  const libraryReference = ONT_LIBRARY_REFERENCE[answers.library_mode];
+  if (libraryReference) {
+    notes.push(libraryReference);
+  }
+
+  const basecallingReference = DORADO_REFERENCE[answers.basecalling_state];
+  if (basecallingReference) {
+    notes.push(basecallingReference);
   }
 
   return notes;
@@ -333,6 +442,32 @@ function renderPreprocessingTable(preprocessing) {
   `;
 }
 
+function renderOntReferenceCard() {
+  const notes = buildOntNotes();
+  if (notes.length === 0) {
+    return "";
+  }
+
+  return `
+    <div class="sub-card">
+      <p class="section-label">Oxford Nanopore Reference</p>
+      <div class="ont-list">
+        ${notes
+          .map(
+            (note) => `
+              <div class="ont-item">
+                <strong>${note.title}</strong>
+                <p>${note.description}</p>
+                <a href="${note.url}" target="_blank" rel="noreferrer">${note.urlLabel}</a>
+              </div>
+            `
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
+}
+
 function renderResult() {
   const recommendation = computeRecommendation();
   if (!recommendation) {
@@ -413,6 +548,7 @@ function renderResult() {
       <div class="sub-grid">
         ${trackHtml}
         ${renderPreprocessingTable(recommendation.preprocessing)}
+        ${renderOntReferenceCard()}
         <div class="sub-card">
           <p class="section-label">Execution model</p>
           <p>${recommendation.pipeline.execution_model}</p>

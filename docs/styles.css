@@ -334,7 +334,7 @@ a {
 
 .support-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
   margin-top: 16px;
 }
@@ -352,6 +352,19 @@ a {
   margin: 8px 0 0;
   color: var(--muted);
   line-height: 1.55;
+}
+
+.support-links {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.support-links li + li {
+  margin-top: 6px;
+}
+
+.support-links a {
+  text-decoration-thickness: 1px;
 }
 
 .result-root {
@@ -445,9 +458,14 @@ a {
   margin-top: 12px;
 }
 
+.ont-list {
+  margin-top: 12px;
+}
+
 .match-item,
 .warning-item,
-.link-item {
+.link-item,
+.ont-item {
   padding: 12px 13px;
   border-radius: 12px;
 }
@@ -467,12 +485,27 @@ a {
   border: 1px solid var(--line);
 }
 
+.ont-item {
+  background: rgba(223, 241, 234, 0.38);
+  border: 1px solid rgba(15, 111, 92, 0.14);
+}
+
 .match-item strong,
 .warning-item strong,
-.link-item strong {
+.link-item strong,
+.ont-item strong {
   display: block;
   margin-bottom: 4px;
   color: var(--text);
+}
+
+.ont-item p {
+  margin: 0;
+}
+
+.ont-item a {
+  display: inline-block;
+  margin-top: 8px;
 }
 
 .preprocessing-table {
