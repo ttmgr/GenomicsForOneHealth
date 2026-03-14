@@ -888,11 +888,6 @@ a {
   margin: 0 0 4px;
 }
 
-.match-env {
-  font-size: 0.82rem;
-  color: var(--muted);
-  margin: 0;
-}
 
 .match-arrow {
   display: flex;
