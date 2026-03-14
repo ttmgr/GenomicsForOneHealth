@@ -23,6 +23,12 @@ As a signatory of the San Francisco Declaration on Research Assessment, we suppo
 
 Learn more about our work at the [Urban Lab website](https://sites.google.com/view/urban-lab/home).
 
+## Pipeline Selector
+
+> **Start here:** Use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/) to choose the closest existing workflow in this collection and see the main preprocessing defaults for your data.
+>
+> The selector is a static GitHub Pages app built from the published repository only. If your use case falls outside the current collection, it will return the nearest documented starting point rather than a false exact match.
+
 ### Our Team
 - **Prof. Dr. Lara Urban**: Principal Investigator & Supervisor (Helmholtz AI & University of Zurich)
 - **Dr. Albert Perlas** (former Postdoc): Virome and Avian Influenza Virus (AIV) 

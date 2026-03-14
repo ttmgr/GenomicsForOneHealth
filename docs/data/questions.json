@@ -1,0 +1,488 @@
+{
+  "stages": [
+    {
+      "id": "stage1",
+      "title": "Stage 1 · Biological and analytical intent",
+      "summary": "Use these answers to narrow the collection to workflows that are biologically and analytically compatible with your study.",
+      "questions": [
+        {
+          "id": "category",
+          "stage": "stage1",
+          "field": "category",
+          "label": "High-level use case",
+          "description": "Choose the broad application domain that best matches your study. If you are unsure, use the neutral option.",
+          "options": [
+            {
+              "value": "environmental_metagenomics",
+              "label": "Environmental metagenomics",
+              "help": "Air or passive water metagenomics, pathogen surveillance, or environmental AMR work."
+            },
+            {
+              "value": "edna_metabarcoding",
+              "label": "eDNA metabarcoding",
+              "help": "Amplicon-based biodiversity or taxonomic assignment workflows."
+            },
+            {
+              "value": "food_safety",
+              "label": "Food safety",
+              "help": "Targeted pathogen recovery from food-associated complex samples."
+            },
+            {
+              "value": "clinical_isolates_plasmids",
+              "label": "Clinical isolates / plasmids",
+              "help": "Clinical AMR profiling, plasmid clustering, or host-association analysis."
+            },
+            {
+              "value": "veterinary_zoonotic_surveillance",
+              "label": "Veterinary / zoonotic surveillance",
+              "help": "Avian influenza consensus generation, virology, or host-spillover tracking."
+            },
+            {
+              "value": "viability_assessment",
+              "label": "Viability assessment",
+              "help": "Raw-signal inference of microbial viability using POD5 or FAST5."
+            },
+            {
+              "value": "unsure",
+              "label": "Not sure",
+              "help": "Do not use category as a hard filter yet.",
+              "neutral": true
+            }
+          ]
+        },
+        {
+          "id": "sample_type",
+          "stage": "stage1",
+          "field": "sample_types",
+          "label": "Sample or material type",
+          "description": "Pick the sample class that best reflects the material you actually sequenced.",
+          "options": [
+            {
+              "value": "air_bioaerosol",
+              "label": "Air / bioaerosol sample",
+              "help": "Liquid impingement or other air microbiome sampling."
+            },
+            {
+              "value": "wetland_or_passive_water_sample",
+              "label": "Passive water / wetland sample",
+              "help": "Water samples from wetland or passive environmental collection."
+            },
+            {
+              "value": "edna_water_sample",
+              "label": "Water eDNA amplicon sample",
+              "help": "Amplicon-based biodiversity sequencing from water."
+            },
+            {
+              "value": "food_safety_sample",
+              "label": "Food safety or enrichment sample",
+              "help": "Complex food-associated sample with pathogen enrichment or adaptive sampling."
+            },
+            {
+              "value": "bacterial_isolate",
+              "label": "Bacterial isolate",
+              "help": "Single-isolate or isolate-dominant sequencing for assembly, AMR, or plasmid work."
+            },
+            {
+              "value": "clinical_metagenome",
+              "label": "Clinical metagenome or swab",
+              "help": "Complex clinical sample rather than a purified isolate."
+            },
+            {
+              "value": "avian_influenza_sample",
+              "label": "Avian influenza sample",
+              "help": "AIV-positive or influenza-targeted sequencing sample."
+            },
+            {
+              "value": "cross_host_aiv_pair",
+              "label": "Cross-host AIV comparison set",
+              "help": "Matched avian and mammalian host samples for spillover/spillback analysis."
+            },
+            {
+              "value": "raw_signal",
+              "label": "Raw nanopore signal only",
+              "help": "POD5 or FAST5 used directly for signal-level inference."
+            },
+            {
+              "value": "soil",
+              "label": "Soil metagenomic DNA",
+              "help": "Useful for nearest-starting-point guidance only if no exact workflow exists."
+            },
+            {
+              "value": "unsure",
+              "label": "Not sure",
+              "help": "Do not use sample type as a hard filter yet.",
+              "neutral": true
+            }
+          ]
+        },
+        {
+          "id": "molecule_type",
+          "stage": "stage1",
+          "field": "molecule_types",
+          "label": "Target molecule or signal type",
+          "description": "Choose the molecule or signal that best reflects the data and analytical branch you care about.",
+          "options": [
+            {
+              "value": "dna",
+              "label": "DNA",
+              "help": "Shotgun DNA, isolate DNA, or DNA-focused metagenomics."
+            },
+            {
+              "value": "rna",
+              "label": "RNA",
+              "help": "RNA sequencing or workflows centered on viral RNA."
+            },
+            {
+              "value": "dna_rna",
+              "label": "DNA + RNA",
+              "help": "Dual-extraction workflows where both nucleic acids matter."
+            },
+            {
+              "value": "amplicon_dna",
+              "label": "Amplicon DNA",
+              "help": "12S, 16S, or other targeted metabarcoding amplicons."
+            },
+            {
+              "value": "raw_signal",
+              "label": "Raw electrical signal",
+              "help": "FAST5 or POD5 signal used directly rather than only after basecalling."
+            },
+            {
+              "value": "viral_reads_or_variants",
+              "label": "Viral reads or variants",
+              "help": "Basecalled viral reads, consensus work, or variant files."
+            },
+            {
+              "value": "unsure",
+              "label": "Not sure",
+              "help": "Do not use molecule type as a hard filter yet.",
+              "neutral": true
+            }
+          ]
+        },
+        {
+          "id": "analysis_goal",
+          "stage": "stage1",
+          "field": "analysis_goals",
+          "label": "Main analytical objective",
+          "description": "Choose the primary reason you need the workflow. This is the strongest route to a specific published pipeline.",
+          "options": [
+            {
+              "value": "community_profiling",
+              "label": "Community profiling",
+              "help": "Taxonomic composition, assembly, binning, and environmental characterization."
+            },
+            {
+              "value": "pathogen_amr_surveillance",
+              "label": "Pathogen / AMR surveillance",
+              "help": "Pathogen detection, AMR profiling, or environmental pathogen screening."
+            },
+            {
+              "value": "viral_metagenomics",
+              "label": "Viral metagenomics",
+              "help": "Untargeted viral community analysis rather than a single influenza workflow."
+            },
+            {
+              "value": "biodiversity_metabarcoding",
+              "label": "Biodiversity metabarcoding",
+              "help": "Amplicon-based biodiversity or vertebrate host-range detection."
+            },
+            {
+              "value": "target_enrichment_and_listeria_recovery",
+              "label": "Target enrichment / Listeria recovery",
+              "help": "Adaptive sampling, target extraction, and Listeria-focused recovery."
+            },
+            {
+              "value": "clinical_amr_profiling",
+              "label": "Clinical AMR profiling",
+              "help": "AMR detection and assembly in clinical isolate sequencing."
+            },
+            {
+              "value": "plasmid_clustering",
+              "label": "Plasmid clustering",
+              "help": "Plasmid typing, clustering, and relatedness analysis."
+            },
+            {
+              "value": "amr_host_association",
+              "label": "AMR host association",
+              "help": "Link AMR genes or plasmids to their hosts using methylation-aware data."
+            },
+            {
+              "value": "aiv_consensus_subtyping_phylogeny",
+              "label": "AIV consensus / subtyping / phylogeny",
+              "help": "Targeted avian-influenza consensus generation and segment interpretation."
+            },
+            {
+              "value": "cross_host_variant_tracking",
+              "label": "Cross-host variant tracking",
+              "help": "Variant comparison between avian and mammalian hosts."
+            },
+            {
+              "value": "viability_inference",
+              "label": "Viability inference",
+              "help": "Signal-level inference of living versus dead microbial material."
+            },
+            {
+              "value": "unsure",
+              "label": "Not sure",
+              "help": "Do not use analytical objective as a hard filter yet.",
+              "neutral": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stage2",
+      "title": "Stage 2 · Preprocessing and entry point",
+      "summary": "These answers refine the practical recommendation: which documented entry point to use, whether basecalling or demultiplexing should still happen, and which read-cleaning defaults to prioritize.",
+      "questions": [
+        {
+          "id": "input_format",
+          "stage": "stage2",
+          "field": "input_formats",
+          "label": "Current input format",
+          "description": "Select the file type you already have in hand.",
+          "options": [
+            {
+              "value": "pod5",
+              "label": "POD5",
+              "help": "Raw signal container."
+            },
+            {
+              "value": "fast5",
+              "label": "FAST5",
+              "help": "Legacy raw signal container."
+            },
+            {
+              "value": "bam",
+              "label": "Basecalled BAM",
+              "help": "Aligned or basecalled BAM input."
+            },
+            {
+              "value": "fastq",
+              "label": "FASTQ",
+              "help": "Basecalled reads in single-end FASTQ."
+            },
+            {
+              "value": "paired_end_fastq",
+              "label": "Paired-end FASTQ",
+              "help": "Typical for Illumina amplicon input."
+            },
+            {
+              "value": "vcf",
+              "label": "VCF",
+              "help": "Variant file already called upstream."
+            },
+            {
+              "value": "fastq_and_vcf",
+              "label": "FASTQ + VCF",
+              "help": "You have basecalled reads and variant files together."
+            },
+            {
+              "value": "unsure",
+              "label": "Not sure",
+              "help": "Do not use input format as a strict differentiator.",
+              "neutral": true
+            }
+          ]
+        },
+        {
+          "id": "library_mode",
+          "stage": "stage2",
+          "field": "library_modes",
+          "label": "Library or run mode",
+          "description": "Select the main ONT mode or sequencing setup that best matches your dataset.",
+          "options": [
+            {
+              "value": "rbk114_24",
+              "label": "RBK114.24",
+              "help": "Rapid barcoding kit on R10.4.1."
+            },
+            {
+              "value": "nbd114_24",
+              "label": "NBD114.24",
+              "help": "Native barcoding kit on R10.4.1."
+            },
+            {
+              "value": "adaptive_sampling",
+              "label": "Adaptive sampling",
+              "help": "Real-time read rejection / enrichment."
+            },
+            {
+              "value": "direct_rna002",
+              "label": "Direct RNA002",
+              "help": "Legacy direct-RNA branch."
+            },
+            {
+              "value": "direct_rna004",
+              "label": "Direct RNA004",
+              "help": "Latest direct-RNA branch."
+            },
+            {
+              "value": "cdna_rbk",
+              "label": "cDNA + RBK",
+              "help": "cDNA workflow paired with rapid barcoding."
+            },
+            {
+              "value": "standard_isolate",
+              "label": "Standard isolate workflow",
+              "help": "Single-isolate or standard ONT bacterial sequencing."
+            },
+            {
+              "value": "barcoded_metagenome",
+              "label": "Barcoded metagenome",
+              "help": "Multiplexed metagenomic sequencing rather than a single isolate."
+            },
+            {
+              "value": "amplicon",
+              "label": "Amplicon workflow",
+              "help": "12S / 16S or similar amplicon library."
+            },
+            {
+              "value": "signal_only",
+              "label": "Signal-only AI workflow",
+              "help": "Raw-signal modeling rather than standard basecalled analysis."
+            },
+            {
+              "value": "unsure",
+              "label": "Not sure",
+              "help": "Do not use library mode as a strict differentiator.",
+              "neutral": true
+            }
+          ]
+        },
+        {
+          "id": "multiplexing",
+          "stage": "stage2",
+          "field": "supports_multiplexing",
+          "label": "Are your data multiplexed?",
+          "description": "Use this to highlight whether a documented demultiplexing branch is likely to matter.",
+          "options": [
+            {
+              "value": "yes",
+              "label": "Yes",
+              "help": "Barcodes are present and samples still need per-sample handling."
+            },
+            {
+              "value": "no",
+              "label": "No",
+              "help": "Single-sample or already separated inputs."
+            },
+            {
+              "value": "unsure",
+              "label": "Not sure",
+              "help": "Treat multiplexing as neutral.",
+              "neutral": true
+            }
+          ]
+        },
+        {
+          "id": "demultiplexing",
+          "stage": "stage2",
+          "field": "demultiplexing",
+          "label": "Demultiplexing status",
+          "description": "This does not choose the pipeline, but it changes how the recommendation is phrased.",
+          "options": [
+            {
+              "value": "needed",
+              "label": "Still needed",
+              "help": "The reads are not yet separated by sample or barcode."
+            },
+            {
+              "value": "already_done",
+              "label": "Already done",
+              "help": "Per-sample files are already available."
+            },
+            {
+              "value": "not_needed",
+              "label": "Not needed",
+              "help": "Single-sample data or workflow branch without demultiplexing."
+            },
+            {
+              "value": "unsure",
+              "label": "Not sure",
+              "help": "Keep demultiplexing neutral.",
+              "neutral": true
+            }
+          ]
+        },
+        {
+          "id": "basecalling_state",
+          "stage": "stage2",
+          "field": "basecalling_state",
+          "label": "Basecalling state or desired tier",
+          "description": "Use this to tailor the recommended entry point and basecalling note.",
+          "options": [
+            {
+              "value": "raw_signal_not_basecalled",
+              "label": "Raw data, not basecalled yet",
+              "help": "You still need a basecalling step."
+            },
+            {
+              "value": "prefer_hac",
+              "label": "Prefer HAC",
+              "help": "You want high-accuracy basecalling guidance."
+            },
+            {
+              "value": "prefer_sup",
+              "label": "Prefer SUP",
+              "help": "You want super-accuracy basecalling guidance."
+            },
+            {
+              "value": "already_basecalled",
+              "label": "Already basecalled",
+              "help": "Reads are already in FASTQ or BAM."
+            },
+            {
+              "value": "not_applicable",
+              "label": "Not applicable",
+              "help": "Use this for VCF- or signal-only cases where standard basecalling is not the focus."
+            },
+            {
+              "value": "unsure",
+              "label": "Not sure",
+              "help": "Keep basecalling state neutral.",
+              "neutral": true
+            }
+          ]
+        },
+        {
+          "id": "preprocessing_state",
+          "stage": "stage2",
+          "field": "preprocessing_state",
+          "label": "Adapter trimming and read filtering",
+          "description": "Use this to tailor whether the workflow should start before or after trimming and filtering.",
+          "options": [
+            {
+              "value": "need_trim_and_filter",
+              "label": "Need trimming and filtering",
+              "help": "Adapters and length / quality filtering are still pending."
+            },
+            {
+              "value": "need_trim_only",
+              "label": "Need trimming only",
+              "help": "Adapters still need to be removed, but filtering may already be done."
+            },
+            {
+              "value": "need_filter_only",
+              "label": "Need filtering only",
+              "help": "Reads are trimmed but still need Q / length filtering."
+            },
+            {
+              "value": "already_trimmed_and_filtered",
+              "label": "Already trimmed and filtered",
+              "help": "Use the workflow after preprocessing if thresholds still match."
+            },
+            {
+              "value": "unsure",
+              "label": "Not sure",
+              "help": "Keep preprocessing state neutral.",
+              "neutral": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

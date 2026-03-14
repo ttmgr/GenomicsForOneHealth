@@ -4,6 +4,8 @@ This category covers pipelines for assessing microbial viability directly from r
 
 **Contact:** Harika Ürel (PhD Student) & Dr. Lara Urban
 
+> **Pipeline Selector:** Use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/) if you need to determine whether your project belongs in signal-level viability inference or one of the read-based workflows elsewhere in the collection.
+
 ---
 
 ## Pipelines

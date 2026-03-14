@@ -4,6 +4,8 @@ This category covers nanopore metagenomics pipelines applied to environmental mo
 
 **Contact:** Tim Reska (PhD Student) & Dr. Lara Urban
 
+> **Pipeline Selector:** If you need help deciding between Air Metagenomics and Wetland Health, start with the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/).
+
 ---
 
 ## Pipelines
