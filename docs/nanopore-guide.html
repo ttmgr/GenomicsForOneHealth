@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nanopore Guide</title>
+  <meta name="description"
+    content="Compact Nanopore guide for the GenomicsForOneHealth selector: input material, flow cells, kits, basecalling tiers, and when to use EPI2ME Labs or CZ ID.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f1e8;
+      --panel: #ffffff;
+      --line: #ddd2c3;
+      --text: #213029;
+      --muted: #62716a;
+      --accent: #1d6a55;
+      --accent-soft: #e4f1ec;
+      --warn-bg: #fff1dd;
+      --warn-text: #7b5008;
+      --shadow: 0 18px 36px rgba(33, 48, 41, 0.08);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(29, 106, 85, 0.08), transparent 24%),
+        linear-gradient(180deg, #faf6ef 0%, var(--bg) 100%);
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 44px;
+    }
+
+    header,
+    section {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    header {
+      padding: 26px;
+    }
+
+    .eyebrow,
+    .section-label,
+    .impact-label {
+      margin: 0;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1,
+    h2 {
+      margin: 10px 0 0;
+      font-family: "Fraunces", Georgia, serif;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 0.98;
+    }
+
+    h2 {
+      font-size: 1.65rem;
+    }
+
+    p,
+    li {
+      line-height: 1.65;
+    }
+
+    .hero-text {
+      max-width: 740px;
+      color: var(--muted);
+    }
+
+    .guide-nav {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .guide-nav a,
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    section {
+      padding: 22px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .subcard {
+      padding: 14px;
+      border-radius: 16px;
+      background: #faf7f1;
+      border: 1px solid rgba(221, 210, 195, 0.9);
+    }
+
+    .subcard h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .impact {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(29, 106, 85, 0.06);
+    }
+
+    .impact p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .warning {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--warn-bg);
+      color: var(--warn-text);
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    @media (max-width: 720px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">GenomicsForOneHealth</p>
+      <h1>Compact Nanopore Guide</h1>
+      <p class="hero-text">
+        This page supports the selector without turning every wizard step into a lecture. Use it when you want the
+        reasoning behind kit, flow cell, basecalling, or analysis-environment recommendations.
+      </p>
+      <nav class="guide-nav">
+        <a href="#input-material">Input material</a>
+        <a href="#flow-cells">Flow cells</a>
+        <a href="#library-prep-kits">Library prep kits</a>
+        <a href="#basecalling-tiers">Basecalling tiers</a>
+        <a href="#epi2me">EPI2ME Labs</a>
+        <a href="#czid">CZ ID</a>
+        <a href="#defaults">Practical defaults</a>
+      </nav>
+      <p><a class="back-link" href="index.html">Back to the selector</a></p>
+    </header>
+
+    <div class="stack">
+      <section id="input-material">
+        <p class="section-label">Input material</p>
+        <h2>Start with the material, not the kit</h2>
+        <p>
+          The selector splits route choice from Nanopore setup because the first real decision is what kind of material
+          the data represent: long-read metagenomic DNA, RNA virome material, 12S amplicons, single isolates,
+          barcoded isolates, or clinical metagenomes.
+        </p>
+        <div class="two-col">
+          <div class="subcard">
+            <h3>High-molecular-weight DNA</h3>
+            <p>
+              Best fit for isolate assembly, plasmid resolution, and longer-fragment metagenomics where read length and
+              consensus quality matter.
+            </p>
+          </div>
+          <div class="subcard">
+            <h3>Amplicons and targeted products</h3>
+            <p>
+              These behave differently from shotgun DNA. They usually need lighter throughput assumptions and
+              primer-aware cleanup rather than metagenomic assembly defaults.
+            </p>
+          </div>
+          <div class="subcard">
+            <h3>Environmental or clinical metagenomes</h3>
+            <p>
+              Mixed-community inputs need more caution around host background, community complexity, and whether a
+              cloud or ONT-curated fallback may be more appropriate than a study-specific repo backend.
+            </p>
+          </div>
+          <div class="subcard">
+            <h3>RNA and cDNA</h3>
+            <p>
+              Native direct RNA and cDNA-derived RNA workflows should not be collapsed into generic DNA logic. They can
+              change flow cell, throughput, and basecalling expectations.
+            </p>
+          </div>
+        </div>
+        <div class="impact">
+          <p class="impact-label">What this changes in the selector</p>
+          <p>
+            The first routing pages ask for sample, material, and target before any Nanopore setup questions appear.
+          </p>
+        </div>
+      </section>
+
+      <section id="flow-cells">
+        <p class="section-label">Flow cells</p>
+        <h2>Choose throughput and compatibility deliberately</h2>
+        <div class="two-col">
+          <div class="subcard">
+            <h3>Flongle</h3>
+            <p>Pilot-scale, targeted, or low-output work. Good for small tests, not deep metagenomic production.</p>
+          </div>
+          <div class="subcard">
+            <h3>MinION or GridION R10.4.1</h3>
+            <p>The clean default for most new microbial genomics and moderate-depth metagenomics runs.</p>
+          </div>
+          <div class="subcard">
+            <h3>PromethION R10.4.1</h3>
+            <p>Deep metagenomics, larger cohorts, or cases where a MinION-style throughput assumption is too small.</p>
+          </div>
+          <div class="subcard">
+            <h3>RNA-specific flow cells</h3>
+            <p>Relevant only for native direct RNA. They should not be shown for ordinary DNA workflows.</p>
+          </div>
+        </div>
+        <div class="warning">
+          Legacy R9.4.1 remains a compatibility path. It should stay visible for older runs, but it should not drive
+          new default recommendations.
+        </div>
+        <div class="impact">
+          <p class="impact-label">What this changes in the selector</p>
+          <p>
+            Flow cell choice is a separate setup page because it changes throughput framing and compatibility notes,
+            not the biological route itself.
+          </p>
+        </div>
+      </section>
+
+      <section id="library-prep-kits">
+        <p class="section-label">Library prep kits</p>
+        <h2>Kit choice changes preprocessing more than route identity</h2>
+        <div class="two-col">
+          <div class="subcard">
+            <h3>LSK114</h3>
+            <p>
+              Strong default for read length, yield, and consensus-focused workflows. Best when single-sample quality
+              matters more than speed.
+            </p>
+          </div>
+          <div class="subcard">
+            <h3>RBK114.24</h3>
+            <p>
+              Rapid multiplexing. Expect demultiplexing and barcode trimming before downstream analysis.
+            </p>
+          </div>
+          <div class="subcard">
+            <h3>NBD114.24</h3>
+            <p>
+              Native barcoding with stronger quality framing than rapid barcoding, while still preserving per-barcode
+              separation logic.
+            </p>
+          </div>
+          <div class="subcard">
+            <h3>Amplicon and RNA-specialized routes</h3>
+            <p>
+              Amplicon workflows and direct RNA should be treated as distinct setup branches, not squeezed into generic
+              DNA assumptions.
+            </p>
+          </div>
+        </div>
+        <div class="impact">
+          <p class="impact-label">What this changes in the selector</p>
+          <p>
+            The setup advisor shows four kit consequences only: demultiplexing, barcode trimming, typical use, and
+            route implication. That keeps the page readable while still exposing the operational impact.
+          </p>
+        </div>
+      </section>
+
+      <section id="basecalling-tiers">
+        <p class="section-label">Basecalling tiers</p>
+        <h2>FAST, HAC, and SUP are different intent choices</h2>
+        <div class="two-col">
+          <div class="subcard">
+            <h3>FAST</h3>
+            <p>Best for live monitoring, quick triage, or field-style early decisions.</p>
+          </div>
+          <div class="subcard">
+            <h3>HAC</h3>
+            <p>The standard balanced default for most production microbial genomics and metagenomics workflows.</p>
+          </div>
+          <div class="subcard">
+            <h3>SUP</h3>
+            <p>Prefer this when assembly quality, AMR interpretation, or high-confidence consensus matters most.</p>
+          </div>
+          <div class="subcard">
+            <h3>Already basecalled</h3>
+            <p>Use this when FASTQ or BAM already exists so the selector stops inserting upstream basecalling advice.</p>
+          </div>
+        </div>
+        <div class="impact">
+          <p class="impact-label">What this changes in the selector</p>
+          <p>
+            Basecalling becomes a clean setup page. It no longer clutters route choice, but it still changes early-step
+            guidance and whether the result inserts a basecalling action at all.
+          </p>
+        </div>
+      </section>
+
+      <section id="epi2me">
+        <p class="section-label">EPI2ME Labs</p>
+        <h2>Use EPI2ME Labs when you need an ONT-curated general workflow shell</h2>
+        <p>
+          EPI2ME Labs is useful when the nearest internal example is informative but still too study-specific. It fits
+          especially well for bacterial genomes, metagenomics, and ONT amplicon-style reference workflows.
+        </p>
+        <ul>
+          <li>Good fit for isolate assembly and polishing.</li>
+          <li>Good fit for generalized long-read metagenomics when the repo only has an approximate example.</li>
+          <li>Useful as an amplicon reference, but not an exact replacement for every 12S study design.</li>
+        </ul>
+        <div class="impact">
+          <p class="impact-label">What this changes in the selector</p>
+          <p>
+            Supported routes may show EPI2ME Labs as an alternative environment. Unsupported routes surface it more
+            strongly as a fallback.
+          </p>
+        </div>
+      </section>
+
+      <section id="czid">
+        <p class="section-label">CZ ID</p>
+        <h2>Use CZ ID when the main value is cloud metagenomic interpretation</h2>
+        <p>
+          CZ ID is most relevant for long-read metagenomics, clinical metagenomes, and some unsupported environmental
+          discovery contexts where a cloud analysis environment is more practical than forcing everything into a
+          study-specific internal backend.
+        </p>
+        <ul>
+          <li>Best aligned to metagenomic interpretation, not isolate assembly.</li>
+          <li>Useful when the repo only offers a nearest example rather than an exact route.</li>
+          <li>Less suitable for small isolate assembly or narrowly targeted amplicon questions.</li>
+        </ul>
+        <div class="impact">
+          <p class="impact-label">What this changes in the selector</p>
+          <p>
+            CZ ID appears only on metagenomic-style setup pages and is prioritized mainly for unsupported or
+            hybrid-reference outcomes.
+          </p>
+        </div>
+      </section>
+
+      <section id="defaults">
+        <p class="section-label">Practical defaults</p>
+        <h2>Simple defaults for common microbial genomics and metagenomics cases</h2>
+        <div class="two-col">
+          <div class="subcard">
+            <h3>Environmental long-read DNA</h3>
+            <p>Default to R10.4.1 plus HAC for broad profiling, or SUP when assembly and AMR matter more.</p>
+          </div>
+          <div class="subcard">
+            <h3>Single isolates</h3>
+            <p>Default to LSK114 plus SUP. Keep hybrid assembly visible when short reads also exist.</p>
+          </div>
+          <div class="subcard">
+            <h3>Barcoded isolates</h3>
+            <p>Default to native barcoding plus SUP. Keep per-barcode separation and comparative outputs explicit.</p>
+          </div>
+          <div class="subcard">
+            <h3>Metagenomic short-read-like long reads</h3>
+            <p>If the median read length drops below 1000 bp, the selector shifts the preferred assembly heuristic toward nanoMDBG.</p>
+          </div>
+        </div>
+        <div class="impact">
+          <p class="impact-label">What this changes in the selector</p>
+          <p>
+            The conditions page stays small. It only asks for a few route-specific refinements that actually change
+            tool preference, warnings, or early-step emphasis.
+          </p>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+
+</html>
