@@ -1,0 +1,154 @@
+[
+  {
+    "id": "air_pod5_rbk114",
+    "title": "Air metagenomics from POD5",
+    "summary": "Low-biomass air metagenomics with SQK-RBK114.24 and raw POD5 input.",
+    "audience": "Environmental metagenomics users starting from raw ONT signal.",
+    "featured": true,
+    "prefill_answers": {
+      "category": "environmental_metagenomics",
+      "sample_type": "air_bioaerosol",
+      "molecule_type": "dna",
+      "analysis_goal": "community_profiling",
+      "input_format": "pod5",
+      "library_mode": "rbk114_24",
+      "multiplexing": "yes",
+      "demultiplexing": "needed",
+      "basecalling_state": "prefer_hac",
+      "preprocessing_state": "need_trim_and_filter"
+    }
+  },
+  {
+    "id": "wetland_dna_fastq",
+    "title": "Wetland DNA metagenomics",
+    "summary": "Passive wetland water DNA metagenomics from basecalled FASTQ.",
+    "audience": "Wetland surveillance users focused on pathogens and AMR.",
+    "featured": true,
+    "prefill_answers": {
+      "category": "environmental_metagenomics",
+      "sample_type": "wetland_or_passive_water_sample",
+      "molecule_type": "dna",
+      "analysis_goal": "pathogen_amr_surveillance",
+      "input_format": "fastq",
+      "library_mode": "rbk114_24",
+      "multiplexing": "yes",
+      "demultiplexing": "already_done",
+      "basecalling_state": "already_basecalled",
+      "preprocessing_state": "need_trim_and_filter"
+    }
+  },
+  {
+    "id": "wetland_rna_virome_fastq",
+    "title": "Wetland RNA virome",
+    "summary": "Untargeted wetland RNA viromics from basecalled FASTQ.",
+    "audience": "Wetland surveillance users focused on RNA virus discovery.",
+    "featured": true,
+    "prefill_answers": {
+      "category": "environmental_metagenomics",
+      "sample_type": "wetland_or_passive_water_sample",
+      "molecule_type": "rna",
+      "analysis_goal": "viral_metagenomics",
+      "input_format": "fastq",
+      "library_mode": "rbk114_24",
+      "multiplexing": "yes",
+      "demultiplexing": "already_done",
+      "basecalling_state": "already_basecalled",
+      "preprocessing_state": "need_trim_and_filter"
+    }
+  },
+  {
+    "id": "wetland_12s_amplicon",
+    "title": "Wetland 12S metabarcoding",
+    "summary": "Vertebrate host-range inference from wetland 12S amplicon data.",
+    "audience": "Users working on wetland eDNA amplicons.",
+    "featured": true,
+    "prefill_answers": {
+      "category": "environmental_metagenomics",
+      "sample_type": "wetland_or_passive_water_sample",
+      "molecule_type": "amplicon_dna",
+      "analysis_goal": "biodiversity_metabarcoding",
+      "input_format": "fastq",
+      "library_mode": "amplicon",
+      "multiplexing": "yes",
+      "demultiplexing": "needed",
+      "basecalling_state": "already_basecalled",
+      "preprocessing_state": "need_trim_and_filter"
+    }
+  },
+  {
+    "id": "listeria_bam",
+    "title": "Listeria adaptive sampling from BAM",
+    "summary": "Adaptive sampling benchmark workflow entering from basecalled BAM files.",
+    "audience": "Food safety users comparing AS and native sequencing runs.",
+    "featured": true,
+    "prefill_answers": {
+      "category": "food_safety",
+      "sample_type": "food_safety_sample",
+      "molecule_type": "dna",
+      "analysis_goal": "target_enrichment_and_listeria_recovery",
+      "input_format": "bam",
+      "library_mode": "adaptive_sampling",
+      "multiplexing": "yes",
+      "demultiplexing": "already_done",
+      "basecalling_state": "already_basecalled",
+      "preprocessing_state": "need_trim_and_filter"
+    }
+  },
+  {
+    "id": "amr_isolate",
+    "title": "Bacterial isolate AMR profiling",
+    "summary": "Clinical isolate workflow for resistance profiling and assembly.",
+    "audience": "Clinical isolate users working from raw or basecalled ONT reads.",
+    "featured": true,
+    "prefill_answers": {
+      "category": "clinical_isolates_plasmids",
+      "sample_type": "bacterial_isolate",
+      "molecule_type": "dna",
+      "analysis_goal": "clinical_amr_profiling",
+      "input_format": "fast5",
+      "library_mode": "standard_isolate",
+      "multiplexing": "no",
+      "demultiplexing": "not_needed",
+      "basecalling_state": "prefer_hac",
+      "preprocessing_state": "need_trim_and_filter"
+    }
+  },
+  {
+    "id": "cre_plasmids",
+    "title": "CRE plasmid clustering",
+    "summary": "Isolate-based plasmid reconstruction and clustering from ONT data.",
+    "audience": "Clinical plasmid and outbreak analysis users.",
+    "featured": true,
+    "prefill_answers": {
+      "category": "clinical_isolates_plasmids",
+      "sample_type": "bacterial_isolate",
+      "molecule_type": "dna",
+      "analysis_goal": "plasmid_clustering",
+      "input_format": "pod5",
+      "library_mode": "rbk114_24",
+      "multiplexing": "yes",
+      "demultiplexing": "needed",
+      "basecalling_state": "prefer_sup",
+      "preprocessing_state": "need_trim_and_filter"
+    }
+  },
+  {
+    "id": "squiggle_pod5",
+    "title": "Squiggle4Viability from POD5",
+    "summary": "Raw-signal AI viability inference directly from POD5.",
+    "audience": "Users analyzing viability from nanopore raw signal.",
+    "featured": true,
+    "prefill_answers": {
+      "category": "viability_assessment",
+      "sample_type": "raw_signal",
+      "molecule_type": "raw_signal",
+      "analysis_goal": "viability_inference",
+      "input_format": "pod5",
+      "library_mode": "signal_only",
+      "multiplexing": "no",
+      "demultiplexing": "not_needed",
+      "basecalling_state": "not_applicable",
+      "preprocessing_state": "unsure"
+    }
+  }
+]
