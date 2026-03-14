@@ -1,0 +1,361 @@
+[
+  {
+    "id": "air_bioaerosol_example",
+    "label": "Air / bioaerosol",
+    "sample_contexts": [
+      "environmental"
+    ],
+    "material_classes": [
+      "long_read_metagenomic_dna"
+    ],
+    "target_goals": [
+      "taxonomy_profiling",
+      "functional_profiling",
+      "mag_recovery",
+      "amr_surveillance",
+      "full_environmental_pipeline"
+    ],
+    "pipeline_id": "air_metagenomics",
+    "track_id": null,
+    "nearest_pipeline_id": null,
+    "nearest_track_id": null,
+    "status_class": "exact",
+    "route_summary": "Environmental sample -> long-read metagenomic DNA -> air / bioaerosol",
+    "selection_help": "Use this when the sample is most similar to the published air metagenomics study context.",
+    "unsupported_reason": null
+  },
+  {
+    "id": "wetland_passive_water_example",
+    "label": "Wetland / passive water",
+    "sample_contexts": [
+      "environmental"
+    ],
+    "material_classes": [
+      "long_read_metagenomic_dna"
+    ],
+    "target_goals": [
+      "taxonomy_profiling",
+      "functional_profiling",
+      "mag_recovery",
+      "amr_surveillance",
+      "full_environmental_pipeline"
+    ],
+    "pipeline_id": "wetland_health",
+    "track_id": "dna_metagenomics",
+    "nearest_pipeline_id": null,
+    "nearest_track_id": null,
+    "status_class": "exact",
+    "route_summary": "Environmental sample -> long-read metagenomic DNA -> wetland / passive water",
+    "selection_help": "Use this when the sample is most similar to the passive-water wetland surveillance system.",
+    "unsupported_reason": null
+  },
+  {
+    "id": "soil_unsupported_example",
+    "label": "Soil",
+    "sample_contexts": [
+      "environmental"
+    ],
+    "material_classes": [
+      "long_read_metagenomic_dna"
+    ],
+    "target_goals": [
+      "taxonomy_profiling",
+      "functional_profiling",
+      "mag_recovery",
+      "amr_surveillance",
+      "full_environmental_pipeline"
+    ],
+    "pipeline_id": null,
+    "track_id": null,
+    "nearest_pipeline_id": "air_metagenomics",
+    "nearest_track_id": null,
+    "status_class": "unsupported_nearest",
+    "route_summary": "Environmental sample -> long-read metagenomic DNA -> soil",
+    "selection_help": "Use this when your sample is soil and you want the nearest published environmental backend rather than a false exact match.",
+    "unsupported_reason": "No soil-specific long-read metagenomic workflow is currently published in this repository."
+  },
+  {
+    "id": "other_environmental_unsupported_example",
+    "label": "Other environmental matrix",
+    "sample_contexts": [
+      "environmental"
+    ],
+    "material_classes": [
+      "long_read_metagenomic_dna"
+    ],
+    "target_goals": [
+      "taxonomy_profiling",
+      "functional_profiling",
+      "mag_recovery",
+      "amr_surveillance",
+      "full_environmental_pipeline"
+    ],
+    "pipeline_id": null,
+    "track_id": null,
+    "nearest_pipeline_id": "air_metagenomics",
+    "nearest_track_id": null,
+    "status_class": "unsupported_nearest",
+    "route_summary": "Environmental sample -> long-read metagenomic DNA -> other environmental matrix",
+    "selection_help": "Use this when the sample is environmental but not close to the published air or passive-water systems.",
+    "unsupported_reason": "The public environmental DNA backends here are example-specific rather than a generic meta-pipeline for every matrix."
+  },
+  {
+    "id": "wetland_rna_virome_example",
+    "label": "Wetland / passive water RNA virome",
+    "sample_contexts": [
+      "environmental"
+    ],
+    "material_classes": [
+      "rna_virome_material"
+    ],
+    "target_goals": [
+      "viral_discovery",
+      "full_virome_pipeline"
+    ],
+    "pipeline_id": "wetland_health",
+    "track_id": "rna_virome",
+    "nearest_pipeline_id": null,
+    "nearest_track_id": null,
+    "status_class": "exact",
+    "route_summary": "Environmental sample -> RNA virome material -> wetland RNA virome",
+    "selection_help": "Use this when the RNA virome material is closest to the wetland passive-water study context.",
+    "unsupported_reason": null
+  },
+  {
+    "id": "other_environmental_virome_unsupported_example",
+    "label": "Other environmental RNA virome",
+    "sample_contexts": [
+      "environmental"
+    ],
+    "material_classes": [
+      "rna_virome_material"
+    ],
+    "target_goals": [
+      "viral_discovery",
+      "full_virome_pipeline"
+    ],
+    "pipeline_id": null,
+    "track_id": null,
+    "nearest_pipeline_id": "wetland_health",
+    "nearest_track_id": "rna_virome",
+    "status_class": "unsupported_nearest",
+    "route_summary": "Environmental sample -> RNA virome material -> other environmental RNA virome",
+    "selection_help": "Use this when your RNA virome case is not close to the published wetland passive-water example.",
+    "unsupported_reason": "The repository does not currently contain a general-purpose environmental RNA virome backend beyond the wetland branch."
+  },
+  {
+    "id": "wetland_edna_example",
+    "label": "Wetland 12S eDNA",
+    "sample_contexts": [
+      "environmental"
+    ],
+    "material_classes": [
+      "edna_12s_amplicon"
+    ],
+    "target_goals": [
+      "biodiversity_metabarcoding",
+      "host_range_inference",
+      "full_amplicon_pipeline"
+    ],
+    "pipeline_id": "wetland_health",
+    "track_id": "edna",
+    "nearest_pipeline_id": null,
+    "nearest_track_id": null,
+    "status_class": "exact",
+    "route_summary": "Environmental sample -> eDNA 12S amplicon -> wetland 12S eDNA",
+    "selection_help": "Use this when the 12S material is closest to the wetland host-range and passive-water system.",
+    "unsupported_reason": null
+  },
+  {
+    "id": "zambia_water_edna_example",
+    "label": "Water eDNA example",
+    "sample_contexts": [
+      "environmental"
+    ],
+    "material_classes": [
+      "edna_12s_amplicon"
+    ],
+    "target_goals": [
+      "biodiversity_metabarcoding",
+      "host_range_inference",
+      "full_amplicon_pipeline"
+    ],
+    "pipeline_id": "zambia_edna",
+    "track_id": null,
+    "nearest_pipeline_id": null,
+    "nearest_track_id": null,
+    "status_class": "exact",
+    "route_summary": "Environmental sample -> eDNA 12S amplicon -> water eDNA example",
+    "selection_help": "Use this when the 12S route is closer to general water-eDNA metabarcoding than to the wetland host-range branch.",
+    "unsupported_reason": null
+  },
+  {
+    "id": "other_edna_unsupported_example",
+    "label": "Other 12S eDNA context",
+    "sample_contexts": [
+      "environmental"
+    ],
+    "material_classes": [
+      "edna_12s_amplicon"
+    ],
+    "target_goals": [
+      "biodiversity_metabarcoding",
+      "host_range_inference",
+      "full_amplicon_pipeline"
+    ],
+    "pipeline_id": null,
+    "track_id": null,
+    "nearest_pipeline_id": "zambia_edna",
+    "nearest_track_id": null,
+    "status_class": "unsupported_nearest",
+    "route_summary": "Environmental sample -> eDNA 12S amplicon -> other 12S context",
+    "selection_help": "Use this when your 12S case is not close to either the wetland branch or the Zambia water-eDNA example.",
+    "unsupported_reason": "The repository does not currently include a general-purpose 12S backend outside these two published study contexts."
+  },
+  {
+    "id": "amr_nanopore_example",
+    "label": "Single-isolate assembly and AMR example",
+    "sample_contexts": [
+      "clinical_isolate"
+    ],
+    "material_classes": [
+      "single_isolate_long_read_dna"
+    ],
+    "target_goals": [
+      "complete_genome_assembly",
+      "annotation",
+      "hybrid_assembly",
+      "amr_virulence_profiling",
+      "full_isolate_pipeline"
+    ],
+    "pipeline_id": "amr_nanopore",
+    "track_id": null,
+    "nearest_pipeline_id": null,
+    "nearest_track_id": null,
+    "status_class": "exact",
+    "route_summary": "Clinical / isolate -> single isolate long-read DNA -> AMR Nanopore example",
+    "selection_help": "Use this when your isolate route is closest to the published single-isolate AMR nanopore workflow.",
+    "unsupported_reason": null
+  },
+  {
+    "id": "other_single_isolate_example",
+    "label": "Other single-isolate context",
+    "sample_contexts": [
+      "clinical_isolate"
+    ],
+    "material_classes": [
+      "single_isolate_long_read_dna"
+    ],
+    "target_goals": [
+      "complete_genome_assembly",
+      "annotation",
+      "hybrid_assembly",
+      "amr_virulence_profiling",
+      "full_isolate_pipeline"
+    ],
+    "pipeline_id": null,
+    "track_id": null,
+    "nearest_pipeline_id": "amr_nanopore",
+    "nearest_track_id": null,
+    "status_class": "unsupported_nearest",
+    "route_summary": "Clinical / isolate -> single isolate long-read DNA -> other single-isolate context",
+    "selection_help": "Use this when your single-isolate workflow is not a close match to the published AMR Nanopore example.",
+    "unsupported_reason": "The repository currently exposes one published single-isolate backend rather than a broader single-isolate workflow family."
+  },
+  {
+    "id": "cre_plasmid_example",
+    "label": "Barcoded isolate example",
+    "sample_contexts": [
+      "clinical_isolate"
+    ],
+    "material_classes": [
+      "barcoded_isolate_long_read_dna"
+    ],
+    "target_goals": [
+      "genome_assembly_annotation",
+      "amr_virulence_profiling",
+      "phylogenetics_outbreak_tracking",
+      "plasmid_reconstruction",
+      "full_isolate_pipeline"
+    ],
+    "pipeline_id": "cre_plasmid_clustering",
+    "track_id": null,
+    "nearest_pipeline_id": null,
+    "nearest_track_id": null,
+    "status_class": "exact",
+    "route_summary": "Clinical / isolate -> barcoded isolate long-read DNA -> CRE plasmid example",
+    "selection_help": "Use this when your barcoded isolate route is closest to the published CRE plasmid clustering workflow.",
+    "unsupported_reason": null
+  },
+  {
+    "id": "other_barcoded_isolate_example",
+    "label": "Other barcoded-isolate context",
+    "sample_contexts": [
+      "clinical_isolate"
+    ],
+    "material_classes": [
+      "barcoded_isolate_long_read_dna"
+    ],
+    "target_goals": [
+      "genome_assembly_annotation",
+      "amr_virulence_profiling",
+      "phylogenetics_outbreak_tracking",
+      "plasmid_reconstruction",
+      "full_isolate_pipeline"
+    ],
+    "pipeline_id": null,
+    "track_id": null,
+    "nearest_pipeline_id": "cre_plasmid_clustering",
+    "nearest_track_id": null,
+    "status_class": "unsupported_nearest",
+    "route_summary": "Clinical / isolate -> barcoded isolate long-read DNA -> other barcoded-isolate context",
+    "selection_help": "Use this when your barcoded isolate route is not a close match to the published CRE example.",
+    "unsupported_reason": "The repository currently exposes one published barcoded-isolate backend rather than a broader barcoded-isolate workflow family."
+  },
+  {
+    "id": "amr_host_association_example",
+    "label": "Clinical metagenome host-association example",
+    "sample_contexts": [
+      "clinical_isolate"
+    ],
+    "material_classes": [
+      "clinical_metagenome"
+    ],
+    "target_goals": [
+      "amr_host_association",
+      "full_host_association_pipeline"
+    ],
+    "pipeline_id": "nanopore_amr_host_association",
+    "track_id": null,
+    "nearest_pipeline_id": null,
+    "nearest_track_id": null,
+    "status_class": "exact",
+    "route_summary": "Clinical / isolate -> clinical metagenome -> AMR host association",
+    "selection_help": "This is the published clinical metagenome backend in the repository.",
+    "unsupported_reason": null
+  },
+  {
+    "id": "listeria_adaptive_sampling_example",
+    "label": "Listeria adaptive-sampling example",
+    "sample_contexts": [
+      "food_safety"
+    ],
+    "material_classes": [
+      "listeria_enrichment_material"
+    ],
+    "target_goals": [
+      "listeria_target_recovery",
+      "as_vs_native_comparison",
+      "recovered_target_amr_profiling",
+      "full_food_safety_pipeline"
+    ],
+    "pipeline_id": "listeria_adaptive_sampling",
+    "track_id": null,
+    "nearest_pipeline_id": null,
+    "nearest_track_id": null,
+    "status_class": "exact",
+    "route_summary": "Food safety -> Listeria enrichment / recovery -> adaptive-sampling example",
+    "selection_help": "This is the published food-safety backend currently available in the repository.",
+    "unsupported_reason": null
+  }
+]

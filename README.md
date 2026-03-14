@@ -25,9 +25,9 @@ Learn more about our work at the [Urban Lab website](https://sites.google.com/vi
 
 ## Pipeline Selector
 
-> **Start here:** Use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/) to choose the closest existing workflow in this collection and receive a lab-facing action sheet with fit classification, documented entry points, preprocessing defaults, prerequisites, and next-step guidance.
+> **Start here:** Use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/) to move through a wizard-style decision flow and receive a lab-facing action sheet with documented entry points, preprocessing defaults, prerequisites, warnings, and next-step guidance.
 >
-> The selector is a static GitHub Pages app built from the published repository only. It begins with sequencing context, then library prep kit or run mode, then the main analytic goal, and finally the sample context that best matches the closest published example. The documented repository workflows are used as published example backends for those broader routes, while setup details such as multiplexing, demultiplexing, basecalling, and entry format are handled afterward to refine the action sheet rather than to define the route itself. If your use case falls outside the current collection, it returns the nearest documented starting point rather than a false exact match.
+> The selector is a static GitHub Pages app built from the published repository only. It now starts with the sample, then the material class, then the main analytical target. Only after that does it expose the closest published study examples in the repository, followed by expert tuning inputs that refine preprocessing and tool suggestions without changing the selected backend. If your use case falls outside the current collection, it returns the nearest published example rather than a false exact match.
 
 ### Our Team
 - **Prof. Dr. Lara Urban**: Principal Investigator & Supervisor (Helmholtz AI & University of Zurich)

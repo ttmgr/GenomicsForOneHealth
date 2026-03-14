@@ -1,0 +1,469 @@
+[
+  {
+    "id": "env_short_reads_prefer_nanomdbg",
+    "applies_to_example_ids": [
+      "air_bioaerosol_example",
+      "wetland_passive_water_example"
+    ],
+    "when": {
+      "target_goal": [
+        "mag_recovery",
+        "full_environmental_pipeline"
+      ],
+      "median_read_length_below_1000": [
+        "yes"
+      ]
+    },
+    "effect_type": "tool_swap",
+    "title": "Prefer nanoMDBG for short long-read assemblies",
+    "summary": "Median read length below 1000 bp favors nanoMDBG over metaFlye for the initial metagenomic assembly heuristic.",
+    "tool_override": {
+      "from": "metaFlye",
+      "to": "nanoMDBG"
+    },
+    "step_insertion": null,
+    "warning": "This is an expert heuristic override inside the selected backend, not a backend reroute.",
+    "priority": 100
+  },
+  {
+    "id": "raw_signal_insert_basecalling",
+    "applies_to_example_ids": [
+      "air_bioaerosol_example",
+      "wetland_passive_water_example",
+      "wetland_rna_virome_example",
+      "wetland_edna_example",
+      "zambia_water_edna_example",
+      "amr_nanopore_example",
+      "cre_plasmid_example",
+      "amr_host_association_example",
+      "listeria_adaptive_sampling_example",
+      "soil_unsupported_example",
+      "other_environmental_unsupported_example",
+      "other_environmental_virome_unsupported_example",
+      "other_edna_unsupported_example",
+      "other_single_isolate_example",
+      "other_barcoded_isolate_example"
+    ],
+    "when": {
+      "input_format": [
+        "pod5",
+        "fast5"
+      ],
+      "basecalling_state": [
+        "raw_signal_not_basecalled"
+      ]
+    },
+    "effect_type": "step_insert",
+    "title": "Insert basecalling before downstream preprocessing",
+    "summary": "Raw signal input requires a basecalling step before trimming, demultiplexing, filtering, or downstream analysis.",
+    "tool_override": null,
+    "step_insertion": {
+      "id": "generic_basecalling",
+      "title": "Basecall raw signal input",
+      "summary": "Run Dorado basecalling before any demultiplexing, trimming, or downstream workflow entry."
+    },
+    "warning": "Use Dorado model guidance that matches the flow cell, chemistry, and compute budget.",
+    "priority": 90
+  },
+  {
+    "id": "barcoded_inputs_insert_demux",
+    "applies_to_example_ids": [
+      "air_bioaerosol_example",
+      "wetland_passive_water_example",
+      "wetland_rna_virome_example",
+      "wetland_edna_example",
+      "zambia_water_edna_example",
+      "cre_plasmid_example",
+      "amr_host_association_example",
+      "listeria_adaptive_sampling_example",
+      "soil_unsupported_example",
+      "other_environmental_unsupported_example",
+      "other_environmental_virome_unsupported_example",
+      "other_edna_unsupported_example",
+      "other_barcoded_isolate_example"
+    ],
+    "when": {
+      "library_mode": [
+        "rbk114_24",
+        "nbd114_24",
+        "barcoded_metagenome"
+      ],
+      "demultiplexing": [
+        "needed"
+      ]
+    },
+    "effect_type": "step_insert",
+    "title": "Insert demultiplexing and barcode trimming",
+    "summary": "Barcoded runs that are still pooled should be demultiplexed before downstream workflow execution.",
+    "tool_override": null,
+    "step_insertion": {
+      "id": "generic_demultiplexing",
+      "title": "Demultiplex and trim barcodes",
+      "summary": "Separate pooled reads by barcode and remove barcoding artifacts before continuing."
+    },
+    "warning": "Demultiplexing is an entry adjustment inside the selected backend, not a different backend choice.",
+    "priority": 85
+  },
+  {
+    "id": "already_basecalled_skip_basecalling",
+    "applies_to_example_ids": [
+      "air_bioaerosol_example",
+      "wetland_passive_water_example",
+      "wetland_rna_virome_example",
+      "wetland_edna_example",
+      "zambia_water_edna_example",
+      "amr_nanopore_example",
+      "cre_plasmid_example",
+      "amr_host_association_example",
+      "listeria_adaptive_sampling_example",
+      "soil_unsupported_example",
+      "other_environmental_unsupported_example",
+      "other_environmental_virome_unsupported_example",
+      "other_edna_unsupported_example",
+      "other_single_isolate_example",
+      "other_barcoded_isolate_example"
+    ],
+    "when": {
+      "basecalling_state": [
+        "already_basecalled"
+      ]
+    },
+    "effect_type": "step_skip",
+    "title": "Skip raw basecalling guidance",
+    "summary": "The data are already basecalled, so the result should start from preprocessing or downstream workflow entry.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Confirm that current FASTQ or BAM files still match the documented thresholds before skipping upstream steps.",
+    "priority": 95,
+    "target_step_ids": [
+      "generic_basecalling"
+    ]
+  },
+  {
+    "id": "already_trimmed_skip_cleaning",
+    "applies_to_example_ids": [
+      "air_bioaerosol_example",
+      "wetland_passive_water_example",
+      "wetland_rna_virome_example",
+      "wetland_edna_example",
+      "zambia_water_edna_example",
+      "amr_nanopore_example",
+      "cre_plasmid_example",
+      "amr_host_association_example",
+      "listeria_adaptive_sampling_example",
+      "soil_unsupported_example",
+      "other_environmental_unsupported_example",
+      "other_environmental_virome_unsupported_example",
+      "other_edna_unsupported_example",
+      "other_single_isolate_example",
+      "other_barcoded_isolate_example"
+    ],
+    "when": {
+      "preprocessing_state": [
+        "already_trimmed_and_filtered"
+      ]
+    },
+    "effect_type": "step_skip",
+    "title": "Suppress early read-cleaning steps",
+    "summary": "The data have already been trimmed and filtered, so the action sheet should not repeat early cleaning steps.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Verify that your existing trimming and filtering thresholds are compatible with the selected published backend.",
+    "priority": 80,
+    "target_step_ids": [
+      "generic_read_cleaning"
+    ]
+  },
+  {
+    "id": "single_isolate_lsk114_assumption",
+    "applies_to_example_ids": [
+      "amr_nanopore_example",
+      "other_single_isolate_example"
+    ],
+    "when": {
+      "library_mode": [
+        "lsk114"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Single-isolate ligation framing",
+    "summary": "LSK114 usually implies a single-sample isolate route where demultiplexing is not expected unless the user has explicitly introduced pooled handling upstream.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Treat the route as single-sample by default unless there is a documented reason to override that assumption.",
+    "priority": 70
+  },
+  {
+    "id": "barcoded_isolate_assumption",
+    "applies_to_example_ids": [
+      "cre_plasmid_example",
+      "other_barcoded_isolate_example"
+    ],
+    "when": {
+      "library_mode": [
+        "rbk114_24",
+        "nbd114_24"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Per-barcode isolate handling",
+    "summary": "This route assumes one isolate per barcode and comparative downstream interpretation across barcodes.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Keep barcode naming and per-isolate separation consistent before comparative assembly, AMR, and plasmid steps.",
+    "priority": 70
+  },
+  {
+    "id": "adaptive_sampling_matched_control",
+    "applies_to_example_ids": [
+      "listeria_adaptive_sampling_example"
+    ],
+    "when": {
+      "library_mode": [
+        "adaptive_sampling"
+      ],
+      "matched_control_available": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Matched control available",
+    "summary": "Interpret the adaptive-sampling run alongside the matched control to evaluate target recovery and downstream differences.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Keep the adaptive-sampling and control outputs paired through the result interpretation workflow.",
+    "priority": 70
+  },
+  {
+    "id": "low_biomass_environmental_warning",
+    "applies_to_example_ids": [
+      "air_bioaerosol_example",
+      "wetland_passive_water_example",
+      "soil_unsupported_example",
+      "other_environmental_unsupported_example"
+    ],
+    "when": {
+      "very_low_biomass_sample": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Low-biomass environmental caution",
+    "summary": "Low biomass can reduce assembly and binning confidence, so taxonomic and functional outputs should be interpreted conservatively.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Assembly and MAG recovery may be less stable in sparse environmental material.",
+    "priority": 55
+  },
+  {
+    "id": "assembly_priority_warning",
+    "applies_to_example_ids": [
+      "air_bioaerosol_example",
+      "wetland_passive_water_example",
+      "soil_unsupported_example",
+      "other_environmental_unsupported_example"
+    ],
+    "when": {
+      "assembly_is_priority": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Assembly-centered interpretation",
+    "summary": "The result should emphasize assembly, polishing, and genome recovery outputs over quick taxonomic screening alone.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Prefer basecalling and filtering choices that preserve downstream assembly quality.",
+    "priority": 50
+  },
+  {
+    "id": "low_viral_load_warning",
+    "applies_to_example_ids": [
+      "wetland_rna_virome_example",
+      "other_environmental_virome_unsupported_example"
+    ],
+    "when": {
+      "low_viral_load_expected": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Low viral load expected",
+    "summary": "Sparse viral signal should be interpreted conservatively and may reduce assembly yield.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Retain sensitivity-aware downstream interpretation and expect weaker contig recovery.",
+    "priority": 50
+  },
+  {
+    "id": "contigs_already_available_warning",
+    "applies_to_example_ids": [
+      "wetland_rna_virome_example",
+      "other_environmental_virome_unsupported_example"
+    ],
+    "when": {
+      "assembled_contigs_already_available": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Contigs already available",
+    "summary": "The action sheet should emphasize classification, polishing, and annotation rather than starting from raw assembly again.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Confirm that the existing contigs are compatible with the selected backend expectations.",
+    "priority": 45
+  },
+  {
+    "id": "barcoded_amplicon_warning",
+    "applies_to_example_ids": [
+      "wetland_edna_example",
+      "zambia_water_edna_example",
+      "other_edna_unsupported_example"
+    ],
+    "when": {
+      "barcoded_amplicon_pool": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Barcoded amplicon pool",
+    "summary": "Amplicon pools usually require demultiplexing and primer-aware cleanup before taxonomic assignment.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Confirm whether OBITools demultiplexing or equivalent amplicon handling is still needed.",
+    "priority": 55
+  },
+  {
+    "id": "illumina_support_warning",
+    "applies_to_example_ids": [
+      "wetland_edna_example",
+      "zambia_water_edna_example",
+      "other_edna_unsupported_example"
+    ],
+    "when": {
+      "illumina_support_reads_present": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Short-read support available",
+    "summary": "Paired-end support data are available and should be kept visible as an auxiliary route for validation or cross-platform comparison.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Keep short-read support separate from the main ONT action sheet unless the branch explicitly documents cross-platform integration.",
+    "priority": 40
+  },
+  {
+    "id": "hybrid_support_warning",
+    "applies_to_example_ids": [
+      "amr_nanopore_example",
+      "other_single_isolate_example"
+    ],
+    "when": {
+      "short_reads_available_for_hybrid": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Hybrid assembly support available",
+    "summary": "Short-read data are available, so hybrid assembly remains a viable refinement path inside the selected single-isolate backend.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Keep long-read and short-read assets paired if you intend to use hybrid assembly or polishing.",
+    "priority": 45
+  },
+  {
+    "id": "closed_genome_priority_warning",
+    "applies_to_example_ids": [
+      "amr_nanopore_example",
+      "other_single_isolate_example"
+    ],
+    "when": {
+      "closed_genome_is_priority": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Closed genome is the priority",
+    "summary": "The action sheet should emphasize finishing, circularization, and assembly quality rather than only screening-oriented outputs.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Favor accuracy-preserving preprocessing and downstream assembly quality checks.",
+    "priority": 45
+  },
+  {
+    "id": "barcoded_isolates_not_split_warning",
+    "applies_to_example_ids": [
+      "cre_plasmid_example",
+      "other_barcoded_isolate_example"
+    ],
+    "when": {
+      "per_barcode_isolates_not_yet_split": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Per-barcode isolate outputs still need separation",
+    "summary": "Comparative isolate workflows assume one cleaned dataset per barcode before assembly and relatedness analysis.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Finish barcode-aware separation before comparative isolate analysis.",
+    "priority": 45
+  },
+  {
+    "id": "comparative_phylogeny_priority_warning",
+    "applies_to_example_ids": [
+      "cre_plasmid_example",
+      "other_barcoded_isolate_example"
+    ],
+    "when": {
+      "comparative_phylogeny_is_priority": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Comparative phylogeny is a priority",
+    "summary": "Keep barcode naming, isolate metadata, and downstream comparative outputs aligned for outbreak-style interpretation.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Preserve consistent isolate identifiers through assembly and comparative analysis.",
+    "priority": 40
+  },
+  {
+    "id": "host_association_priority_warning",
+    "applies_to_example_ids": [
+      "amr_host_association_example"
+    ],
+    "when": {
+      "host_association_is_primary_deliverable": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Host association is the primary deliverable",
+    "summary": "Keep methylation-aware linkage outputs and contig-level association interpretation central in the result summary.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Do not collapse the route into generic metagenome screening if host linkage is the main output.",
+    "priority": 45
+  },
+  {
+    "id": "food_target_already_enriched_warning",
+    "applies_to_example_ids": [
+      "listeria_adaptive_sampling_example"
+    ],
+    "when": {
+      "target_reads_already_enriched": [
+        "yes"
+      ]
+    },
+    "effect_type": "warning_only",
+    "title": "Target reads already look enriched",
+    "summary": "The result should emphasize downstream recovery and interpretation rather than enrichment troubleshooting.",
+    "tool_override": null,
+    "step_insertion": null,
+    "warning": "Confirm whether the adaptive-sampling objective has already been met before over-tuning the upstream steps.",
+    "priority": 35
+  }
+]
