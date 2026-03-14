@@ -1,0 +1,121 @@
+[
+  {
+    "id": "epi2me_bacterial_genomes",
+    "label": "EPI2ME Labs Bacterial Genomes",
+    "route_compatibility": [
+      "exact",
+      "unsupported"
+    ],
+    "supported_material_classes": [
+      "single_isolate_long_read_dna",
+      "barcoded_isolate_long_read_dna"
+    ],
+    "supported_target_goals": [
+      "complete_genome_assembly",
+      "annotation",
+      "hybrid_assembly",
+      "amr_virulence_profiling",
+      "full_isolate_pipeline",
+      "genome_assembly_annotation",
+      "phylogenetics_outbreak_tracking",
+      "plasmid_reconstruction"
+    ],
+    "recommended_when": [
+      "You want an ONT-curated local workflow for bacterial isolate assembly and polishing.",
+      "The nearest internal isolate backend is informative, but you want a more general ONT-maintained workflow shell."
+    ],
+    "avoid_when": [
+      "The main task is environmental shotgun metagenomics or cloud-first pathogen discovery."
+    ],
+    "url": "https://epi2me.nanoporetech.com/epi2me-docs/workflows/wf-bacterial-genomes/",
+    "source_type": "ont_curated"
+  },
+  {
+    "id": "epi2me_metagenomics",
+    "label": "EPI2ME Labs Metagenomics",
+    "route_compatibility": [
+      "exact",
+      "unsupported"
+    ],
+    "supported_material_classes": [
+      "long_read_metagenomic_dna",
+      "clinical_metagenome"
+    ],
+    "supported_target_goals": [
+      "taxonomy_profiling",
+      "functional_profiling",
+      "mag_recovery",
+      "amr_surveillance",
+      "full_environmental_pipeline",
+      "amr_host_association",
+      "full_host_association_pipeline"
+    ],
+    "recommended_when": [
+      "You want an ONT-curated local metagenomics workflow with standard reporting and reproducible defaults.",
+      "The internal example is useful, but you need a more generic ONT-maintained metagenomics workflow."
+    ],
+    "avoid_when": [
+      "The route is primarily amplicon-focused or single-isolate assembly."
+    ],
+    "url": "https://epi2me.nanoporetech.com/epi2me-docs/workflows/wf-metagenomics/",
+    "source_type": "ont_curated"
+  },
+  {
+    "id": "epi2me_amplicon",
+    "label": "EPI2ME Labs 16S or amplicon workflows",
+    "route_compatibility": [
+      "exact",
+      "unsupported"
+    ],
+    "supported_material_classes": [
+      "edna_12s_amplicon"
+    ],
+    "supported_target_goals": [
+      "biodiversity_metabarcoding",
+      "host_range_inference",
+      "full_amplicon_pipeline"
+    ],
+    "recommended_when": [
+      "You want an ONT-maintained amplicon workflow reference alongside the nearest internal 12S example.",
+      "The internal example is directionally useful, but you need a more generic ONT amplicon starting point."
+    ],
+    "avoid_when": [
+      "The route is shotgun metagenomics or isolate assembly."
+    ],
+    "url": "https://epi2me.nanoporetech.com/epi2me-docs/workflows/wf-16s/",
+    "source_type": "ont_curated"
+  },
+  {
+    "id": "cz_id_long_read_metagenomics",
+    "label": "CZ ID long-read metagenomics",
+    "route_compatibility": [
+      "exact",
+      "unsupported"
+    ],
+    "supported_material_classes": [
+      "long_read_metagenomic_dna",
+      "rna_virome_material",
+      "clinical_metagenome"
+    ],
+    "supported_target_goals": [
+      "taxonomy_profiling",
+      "functional_profiling",
+      "mag_recovery",
+      "amr_surveillance",
+      "full_environmental_pipeline",
+      "viral_discovery",
+      "full_virome_pipeline",
+      "amr_host_association",
+      "full_host_association_pipeline"
+    ],
+    "recommended_when": [
+      "You want cloud-based long-read metagenomic interpretation for a route the group repo does not cover exactly.",
+      "You need a secondary external reference when the nearest internal example is only approximate."
+    ],
+    "avoid_when": [
+      "The route is isolate assembly or a small targeted amplicon assay."
+    ],
+    "url": "https://public.czid.org/",
+    "source_type": "cloud"
+  }
+]

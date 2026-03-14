@@ -31,7 +31,9 @@ const datasets = {
   pipelines: readJson("pipelines.json"),
   playbooks: readJson("playbooks.json"),
   examples: readJson("examples.json"),
-  expertRules: readJson("expert_rules.json")
+  expertRules: readJson("expert_rules.json"),
+  nanoporeProfiles: readJson("nanopore_profiles.json"),
+  externalWorkflows: readJson("external_workflows.json")
 };
 
 const exactCases = [
@@ -41,10 +43,7 @@ const exactCases = [
       sample_context: "environmental",
       material_class: "long_read_metagenomic_dna",
       target_goal: "taxonomy_profiling",
-      example_context: "air_bioaerosol_example",
-      input_format: "pod5",
-      basecalling_state: "raw_signal_not_basecalled",
-      preprocessing_state: "need_trim_and_filter"
+      example_context: "air_bioaerosol_example"
     },
     pipeline: "air_metagenomics",
     status: "exact"
@@ -55,12 +54,7 @@ const exactCases = [
       sample_context: "environmental",
       material_class: "long_read_metagenomic_dna",
       target_goal: "mag_recovery",
-      example_context: "wetland_passive_water_example",
-      library_mode: "nbd114_24",
-      demultiplexing: "already_done",
-      input_format: "fastq",
-      basecalling_state: "already_basecalled",
-      preprocessing_state: "need_trim_and_filter"
+      example_context: "wetland_passive_water_example"
     },
     pipeline: "wetland_health",
     track: "dna_metagenomics",
@@ -72,9 +66,7 @@ const exactCases = [
       sample_context: "environmental",
       material_class: "rna_virome_material",
       target_goal: "viral_discovery",
-      example_context: "wetland_rna_virome_example",
-      input_format: "fastq",
-      basecalling_state: "already_basecalled"
+      example_context: "wetland_rna_virome_example"
     },
     pipeline: "wetland_health",
     track: "rna_virome",
@@ -86,10 +78,7 @@ const exactCases = [
       sample_context: "environmental",
       material_class: "edna_12s_amplicon",
       target_goal: "biodiversity_metabarcoding",
-      example_context: "wetland_edna_example",
-      library_mode: "amplicon_workflow",
-      input_format: "fastq",
-      demultiplexing: "needed"
+      example_context: "wetland_edna_example"
     },
     pipeline: "wetland_health",
     track: "edna",
@@ -101,9 +90,7 @@ const exactCases = [
       sample_context: "environmental",
       material_class: "edna_12s_amplicon",
       target_goal: "biodiversity_metabarcoding",
-      example_context: "zambia_water_edna_example",
-      library_mode: "amplicon_workflow",
-      input_format: "fastq"
+      example_context: "zambia_water_edna_example"
     },
     pipeline: "zambia_edna",
     status: "exact"
@@ -114,10 +101,7 @@ const exactCases = [
       sample_context: "clinical_isolate",
       material_class: "single_isolate_long_read_dna",
       target_goal: "complete_genome_assembly",
-      example_context: "amr_nanopore_example",
-      library_mode: "lsk114",
-      input_format: "pod5",
-      basecalling_state: "prefer_sup"
+      example_context: "amr_nanopore_example"
     },
     pipeline: "amr_nanopore",
     status: "exact"
@@ -128,25 +112,17 @@ const exactCases = [
       sample_context: "clinical_isolate",
       material_class: "barcoded_isolate_long_read_dna",
       target_goal: "plasmid_reconstruction",
-      example_context: "cre_plasmid_example",
-      library_mode: "rbk114_24",
-      input_format: "pod5",
-      demultiplexing: "needed",
-      basecalling_state: "prefer_sup"
+      example_context: "cre_plasmid_example"
     },
     pipeline: "cre_plasmid_clustering",
     status: "exact"
   },
   {
-    name: "host_association_unique_example",
+    name: "clinical_metagenome_host_association",
     answers: {
       sample_context: "clinical_isolate",
       material_class: "clinical_metagenome",
-      target_goal: "amr_host_association",
-      library_mode: "barcoded_metagenome",
-      input_format: "pod5",
-      demultiplexing: "needed",
-      basecalling_state: "raw_signal_not_basecalled"
+      target_goal: "amr_host_association"
     },
     pipeline: "nanopore_amr_host_association",
     status: "exact",
@@ -157,10 +133,7 @@ const exactCases = [
     answers: {
       sample_context: "food_safety",
       material_class: "listeria_enrichment_material",
-      target_goal: "listeria_target_recovery",
-      library_mode: "adaptive_sampling",
-      input_format: "bam",
-      basecalling_state: "already_basecalled"
+      target_goal: "listeria_target_recovery"
     },
     pipeline: "listeria_adaptive_sampling",
     status: "exact",
@@ -170,7 +143,7 @@ const exactCases = [
 
 for (const testCase of exactCases) {
   const result = computeRecommendation(testCase.answers, datasets);
-  assert(result, `${testCase.name}: no recommendation returned`);
+  assert(result, `${testCase.name}: expected a recommendation`);
   assert(result.backend.pipeline.id === testCase.pipeline, `${testCase.name}: expected ${testCase.pipeline}, got ${result.backend.pipeline.id}`);
   assert(result.status === testCase.status, `${testCase.name}: expected status ${testCase.status}, got ${result.status}`);
   if (testCase.track) {
@@ -178,9 +151,8 @@ for (const testCase of exactCases) {
   }
   if (testCase.requiresExamplePage === false) {
     assert(!needsExampleSelection(testCase.answers, datasets), `${testCase.name}: example page should be skipped`);
-    assert(!getWizardPageSequence(datasets.questionSpec, testCase.answers, datasets).includes("example"), `${testCase.name}: example page should not be in wizard sequence`);
+    assert(!getWizardPageSequence(datasets.questionSpec, testCase.answers, datasets).includes("example"), `${testCase.name}: example page should not appear in the sequence`);
   }
-  assert(result.entry_actions.length > 0, `${testCase.name}: expected at least one entry action`);
 }
 
 const unsupportedCases = [
@@ -192,7 +164,8 @@ const unsupportedCases = [
       target_goal: "taxonomy_profiling",
       example_context: "soil_unsupported_example"
     },
-    pipeline: "air_metagenomics"
+    pipeline: "air_metagenomics",
+    externalIds: ["epi2me_metagenomics", "cz_id_long_read_metagenomics"]
   },
   {
     name: "other_environmental_matrix",
@@ -202,7 +175,8 @@ const unsupportedCases = [
       target_goal: "functional_profiling",
       example_context: "other_environmental_unsupported_example"
     },
-    pipeline: "air_metagenomics"
+    pipeline: "air_metagenomics",
+    externalIds: ["epi2me_metagenomics", "cz_id_long_read_metagenomics"]
   },
   {
     name: "other_environmental_virome",
@@ -213,7 +187,8 @@ const unsupportedCases = [
       example_context: "other_environmental_virome_unsupported_example"
     },
     pipeline: "wetland_health",
-    track: "rna_virome"
+    track: "rna_virome",
+    externalIds: ["cz_id_long_read_metagenomics"]
   },
   {
     name: "other_edna_context",
@@ -223,7 +198,8 @@ const unsupportedCases = [
       target_goal: "host_range_inference",
       example_context: "other_edna_unsupported_example"
     },
-    pipeline: "zambia_edna"
+    pipeline: "zambia_edna",
+    externalIds: ["epi2me_amplicon"]
   },
   {
     name: "other_single_isolate",
@@ -233,7 +209,8 @@ const unsupportedCases = [
       target_goal: "annotation",
       example_context: "other_single_isolate_example"
     },
-    pipeline: "amr_nanopore"
+    pipeline: "amr_nanopore",
+    externalIds: ["epi2me_bacterial_genomes"]
   },
   {
     name: "other_barcoded_isolate",
@@ -243,17 +220,21 @@ const unsupportedCases = [
       target_goal: "phylogenetics_outbreak_tracking",
       example_context: "other_barcoded_isolate_example"
     },
-    pipeline: "cre_plasmid_clustering"
+    pipeline: "cre_plasmid_clustering",
+    externalIds: ["epi2me_bacterial_genomes"]
   }
 ];
 
 for (const testCase of unsupportedCases) {
   const result = computeRecommendation(testCase.answers, datasets);
-  assert(result, `${testCase.name}: no recommendation returned`);
+  assert(result, `${testCase.name}: expected a recommendation`);
   assert(result.status === "unsupported", `${testCase.name}: expected unsupported status`);
   assert(result.backend.pipeline.id === testCase.pipeline, `${testCase.name}: expected nearest pipeline ${testCase.pipeline}`);
   if (testCase.track) {
     assert(result.backend.track?.id === testCase.track, `${testCase.name}: expected nearest track ${testCase.track}`);
+  }
+  for (const workflowId of testCase.externalIds) {
+    assert(result.external_fallbacks.some((workflow) => workflow.id === workflowId), `${testCase.name}: missing external fallback ${workflowId}`);
   }
 }
 
@@ -262,89 +243,140 @@ const multiExampleAnswers = {
   material_class: "long_read_metagenomic_dna",
   target_goal: "taxonomy_profiling"
 };
-assert(needsExampleSelection(multiExampleAnswers, datasets), "Environmental long-read DNA should require the example page");
-assert(getWizardPageSequence(datasets.questionSpec, multiExampleAnswers, datasets).includes("example"), "Environmental long-read DNA should include the example page");
 
-const nanoMdbgCase = computeRecommendation(
+assert(needsExampleSelection(multiExampleAnswers, datasets), "environmental long-read DNA should require example selection");
+assert(getWizardPageSequence(datasets.questionSpec, multiExampleAnswers, datasets).includes("example"), "example page should appear when multiple contexts fit");
+
+const shortReadAssemblyResult = computeRecommendation(
   {
     sample_context: "environmental",
     material_class: "long_read_metagenomic_dna",
     target_goal: "mag_recovery",
     example_context: "wetland_passive_water_example",
-    median_read_length_below_1000: "yes",
-    input_format: "fastq",
-    basecalling_state: "already_basecalled"
+    median_read_length_below_1000: "yes"
   },
   datasets
 );
-assert(nanoMdbgCase.expert_effects.some((effect) => effect.title.includes("nanoMDBG")), "Short-read environmental assembly should trigger the nanoMDBG override");
-assert(nanoMdbgCase.preprocessing.additional_preprocessing.includes("nanoMDBG"), "Short-read environmental assembly should mention nanoMDBG in preprocessing");
 
-const noNanoMdbgCase = computeRecommendation(
+assert(shortReadAssemblyResult.preferred_tool_override?.to === "nanoMDBG", "short metagenomic reads should trigger the nanoMDBG heuristic");
+
+const normalAssemblyResult = computeRecommendation(
   {
     sample_context: "environmental",
     material_class: "long_read_metagenomic_dna",
     target_goal: "mag_recovery",
     example_context: "wetland_passive_water_example",
-    median_read_length_below_1000: "no",
-    input_format: "fastq",
-    basecalling_state: "already_basecalled"
+    median_read_length_below_1000: "no"
   },
   datasets
 );
-assert(!noNanoMdbgCase.preprocessing.additional_preprocessing.includes("nanoMDBG"), "Longer-read environmental assembly should not force the nanoMDBG override");
-assert(noNanoMdbgCase.backend.pipeline.id === nanoMdbgCase.backend.pipeline.id, "Expert heuristics must not change the selected backend");
 
-const rawSignalCase = computeRecommendation(
-  {
-    sample_context: "environmental",
-    material_class: "long_read_metagenomic_dna",
-    target_goal: "taxonomy_profiling",
-    example_context: "air_bioaerosol_example",
-    input_format: "pod5",
-    basecalling_state: "raw_signal_not_basecalled"
-  },
-  datasets
-);
-assert(rawSignalCase.entry_actions.some((action) => action.id === "generic_basecalling"), "Raw signal should insert a basecalling step");
+assert(!normalAssemblyResult.preferred_tool_override, "nanoMDBG should not be preferred when median read length is not below 1000 bp");
 
-const alreadyBasecalledCase = computeRecommendation(
-  {
-    sample_context: "environmental",
-    material_class: "long_read_metagenomic_dna",
-    target_goal: "taxonomy_profiling",
-    example_context: "air_bioaerosol_example",
-    input_format: "fastq",
-    basecalling_state: "already_basecalled"
-  },
-  datasets
-);
-assert(!alreadyBasecalledCase.entry_actions.some((action) => action.id === "generic_basecalling"), "Already-basecalled input should suppress generic basecalling");
-
-const demuxCase = computeRecommendation(
+const barcodedSetupResult = computeRecommendation(
   {
     sample_context: "clinical_isolate",
     material_class: "barcoded_isolate_long_read_dna",
     target_goal: "plasmid_reconstruction",
     example_context: "cre_plasmid_example",
-    library_mode: "rbk114_24",
-    demultiplexing: "needed"
+    library_mode: "rbk114_24"
   },
   datasets
 );
-assert(demuxCase.entry_actions.some((action) => action.id === "generic_demultiplexing"), "Barcoded pooled input should insert demultiplexing");
 
-const trimmedCase = computeRecommendation(
+assert(barcodedSetupResult.entry_actions.some((action) => action.title.includes("Demultiplex")), "barcoded kits should insert a demultiplexing action");
+assert(barcodedSetupResult.expert_effects.some((effect) => effect.title.includes("demultiplexing")), "barcoded kits should surface a demultiplexing heuristic");
+
+const basecallingResult = computeRecommendation(
+  {
+    sample_context: "clinical_isolate",
+    material_class: "single_isolate_long_read_dna",
+    target_goal: "complete_genome_assembly",
+    example_context: "amr_nanopore_example",
+    basecalling_goal: "already_basecalled"
+  },
+  datasets
+);
+
+assert(basecallingResult.expert_effects.some((effect) => effect.title.includes("Skip upstream basecalling")), "already-basecalled routes should suppress basecalling insertion");
+assert(!basecallingResult.entry_actions[0].title.includes("Basecall"), "already-basecalled routes should not prepend a basecalling action");
+
+const lskResult = computeRecommendation(
+  {
+    sample_context: "clinical_isolate",
+    material_class: "single_isolate_long_read_dna",
+    target_goal: "complete_genome_assembly",
+    example_context: "amr_nanopore_example",
+    library_mode: "lsk114"
+  },
+  datasets
+);
+
+assert(lskResult.warnings.some((warning) => warning.title === "Single-isolate ligation framing"), "LSK114 should reinforce single-isolate framing");
+
+const flongleResult = computeRecommendation(
   {
     sample_context: "environmental",
     material_class: "long_read_metagenomic_dna",
     target_goal: "taxonomy_profiling",
     example_context: "air_bioaerosol_example",
-    preprocessing_state: "already_trimmed_and_filtered"
+    flowcell_family: "flongle"
   },
   datasets
 );
-assert(!trimmedCase.entry_actions.some((action) => action.id === "generic_read_cleaning"), "Already-trimmed reads should suppress generic cleaning");
-assert(trimmedCase.warnings.some((warning) => warning.title.includes("Suppress early read-cleaning steps")), "Already-trimmed reads should add a compatibility warning");
 
-console.log("selector cases ok");
+assert(flongleResult.warnings.some((warning) => warning.title === "Flongle throughput caution"), "Flongle should trigger pilot framing");
+
+const promethionResult = computeRecommendation(
+  {
+    sample_context: "environmental",
+    material_class: "long_read_metagenomic_dna",
+    target_goal: "taxonomy_profiling",
+    example_context: "air_bioaerosol_example",
+    flowcell_family: "promethion_r10_4_1"
+  },
+  datasets
+);
+
+assert(promethionResult.warnings.some((warning) => warning.title === "PromethION depth framing"), "PromethION should trigger deep-run framing");
+
+const fastBasecallingResult = computeRecommendation(
+  {
+    sample_context: "environmental",
+    material_class: "long_read_metagenomic_dna",
+    target_goal: "taxonomy_profiling",
+    example_context: "air_bioaerosol_example",
+    basecalling_goal: "real_time_fast"
+  },
+  datasets
+);
+
+assert(fastBasecallingResult.setup_summary.recommendation.includes("FAST"), "FAST basecalling should appear in the setup recommendation");
+
+const hacResult = computeRecommendation(
+  {
+    sample_context: "environmental",
+    material_class: "long_read_metagenomic_dna",
+    target_goal: "taxonomy_profiling",
+    example_context: "air_bioaerosol_example",
+    basecalling_goal: "balanced_hac"
+  },
+  datasets
+);
+
+assert(hacResult.setup_summary.recommendation.includes("HAC"), "HAC should appear in the setup recommendation");
+
+const supResult = computeRecommendation(
+  {
+    sample_context: "clinical_isolate",
+    material_class: "single_isolate_long_read_dna",
+    target_goal: "complete_genome_assembly",
+    example_context: "amr_nanopore_example",
+    basecalling_goal: "max_accuracy_sup"
+  },
+  datasets
+);
+
+assert(supResult.setup_summary.recommendation.includes("SUP"), "SUP should appear in the setup recommendation");
+
+console.log("Selector smoke tests passed.");

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GenomicsForOneHealth Pipeline Selector</title>
   <meta name="description"
-    content="Wizard-style pipeline selector for the GenomicsForOneHealth collection. Start with sample context, then material, then target, then refine the recommendation with expert tuning and published example backends.">
+    content="Sparse route wizard plus Nanopore setup advisor for the GenomicsForOneHealth collection. Start with sample, material, and target, then refine kit, flow cell, basecalling, and fallback environment.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -24,19 +24,26 @@
         <p class="eyebrow">GenomicsForOneHealth</p>
         <h1>Pipeline Selector</h1>
         <p class="hero-text">
-          Start with the sample, then choose the material class, then the main analytical target. Published repository
-          workflows appear later as example backends, and expert settings are applied afterward to refine
-          preprocessing, tool emphasis, and entry guidance without changing the selected backend.
+          Start with the sample, then the material, then the main target. Repository workflows only appear after the
+          route is narrowed, and the Nanopore setup advisor is handled as a second phase rather than mixed into the
+          first decision.
+        </p>
+        <p class="hero-link-row">
+          <a href="nanopore-guide.html" target="_blank" rel="noreferrer">Open the compact Nanopore guide</a>
         </p>
       </div>
       <div class="hero-meta">
         <div class="meta-card">
-          <p class="meta-label">Flow</p>
-          <p class="meta-value">Sample -> Material -> Target -> Example -> Expert -> Results</p>
+          <p class="meta-label">Route</p>
+          <p class="meta-value">Sample -> Material -> Target -> Example</p>
         </div>
         <div class="meta-card">
-          <p class="meta-label">Mode</p>
-          <p class="meta-value">Wizard, not a dense form</p>
+          <p class="meta-label">Setup</p>
+          <p class="meta-value">Setup -> Kit -> Flow cell -> Basecalling -> Analysis -> Conditions</p>
+        </div>
+        <div class="meta-card">
+          <p class="meta-label">Output</p>
+          <p class="meta-value">Generalized route + published backend + Nanopore setup recommendation</p>
         </div>
       </div>
     </header>
@@ -53,8 +60,8 @@
 
         <div class="panel-note">
           <p>
-            The first three pages stay generic and do not expose repository workflow names. Published study examples
-            only appear once the route has been narrowed enough to make that choice meaningful.
+            Keep the first phase generic: sample, material, and target. Published examples come later, and the
+            Nanopore pages only refine setup, throughput, and fallback environments.
           </p>
         </div>
 

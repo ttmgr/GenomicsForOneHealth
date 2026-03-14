@@ -1,21 +1,28 @@
 # Selector Data Guide
 
-The selector now uses a wizard model with three layers:
+The selector now uses a two-layer wizard:
 
-1. generic routing pages
-2. published example mapping
-3. post-route expert heuristics
+1. sparse route pages
+2. Nanopore setup advisor
+
+Published examples and fallback workflows are attached after the route is narrowed.
 
 ## Files
 
 - `questions.json`
-  Defines the wizard pages and answer schema. This is the main UI contract for the selector. Each page entry describes the page id, title, summary, page type, and the questions rendered on that page.
+  Defines the wizard pages and answer schema. This is the main UI contract for the selector. It now includes route pages, setup-advisor pages, a conditions page, and the results page.
 
 - `examples.json`
   Maps generalized routes to published repository backends. Exact example entries resolve directly to a pipeline and optional track. Unsupported example entries resolve to the nearest published backend while preserving an explicit unsupported label.
 
 - `expert_rules.json`
-  Stores post-route heuristic adjustments. These rules may insert or skip steps, add warnings, or swap preferred tools inside the selected backend. They must never reroute to another backend.
+  Stores post-route heuristic adjustments. These rules may add warnings or swap preferred tools inside the selected backend. They must never reroute to another backend.
+
+- `nanopore_profiles.json`
+  Stores the setup-advisor defaults and compact card content for kits, flow cells, basecalling profiles, and route-specific Nanopore defaults.
+
+- `external_workflows.json`
+  Stores the modeled fallback workflows used in the results page when the selector should also surface EPI2ME Labs or CZ ID options.
 
 - `pipelines.json`
   Keeps the published workflow metadata: titles, docs, supported inputs, tracks, and routing-related fields that are still useful outside the wizard.
@@ -30,13 +37,15 @@ The selector now uses a wizard model with three layers:
 1. Add or update the workflow entry in `pipelines.json`.
 2. Add a matching action sheet in `playbooks.json`.
 3. Add one or more example routes in `examples.json`.
-4. Add expert rules only if the new backend needs route-specific heuristic tuning that does not change backend selection.
+4. Add or update `nanopore_profiles.json` only if the new route needs different setup defaults.
+5. Add expert rules only if the new backend needs route-specific heuristic tuning that does not change backend selection.
 
 ### Add a new wizard question
 
 1. Add it to the correct page in `questions.json`.
 2. If it is used by expert rules, update `expert_rules.json`.
-3. If it is referenced by conditional visibility, ensure the dependency points to an earlier question.
+3. If it changes route defaults or setup cards, update `nanopore_profiles.json`.
+4. If it is referenced by conditional visibility, ensure the dependency points to an earlier question.
 
 ### Add a new example
 
@@ -73,6 +82,12 @@ Unsupported examples must include:
 - Expert rules refine the selected backend; they do not choose a different backend.
 - Allowed effects are `tool_swap`, `step_insert`, `step_skip`, `warning_only`, and `preprocessing_override`.
 - Do not add any field that reroutes to a different `pipeline_id` or `track_id`.
+
+### External workflow policy
+
+- External workflows are secondary references, not replacements for the internal backends.
+- Use `route_compatibility` to distinguish exact-route alternatives from unsupported-route fallbacks.
+- Do not overclaim an external workflow as an exact replacement when it is only directionally related.
 
 ## Review Expectations
 
