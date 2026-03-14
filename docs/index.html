@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GenomicsForOneHealth Pipeline Selector</title>
   <meta name="description"
-    content="Sparse route wizard plus Nanopore setup advisor for the GenomicsForOneHealth collection. Start with sample, material, and target, then refine kit, flow cell, basecalling, and fallback environment.">
+    content="Find the right Nanopore sequencing workflow from the GenomicsForOneHealth collection. Describe your samples and analysis goals, then get a matched published workflow and setup recommendation.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -22,28 +22,27 @@
     <header class="hero">
       <div class="hero-copy">
         <p class="eyebrow">GenomicsForOneHealth</p>
-        <h1>Pipeline Selector</h1>
+        <h1>Find the right workflow</h1>
         <p class="hero-text">
-          Start with the sample, then the material, then the main target. Repository workflows only appear after the
-          route is narrowed, and the Nanopore setup advisor is handled as a second phase rather than mixed into the
-          first decision.
+          Describe your samples and what you want to analyse. The selector will match you to a published workflow from
+          this repository, suggest a Nanopore sequencing setup, and point you to the documentation you need to get started.
         </p>
         <p class="hero-link-row">
-          <a href="nanopore-guide.html" target="_blank" rel="noreferrer">Open the compact Nanopore guide</a>
+          <a href="nanopore-guide.html" target="_blank" rel="noreferrer">Nanopore setup guide</a>
         </p>
       </div>
       <div class="hero-meta">
         <div class="meta-card">
-          <p class="meta-label">Route</p>
-          <p class="meta-value">Sample -> Material -> Target -> Example</p>
+          <p class="meta-label">Step 1</p>
+          <p class="meta-value">Describe your sample, material, and analysis goal</p>
         </div>
         <div class="meta-card">
-          <p class="meta-label">Setup</p>
-          <p class="meta-value">Setup -> Kit -> Flow cell -> Basecalling -> Analysis -> Conditions</p>
+          <p class="meta-label">Step 2</p>
+          <p class="meta-value">Refine your Nanopore setup (kit, flow cell, basecalling)</p>
         </div>
         <div class="meta-card">
-          <p class="meta-label">Output</p>
-          <p class="meta-value">Generalized route + published backend + Nanopore setup recommendation</p>
+          <p class="meta-label">Result</p>
+          <p class="meta-value">Matched workflow + sequencing setup + next steps to run it</p>
         </div>
       </div>
     </header>
@@ -52,16 +51,16 @@
       <section class="wizard-panel">
         <div class="panel-head">
           <div>
-            <p class="panel-kicker">Decision Aid</p>
-            <h2>Route your sequencing case</h2>
+            <p class="panel-kicker">Workflow finder</p>
+            <h2>Describe your sequencing project</h2>
           </div>
-          <button id="reset-button" class="ghost-button" type="button">Reset</button>
+          <button id="reset-button" class="ghost-button" type="button">Start over</button>
         </div>
 
         <div class="panel-note">
           <p>
-            Keep the first phase generic: sample, material, and target. Published examples come later, and the
-            Nanopore pages only refine setup, throughput, and fallback environments.
+            Answer three quick questions about your samples first. The selector will then show you the closest
+            published workflow and help you choose a Nanopore sequencing setup.
           </p>
         </div>
 

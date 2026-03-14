@@ -4,7 +4,7 @@
       "id": "sample",
       "page_type": "route",
       "title": "Sample",
-      "summary": "Start with the broad sample context. Published repository workflows appear later as example backends rather than at the start of the wizard.",
+      "summary": "What kind of samples are you sequencing? This is the first step toward finding the right workflow.",
       "questions": [
         {
           "id": "sample_context",
@@ -41,7 +41,7 @@
       "id": "material",
       "page_type": "route",
       "title": "Material",
-      "summary": "Describe the biological material or assay class, not the kit. This keeps the early routing generic and reduces repo-specific bias.",
+      "summary": "What kind of sequencing data are you working with? This helps narrow down which workflows apply.",
       "questions": [
         {
           "id": "material_class",
@@ -133,7 +133,7 @@
       "id": "target",
       "page_type": "route",
       "title": "Target",
-      "summary": "Choose the main analytical target or deliverable. This is still a generic research question page, not an example-backend page.",
+      "summary": "What do you want to get out of this analysis? Pick the goal that best describes your project.",
       "questions": [
         {
           "id": "target_goal",
@@ -469,7 +469,7 @@
       "id": "example",
       "page_type": "conditional_route",
       "title": "Published Example Context",
-      "summary": "Choose the published study context that is closest to your case. Unsupported contexts remain available and map to the nearest published example backend.",
+      "summary": "Several published workflows match your description. Pick the one closest to your project. If none is an exact match, you will still see the nearest alternative.",
       "questions": [
         {
           "id": "example_context",
@@ -484,14 +484,14 @@
       "id": "setup",
       "page_type": "info",
       "title": "Nanopore Setup Advisor",
-      "summary": "Your route is now defined. Next, refine the sequencing setup and analysis environment without changing the selected published backend.",
+      "summary": "Your workflow is matched. The next pages help you choose the right Nanopore sequencing setup for your project.",
       "questions": []
     },
     {
       "id": "kit",
       "page_type": "setup",
       "title": "Library Prep Kit",
-      "summary": "Choose the closest library prep kit or run mode. This mainly changes demultiplexing, trimming, throughput, and how the result frames the early preprocessing steps.",
+      "summary": "Which library preparation kit are you using (or planning to use)? This affects demultiplexing, adapter trimming, and throughput expectations.",
       "questions": [
         {
           "id": "library_mode",
@@ -618,7 +618,7 @@
       "id": "flowcell",
       "page_type": "setup",
       "title": "Flow Cell",
-      "summary": "Choose the flow cell family. This tunes throughput framing, compatibility notes, and where the selector suggests MinION, PromethION, or RNA-specific paths.",
+      "summary": "Which flow cell are you running on? This determines throughput expectations and compatibility notes.",
       "questions": [
         {
           "id": "flowcell_family",
@@ -680,7 +680,7 @@
       "id": "basecalling",
       "page_type": "setup",
       "title": "Basecalling",
-      "summary": "Choose the basecalling intent. This determines whether the selector suggests live monitoring, balanced production settings, maximum-accuracy consensus, or no upstream basecalling step at all.",
+      "summary": "How do you want to basecall? Choose between speed (FAST), balanced accuracy (HAC), maximum accuracy (SUP), or skip this if your reads are already basecalled.",
       "questions": [
         {
           "id": "basecalling_goal",
@@ -737,7 +737,7 @@
       "id": "analysis",
       "page_type": "setup",
       "title": "Analysis Environment",
-      "summary": "Choose whether the recommendation should stay fully inside the group repository or also surface ONT-curated and cloud-based fallback environments.",
+      "summary": "Where do you want to run the analysis? Use our repository workflows, ONT's EPI2ME platform, or a cloud service like CZ ID.",
       "questions": [
         {
           "id": "analysis_environment",
@@ -806,7 +806,7 @@
       "id": "conditions",
       "page_type": "conditions",
       "title": "Conditions",
-      "summary": "Only a few route-specific conditions appear here. Use them to adjust warnings, preprocessing emphasis, and a small number of heuristics such as short-read metagenomic assembly.",
+      "summary": "Optional fine-tuning based on your specific situation. These toggles adjust warnings and setup recommendations. Skip any you are unsure about.",
       "questions": [
         {
           "id": "median_read_length_below_1000",
@@ -1206,7 +1206,7 @@
       "id": "results",
       "page_type": "results",
       "title": "Results",
-      "summary": "Review the generalized route, the selected published backend, and the Nanopore setup recommendation.",
+      "summary": "Here is your matched workflow, Nanopore setup recommendation, and everything you need to get started.",
       "questions": []
     }
   ]
