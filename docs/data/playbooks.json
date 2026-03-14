@@ -117,7 +117,7 @@
     "pipeline_id": "wetland_health",
     "track_id": null,
     "recommended_when": [
-      "Passive wetland water studies where you still need to choose among the DNA metagenomics, RNA virome, 12S metabarcoding, or AIV branches.",
+      "Passive wetland water studies where you still need to choose among the DNA metagenomics, RNA virome, or 12S metabarcoding branches.",
       "Basecalled FASTQ projects tied to the published wetland study context."
     ],
     "avoid_when": [
@@ -149,7 +149,7 @@
         "label": "Launch the wetland wrapper",
         "command": "bash run_pipeline.sh",
         "source_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md",
-        "notes": "Recommended documented entry point for choosing among the four wetland branches."
+        "notes": "Recommended documented entry point for choosing among the three wetland branches."
       }
     ],
     "preprocessing_defaults": {
@@ -167,7 +167,7 @@
       },
       {
         "name": "Branch-specific tooling",
-        "note": "Additional tools vary by DNA metagenomics, RNA virome, 12S amplicon, or AIV branch."
+        "note": "Additional tools vary by DNA metagenomics, RNA virome, or 12S amplicon branch."
       }
     ],
     "required_databases": [
@@ -200,7 +200,7 @@
       "Cases where microbial community profiling, pathogen detection, and assembly are the primary goals."
     ],
     "avoid_when": [
-      "Untargeted RNA virome discovery, 12S amplicons, or dedicated AIV consensus work."
+      "Untargeted RNA virome discovery or 12S amplicons."
     ],
     "required_inputs": [
       "Basecalled FASTQ files for wetland DNA metagenomics.",
@@ -282,7 +282,6 @@
       "RNA-focused wetland analyses where the goal is viral community characterization rather than targeted influenza consensus."
     ],
     "avoid_when": [
-      "Dedicated AIV whole-genome reconstruction.",
       "DNA metagenomics or 12S metabarcoding branches."
     ],
     "required_inputs": [
@@ -418,80 +417,6 @@
     ],
     "runtime_notes": [
       "Use Zambia eDNA instead if your water metabarcoding study is not tied to the wetland passive sampler system."
-    ],
-    "evidence_links": [
-      {
-        "label": "Wetland Health README",
-        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
-      }
-    ]
-  },
-  {
-    "pipeline_id": "wetland_health",
-    "track_id": "aiv_wgs",
-    "recommended_when": [
-      "Wetland-derived AIV-positive RNA samples that belong to the passive water surveillance study.",
-      "Segment-level AIV consensus reconstruction inside the wetland study."
-    ],
-    "avoid_when": [
-      "Standalone AIV chemistry benchmarking outside the wetland study.",
-      "Untargeted RNA virome discovery."
-    ],
-    "required_inputs": [
-      "Basecalled AIV wetland reads and the reference set required by the branch.",
-      "Wetland study context for sample identity and site interpretation."
-    ],
-    "entry_actions": [
-      {
-        "id": "wetland-aiv-wrapper",
-        "title": "Launch the wetland wrapper and choose the AIV branch",
-        "summary": "Use workflow option 3 to enter the wetland AIV whole-genome branch.",
-        "entry_file": "Environmental_Metagenomics/Wetland_Health/run_pipeline.sh",
-        "doc_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
-      },
-      {
-        "id": "wetland-aiv-refs",
-        "title": "Confirm the AIV study-specific reference inputs",
-        "summary": "Use the wetland documentation to check the sample accession context and the AIV-specific reference workflow assumptions.",
-        "entry_file": "Environmental_Metagenomics/Wetland_Health/README.md",
-        "doc_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
-      }
-    ],
-    "curated_commands": [
-      {
-        "label": "Launch the wetland wrapper",
-        "command": "bash run_pipeline.sh",
-        "source_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md",
-        "notes": "Choose the AIV workflow inside the wrapper."
-      }
-    ],
-    "preprocessing_defaults": {
-      "input_expectation": "Basecalled reads for wetland AIV reconstruction.",
-      "basecalling": "The published wetland AIV branch assumes basecalled reads at entry.",
-      "demultiplexing": "Demultiplex if barcode pooling remains unresolved.",
-      "adapter_trimming": "Use the branch-specific read cleaning before minimap2 mapping.",
-      "length_quality_filtering": "NanoFilt with Q >= 8 and minimum length 150 bp.",
-      "additional_preprocessing": "Map to segment references, choose the best reference by idxstats, then call consensus with BCFtools."
-    },
-    "required_tools": [
-      {
-        "name": "Minimap2, Samtools, BCFtools",
-        "note": "Core AIV mapping and consensus stack."
-      }
-    ],
-    "required_databases": [
-      {
-        "name": "AIV reference sequences",
-        "note": "Required for segment-aware mapping and consensus generation."
-      }
-    ],
-    "expected_outputs": [
-      "Mapped wetland AIV reads",
-      "Segment-level consensus sequences",
-      "AIV interpretation outputs for wetland surveillance"
-    ],
-    "runtime_notes": [
-      "Use the dedicated Avian Influenza Profiling pipeline if your project is primarily an AIV chemistry or protocol benchmark rather than a wetland branch."
     ],
     "evidence_links": [
       {
@@ -946,313 +871,6 @@
       {
         "label": "AMR host association README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/Nanopore-AMR-Host-Association/README.md"
-      }
-    ]
-  },
-  {
-    "pipeline_id": "avian_influenza_profiling",
-    "track_id": null,
-    "recommended_when": [
-      "Dedicated avian influenza sequencing projects needing basecalling, consensus, subtyping, or phylogenetic interpretation.",
-      "Direct RNA002, direct RNA004, or cDNA-based AIV sequencing workflows."
-    ],
-    "avoid_when": [
-      "Wetland multi-omics cases where the AIV branch is only one track inside the wetland study.",
-      "Generic viral metagenomics without an influenza-specific reference workflow."
-    ],
-    "required_inputs": [
-      "Raw POD5 or basecalled FASTQ plus an AIV reference FASTA when using the reference-based branch.",
-      "Knowledge of the sequencing chemistry: RNA002, RNA004, or cDNA."
-    ],
-    "entry_actions": [
-      {
-        "id": "aiv-wrapper",
-        "title": "Use the interactive wrapper to select the chemistry-specific branch",
-        "summary": "The wrapper helps route you to the relevant direct RNA, cDNA, or consensus-building script set.",
-        "entry_file": "Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/run_pipeline.sh",
-        "doc_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md"
-      },
-      {
-        "id": "aiv-chemistry",
-        "title": "Pick the correct basecalling script for your chemistry",
-        "summary": "Use the README tables to choose between RNA002, RNA004, cDNA, or RNA modification-aware entry scripts.",
-        "entry_file": "Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md",
-        "doc_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md"
-      },
-      {
-        "id": "aiv-consensus",
-        "title": "Choose reference-based consensus, de novo assembly, or IRMA",
-        "summary": "Select the documented downstream branch that matches your analysis question after basecalling.",
-        "entry_file": "Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md",
-        "doc_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md"
-      }
-    ],
-    "curated_commands": [
-      {
-        "label": "Launch the AIV wrapper",
-        "command": "bash run_pipeline.sh",
-        "source_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md",
-        "notes": "Recommended documented entry point."
-      },
-      {
-        "label": "Basecall Direct RNA004 data",
-        "when": {
-          "library_mode": [
-            "direct_rna004"
-          ],
-          "input_format": [
-            "pod5",
-            "fast5"
-          ]
-        },
-        "command": "bash base_calling_RNA004.sh /path/to/pod5 /path/to/output.fastq",
-        "source_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md",
-        "notes": "Documented chemistry-specific basecalling example."
-      },
-      {
-        "label": "Basecall cDNA data",
-        "when": {
-          "library_mode": [
-            "cdna_rbk"
-          ],
-          "input_format": [
-            "pod5",
-            "fast5"
-          ]
-        },
-        "command": "bash base_calling_cDNA.sh /path/to/pod5 /path/to/output.fastq",
-        "source_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md",
-        "notes": "Documented cDNA basecalling example."
-      }
-    ],
-    "preprocessing_defaults": {
-      "input_expectation": "Raw POD5 or basecalled FASTQ for AIV-focused sequencing.",
-      "basecalling": "Use the chemistry-specific Dorado scripts for RNA002, RNA004, or cDNA entry.",
-      "demultiplexing": "Demultiplex only if your AIV run still contains pooled samples.",
-      "adapter_trimming": "Follow the chemistry-specific cleaning step before de novo or reference-based analysis.",
-      "length_quality_filtering": "Use the chemistry-specific workflow defaults described in the README.",
-      "additional_preprocessing": "Choose among de novo assembly, BCFtools reference-based consensus, or IRMA after basecalling."
-    },
-    "required_tools": [
-      {
-        "name": "Dorado",
-        "note": "Basecalling across RNA002, RNA004, and cDNA branches."
-      },
-      {
-        "name": "Minimap2, Samtools, BCFtools",
-        "note": "Reference-based consensus stack."
-      },
-      {
-        "name": "Flye, Racon, IRMA",
-        "note": "De novo and influenza-specific assembly options."
-      }
-    ],
-    "required_databases": [
-      {
-        "name": "AIV reference FASTA",
-        "note": "Required for reference-based consensus routes."
-      }
-    ],
-    "expected_outputs": [
-      "Chemistry-specific basecalled reads",
-      "Consensus sequences or de novo assemblies",
-      "Subtype and phylogeny-ready outputs"
-    ],
-    "runtime_notes": [
-      "Choose the chemistry branch first. The downstream scripts differ substantially between direct RNA and cDNA entry."
-    ],
-    "evidence_links": [
-      {
-        "label": "AIV profiling README",
-        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md"
-      }
-    ]
-  },
-  {
-    "pipeline_id": "from_feather_to_fur",
-    "track_id": null,
-    "recommended_when": [
-      "Cross-host AIV comparison sets where the goal is variant calling, frequency filtering, and spillover/spillback interpretation.",
-      "Projects needing consensus FASTA generation for FluSurver review."
-    ],
-    "avoid_when": [
-      "General AIV consensus generation without a cross-host comparison objective.",
-      "Non-influenza virology workflows."
-    ],
-    "required_inputs": [
-      "FASTQ and reference genome for variant calling, or VCF plus reference for downstream filtering and consensus.",
-      "Animal and inoculum VCFs for differential frequency filtering."
-    ],
-    "entry_actions": [
-      {
-        "id": "feather-wrapper",
-        "title": "Use the interactive wrapper for the local variant workflow",
-        "summary": "The wrapper guides you through variant calling, filtering, and FASTA generation for manual FluSurver review.",
-        "entry_file": "Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/run_pipeline.sh",
-        "doc_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md"
-      },
-      {
-        "id": "feather-variant",
-        "title": "Run the variant-calling step on the animal sample",
-        "summary": "Use the documented script to filter FASTQ, map reads, and call variants before comparative filtering.",
-        "entry_file": "Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/variant_calling.sh",
-        "doc_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md"
-      },
-      {
-        "id": "feather-flusurver",
-        "title": "Generate consensus FASTA and finish the manual FluSurver review",
-        "summary": "The documented workflow still depends on FluSurver review and manual result merging.",
-        "entry_file": "Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md",
-        "doc_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md"
-      }
-    ],
-    "curated_commands": [
-      {
-        "label": "Launch the Feather-to-Fur wrapper",
-        "command": "bash run_pipeline.sh",
-        "source_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md",
-        "notes": "Recommended documented entry point."
-      },
-      {
-        "label": "Run the variant-calling step",
-        "command": "bash variant_calling.sh sample.fastq.gz reference.fasta output_directory",
-        "source_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md",
-        "notes": "Documented example for the initial alignment and variant-calling stage."
-      }
-    ],
-    "preprocessing_defaults": {
-      "input_expectation": "FASTQ or VCF plus reference, depending on the stage at which you enter.",
-      "basecalling": "This workflow assumes basecalled reads or existing variant files rather than raw-signal entry.",
-      "demultiplexing": "Usually not central once per-sample FASTQ or VCF files already exist.",
-      "adapter_trimming": "Handled inside the initial variant-calling branch when entering from FASTQ.",
-      "length_quality_filtering": "FASTQ filtering happens before minimap2 and Clair3 in the initial step.",
-      "additional_preprocessing": "Compare animal and inoculum VCFs, then generate consensus FASTA for FluSurver."
-    },
-    "required_tools": [
-      {
-        "name": "Minimap2, Clair3, BCFtools",
-        "note": "Core variant-calling and consensus stack."
-      },
-      {
-        "name": "FluSurver",
-        "note": "Manual annotation step outside the repo but explicitly required by the published workflow."
-      }
-    ],
-    "required_databases": [
-      {
-        "name": "Reference FASTA",
-        "note": "Needed for mapping and consensus generation."
-      }
-    ],
-    "expected_outputs": [
-      "Annotated VCFs",
-      "Filtered cross-host variant tables",
-      "Consensus FASTA for FluSurver and merged annotation output"
-    ],
-    "runtime_notes": [
-      "The workflow includes a manual FluSurver step and is therefore not fully end-to-end automated."
-    ],
-    "evidence_links": [
-      {
-        "label": "From Feather to Fur README",
-        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md"
-      }
-    ]
-  },
-  {
-    "pipeline_id": "squiggle4viability",
-    "track_id": null,
-    "recommended_when": [
-      "Raw-signal viability inference from POD5 or FAST5 using the published AI models.",
-      "Projects that need either signal-level inference or the hybrid metagenomics branch tied to viability analysis."
-    ],
-    "avoid_when": [
-      "Standard basecalled metagenomics workflows without a viability question.",
-      "Users who only need taxonomic profiling and not signal-level modeling."
-    ],
-    "required_inputs": [
-      "POD5 or FAST5 signal data for AI inference, plus model weights.",
-      "Optional BAM and downstream files if using the metagenomics analysis branch."
-    ],
-    "entry_actions": [
-      {
-        "id": "squiggle-wrapper",
-        "title": "Start with the interactive wrapper",
-        "summary": "The wrapper lets you choose between AI inference on raw signal and the extended metagenomics workflow.",
-        "entry_file": "Viability_Assessment/Squiggle4Viability/run_pipeline.sh",
-        "doc_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Viability_Assessment/Squiggle4Viability/README.md"
-      },
-      {
-        "id": "squiggle-inference",
-        "title": "Choose fixed-length or variable-length inference",
-        "summary": "Use the direct AI scripts if you want to bypass the wrapper and run model inference explicitly.",
-        "entry_file": "Viability_Assessment/Squiggle4Viability/AI_scripts/inference_variable_length.py",
-        "doc_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Viability_Assessment/Squiggle4Viability/README.md"
-      },
-      {
-        "id": "squiggle-metagenomics",
-        "title": "Use the metagenomics branch only if you need read- or genus-level downstream interpretation",
-        "summary": "The README documents separate metagenomics helper scripts beyond the core signal-level inference pipeline.",
-        "entry_file": "Viability_Assessment/Squiggle4Viability/README.md",
-        "doc_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Viability_Assessment/Squiggle4Viability/README.md"
-      }
-    ],
-    "curated_commands": [
-      {
-        "label": "Launch the Squiggle4Viability wrapper",
-        "command": "bash run_pipeline.sh",
-        "source_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Viability_Assessment/Squiggle4Viability/README.md",
-        "notes": "Recommended documented entry point."
-      },
-      {
-        "label": "Run variable-length inference",
-        "when": {
-          "input_format": [
-            "pod5",
-            "fast5"
-          ]
-        },
-        "command": "python AI_scripts/inference_variable_length.py --model path_to_model_weights --inpath path_to_pod5_folder --outpath path_to_output_folder --model_type ResNet1",
-        "source_url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Viability_Assessment/Squiggle4Viability/README.md",
-        "notes": "Documented example for direct full-length signal inference."
-      }
-    ],
-    "preprocessing_defaults": {
-      "input_expectation": "Raw POD5 or FAST5 signal data.",
-      "basecalling": "Basecalling is not the primary entry point for the core viability inference branch.",
-      "demultiplexing": "Usually not required for direct signal inference.",
-      "adapter_trimming": "Not central for the primary AI inference branch.",
-      "length_quality_filtering": "Signal segmentation and preprocessing replace standard read-level QC in the core model workflow.",
-      "additional_preprocessing": "Choose between chunked or variable-length inference, then optionally continue into the metagenomics helper scripts."
-    },
-    "required_tools": [
-      {
-        "name": "Python AI stack",
-        "note": "Requirements are provided in requirements.txt for the neural network and preprocessing steps."
-      },
-      {
-        "name": "Optional metagenomics helpers",
-        "note": "Additional scripts exist for Dorado, Kraken2, assembly, and genus-specific downstream analysis."
-      }
-    ],
-    "required_databases": [
-      {
-        "name": "Model weights",
-        "note": "Required for inference."
-      }
-    ],
-    "expected_outputs": [
-      "Signal-level predictions",
-      "Model explainability outputs such as CAMs",
-      "Optional downstream metagenomics interpretation files"
-    ],
-    "runtime_notes": [
-      "The AI branch and the metagenomics branch are distinct; only the first is required for core viability inference."
-    ],
-    "evidence_links": [
-      {
-        "label": "Squiggle4Viability README",
-        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Viability_Assessment/Squiggle4Viability/README.md"
       }
     ]
   }
