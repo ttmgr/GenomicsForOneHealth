@@ -1,71 +1,81 @@
 # Selector Data Guide
 
-The selector data model is split so routing logic, operator guidance, and unsupported-case handling can evolve independently.
+The selector now uses a wizard model with three layers:
+
+1. generic routing pages
+2. published example mapping
+3. post-route expert heuristics
 
 ## Files
 
-- `pipelines.json`
-  Routing metadata for each published workflow in the collection. This file now carries the main selector fields such as `sequencing_contexts`, `library_modes`, `analysis_goals`, and `sample_types`. It should stay concise and should not become the main operator manual.
-
 - `questions.json`
-  Ordered question flow and allowed option values. Treat this as the schema for user answers, including conditional visibility and kit-driven autofill defaults.
+  Defines the wizard pages and answer schema. This is the main UI contract for the selector. Each page entry describes the page id, title, summary, page type, and the questions rendered on that page.
+
+- `examples.json`
+  Maps generalized routes to published repository backends. Exact example entries resolve directly to a pipeline and optional track. Unsupported example entries resolve to the nearest published backend while preserving an explicit unsupported label.
+
+- `expert_rules.json`
+  Stores post-route heuristic adjustments. These rules may insert or skip steps, add warnings, or swap preferred tools inside the selected backend. They must never reroute to another backend.
+
+- `pipelines.json`
+  Keeps the published workflow metadata: titles, docs, supported inputs, tracks, and routing-related fields that are still useful outside the wizard.
 
 - `playbooks.json`
-  Action-sheet content for each supported workflow or track. This is where entry actions, curated commands, prerequisites, outputs, and workflow-specific notes belong.
-
-- `presets.json`
-  Published example scenarios grouped by higher-level route. These prefill the selector for researchers who want to start from a concrete documented example.
-
-- `out_of_scope.json`
-  Explicit unsupported or partial-fit rules. Use this file when a workflow is biologically adjacent to the collection but still not truly covered by the published repository.
+  Provides the operator-facing action-sheet content for each backend or track: entry actions, curated commands, preprocessing defaults, prerequisites, outputs, and evidence links.
 
 ## Maintenance Rules
 
-### Add a new pipeline
+### Add a new published backend
 
-1. Add the routing entry to `pipelines.json`.
-2. Add at least one matching playbook to `playbooks.json`.
-3. Add or update presets if the new workflow should appear as a published example of a broader route.
-4. Add an out-of-scope rule only if the new workflow changes an existing unsupported boundary.
+1. Add or update the workflow entry in `pipelines.json`.
+2. Add a matching action sheet in `playbooks.json`.
+3. Add one or more example routes in `examples.json`.
+4. Add expert rules only if the new backend needs route-specific heuristic tuning that does not change backend selection.
 
-### Add a playbook
+### Add a new wizard question
 
-Every playbook must include:
+1. Add it to the correct page in `questions.json`.
+2. If it is used by expert rules, update `expert_rules.json`.
+3. If it is referenced by conditional visibility, ensure the dependency points to an earlier question.
+
+### Add a new example
+
+Every example must include:
+
+- `id`
+- `label`
+- `sample_contexts`
+- `material_classes`
+- `target_goals`
+- `status_class`
+- `route_summary`
+- `selection_help`
+
+Exact examples must include:
 
 - `pipeline_id`
-- `track_id` (`null` for pipeline-level playbooks)
-- `example_badge`
-- `route_summary`
-- `recommended_when`
-- `avoid_when`
-- `required_inputs`
-- `entry_actions`
-- `preprocessing_defaults`
-- `required_tools`
-- `required_databases`
-- `expected_outputs`
-- `runtime_notes`
-- `evidence_links`
+- optional `track_id`
+
+Unsupported examples must include:
+
+- `nearest_pipeline_id`
+- optional `nearest_track_id`
+- `unsupported_reason`
 
 ### Curated command policy
 
 - Only include commands that are already documented in the repository.
 - Every curated command must include a `source_url`.
-- If the repo does not document a reliable copy-ready command, leave `curated_commands` empty and point users to the correct wrapper script or README entry instead.
-- Do not invent local paths, unpublished flags, or machine-specific database locations.
+- If the repo does not document a reliable copy-ready command, leave `curated_commands` empty and point the user to the correct wrapper or README entry instead.
 
-### Unsupported-case policy
+### Expert rule policy
 
-Use `out_of_scope.json` when:
-
-- the user intent is scientifically adjacent to the collection,
-- the repo does not contain a validated exact workflow,
-- and forcing a normal recommendation would overstate support.
-
-Do not use unsupported rules to hide uncertainty that should instead be represented as a low-confidence nearest fit.
+- Expert rules refine the selected backend; they do not choose a different backend.
+- Allowed effects are `tool_swap`, `step_insert`, `step_skip`, `warning_only`, and `preprocessing_override`.
+- Do not add any field that reroutes to a different `pipeline_id` or `track_id`.
 
 ## Review Expectations
 
-- Run `node docs/scripts/validate_selector_data.mjs` after data edits.
-- Run `node docs/scripts/check_selector_cases.mjs` after changing routing or playbooks.
+- Run `node docs/scripts/validate_selector_data.mjs` after editing selector data.
+- Run `node docs/scripts/check_selector_cases.mjs` after changing routing or expert heuristics.
 - Keep `last_reviewed` current in `pipelines.json` when a workflow entry is refreshed.
