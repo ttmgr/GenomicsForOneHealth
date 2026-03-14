@@ -13,6 +13,7 @@
     href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script defer src="selector-engine.js"></script>
   <script defer src="app.js"></script>
 </head>
 
@@ -31,7 +32,7 @@
       <div class="hero-meta">
         <div class="meta-card">
           <p class="meta-label">Version</p>
-          <p class="meta-value">v1 · static Pages app</p>
+          <p class="meta-value">v2 · action sheet</p>
         </div>
         <div class="meta-card">
           <p class="meta-label">Scope</p>
@@ -53,10 +54,12 @@
         <div class="panel-note">
           <p>
             Stage 1 narrows the collection to biologically compatible workflows. Stage 2 refines preprocessing
-            guidance such as basecalling, demultiplexing, and read filtering. Kit names and basecalling tiers are
-            aligned to current Oxford Nanopore terminology where possible.
+            guidance such as basecalling, demultiplexing, and read filtering. The result pane now returns a lab-facing
+            action sheet with documented entry points, prerequisites, and next-step guidance.
           </p>
         </div>
+
+        <div id="preset-root" class="preset-root"></div>
 
         <noscript>
           <div class="error-box">
@@ -81,15 +84,16 @@
           <div class="support-card">
             <h3>What this tool does</h3>
             <p>
-              Routes researchers to the closest <strong>existing</strong> workflow in the collection and shows the
-              main preprocessing defaults and documentation links.
+              Routes researchers to the closest <strong>existing</strong> workflow in the collection and returns a
+              practical action sheet: fit assessment, entry points, preprocessing defaults, prerequisites, and direct
+              documentation links.
             </p>
           </div>
           <div class="support-card">
             <h3>What it does not do</h3>
             <p>
-              It does not generate full commands, inspect uploaded files, or claim an exact match when the collection
-              does not currently contain one.
+              It does not inspect uploaded files, replace project-specific judgment, or pretend unsupported scenarios
+              are exact workflow matches.
             </p>
           </div>
           <div class="support-card">
