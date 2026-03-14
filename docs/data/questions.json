@@ -15,22 +15,22 @@
             {
               "value": "environmental",
               "label": "Environmental sample",
-              "help": "Environmental surveillance material such as air, passive water, or eDNA."
+              "help": "Air, water, or eDNA surveillance."
             },
             {
               "value": "clinical_isolate",
               "label": "Clinical / isolate",
-              "help": "Purified isolates, barcoded isolate collections, or clinical metagenomes."
+              "help": "Isolates or clinical metagenomes."
             },
             {
               "value": "food_safety",
               "label": "Food safety",
-              "help": "Food-associated enrichment and recovery workflows."
+              "help": "Enrichment and recovery workflows."
             },
             {
               "value": "unsure",
               "label": "Not sure",
-              "help": "Return when the broad sample context is clearer.",
+              "help": "Come back when clearer.",
               "neutral": true
             }
           ]
@@ -505,8 +505,6 @@
               "help": "Ligation-based route focused on read length and single-sample yield.",
               "visible_when": {
                 "material_class": [
-                  "long_read_metagenomic_dna",
-                  "rna_virome_material",
                   "single_isolate_long_read_dna",
                   "clinical_metagenome"
                 ]

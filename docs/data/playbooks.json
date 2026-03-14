@@ -4,12 +4,12 @@
     "track_id": null,
     "example_badge": "Published environmental example",
     "recommended_when": [
-      "Low-biomass air or bioaerosol metagenomics from FAST5, POD5, or basecalled FASTQ.",
-      "Environmental DNA studies focused on taxonomic profiling, assembly, binning, and functional annotation."
+      "Low-biomass air or bioaerosol metagenomics.",
+      "Taxonomic profiling, assembly, binning, and functional annotation."
     ],
     "avoid_when": [
-      "Soil metagenomics or arbitrary non-air environmental matrices.",
-      "RNA-centric workflows or amplicon-only studies."
+      "Soil or non-air environmental matrices.",
+      "RNA or amplicon-only studies."
     ],
     "required_inputs": [
       "Raw FAST5 or POD5, or already basecalled FASTQ for the target air dataset.",
@@ -63,16 +63,39 @@
     },
     "required_tools": [
       {
-        "name": "Dorado or Guppy",
-        "note": "Basecalling from POD5 or FAST5."
+        "name": "Dorado",
+        "note": "Basecalling from POD5.",
+        "url": "https://github.com/nanoporetech/dorado"
       },
       {
-        "name": "Porechop and NanoFilt",
-        "note": "Read cleaning before taxonomic classification and assembly."
+        "name": "Porechop",
+        "note": "Adapter trimming.",
+        "url": "https://github.com/rrwick/Porechop"
       },
       {
-        "name": "Kraken2, Flye, Minimap2, Racon",
-        "note": "Core taxonomic and assembly stack."
+        "name": "NanoFilt",
+        "note": "Read quality filtering.",
+        "url": "https://github.com/wdecoster/nanofilt"
+      },
+      {
+        "name": "Kraken2",
+        "note": "Taxonomic profiling.",
+        "url": "https://github.com/DerrickWood/kraken2"
+      },
+      {
+        "name": "Flye",
+        "note": "Metagenomic assembly.",
+        "url": "https://github.com/mikolmogorov/Flye"
+      },
+      {
+        "name": "Minimap2",
+        "note": "Read alignment.",
+        "url": "https://github.com/lh3/minimap2"
+      },
+      {
+        "name": "Racon",
+        "note": "Assembly polishing.",
+        "url": "https://github.com/isovic/racon"
       }
     ],
     "required_databases": [
@@ -120,12 +143,12 @@
     "track_id": null,
     "example_badge": "Published environmental example",
     "recommended_when": [
-      "Passive wetland water studies where you still need to choose among the DNA metagenomics, RNA virome, or 12S metabarcoding branches.",
-      "Basecalled FASTQ projects tied to the published wetland study context."
+      "Passive wetland water studies needing branch selection.",
+      "Projects tied to the published wetland study context."
     ],
     "avoid_when": [
-      "Generic water or soil matrices outside the published wetland system.",
-      "Cases where one of the dedicated downstream branches is already clearly known."
+      "Water or soil matrices outside the published wetland system.",
+      "The dedicated downstream branch is already known."
     ],
     "required_inputs": [
       "Basecalled FASTQ directories for the relevant wetland branch.",
@@ -165,12 +188,23 @@
     },
     "required_tools": [
       {
-        "name": "Porechop, NanoFilt, Minimap2",
-        "note": "Core preprocessing utilities used across multiple wetland branches."
+        "name": "Porechop",
+        "note": "Adapter trimming.",
+        "url": "https://github.com/rrwick/Porechop"
+      },
+      {
+        "name": "NanoFilt",
+        "note": "Read quality filtering.",
+        "url": "https://github.com/wdecoster/nanofilt"
+      },
+      {
+        "name": "Minimap2",
+        "note": "Read alignment.",
+        "url": "https://github.com/lh3/minimap2"
       },
       {
         "name": "Branch-specific tooling",
-        "note": "Additional tools vary by DNA metagenomics, RNA virome, or 12S amplicon branch."
+        "note": "Additional tools vary by branch."
       }
     ],
     "required_databases": [
@@ -201,11 +235,11 @@
     "track_id": "dna_metagenomics",
     "example_badge": "Published environmental example",
     "recommended_when": [
-      "Passive wetland water DNA metagenomics for pathogen and AMR surveillance.",
-      "Cases where microbial community profiling, pathogen detection, and assembly are the primary goals."
+      "Wetland water DNA metagenomics for pathogen and AMR surveillance.",
+      "Community profiling, pathogen detection, and assembly goals."
     ],
     "avoid_when": [
-      "Untargeted RNA virome discovery or 12S amplicons."
+      "RNA virome discovery or 12S amplicons."
     ],
     "required_inputs": [
       "Basecalled FASTQ files for wetland DNA metagenomics.",
@@ -245,12 +279,23 @@
     },
     "required_tools": [
       {
-        "name": "Porechop, NanoFilt, SeqKit",
-        "note": "Core wetland DNA preprocessing."
+        "name": "Porechop",
+        "note": "Adapter trimming.",
+        "url": "https://github.com/rrwick/Porechop"
+      },
+      {
+        "name": "NanoFilt",
+        "note": "Read quality filtering.",
+        "url": "https://github.com/wdecoster/nanofilt"
+      },
+      {
+        "name": "SeqKit",
+        "note": "Read subsampling.",
+        "url": "https://github.com/shenwei356/seqkit"
       },
       {
         "name": "Assembly and profiling stack",
-        "note": "The downstream branch uses the metagenomics toolchain described in the DNA shotgun notes."
+        "note": "See the DNA shotgun notes for full toolchain."
       }
     ],
     "required_databases": [
@@ -285,11 +330,11 @@
     "track_id": "rna_virome",
     "example_badge": "Published environmental example",
     "recommended_when": [
-      "Untargeted RNA virome discovery from passive wetland water samples.",
-      "RNA-focused wetland analyses where the goal is viral community characterization rather than targeted influenza consensus."
+      "RNA virome discovery from wetland water samples.",
+      "Viral community characterization rather than targeted influenza consensus."
     ],
     "avoid_when": [
-      "DNA metagenomics or 12S metabarcoding branches."
+      "DNA metagenomics or 12S metabarcoding."
     ],
     "required_inputs": [
       "Basecalled FASTQ for wetland RNA viromics.",
@@ -329,12 +374,29 @@
     },
     "required_tools": [
       {
-        "name": "NanoFilt and seqkit",
-        "note": "Used in the RNA wetland preprocessing and translation-oriented steps."
+        "name": "NanoFilt",
+        "note": "Read quality filtering.",
+        "url": "https://github.com/wdecoster/nanofilt"
       },
       {
-        "name": "nanoMDBG, Medaka, DIAMOND",
-        "note": "Core RNA virome assembly and classification stack."
+        "name": "SeqKit",
+        "note": "Read utilities.",
+        "url": "https://github.com/shenwei356/seqkit"
+      },
+      {
+        "name": "metaMDBG",
+        "note": "RNA virome assembly.",
+        "url": "https://github.com/GaetanBenoworkt/metaMDBG"
+      },
+      {
+        "name": "Medaka",
+        "note": "Assembly polishing.",
+        "url": "https://github.com/nanoporetech/medaka"
+      },
+      {
+        "name": "DIAMOND",
+        "note": "Translated viral classification.",
+        "url": "https://github.com/bbuchfink/diamond"
       }
     ],
     "required_databases": [
@@ -364,12 +426,12 @@
     "track_id": "edna",
     "example_badge": "Published environmental example",
     "recommended_when": [
-      "Wetland 12S amplicon data used for vertebrate host-range inference in the passive water study.",
-      "Barcoded amplicon runs that need OBITools4 demultiplexing and MIDORI2 mapping."
+      "Wetland 12S amplicon data for vertebrate host-range inference.",
+      "Barcoded amplicon runs needing OBITools4 and MIDORI2."
     ],
     "avoid_when": [
-      "General water eDNA outside the wetland study context.",
-      "DNA shotgun metagenomics or RNA-focused branches."
+      "Water eDNA outside the wetland study context.",
+      "Shotgun metagenomics or RNA branches."
     ],
     "required_inputs": [
       "Basecalled wetland 12S FASTQ data.",
@@ -409,8 +471,19 @@
     },
     "required_tools": [
       {
-        "name": "OBITools4, Cutadapt, VSEARCH",
-        "note": "Core wetland 12S branch tooling."
+        "name": "OBITools4",
+        "note": "Amplicon demultiplexing.",
+        "url": "https://github.com/metabarcoding/obitools4"
+      },
+      {
+        "name": "Cutadapt",
+        "note": "Primer removal.",
+        "url": "https://github.com/marcelm/cutadapt"
+      },
+      {
+        "name": "VSEARCH",
+        "note": "Quality filtering and OTU clustering.",
+        "url": "https://github.com/torognes/vsearch"
       }
     ],
     "required_databases": [
@@ -440,12 +513,12 @@
     "track_id": null,
     "example_badge": "Published environmental example",
     "recommended_when": [
-      "Water eDNA amplicon studies using 12S or 16S metabarcoding with Nanopore or Illumina input.",
-      "Biodiversity-focused workflows needing OBITools4 and MIDORI2-based assignment."
+      "Water eDNA amplicon studies using 12S or 16S metabarcoding.",
+      "Biodiversity workflows needing OBITools4 and MIDORI2."
     ],
     "avoid_when": [
-      "Wetland-specific 12S runs where the wetland host-range branch is the real study context.",
-      "Shotgun metagenomics or raw-signal-only workflows."
+      "Wetland-specific 12S runs where the host-range branch applies.",
+      "Shotgun metagenomics or raw-signal-only studies."
     ],
     "required_inputs": [
       "Basecalled Nanopore FASTQ or Illumina paired-end FASTQ.",
@@ -485,8 +558,19 @@
     },
     "required_tools": [
       {
-        "name": "OBITools4, Cutadapt, VSEARCH",
-        "note": "Core metabarcoding processing stack."
+        "name": "OBITools4",
+        "note": "Amplicon demultiplexing.",
+        "url": "https://github.com/metabarcoding/obitools4"
+      },
+      {
+        "name": "Cutadapt",
+        "note": "Primer removal.",
+        "url": "https://github.com/marcelm/cutadapt"
+      },
+      {
+        "name": "VSEARCH",
+        "note": "Quality filtering and OTU clustering.",
+        "url": "https://github.com/torognes/vsearch"
       }
     ],
     "required_databases": [
@@ -516,12 +600,12 @@
     "track_id": null,
     "example_badge": "Published food safety example",
     "recommended_when": [
-      "Food safety datasets comparing adaptive sampling against native sequencing for Listeria recovery.",
-      "Runs entering from basecalled BAM or downstream FASTQ in a SLURM-oriented environment."
+      "Adaptive sampling vs. native sequencing for Listeria recovery.",
+      "SLURM-oriented food safety workflows."
     ],
     "avoid_when": [
-      "General isolate AMR profiling without the adaptive-sampling comparison design.",
-      "Projects lacking Listeria-focused target enrichment logic."
+      "Isolate AMR profiling without adaptive-sampling comparison.",
+      "Projects without Listeria-focused enrichment."
     ],
     "required_inputs": [
       "Raw or basecalled BAM files from Listeria adaptive sampling or native sequencing runs.",
@@ -581,16 +665,43 @@
     },
     "required_tools": [
       {
-        "name": "Samtools, Porechop, NanoFilt, Kraken2",
-        "note": "Core preprocessing and target-extraction stack."
+        "name": "Samtools",
+        "note": "BAM handling.",
+        "url": "https://github.com/samtools/samtools"
       },
       {
-        "name": "Flye, metaMDBG, Myloasm",
-        "note": "Parallel assembler comparison for target recovery."
+        "name": "Porechop",
+        "note": "Adapter trimming.",
+        "url": "https://github.com/rrwick/Porechop"
+      },
+      {
+        "name": "NanoFilt",
+        "note": "Read quality filtering.",
+        "url": "https://github.com/wdecoster/nanofilt"
+      },
+      {
+        "name": "Kraken2",
+        "note": "Taxonomic screening.",
+        "url": "https://github.com/DerrickWood/kraken2"
+      },
+      {
+        "name": "Flye",
+        "note": "Assembly.",
+        "url": "https://github.com/mikolmogorov/Flye"
+      },
+      {
+        "name": "metaMDBG",
+        "note": "Alternative assembler.",
+        "url": "https://github.com/GaetanBenoworkt/metaMDBG"
+      },
+      {
+        "name": "Myloasm",
+        "note": "Parallel assembler comparison."
       },
       {
         "name": "AMRFinderPlus",
-        "note": "AMR detection on recovered target assemblies."
+        "note": "AMR detection.",
+        "url": "https://github.com/ncbi/amr"
       }
     ],
     "required_databases": [
@@ -630,11 +741,11 @@
     "track_id": null,
     "example_badge": "Published clinical/isolate example",
     "recommended_when": [
-      "Clinical isolate sequencing where the goal is rapid AMR profiling, assembly, and polishing.",
-      "Single-isolate or isolate-dominant ONT datasets entering from FAST5 or FASTQ."
+      "Rapid AMR profiling, assembly, and polishing of clinical isolates.",
+      "Single-isolate or isolate-dominant ONT datasets."
     ],
     "avoid_when": [
-      "Complex metagenomes or plasmid-clustering studies requiring multi-isolate relatedness analysis."
+      "Complex metagenomes or multi-isolate plasmid-clustering studies."
     ],
     "required_inputs": [
       "Raw FAST5 or already basecalled FASTQ for the isolate.",
@@ -674,12 +785,34 @@
     },
     "required_tools": [
       {
-        "name": "Guppy or Dorado",
-        "note": "Basecalling when entering from raw FAST5."
+        "name": "Dorado",
+        "note": "Basecalling.",
+        "url": "https://github.com/nanoporetech/dorado"
       },
       {
-        "name": "Porechop, NanoFilt, Flye, Minimap2, Racon",
-        "note": "Core isolate AMR analysis stack."
+        "name": "Porechop",
+        "note": "Adapter trimming.",
+        "url": "https://github.com/rrwick/Porechop"
+      },
+      {
+        "name": "NanoFilt",
+        "note": "Read quality filtering.",
+        "url": "https://github.com/wdecoster/nanofilt"
+      },
+      {
+        "name": "Flye",
+        "note": "Isolate assembly.",
+        "url": "https://github.com/mikolmogorov/Flye"
+      },
+      {
+        "name": "Minimap2",
+        "note": "Read alignment.",
+        "url": "https://github.com/lh3/minimap2"
+      },
+      {
+        "name": "Racon",
+        "note": "Assembly polishing.",
+        "url": "https://github.com/isovic/racon"
       }
     ],
     "required_databases": [
@@ -709,12 +842,12 @@
     "track_id": null,
     "example_badge": "Published clinical/isolate example",
     "recommended_when": [
-      "CRE isolate datasets where plasmid reconstruction, typing, and clustering are the main outputs.",
-      "RBK114-based isolate sequencing on R10.4.1 where demultiplexing and per-barcode assembly are required."
+      "CRE isolate plasmid reconstruction, typing, and clustering.",
+      "RBK114-based isolate sequencing needing per-barcode assembly."
     ],
     "avoid_when": [
-      "Single-isolate AMR workflows without plasmid-comparison objectives.",
-      "Clinical metagenomes needing host-association rather than isolate-level clustering."
+      "Single-isolate AMR without plasmid comparison.",
+      "Clinical metagenomes needing host-association."
     ],
     "required_inputs": [
       "Raw POD5 or basecalled FASTQ for CRE isolates.",
@@ -765,12 +898,54 @@
     },
     "required_tools": [
       {
-        "name": "Dorado, Porechop, NanoFilt, SeqKit",
-        "note": "Entry preprocessing stack."
+        "name": "Dorado",
+        "note": "Basecalling.",
+        "url": "https://github.com/nanoporetech/dorado"
       },
       {
-        "name": "Flye, Medaka, MOB-Suite, AMRFinderPlus, Mash, Pling",
-        "note": "Core plasmid reconstruction and relatedness stack."
+        "name": "Porechop",
+        "note": "Adapter trimming.",
+        "url": "https://github.com/rrwick/Porechop"
+      },
+      {
+        "name": "NanoFilt",
+        "note": "Read quality filtering.",
+        "url": "https://github.com/wdecoster/nanofilt"
+      },
+      {
+        "name": "SeqKit",
+        "note": "Read utilities.",
+        "url": "https://github.com/shenwei356/seqkit"
+      },
+      {
+        "name": "Flye",
+        "note": "Assembly.",
+        "url": "https://github.com/mikolmogorov/Flye"
+      },
+      {
+        "name": "Medaka",
+        "note": "Assembly polishing.",
+        "url": "https://github.com/nanoporetech/medaka"
+      },
+      {
+        "name": "MOB-Suite",
+        "note": "Plasmid reconstruction.",
+        "url": "https://github.com/phac-nml/mob-suite"
+      },
+      {
+        "name": "AMRFinderPlus",
+        "note": "AMR detection.",
+        "url": "https://github.com/ncbi/amr"
+      },
+      {
+        "name": "Mash",
+        "note": "Distance estimation.",
+        "url": "https://github.com/marbl/Mash"
+      },
+      {
+        "name": "Pling",
+        "note": "Plasmid clustering.",
+        "url": "https://github.com/iqbal-lab-org/pling"
       }
     ],
     "required_databases": [
@@ -801,12 +976,12 @@
     "track_id": null,
     "example_badge": "Published clinical/isolate example",
     "recommended_when": [
-      "Clinical metagenomic or mixed datasets where the goal is linking AMR determinants to their host organisms.",
-      "Projects entering from POD5 and using methylation-aware association rather than standard taxonomic profiling alone."
+      "Linking AMR determinants to host organisms in clinical metagenomes.",
+      "Methylation-aware association rather than standard taxonomic profiling."
     ],
     "avoid_when": [
-      "Pure isolate AMR workflows without host-association goals.",
-      "Generic clinical metagenomics where no methylation-aware linkage step is needed."
+      "Pure isolate AMR without host-association goals.",
+      "Clinical metagenomics without methylation-aware linkage."
     ],
     "required_inputs": [
       "Raw POD5 files, sequencing kit name, and Kraken2 database path.",
@@ -859,16 +1034,54 @@
     },
     "required_tools": [
       {
-        "name": "Dorado, Samtools, Chopper",
-        "note": "Core raw-data entry stack."
+        "name": "Dorado",
+        "note": "Basecalling.",
+        "url": "https://github.com/nanoporetech/dorado"
       },
       {
-        "name": "metaMDBG or Flye, modkit, nanomotif",
-        "note": "Assembly and methylation-inference stack."
+        "name": "Samtools",
+        "note": "BAM handling.",
+        "url": "https://github.com/samtools/samtools"
       },
       {
-        "name": "MOB-suite, AMRFinder, Kraken2",
-        "note": "Annotation and AMR interpretation stack."
+        "name": "Chopper",
+        "note": "Read filtering.",
+        "url": "https://github.com/wdecoster/chopper"
+      },
+      {
+        "name": "metaMDBG",
+        "note": "Metagenomic assembly.",
+        "url": "https://github.com/GaetanBenoworkt/metaMDBG"
+      },
+      {
+        "name": "Flye",
+        "note": "Alternative assembler.",
+        "url": "https://github.com/mikolmogorov/Flye"
+      },
+      {
+        "name": "Modkit",
+        "note": "Methylation calling.",
+        "url": "https://github.com/nanoporetech/modkit"
+      },
+      {
+        "name": "Nanomotif",
+        "note": "Methylation motif inference.",
+        "url": "https://github.com/MicrobialDarkMatter/nanomotif"
+      },
+      {
+        "name": "MOB-Suite",
+        "note": "Plasmid reconstruction.",
+        "url": "https://github.com/phac-nml/mob-suite"
+      },
+      {
+        "name": "AMRFinderPlus",
+        "note": "AMR detection.",
+        "url": "https://github.com/ncbi/amr"
+      },
+      {
+        "name": "Kraken2",
+        "note": "Taxonomic annotation.",
+        "url": "https://github.com/DerrickWood/kraken2"
       }
     ],
     "required_databases": [

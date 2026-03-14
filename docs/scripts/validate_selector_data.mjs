@@ -288,6 +288,22 @@ for (const example of examples) {
       fail(`Unsupported example ${example.id} references an unknown nearest track`);
     }
   }
+
+  if (example.recommended_steps) {
+    if (!Array.isArray(example.recommended_steps)) {
+      fail(`Example ${example.id} recommended_steps must be an array`);
+    }
+    for (const step of example.recommended_steps) {
+      for (const field of ["category", "recommendation", "source_pipeline_id", "rationale"]) {
+        if (!step[field]) {
+          fail(`Example ${example.id} has a recommended_step missing ${field}`);
+        }
+      }
+      if (!pipelineIds.has(step.source_pipeline_id)) {
+        fail(`Example ${example.id} recommended_step references unknown pipeline ${step.source_pipeline_id}`);
+      }
+    }
+  }
 }
 
 if (!Array.isArray(matrixProfiles) || matrixProfiles.length === 0) {

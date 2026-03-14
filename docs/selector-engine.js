@@ -514,9 +514,12 @@
 
   function buildStatus(example) {
     if (example.status_class === "unsupported_nearest") {
+      const hasComposed = Array.isArray(example.recommended_steps) && example.recommended_steps.length > 0;
       return {
         value: "unsupported",
-        label: "Unsupported / nearest published example"
+        label: hasComposed
+          ? "Recommended approach (composed from published workflows)"
+          : "Unsupported / nearest published example"
       };
     }
 
@@ -621,6 +624,7 @@
       },
       example,
       backend,
+      composed_steps: example.recommended_steps || null,
       status: status.value,
       status_label: status.label,
       explanation,

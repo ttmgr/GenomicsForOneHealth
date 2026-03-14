@@ -279,7 +279,7 @@ const airResult = computeRecommendation(
   datasets
 );
 
-assert(airResult.matrix_notes.summary.includes("low-biomass"), "air result should include low-biomass matrix framing");
+assert(airResult.matrix_notes.summary.toLowerCase().includes("low-biomass"), "air result should include low-biomass matrix framing");
 assert(airResult.literature_links.length >= 1, "air result should expose literature links");
 
 const shortReadAssemblyResult = computeRecommendation(

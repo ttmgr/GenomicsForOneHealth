@@ -75,7 +75,14 @@
     "route_summary": "Environmental sample -> long-read metagenomic DNA -> soil",
     "selection_help": "Use this when your sample is soil and you want the nearest published environmental backend rather than a false exact match.",
     "matrix_profile_id": "soil_long_read_metagenomics",
-    "unsupported_reason": "No soil-specific long-read metagenomic workflow is currently published in this repository."
+    "unsupported_reason": "No soil-specific long-read metagenomic workflow is currently published in this repository.",
+    "recommended_steps": [
+      {"category": "Basecalling", "recommendation": "Dorado SUP on R10.4.1", "source_pipeline_id": "cre_plasmid_clustering", "source_label": "CRE Plasmid workflow", "rationale": "Highest consensus accuracy for complex environmental samples"},
+      {"category": "Quality filtering", "recommendation": "NanoFilt Q >= 8, min 200 bp", "source_pipeline_id": "air_metagenomics", "source_label": "Air Metagenomics", "rationale": "Proven environmental DNA filtering defaults"},
+      {"category": "Taxonomic profiling", "recommendation": "Kraken2 with a comprehensive database", "source_pipeline_id": "air_metagenomics", "source_label": "Air Metagenomics", "rationale": "Established environmental community profiling"},
+      {"category": "Assembly", "recommendation": "metaFlye or metaMDBG depending on read length", "source_pipeline_id": "wetland_health", "source_label": "Wetland Health DNA track", "rationale": "Best documented environmental metagenomic assembly"},
+      {"category": "AMR detection", "recommendation": "AMRFinderPlus on assembled contigs", "source_pipeline_id": "nanopore_amr_host_association", "source_label": "AMR Host Association", "rationale": "Contextual AMR interpretation from published clinical metagenomics"}
+    ]
   },
   {
     "id": "other_environmental_unsupported_example",
@@ -101,7 +108,14 @@
     "route_summary": "Environmental sample -> long-read metagenomic DNA -> other environmental matrix",
     "selection_help": "Use this when the sample is environmental but not close to the published air or passive-water systems.",
     "matrix_profile_id": "other_environmental_long_read",
-    "unsupported_reason": "The public environmental DNA backends here are example-specific rather than a generic meta-pipeline for every matrix."
+    "unsupported_reason": "The public environmental DNA backends here are example-specific rather than a generic meta-pipeline for every matrix.",
+    "recommended_steps": [
+      {"category": "Basecalling", "recommendation": "Dorado SUP on R10.4.1", "source_pipeline_id": "cre_plasmid_clustering", "source_label": "CRE Plasmid workflow", "rationale": "Highest consensus accuracy for complex environmental samples"},
+      {"category": "Quality filtering", "recommendation": "NanoFilt Q >= 8, min 200 bp", "source_pipeline_id": "air_metagenomics", "source_label": "Air Metagenomics", "rationale": "Proven environmental DNA filtering defaults"},
+      {"category": "Taxonomic profiling", "recommendation": "Kraken2 with a comprehensive database", "source_pipeline_id": "air_metagenomics", "source_label": "Air Metagenomics", "rationale": "Established environmental community profiling"},
+      {"category": "Assembly", "recommendation": "metaFlye or metaMDBG depending on read length", "source_pipeline_id": "wetland_health", "source_label": "Wetland Health DNA track", "rationale": "Best documented environmental metagenomic assembly"},
+      {"category": "AMR detection", "recommendation": "AMRFinderPlus on assembled contigs", "source_pipeline_id": "nanopore_amr_host_association", "source_label": "AMR Host Association", "rationale": "Contextual AMR interpretation from published clinical metagenomics"}
+    ]
   },
   {
     "id": "wetland_rna_virome_example",
@@ -147,7 +161,13 @@
     "route_summary": "Environmental sample -> RNA virome material -> other environmental RNA virome",
     "selection_help": "Use this when your RNA virome case is not close to the published wetland passive-water example.",
     "matrix_profile_id": "environmental_rna_virome",
-    "unsupported_reason": "The repository does not currently contain a general-purpose environmental RNA virome backend beyond the wetland branch."
+    "unsupported_reason": "The repository does not currently contain a general-purpose environmental RNA virome backend beyond the wetland branch.",
+    "recommended_steps": [
+      {"category": "Basecalling", "recommendation": "Dorado HAC for RNA-derived cDNA", "source_pipeline_id": "wetland_health", "source_label": "Wetland Health", "rationale": "Balanced accuracy for viral community material"},
+      {"category": "Quality filtering", "recommendation": "NanoFilt Q >= 9, min 100 bp", "source_pipeline_id": "wetland_health", "source_label": "Wetland Health RNA track", "rationale": "Published RNA virome filtering defaults"},
+      {"category": "Assembly", "recommendation": "nanoMDBG followed by Medaka polishing", "source_pipeline_id": "wetland_health", "source_label": "Wetland Health RNA track", "rationale": "Documented RNA virome assembly and polishing"},
+      {"category": "Classification", "recommendation": "DIAMOND BLASTx against NR", "source_pipeline_id": "wetland_health", "source_label": "Wetland Health RNA track", "rationale": "Translated viral classification from published virome branch"}
+    ]
   },
   {
     "id": "wetland_edna_example",
@@ -219,7 +239,13 @@
     "route_summary": "Environmental sample -> eDNA 12S amplicon -> other 12S context",
     "selection_help": "Use this when your 12S case is not close to either the wetland branch or the Zambia water-eDNA example.",
     "matrix_profile_id": "edna_12s_water",
-    "unsupported_reason": "The repository does not currently include a general-purpose 12S backend outside these two published study contexts."
+    "unsupported_reason": "The repository does not currently include a general-purpose 12S backend outside these two published study contexts.",
+    "recommended_steps": [
+      {"category": "Demultiplexing", "recommendation": "OBITools4 obimultiplex", "source_pipeline_id": "zambia_edna", "source_label": "Zambia eDNA", "rationale": "Published amplicon demultiplexing workflow"},
+      {"category": "Primer removal", "recommendation": "Cutadapt", "source_pipeline_id": "zambia_edna", "source_label": "Zambia eDNA", "rationale": "Standard primer trimming after demultiplexing"},
+      {"category": "Quality filtering", "recommendation": "VSEARCH with dereplication and chimera removal", "source_pipeline_id": "zambia_edna", "source_label": "Zambia eDNA", "rationale": "Published amplicon quality filtering"},
+      {"category": "Taxonomic assignment", "recommendation": "OTU clustering at 99% against MIDORI2", "source_pipeline_id": "zambia_edna", "source_label": "Zambia eDNA", "rationale": "Published 12S taxonomic assignment workflow"}
+    ]
   },
   {
     "id": "amr_nanopore_example",
@@ -271,7 +297,13 @@
     "route_summary": "Clinical / isolate -> single isolate long-read DNA -> other single-isolate context",
     "selection_help": "Use this when your single-isolate workflow is not a close match to the published AMR Nanopore example.",
     "matrix_profile_id": "single_isolate_long_read",
-    "unsupported_reason": "The repository currently exposes one published single-isolate backend rather than a broader single-isolate workflow family."
+    "unsupported_reason": "The repository currently exposes one published single-isolate backend rather than a broader single-isolate workflow family.",
+    "recommended_steps": [
+      {"category": "Basecalling", "recommendation": "Dorado SUP or Guppy HAC", "source_pipeline_id": "amr_nanopore", "source_label": "AMR Nanopore", "rationale": "Published isolate basecalling workflow"},
+      {"category": "Quality filtering", "recommendation": "NanoFilt Q >= 9, min 200 bp", "source_pipeline_id": "amr_nanopore", "source_label": "AMR Nanopore", "rationale": "Published isolate filtering defaults"},
+      {"category": "Assembly", "recommendation": "Flye assembly with Racon polishing", "source_pipeline_id": "amr_nanopore", "source_label": "AMR Nanopore", "rationale": "Published isolate assembly and polishing"},
+      {"category": "AMR profiling", "recommendation": "AMRFinderPlus on polished contigs", "source_pipeline_id": "amr_nanopore", "source_label": "AMR Nanopore", "rationale": "Published isolate AMR detection"}
+    ]
   },
   {
     "id": "cre_plasmid_example",
@@ -323,7 +355,13 @@
     "route_summary": "Clinical / isolate -> barcoded isolate long-read DNA -> other barcoded-isolate context",
     "selection_help": "Use this when your barcoded isolate route is not a close match to the published CRE example.",
     "matrix_profile_id": "barcoded_isolate_long_read",
-    "unsupported_reason": "The repository currently exposes one published barcoded-isolate backend rather than a broader barcoded-isolate workflow family."
+    "unsupported_reason": "The repository currently exposes one published barcoded-isolate backend rather than a broader barcoded-isolate workflow family.",
+    "recommended_steps": [
+      {"category": "Basecalling", "recommendation": "Dorado SUP on R10.4.1", "source_pipeline_id": "cre_plasmid_clustering", "source_label": "CRE Plasmid workflow", "rationale": "Published barcoded isolate basecalling"},
+      {"category": "Demultiplexing", "recommendation": "Dorado demux for barcode separation", "source_pipeline_id": "cre_plasmid_clustering", "source_label": "CRE Plasmid workflow", "rationale": "Published per-barcode separation"},
+      {"category": "Assembly", "recommendation": "Flye assembly with Medaka polishing", "source_pipeline_id": "cre_plasmid_clustering", "source_label": "CRE Plasmid workflow", "rationale": "Published isolate assembly and polishing"},
+      {"category": "Plasmid and AMR", "recommendation": "MOB-Suite, AMRFinderPlus, Mash clustering", "source_pipeline_id": "cre_plasmid_clustering", "source_label": "CRE Plasmid workflow", "rationale": "Published plasmid reconstruction and AMR detection"}
+    ]
   },
   {
     "id": "amr_host_association_example",

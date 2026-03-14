@@ -636,6 +636,33 @@ function renderEvidenceSection(recommendation) {
   `;
 }
 
+function renderComposedSteps(steps) {
+  if (!steps || steps.length === 0) {
+    return "";
+  }
+
+  return `
+    <section class="result-block">
+      <h3>Recommended pipeline (composed from published workflows)</h3>
+      <ol class="step-list composed-steps">
+        ${steps
+          .map(
+            (step) => `
+              <li>
+                <strong>${escapeHtml(step.category)}</strong>
+                <span class="composed-arrow">&rarr;</span>
+                <span>${escapeHtml(step.recommendation)}</span>
+                <span class="composed-source">from ${escapeHtml(step.source_label)}</span>
+                <p class="muted">${escapeHtml(step.rationale)}</p>
+              </li>
+            `
+          )
+          .join("")}
+      </ol>
+    </section>
+  `;
+}
+
 function renderResultsPage() {
   const recommendation = computeRecommendation(answers, datasets);
   if (!recommendation) {
@@ -692,30 +719,53 @@ function renderResultsPage() {
           <span class="result-chip ${recommendation.status === "unsupported" ? "is-warning" : "is-success"}">${escapeHtml(recommendation.status_label)}</span>
         </div>
         <article class="match-column match-ours">
-          <p class="match-column-label">Matched workflow</p>
-          <h3>${escapeHtml(backendTitle)}</h3>
+          <p class="match-column-label">${recommendation.composed_steps ? "Composed recommendation" : "Matched workflow"}</p>
+          <h3>${recommendation.composed_steps ? "Composed from published workflows" : escapeHtml(backendTitle)}</h3>
           <p class="match-explanation">${escapeHtml(recommendation.example.selection_help || recommendation.explanation)}</p>
           ${recommendation.example.unsupported_reason ? `<p class="warning-inline">${escapeHtml(recommendation.example.unsupported_reason)}</p>` : ""}
           <p class="muted">${escapeHtml(recommendation.setup_summary.result_note || "Setup defaults were resolved from the selected route.")}</p>
         </article>
       </section>
 
-      <section class="result-block">
-        <h3>Next steps</h3>
-        <ol class="step-list">
-          ${recommendation.entry_actions
-            .map(
-              (action) => `
-                <li>
-                  <strong>${escapeHtml(action.title)}</strong>
-                  <p>${escapeHtml(action.summary)}</p>
-                  <a href="${escapeHtml(linkHref(action.doc_url))}" target="_blank" rel="noreferrer">${escapeHtml(action.entry_file)}</a>
-                </li>
-              `
-            )
-            .join("")}
-        </ol>
-      </section>
+      ${recommendation.composed_steps
+        ? `
+          ${renderComposedSteps(recommendation.composed_steps)}
+          <details class="detail-panel">
+            <summary>Nearest published workflow: ${escapeHtml(backendTitle)}</summary>
+            <ol class="step-list" style="padding: 0 18px 18px;">
+              ${recommendation.entry_actions
+                .map(
+                  (action) => `
+                    <li>
+                      <strong>${escapeHtml(action.title)}</strong>
+                      <p>${escapeHtml(action.summary)}</p>
+                      <a href="${escapeHtml(linkHref(action.doc_url))}" target="_blank" rel="noreferrer">${escapeHtml(action.entry_file)}</a>
+                    </li>
+                  `
+                )
+                .join("")}
+            </ol>
+          </details>
+        `
+        : `
+          <section class="result-block">
+            <h3>Next steps</h3>
+            <ol class="step-list">
+              ${recommendation.entry_actions
+                .map(
+                  (action) => `
+                    <li>
+                      <strong>${escapeHtml(action.title)}</strong>
+                      <p>${escapeHtml(action.summary)}</p>
+                      <a href="${escapeHtml(linkHref(action.doc_url))}" target="_blank" rel="noreferrer">${escapeHtml(action.entry_file)}</a>
+                    </li>
+                  `
+                )
+                .join("")}
+            </ol>
+          </section>
+        `
+      }
 
       ${renderEvidenceSection(recommendation)}
 
@@ -811,7 +861,7 @@ function renderResultsPage() {
             <h4>Required tools</h4>
             ${
               tools.length > 0
-                ? `<ul class="detail-list">${tools.map((tool) => `<li><strong>${escapeHtml(tool.name)}.</strong> ${escapeHtml(tool.note)}</li>`).join("")}</ul>`
+                ? `<ul class="detail-list">${tools.map((tool) => `<li><strong>${tool.url ? `<a href="${escapeHtml(tool.url)}" target="_blank" rel="noreferrer">${escapeHtml(tool.name)}</a>` : escapeHtml(tool.name)}.</strong> ${escapeHtml(tool.note)}</li>`).join("")}</ul>`
                 : `<p class="muted">No route-specific tool list was attached.</p>`
             }
           </div>

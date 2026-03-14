@@ -947,6 +947,33 @@ a {
   margin-top: 0;
 }
 
+.composed-steps li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.composed-steps li strong {
+  min-width: 120px;
+}
+
+.composed-arrow {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.composed-source {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.composed-steps li p {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+}
+
 @media (max-width: 960px) {
   .hero {
     grid-template-columns: 1fr;
