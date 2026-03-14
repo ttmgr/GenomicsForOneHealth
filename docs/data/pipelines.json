@@ -24,7 +24,6 @@
       "fastq"
     ],
     "library_modes": [
-      "lsk114",
       "rbk114_24",
       "nbd114_24"
     ],
@@ -136,7 +135,6 @@
       "fastq"
     ],
     "library_modes": [
-      "lsk114",
       "rbk114_24",
       "nbd114_24",
       "amplicon_workflow"
