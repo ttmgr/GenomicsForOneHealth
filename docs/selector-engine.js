@@ -7,12 +7,11 @@
   root.SelectorEngine = factory();
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   const WEIGHTS = {
-    selector_groups: 60,
-    sample_types: 42,
-    molecule_types: 34,
-    analysis_goals: 44,
-    input_formats: 24,
-    library_modes: 18,
+    sequencing_contexts: 80,
+    library_modes: 60,
+    analysis_goals: 48,
+    sample_types: 36,
+    input_formats: 18,
     supports_multiplexing: 6
   };
 
@@ -20,33 +19,30 @@
     return questionSpec.stages.flatMap((stage) => stage.questions);
   }
 
-  function questionById(questionSpec, questionId) {
-    return allQuestions(questionSpec).find((question) => question.id === questionId);
-  }
-
-  function questionByField(questionSpec, field) {
-    return allQuestions(questionSpec).find((question) => question.field === field);
-  }
-
-  function optionFor(question, value) {
-    return question.options.find((option) => option.value === value);
-  }
-
-  function isNeutral(question, value) {
-    if (!question || !value) {
-      return false;
-    }
-
-    const option = optionFor(question, value);
-    return Boolean(option && option.neutral);
-  }
-
   function stageQuestions(questionSpec, stageId) {
     return questionSpec.stages.find((stage) => stage.id === stageId)?.questions || [];
   }
 
+  function questionById(questionSpec, questionId) {
+    return allQuestions(questionSpec).find((question) => question.id === questionId) || null;
+  }
+
+  function questionByField(questionSpec, field) {
+    return allQuestions(questionSpec).find((question) => question.field === field) || null;
+  }
+
+  function optionFor(question, value) {
+    return question?.options.find((option) => option.value === value) || null;
+  }
+
+  function isNeutral(question, value) {
+    return Boolean(optionFor(question, value)?.neutral);
+  }
+
   function stageComplete(questionSpec, answers, stageId) {
-    return stageQuestions(questionSpec, stageId).every((question) => Boolean(answers[question.id]));
+    return stageQuestions(questionSpec, stageId)
+      .filter((question) => !question.optional)
+      .every((question) => Boolean(answers[question.id]));
   }
 
   function matchesFieldValue(pipeline, field, value) {
@@ -68,21 +64,30 @@
     return Array.isArray(collection) ? collection.includes(value) : false;
   }
 
+  function stage1Questions(questionSpec) {
+    return stageQuestions(questionSpec, "stage1");
+  }
+
+  function allSpecificStage1Answers(questionSpec, answers) {
+    return stage1Questions(questionSpec).every((question) => {
+      const value = answers[question.id];
+      return Boolean(value) && !isNeutral(question, value);
+    });
+  }
+
   function passesHardFilters(pipeline, answers, questionSpec) {
-    for (const stage of questionSpec.stages) {
-      for (const question of stage.questions) {
-        if (question.stage !== "stage1") {
-          continue;
-        }
+    for (const question of stage1Questions(questionSpec)) {
+      if (question.hard_filter === false || question.optional) {
+        continue;
+      }
 
-        const value = answers[question.id];
-        if (!value || isNeutral(question, value)) {
-          continue;
-        }
+      const value = answers[question.id];
+      if (!value || isNeutral(question, value)) {
+        continue;
+      }
 
-        if (!matchesFieldValue(pipeline, question.field, value)) {
-          return false;
-        }
+      if (!matchesFieldValue(pipeline, question.field, value)) {
+        return false;
       }
     }
 
@@ -93,25 +98,28 @@
     let score = 0;
     const reasons = [];
 
-    for (const stage of questionSpec.stages) {
-      for (const question of stage.questions) {
-        const value = answers[question.id];
-        if (!value || isNeutral(question, value)) {
-          continue;
-        }
+    for (const question of allQuestions(questionSpec)) {
+      const value = answers[question.id];
+      if (!value || isNeutral(question, value)) {
+        continue;
+      }
 
-        if (question.field === "supports_multiplexing") {
-          if (matchesFieldValue(pipeline, question.field, value)) {
-            score += WEIGHTS.supports_multiplexing;
-            reasons.push(`${question.label}: ${optionFor(question, value).label}`);
-          }
-          continue;
-        }
-
+      if (question.field === "supports_multiplexing") {
         if (matchesFieldValue(pipeline, question.field, value)) {
-          score += WEIGHTS[question.field] || 0;
-          reasons.push(`${question.label}: ${optionFor(question, value).label}`);
+          score += WEIGHTS.supports_multiplexing;
+          reasons.push(`${question.label}: ${optionFor(question, value)?.label || value}`);
         }
+        continue;
+      }
+
+      const weight = WEIGHTS[question.field];
+      if (!weight) {
+        continue;
+      }
+
+      if (matchesFieldValue(pipeline, question.field, value)) {
+        score += weight;
+        reasons.push(`${question.label}: ${optionFor(question, value)?.label || value}`);
       }
     }
 
@@ -127,10 +135,10 @@
     let bestScore = -1;
 
     for (const track of pipeline.track_notes) {
-      const when = track.when || {};
       let score = 0;
+      let failed = false;
 
-      for (const [field, acceptedValues] of Object.entries(when)) {
+      for (const [field, acceptedValues] of Object.entries(track.when || {})) {
         const question = questionByField(questionSpec, field);
         const value = question ? answers[question.id] : null;
 
@@ -138,35 +146,21 @@
           continue;
         }
 
-        if (acceptedValues.includes(value)) {
-          score += 1;
-        } else {
-          score = -1;
+        if (!acceptedValues.includes(value)) {
+          failed = true;
           break;
         }
+
+        score += 1;
       }
 
-      if (score > bestScore) {
+      if (!failed && score > bestScore) {
         bestScore = score;
         bestTrack = score > 0 ? track : null;
       }
     }
 
     return bestTrack;
-  }
-
-  function labelForValue(questionSpec, questionId, value) {
-    const question = questionById(questionSpec, questionId);
-    if (!question) {
-      return value;
-    }
-
-    return optionFor(question, value)?.label || value;
-  }
-
-  function formatFieldValues(questionSpec, field, values) {
-    const question = questionByField(questionSpec, field);
-    return values.map((value) => (question ? optionFor(question, value)?.label || value : value)).join(", ");
   }
 
   function matchesAnswerRule(answers, conditions) {
@@ -176,11 +170,7 @@
 
     return Object.entries(conditions).every(([questionId, acceptedValues]) => {
       const value = answers[questionId];
-      if (!value) {
-        return false;
-      }
-
-      return acceptedValues.includes(value);
+      return Boolean(value) && acceptedValues.includes(value);
     });
   }
 
@@ -200,6 +190,18 @@
     return null;
   }
 
+  function resolvePlaybook(playbooks, pipelineId, trackId) {
+    return (
+      playbooks.find((playbook) => playbook.pipeline_id === pipelineId && playbook.track_id === trackId) ||
+      playbooks.find((playbook) => playbook.pipeline_id === pipelineId && playbook.track_id === null) ||
+      null
+    );
+  }
+
+  function filterConditionalItems(items, answers) {
+    return (items || []).filter((item) => !item.when || matchesAnswerRule(answers, item.when));
+  }
+
   function derivePreprocessing(pipeline, track, playbook) {
     if (playbook?.preprocessing_defaults) {
       return playbook.preprocessing_defaults;
@@ -211,17 +213,14 @@
     };
   }
 
-  function resolvePlaybook(playbooks, pipelineId, trackId) {
-    const directMatch = playbooks.find((playbook) => playbook.pipeline_id === pipelineId && playbook.track_id === trackId);
-    if (directMatch) {
-      return directMatch;
-    }
-
-    return playbooks.find((playbook) => playbook.pipeline_id === pipelineId && playbook.track_id === null) || null;
+  function labelForValue(questionSpec, questionId, value) {
+    const question = questionById(questionSpec, questionId);
+    return optionFor(question, value)?.label || value;
   }
 
-  function filterConditionalItems(items, answers) {
-    return (items || []).filter((item) => !item.when || matchesAnswerRule(answers, item.when));
+  function formatFieldValues(questionSpec, field, values) {
+    const question = questionByField(questionSpec, field);
+    return values.map((value) => (question ? optionFor(question, value)?.label || value : value)).join(", ");
   }
 
   function buildCompatibilityWarnings(pipeline, track, status, answers, questionSpec, rule) {
@@ -238,72 +237,84 @@
       });
     } else if (status === "closest_supported") {
       warnings.push({
-        title: "No exact current pipeline",
-        text: "The current collection does not contain a workflow that exactly matches all Stage 1 answers. This recommendation is the nearest documented starting point in the existing repository."
+        title: "Generalized route, nearest backend",
+        text: "The current repository does not contain an exact published example for all Stage 1 answers. This recommendation is the nearest documented backend already present in the collection."
       });
     }
 
     const inputQuestion = questionById(questionSpec, "input_format");
     const inputValue = answers.input_format;
-    if (inputValue && inputQuestion && !isNeutral(inputQuestion, inputValue) && !matchesFieldValue(pipeline, "input_formats", inputValue)) {
+    if (
+      inputValue &&
+      inputQuestion &&
+      !isNeutral(inputQuestion, inputValue) &&
+      Array.isArray(pipeline.input_formats) &&
+      pipeline.input_formats.length > 0 &&
+      !matchesFieldValue(pipeline, "input_formats", inputValue)
+    ) {
       warnings.push({
         title: "Input-format adaptation required",
-        text: `Your current input format is ${labelForValue(questionSpec, "input_format", inputValue)}. The documented workflow is written primarily for ${formatFieldValues(questionSpec, "input_formats", pipeline.input_formats)}. Some adaptation may be required before you can run it exactly as published.`
+        text: `You selected ${labelForValue(questionSpec, "input_format", inputValue)}, but this published backend is documented primarily for ${formatFieldValues(questionSpec, "input_formats", pipeline.input_formats)}.`
       });
     }
 
     const libraryQuestion = questionById(questionSpec, "library_mode");
     const libraryValue = answers.library_mode;
-    if (libraryValue && libraryQuestion && !isNeutral(libraryQuestion, libraryValue) && pipeline.library_modes.length > 0 && !matchesFieldValue(pipeline, "library_modes", libraryValue)) {
+    if (
+      libraryValue &&
+      libraryQuestion &&
+      !isNeutral(libraryQuestion, libraryValue) &&
+      Array.isArray(pipeline.library_modes) &&
+      pipeline.library_modes.length > 0 &&
+      !matchesFieldValue(pipeline, "library_modes", libraryValue)
+    ) {
       warnings.push({
-        title: "Library-mode mismatch",
-        text: `You selected ${labelForValue(questionSpec, "library_mode", libraryValue)}, but this workflow is documented mainly for ${formatFieldValues(questionSpec, "library_modes", pipeline.library_modes)}. Treat the recommendation as a starting point rather than an exact protocol match.`
+        title: "Kit or run-mode mismatch",
+        text: `You selected ${labelForValue(questionSpec, "library_mode", libraryValue)}, but this published backend is documented mainly for ${formatFieldValues(questionSpec, "library_modes", pipeline.library_modes)}.`
       });
     }
 
     if (answers.demultiplexing === "needed" && !pipeline.supports_multiplexing) {
       warnings.push({
-        title: "Demultiplexing not central to this workflow",
-        text: "You indicated that demultiplexing is still needed, but multiplexing is not a central documented mode for this workflow. Confirm whether your data should be separated upstream before using this pipeline."
+        title: "Demultiplexing is not central here",
+        text: "You indicated that demultiplexing is still needed, but multiplexing is not a central documented mode for this published backend."
       });
     }
 
     if (answers.basecalling_state === "already_basecalled") {
       warnings.push({
         title: "Basecalling can likely be skipped",
-        text: "You indicated that reads are already basecalled. Start at the read-level preprocessing stage and verify that the current files and thresholds match the documented workflow."
+        text: "You indicated that reads are already basecalled. Start at the read-level preprocessing stage and confirm that the current files still match the documented thresholds."
       });
     } else if (answers.basecalling_state === "raw_signal_not_basecalled") {
       warnings.push({
         title: "Raw-data entry point",
-        text: `This recommendation assumes a raw-data entry point compatible with ${formatFieldValues(questionSpec, "input_formats", pipeline.input_formats)}. Use the documented basecalling branch before downstream preprocessing.`
+        text: "This recommendation assumes a raw-data entry path. Start with the published basecalling branch before trimming, filtering, or downstream analysis."
       });
     } else if (answers.basecalling_state === "prefer_fast") {
       warnings.push({
         title: "FAST tier selected",
-        text: "FAST is the speed-first Dorado tier. Use it when turnaround time matters most, but expect lower accuracy than HAC or SUP."
+        text: "FAST favors turnaround time over accuracy. That can be reasonable for screening, but it is less conservative for assembly-sensitive workflows."
       });
     } else if (answers.basecalling_state === "prefer_sup") {
       warnings.push({
         title: "SUP tier selected",
-        text: "SUP is the accuracy-first Dorado tier. It is often sensible for assembly-sensitive work, but it carries the highest computational cost."
+        text: "SUP favors accuracy over compute efficiency and is often sensible for assembly and variant-sensitive analyses."
       });
     }
 
     if (answers.preprocessing_state === "already_trimmed_and_filtered") {
       warnings.push({
         title: "Read preprocessing may already be complete",
-        text: "You indicated that adapter trimming and read filtering are already done. Verify that the published thresholds still match your processed reads before skipping those steps."
+        text: "You indicated that trimming and filtering are already done. Confirm that the documented thresholds still match your processed reads before skipping those steps."
       });
     }
 
-    if (track?.notes?.length) {
-      for (const note of track.notes) {
-        warnings.push({
-          title: track.title,
-          text: note
-        });
-      }
+    for (const note of track?.notes || []) {
+      warnings.push({
+        title: track.title,
+        text: note
+      });
     }
 
     return warnings;
@@ -313,40 +324,40 @@
     const libraryReference = {
       rbk114_24: {
         title: "Rapid Barcoding Kit 24 V14",
-        description: "Oxford Nanopore positions SQK-RBK114.24 as a rapid, PCR-free, transposase-based workflow for multiplexing up to 24 genomic DNA samples.",
+        description: "SQK-RBK114.24 is Oxford Nanopore's rapid, PCR-free barcoding workflow for multiplexed DNA sequencing.",
         url: "https://store.nanoporetech.com/rapid-barcoding-sequencing-kit-24-v14.html",
         urlLabel: "Official kit page"
       },
       nbd114_24: {
         title: "Native Barcoding Kit 24 V14",
-        description: "Oxford Nanopore positions SQK-NBD114.24 as a PCR-free ligation workflow that preserves full fragment length and aligns with Q20+ chemistry.",
+        description: "SQK-NBD114.24 is Oxford Nanopore's ligation-based barcoding workflow for multiplexed DNA sequencing with preserved fragment length.",
         url: "https://store.nanoporetech.com/native-barcoding-kit-24-v14.html",
         urlLabel: "Official kit page"
-      },
+      }
     };
 
     const doradoReference = {
       raw_signal_not_basecalled: {
         title: "Dorado simplex basecalling",
-        description: "If you are entering from POD5 or FAST5, use Dorado's simplex basecalling documentation to select the latest compatible model for your chemistry and pore type.",
+        description: "Use Dorado simplex basecalling guidance if you are entering from POD5 or FAST5 and still need a basecalling step.",
         url: "https://software-docs.nanoporetech.com/dorado/latest/basecaller/simplex/",
         urlLabel: "Simplex basecalling docs"
       },
       prefer_fast: {
         title: "Dorado FAST",
-        description: "FAST is the quickest Dorado tier and the least computationally expensive, but also the least accurate of the standard simplex options.",
+        description: "FAST is the quickest standard Dorado tier and the least computationally expensive.",
         url: "https://software-docs.nanoporetech.com/dorado/latest/models/models/",
         urlLabel: "Model selection guide"
       },
       prefer_hac: {
         title: "Dorado HAC",
-        description: "Oxford Nanopore recommends HAC for most users because it balances accuracy and compute cost.",
+        description: "HAC is the balanced Dorado tier for most users when accuracy and compute cost both matter.",
         url: "https://software-docs.nanoporetech.com/dorado/latest/models/models/",
         urlLabel: "Model selection guide"
       },
       prefer_sup: {
         title: "Dorado SUP",
-        description: "SUP is the most accurate standard simplex tier and is useful when assembly quality or difficult calls are the priority.",
+        description: "SUP is the most accurate standard Dorado tier and is useful when downstream accuracy matters most.",
         url: "https://software-docs.nanoporetech.com/dorado/latest/models/models/",
         urlLabel: "Model selection guide"
       }
@@ -362,6 +373,19 @@
     return notes;
   }
 
+  function statusLabel(status) {
+    if (status === "exact") {
+      return "Published example match";
+    }
+    if (status === "track_exact") {
+      return "Published example + branch";
+    }
+    if (status === "closest_supported") {
+      return "Generalized route -> nearest published example";
+    }
+    return "Unsupported / nearest published example";
+  }
+
   function chooseConfidence(status, ranked, warnings) {
     const scoreGap = ranked.length > 1 ? ranked[0].score - ranked[1].score : ranked[0]?.score || 0;
 
@@ -370,69 +394,53 @@
     }
 
     if (status === "closest_supported") {
-      if (warnings.length >= 3 || scoreGap < 18) {
-        return "low";
-      }
-      return "moderate";
+      return warnings.length >= 3 || scoreGap < 20 ? "low" : "moderate";
     }
 
-    if (warnings.length === 0 && scoreGap >= 18) {
+    if (warnings.length === 0 && scoreGap >= 24) {
       return "high";
     }
 
     return "moderate";
   }
 
-  function confidenceSummary(status, confidence, candidateCount, scoreGap) {
+  function confidenceSummary(status, confidence, exactCandidateCount, scoreGap) {
     if (status === "unsupported") {
-      return "This case falls outside the currently published collection. The selector is showing the nearest documented starting point without claiming full support.";
+      return "This case falls outside the published selector boundary. The action sheet below shows the nearest documented backend without claiming exact support.";
     }
 
     if (status === "closest_supported") {
       if (confidence === "low") {
-        return "This is a partial fit with multiple adaptations likely required. Use the listed docs as a starting point rather than a validated protocol match.";
+        return "This is a generalized route with multiple adaptations likely required. Treat the recommended backend as a starting point rather than a validated protocol match.";
       }
-      return "This is the nearest supported route in the current repository. Some workflow adaptation is still likely required.";
-    }
-
-    if (candidateCount > 1 && scoreGap < 18) {
-      return "More than one published workflow remains plausible. The selector is choosing the strongest current fit, but nearby alternatives are also worth reviewing.";
+      return "This is a generalized route mapped to the nearest published example currently available in the repository.";
     }
 
     if (status === "track_exact") {
-      return "The umbrella workflow is an exact current fit, and the selector identified a specific internal branch that best matches your study intent.";
+      return "The selected workflow is an exact published match, and a specific internal wetland branch can be chosen directly from your answers.";
     }
 
-    return "The selected workflow is a strong current fit for the stated biological context and documented analytical objective.";
-  }
+    if (exactCandidateCount > 1 && scoreGap < 20) {
+      return "More than one published example remains plausible, but the selector still found one dominant backend.";
+    }
 
-  function statusLabel(status) {
-    if (status === "exact") {
-      return "Exact current match";
-    }
-    if (status === "track_exact") {
-      return "Exact workflow + track";
-    }
-    if (status === "closest_supported") {
-      return "Nearest current starting point";
-    }
-    return "Unsupported / nearest start";
+    return "The selected workflow is an exact published example match for the sequencing context, kit or run mode, goal, and sample context you provided.";
   }
 
   function explainRecommendation(status, pipeline, track) {
     if (status === "unsupported") {
-      return `${pipeline.title} is the nearest documented starting point in the collection, but the answers you provided fall outside the workflows that are currently published here.`;
+      return `${pipeline.title} is the nearest published backend in the collection, but your stated route is outside the workflows that are currently documented here.`;
     }
 
     if (status === "closest_supported") {
-      return `${pipeline.title} is the nearest documented starting point in the current collection, but at least one of your Stage 1 answers falls outside the workflows that are presently published in this repository.`;
+      return `${pipeline.title} is the nearest published backend for the generalized route you selected. Use it as a documented starting point rather than as an exact one-to-one protocol match.`;
     }
 
     if (track) {
-      return `${pipeline.title} is the strongest current fit for your use case within the published collection. The selected internal branch is ${track.title}.`;
+      return `${pipeline.title} is the exact published example for your route, and ${track.title} is the matching internal branch.`;
     }
 
-    return `${pipeline.title} is the strongest current fit for your biological use case, sample type, and analytical objective within the published collection.`;
+    return `${pipeline.title} is the exact published example backend for the route you selected.`;
   }
 
   function buildAlternatives(primary, ranked, exactCandidates, pipelinesById, outOfScopeRule) {
@@ -447,11 +455,11 @@
       .map((entry) => entry.pipeline)
       .filter((pipeline) => pipeline.id !== primary.id);
 
-    const fallbackIds = (primary.closest_alternatives || [])
+    const fallbackAlternatives = (primary.closest_alternatives || [])
       .map((pipelineId) => pipelinesById.get(pipelineId))
       .filter(Boolean);
 
-    return [...rankedAlternatives, ...fallbackIds]
+    return [...rankedAlternatives, ...fallbackAlternatives]
       .filter((pipeline, index, collection) => collection.findIndex((candidate) => candidate.id === pipeline.id) === index)
       .slice(0, exactCandidates.length > 1 ? 2 : 1);
   }
@@ -466,8 +474,8 @@
     const pipelinesById = new Map(pipelines.map((pipeline) => [pipeline.id, pipeline]));
     const outOfScopeRule = resolveOutOfScopeCase(answers, outOfScopeRules);
     const exactCandidates = pipelines.filter((pipeline) => passesHardFilters(pipeline, answers, questionSpec));
-    const pool = exactCandidates.length > 0 ? exactCandidates : pipelines;
-    const ranked = pool
+    const candidatePool = exactCandidates.length > 0 ? exactCandidates : pipelines;
+    const ranked = candidatePool
       .map((pipeline) => ({
         pipeline,
         ...scorePipeline(pipeline, answers, questionSpec)
@@ -479,14 +487,17 @@
         return left.pipeline.title.localeCompare(right.pipeline.title);
       });
 
-    let primary = ranked[0].pipeline;
+    let primary = ranked[0]?.pipeline || pipelines[0];
     let track = chooseTrack(primary, answers, questionSpec);
-    let status = exactCandidates.length > 0 ? (track ? "track_exact" : "exact") : "closest_supported";
+    let status = "closest_supported";
+    const stage1Specific = allSpecificStage1Answers(questionSpec, answers);
 
     if (outOfScopeRule) {
       primary = pipelinesById.get(outOfScopeRule.primary_nearest_pipeline) || primary;
       track = chooseTrack(primary, answers, questionSpec);
       status = "unsupported";
+    } else if (exactCandidates.length > 0 && stage1Specific && exactCandidates.length === 1) {
+      status = track ? "track_exact" : "exact";
     }
 
     const playbook = resolvePlaybook(playbooks, primary.id, track?.id || null);
@@ -499,8 +510,9 @@
       status,
       statusLabel: statusLabel(status),
       confidence,
-      confidenceLabel: confidence.charAt(0).toUpperCase() + confidence.slice(1),
+      confidenceLabel: `${confidence.charAt(0).toUpperCase()}${confidence.slice(1)} confidence`,
       fitSummary: confidenceSummary(status, confidence, exactCandidates.length, scoreGap),
+      explanation: explainRecommendation(status, primary, track),
       primary: {
         pipeline: primary,
         track,
@@ -513,19 +525,19 @@
       decision_trace: {
         exactCandidateCount: exactCandidates.length,
         scoreGap,
-        reasons: ranked[0].reasons.slice(0, 6)
+        stage1Specific,
+        reasons: (ranked[0]?.reasons || []).slice(0, 6)
       },
       warnings,
       ontNotes: buildOntNotes(answers),
-      explanation: explainRecommendation(status, primary, track),
       outOfScopeRule
     };
   }
 
   return {
+    allQuestions,
     stageQuestions,
     stageComplete,
-    allQuestions,
     questionById,
     questionByField,
     optionFor,

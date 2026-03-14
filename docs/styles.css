@@ -227,6 +227,29 @@ a {
   gap: 12px;
 }
 
+.preset-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.preset-group {
+  display: grid;
+  gap: 12px;
+}
+
+.preset-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.preset-group-title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
 .preset-card {
   display: flex;
   flex-direction: column;
@@ -329,6 +352,11 @@ a {
   background: var(--panel-strong);
 }
 
+.question-card.is-route-question,
+.question-card.is-kit-question {
+  padding: 18px;
+}
+
 .question-card h4 {
   margin: 0;
   font-size: 1rem;
@@ -340,11 +368,25 @@ a {
   line-height: 1.5;
 }
 
+.question-note {
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+  color: var(--accent-strong);
+}
+
 .option-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 10px;
   margin-top: 14px;
+}
+
+.option-grid.is-route-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.option-grid.is-kit-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .option-card {
@@ -370,6 +412,16 @@ a {
   transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
 }
 
+.option-card.is-route-card label {
+  min-height: 146px;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.option-card.is-kit-card label {
+  gap: 10px;
+}
+
 .option-card label:hover {
   transform: translateY(-1px);
   border-color: rgba(15, 111, 92, 0.28);
@@ -388,6 +440,33 @@ a {
 .option-help {
   font-size: 0.88rem;
   line-height: 1.45;
+  color: var(--muted);
+}
+
+.option-meta-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.option-meta-item {
+  display: grid;
+  gap: 2px;
+  padding: 8px 9px;
+  border-radius: 10px;
+  background: rgba(15, 111, 92, 0.06);
+}
+
+.option-meta-item strong {
+  font-size: 0.76rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+}
+
+.option-meta-item span {
+  font-size: 0.82rem;
+  line-height: 1.4;
   color: var(--muted);
 }
 
@@ -484,6 +563,16 @@ a {
   color: var(--muted);
 }
 
+.route-callout {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(15, 111, 92, 0.08);
+  color: var(--accent-strong);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 .chip-row {
   display: flex;
   flex-wrap: wrap;
@@ -536,6 +625,18 @@ a {
   margin-top: 12px;
 }
 
+.kit-effects {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.example-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
 .resource-list.compact {
   margin-top: 10px;
 }
@@ -549,6 +650,7 @@ a {
 .link-item,
 .ont-item,
 .resource-item,
+.example-item,
 .command-card,
 .step-item {
   padding: 12px 13px;
@@ -580,6 +682,16 @@ a {
   border: 1px solid var(--line);
 }
 
+.example-item {
+  background: #f7faf8;
+  border: 1px solid var(--line);
+}
+
+.example-item-primary {
+  background: rgba(223, 241, 234, 0.42);
+  border: 1px solid rgba(15, 111, 92, 0.16);
+}
+
 .command-card {
   margin-top: 12px;
   background: rgba(255, 255, 255, 0.92);
@@ -603,6 +715,7 @@ a {
 .link-item strong,
 .ont-item strong,
 .resource-item strong,
+.example-item strong,
 .command-card strong,
 .step-item strong {
   display: block;
@@ -611,13 +724,26 @@ a {
 }
 
 .ont-item p,
+.example-item p,
 .command-card p,
 .step-item span,
 .resource-item span {
   margin: 0;
 }
 
+.example-route {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(15, 111, 92, 0.08);
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
 .ont-item a,
+.example-item a,
 .step-item a,
 .command-card a {
   display: inline-block;
@@ -718,7 +844,8 @@ a {
   }
 
   .support-grid,
-  .option-grid {
+  .option-grid,
+  .option-grid.is-route-grid {
     grid-template-columns: 1fr;
   }
 

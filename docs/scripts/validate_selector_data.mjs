@@ -25,11 +25,10 @@ const requiredPipelineFields = [
   "title",
   "short_title",
   "readiness_level",
-  "selector_groups",
+  "sequencing_contexts",
   "category",
   "sample_types",
   "analysis_goals",
-  "molecule_types",
   "input_formats",
   "library_modes",
   "supports_multiplexing",
@@ -47,6 +46,8 @@ const requiredPipelineFields = [
 const requiredPlaybookFields = [
   "pipeline_id",
   "track_id",
+  "example_badge",
+  "route_summary",
   "recommended_when",
   "avoid_when",
   "required_inputs",
@@ -61,8 +62,10 @@ const requiredPlaybookFields = [
 ];
 
 const questionOptions = new Map();
+const questionsById = new Map();
 for (const stage of questions.stages) {
   for (const question of stage.questions) {
+    questionsById.set(question.id, question);
     questionOptions.set(
       question.id,
       new Set(question.options.map((option) => option.value))
@@ -74,6 +77,34 @@ const pipelineIds = new Set(pipelines.map((pipeline) => pipeline.id));
 const tracksByPipeline = new Map(
   pipelines.map((pipeline) => [pipeline.id, new Set((pipeline.track_notes || []).map((track) => track.id))])
 );
+
+for (const question of questionsById.values()) {
+  for (const option of question.options) {
+    if (option.visible_when) {
+      for (const [dependencyId, acceptedValues] of Object.entries(option.visible_when)) {
+        if (!questionOptions.has(dependencyId)) {
+          fail(`Question ${question.id} option ${option.value} references unknown dependency ${dependencyId}`);
+        }
+        for (const value of acceptedValues) {
+          if (!questionOptions.get(dependencyId).has(value)) {
+            fail(`Question ${question.id} option ${option.value} references invalid dependency value ${dependencyId}:${value}`);
+          }
+        }
+      }
+    }
+
+    if (option.autofill) {
+      for (const [questionId, value] of Object.entries(option.autofill)) {
+        if (!questionOptions.has(questionId)) {
+          fail(`Question ${question.id} option ${option.value} autofills unknown question ${questionId}`);
+        }
+        if (!questionOptions.get(questionId).has(value)) {
+          fail(`Question ${question.id} option ${option.value} autofills invalid value ${questionId}:${value}`);
+        }
+      }
+    }
+  }
+}
 
 for (const pipeline of pipelines) {
   for (const field of requiredPipelineFields) {
@@ -128,6 +159,7 @@ for (const playbook of playbooks) {
     if (!command.label || !command.command || !command.source_url) {
       fail(`Playbook ${playbook.pipeline_id}/${playbook.track_id} has an incomplete curated command`);
     }
+
     if (command.when) {
       for (const [questionId, values] of Object.entries(command.when)) {
         if (!questionOptions.has(questionId)) {
@@ -150,7 +182,7 @@ for (const playbook of playbooks) {
 }
 
 for (const preset of presets) {
-  if (!preset.id || !preset.title || !preset.summary || !preset.audience || typeof preset.featured !== "boolean") {
+  if (!preset.id || !preset.group || !preset.title || !preset.summary || !preset.audience || typeof preset.featured !== "boolean") {
     fail(`Preset ${preset.id || "<unknown>"} is incomplete`);
   }
 
