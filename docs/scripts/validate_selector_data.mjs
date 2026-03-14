@@ -230,6 +230,17 @@ for (const playbook of playbooks) {
       fail(`Playbook ${playbook.pipeline_id}/${playbook.track_id} has an incomplete evidence link`);
     }
   }
+
+  if (playbook.pipeline_diagram) {
+    if (!Array.isArray(playbook.pipeline_diagram) || playbook.pipeline_diagram.length === 0) {
+      fail(`Playbook ${playbook.pipeline_id}/${playbook.track_id} pipeline_diagram must be a non-empty array`);
+    }
+    for (const step of playbook.pipeline_diagram) {
+      if (!step.step || !step.note || !step.rationale) {
+        fail(`Playbook ${playbook.pipeline_id}/${playbook.track_id} has an incomplete pipeline_diagram step`);
+      }
+    }
+  }
 }
 
 const exampleIds = new Set();
@@ -301,6 +312,17 @@ for (const example of examples) {
       }
       if (!pipelineIds.has(step.source_pipeline_id)) {
         fail(`Example ${example.id} recommended_step references unknown pipeline ${step.source_pipeline_id}`);
+      }
+    }
+  }
+
+  if (example.pipeline_diagram) {
+    if (!Array.isArray(example.pipeline_diagram) || example.pipeline_diagram.length === 0) {
+      fail(`Example ${example.id} pipeline_diagram must be a non-empty array`);
+    }
+    for (const step of example.pipeline_diagram) {
+      if (!step.step || !step.note || !step.rationale) {
+        fail(`Example ${example.id} has an incomplete pipeline_diagram step`);
       }
     }
   }

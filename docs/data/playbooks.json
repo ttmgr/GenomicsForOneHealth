@@ -136,6 +136,72 @@
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Air_Metagenomics/Installation_tutorial.md"
       }
     ],
+    "pipeline_diagram": [
+      {
+        "step": "Input",
+        "file_type": "POD5/FAST5",
+        "tool": null,
+        "tool_url": null,
+        "note": "Raw nanopore signal files",
+        "rationale": "Starting point for all nanopore workflows."
+      },
+      {
+        "step": "Basecalling",
+        "file_type": "FASTQ",
+        "tool": "Dorado",
+        "tool_url": "https://github.com/nanoporetech/dorado",
+        "note": "Convert raw signal to basecalled reads",
+        "rationale": "Dorado SUP gives the highest per-read accuracy for complex environmental samples."
+      },
+      {
+        "step": "Adapter trimming",
+        "file_type": "FASTQ",
+        "tool": "Porechop",
+        "tool_url": "https://github.com/rrwick/Porechop",
+        "note": "Remove sequencing adapters",
+        "rationale": "Standard adapter removal for nanopore reads before quality filtering."
+      },
+      {
+        "step": "Quality filtering",
+        "file_type": "FASTQ",
+        "tool": "NanoFilt",
+        "tool_url": "https://github.com/wdecoster/nanofilt",
+        "note": "Filter by quality and length",
+        "rationale": "Proven environmental DNA filtering defaults (Q >= 8, min 200 bp)."
+      },
+      {
+        "step": "Taxonomic profiling",
+        "file_type": "Report",
+        "tool": "Kraken2",
+        "tool_url": "https://github.com/DerrickWood/kraken2",
+        "note": "Classify reads against a reference database",
+        "rationale": "Established community profiling tool used in the air metagenomics study."
+      },
+      {
+        "step": "Assembly",
+        "file_type": "FASTA",
+        "tool": "Flye",
+        "tool_url": "https://github.com/mikolmogorov/Flye",
+        "note": "Metagenomic assembly of long reads",
+        "rationale": "Flye metagenomic mode is the default assembler for air metagenomics."
+      },
+      {
+        "step": "Polishing",
+        "file_type": "FASTA",
+        "tool": "Racon",
+        "tool_url": "https://github.com/isovic/racon",
+        "note": "Polish assembled contigs",
+        "rationale": "Racon polishing improves consensus accuracy of Flye assemblies."
+      },
+      {
+        "step": "Annotation",
+        "file_type": "Report",
+        "tool": "Bakta",
+        "tool_url": "https://github.com/oschwengers/bakta",
+        "note": "Annotate assembled genomes",
+        "rationale": "Bakta provides standardized prokaryotic genome annotation used in the air pipeline."
+      }
+    ],
     "route_summary": "Environmental metagenomics -> long-read DNA -> air"
   },
   {
@@ -226,6 +292,24 @@
       {
         "label": "Wetland Health README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
+      }
+    ],
+    "pipeline_diagram": [
+      {
+        "step": "Input",
+        "file_type": "POD5/FAST5",
+        "tool": null,
+        "tool_url": null,
+        "note": "Raw nanopore signal files",
+        "rationale": "Starting point for all wetland health branches."
+      },
+      {
+        "step": "Branch selection",
+        "file_type": null,
+        "tool": null,
+        "tool_url": null,
+        "note": "Choose DNA metagenomics, RNA virome, or eDNA track",
+        "rationale": "The wetland health pipeline branches into three specialized tracks depending on material type."
       }
     ],
     "route_summary": "Environmental metagenomics -> choose the wetland branch"
@@ -321,6 +405,48 @@
       {
         "label": "Wetland DNA shotgun notes",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/dna_shotgun_analysis_pipeline.md"
+      }
+    ],
+    "pipeline_diagram": [
+      {
+        "step": "Input",
+        "file_type": "FASTQ",
+        "tool": null,
+        "tool_url": null,
+        "note": "Basecalled reads from wetland DNA samples",
+        "rationale": "Starting point for the wetland DNA metagenomics track."
+      },
+      {
+        "step": "Adapter trimming",
+        "file_type": "FASTQ",
+        "tool": "Porechop",
+        "tool_url": "https://github.com/rrwick/Porechop",
+        "note": "Remove sequencing adapters",
+        "rationale": "Standard adapter removal before quality filtering."
+      },
+      {
+        "step": "Quality filtering",
+        "file_type": "FASTQ",
+        "tool": "NanoFilt",
+        "tool_url": "https://github.com/wdecoster/nanofilt",
+        "note": "Filter by quality and length",
+        "rationale": "Quality and length filtering for environmental DNA reads."
+      },
+      {
+        "step": "Read statistics",
+        "file_type": "Report",
+        "tool": "SeqKit",
+        "tool_url": "https://github.com/shenwei356/seqkit",
+        "note": "Compute read-level statistics",
+        "rationale": "SeqKit provides QC metrics to guide downstream decisions."
+      },
+      {
+        "step": "Assembly + profiling",
+        "file_type": "FASTA",
+        "tool": "Flye + Kraken2",
+        "tool_url": "https://github.com/mikolmogorov/Flye",
+        "note": "Metagenomic assembly and taxonomic profiling",
+        "rationale": "Combined assembly and profiling for comprehensive environmental analysis."
       }
     ],
     "route_summary": "Environmental metagenomics -> long-read DNA -> wetland"
@@ -419,6 +545,48 @@
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
       }
     ],
+    "pipeline_diagram": [
+      {
+        "step": "Input",
+        "file_type": "FASTQ",
+        "tool": null,
+        "tool_url": null,
+        "note": "Basecalled reads from RNA virome material",
+        "rationale": "Starting point for the wetland RNA virome track."
+      },
+      {
+        "step": "Quality filtering",
+        "file_type": "FASTQ",
+        "tool": "NanoFilt",
+        "tool_url": "https://github.com/wdecoster/nanofilt",
+        "note": "Filter by quality and length",
+        "rationale": "Published RNA virome filtering defaults (Q >= 9, min 100 bp)."
+      },
+      {
+        "step": "Assembly",
+        "file_type": "FASTA",
+        "tool": "metaMDBG",
+        "tool_url": "https://github.com/GaetanBenoworkt/metaMDBG",
+        "note": "Assemble viral contigs from RNA reads",
+        "rationale": "metaMDBG is optimized for short and variable-length viral reads."
+      },
+      {
+        "step": "Polishing",
+        "file_type": "FASTA",
+        "tool": "Medaka",
+        "tool_url": "https://github.com/nanoporetech/medaka",
+        "note": "Polish assembled viral contigs",
+        "rationale": "Medaka polishing improves consensus for RNA-derived assemblies."
+      },
+      {
+        "step": "Classification",
+        "file_type": "Report",
+        "tool": "DIAMOND",
+        "tool_url": "https://github.com/bbuchfink/diamond",
+        "note": "Translated search against NR database",
+        "rationale": "DIAMOND BLASTx provides translated viral classification from the published virome branch."
+      }
+    ],
     "route_summary": "Environmental metagenomics -> RNA virome -> wetland"
   },
   {
@@ -506,6 +674,48 @@
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
       }
     ],
+    "pipeline_diagram": [
+      {
+        "step": "Input",
+        "file_type": "FASTQ",
+        "tool": null,
+        "tool_url": null,
+        "note": "Basecalled reads from 12S eDNA amplicons",
+        "rationale": "Starting point for the wetland eDNA track."
+      },
+      {
+        "step": "Demultiplexing",
+        "file_type": "FASTQ",
+        "tool": "OBITools4",
+        "tool_url": "https://git.metabarcoding.org/obitools/obitools4",
+        "note": "Demultiplex amplicon pool",
+        "rationale": "OBITools4 handles amplicon-specific demultiplexing for eDNA studies."
+      },
+      {
+        "step": "Primer removal",
+        "file_type": "FASTQ",
+        "tool": "Cutadapt",
+        "tool_url": "https://github.com/marcelm/cutadapt",
+        "note": "Remove primer sequences",
+        "rationale": "Standard primer trimming after demultiplexing."
+      },
+      {
+        "step": "Quality filtering",
+        "file_type": "FASTQ",
+        "tool": "VSEARCH",
+        "tool_url": "https://github.com/torognes/vsearch",
+        "note": "Dereplicate and remove chimeras",
+        "rationale": "VSEARCH provides robust amplicon quality filtering with chimera removal."
+      },
+      {
+        "step": "Taxonomic assignment",
+        "file_type": "Report",
+        "tool": "MIDORI2",
+        "tool_url": "https://www.reference-midori.info",
+        "note": "Assign taxonomy using 12S reference database",
+        "rationale": "MIDORI2 is the standard 12S reference for vertebrate metabarcoding."
+      }
+    ],
     "route_summary": "Environmental metagenomics -> amplicon workflow -> eDNA 12S -> wetland"
   },
   {
@@ -591,6 +801,48 @@
       {
         "label": "Zambia eDNA README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/eDNA_Metabarcoding/README.md"
+      }
+    ],
+    "pipeline_diagram": [
+      {
+        "step": "Input",
+        "file_type": "FASTQ",
+        "tool": null,
+        "tool_url": null,
+        "note": "Basecalled reads from water eDNA amplicons",
+        "rationale": "Starting point for the Zambia eDNA workflow."
+      },
+      {
+        "step": "Demultiplexing",
+        "file_type": "FASTQ",
+        "tool": "OBITools4",
+        "tool_url": "https://git.metabarcoding.org/obitools/obitools4",
+        "note": "Demultiplex amplicon pool",
+        "rationale": "Published amplicon demultiplexing workflow for water eDNA."
+      },
+      {
+        "step": "Primer removal",
+        "file_type": "FASTQ",
+        "tool": "Cutadapt",
+        "tool_url": "https://github.com/marcelm/cutadapt",
+        "note": "Remove primer sequences",
+        "rationale": "Standard primer trimming after demultiplexing."
+      },
+      {
+        "step": "Quality filtering",
+        "file_type": "FASTQ",
+        "tool": "VSEARCH",
+        "tool_url": "https://github.com/torognes/vsearch",
+        "note": "Dereplicate and remove chimeras",
+        "rationale": "Published amplicon quality filtering and dereplication."
+      },
+      {
+        "step": "Taxonomic assignment",
+        "file_type": "Report",
+        "tool": "MIDORI2",
+        "tool_url": "https://www.reference-midori.info",
+        "note": "OTU clustering at 99% against MIDORI2",
+        "rationale": "Published 12S taxonomic assignment workflow for water eDNA."
       }
     ],
     "route_summary": "Environmental metagenomics -> amplicon workflow -> eDNA 12S -> water eDNA"
@@ -734,6 +986,64 @@
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Food_Safety/Listeria-Adaptive-Sampling/docs/03_execution_guide.md"
       }
     ],
+    "pipeline_diagram": [
+      {
+        "step": "Input",
+        "file_type": "BAM",
+        "tool": null,
+        "tool_url": null,
+        "note": "Adaptive sampling output in BAM format",
+        "rationale": "Listeria adaptive sampling starts from BAM rather than raw signal."
+      },
+      {
+        "step": "BAM conversion",
+        "file_type": "FASTQ",
+        "tool": "Samtools",
+        "tool_url": "https://github.com/samtools/samtools",
+        "note": "Convert BAM to FASTQ for downstream processing",
+        "rationale": "Samtools extracts reads from adaptive sampling BAM output."
+      },
+      {
+        "step": "Adapter trimming",
+        "file_type": "FASTQ",
+        "tool": "Porechop",
+        "tool_url": "https://github.com/rrwick/Porechop",
+        "note": "Remove sequencing adapters",
+        "rationale": "Adapter removal before quality filtering."
+      },
+      {
+        "step": "Quality filtering",
+        "file_type": "FASTQ",
+        "tool": "NanoFilt",
+        "tool_url": "https://github.com/wdecoster/nanofilt",
+        "note": "Filter by quality and length",
+        "rationale": "Quality filtering for enriched reads."
+      },
+      {
+        "step": "Taxonomic screening",
+        "file_type": "Report",
+        "tool": "Kraken2",
+        "tool_url": "https://github.com/DerrickWood/kraken2",
+        "note": "Screen for Listeria and background organisms",
+        "rationale": "Kraken2 identifies target and off-target reads after adaptive enrichment."
+      },
+      {
+        "step": "Assembly",
+        "file_type": "FASTA",
+        "tool": "Flye",
+        "tool_url": "https://github.com/mikolmogorov/Flye",
+        "note": "Assemble target reads",
+        "rationale": "Flye assembles enriched Listeria reads into draft genomes."
+      },
+      {
+        "step": "AMR profiling",
+        "file_type": "Report",
+        "tool": "AMRFinderPlus",
+        "tool_url": "https://github.com/ncbi/amr",
+        "note": "Detect antimicrobial resistance genes",
+        "rationale": "AMRFinderPlus profiles AMR content in recovered Listeria assemblies."
+      }
+    ],
     "route_summary": "Food safety -> adaptive sampling or control -> Listeria"
   },
   {
@@ -833,6 +1143,56 @@
       {
         "label": "AMR Nanopore README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore/README.md"
+      }
+    ],
+    "pipeline_diagram": [
+      {
+        "step": "Input",
+        "file_type": "POD5/FAST5",
+        "tool": null,
+        "tool_url": null,
+        "note": "Raw nanopore signal files",
+        "rationale": "Starting point for isolate AMR nanopore workflow."
+      },
+      {
+        "step": "Basecalling",
+        "file_type": "FASTQ",
+        "tool": "Dorado",
+        "tool_url": "https://github.com/nanoporetech/dorado",
+        "note": "Convert raw signal to basecalled reads",
+        "rationale": "Dorado provides high-accuracy basecalling for isolate sequencing."
+      },
+      {
+        "step": "Adapter trimming",
+        "file_type": "FASTQ",
+        "tool": "Porechop",
+        "tool_url": "https://github.com/rrwick/Porechop",
+        "note": "Remove sequencing adapters",
+        "rationale": "Standard adapter removal for nanopore reads."
+      },
+      {
+        "step": "Quality filtering",
+        "file_type": "FASTQ",
+        "tool": "NanoFilt",
+        "tool_url": "https://github.com/wdecoster/nanofilt",
+        "note": "Filter by quality and length",
+        "rationale": "Published isolate filtering defaults (Q >= 9, min 200 bp)."
+      },
+      {
+        "step": "Assembly",
+        "file_type": "FASTA",
+        "tool": "Flye",
+        "tool_url": "https://github.com/mikolmogorov/Flye",
+        "note": "Assemble isolate genome",
+        "rationale": "Flye produces high-quality isolate assemblies from long reads."
+      },
+      {
+        "step": "Polishing",
+        "file_type": "FASTA",
+        "tool": "Racon",
+        "tool_url": "https://github.com/isovic/racon",
+        "note": "Polish assembled genome",
+        "rationale": "Racon polishing improves consensus accuracy for isolate assemblies."
       }
     ],
     "route_summary": "Clinical / isolate -> LSK114 -> single isolate"
@@ -969,6 +1329,72 @@
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/CRE-Plasmid-clustering/README.md"
       }
     ],
+    "pipeline_diagram": [
+      {
+        "step": "Input",
+        "file_type": "POD5/FAST5",
+        "tool": null,
+        "tool_url": null,
+        "note": "Raw nanopore signal files from barcoded isolates",
+        "rationale": "Starting point for the CRE plasmid clustering workflow."
+      },
+      {
+        "step": "Basecalling",
+        "file_type": "FASTQ",
+        "tool": "Dorado",
+        "tool_url": "https://github.com/nanoporetech/dorado",
+        "note": "Convert raw signal to basecalled reads",
+        "rationale": "Dorado SUP gives the highest per-read accuracy. Used in our CRE plasmid study."
+      },
+      {
+        "step": "Demultiplexing",
+        "file_type": "FASTQ",
+        "tool": "Dorado demux",
+        "tool_url": "https://github.com/nanoporetech/dorado",
+        "note": "Separate barcoded samples",
+        "rationale": "Integrated demultiplexing within Dorado for barcoded isolate pools."
+      },
+      {
+        "step": "Quality filtering",
+        "file_type": "FASTQ",
+        "tool": "NanoFilt",
+        "tool_url": "https://github.com/wdecoster/nanofilt",
+        "note": "Filter by quality and length",
+        "rationale": "Quality filtering for per-barcode isolate reads."
+      },
+      {
+        "step": "Assembly",
+        "file_type": "FASTA",
+        "tool": "Flye",
+        "tool_url": "https://github.com/mikolmogorov/Flye",
+        "note": "Assemble per-barcode isolate genomes",
+        "rationale": "Flye produces complete isolate assemblies including plasmids."
+      },
+      {
+        "step": "Polishing",
+        "file_type": "FASTA",
+        "tool": "Medaka",
+        "tool_url": "https://github.com/nanoporetech/medaka",
+        "note": "Polish assembled genomes",
+        "rationale": "Medaka polishing for high-accuracy consensus on R10.4.1 data."
+      },
+      {
+        "step": "Plasmid typing",
+        "file_type": "Report",
+        "tool": "MOB-Suite",
+        "tool_url": "https://github.com/phac-nml/mob-suite",
+        "note": "Reconstruct and type plasmids",
+        "rationale": "MOB-Suite resolves plasmid content for epidemiological comparison."
+      },
+      {
+        "step": "AMR + clustering",
+        "file_type": "Report",
+        "tool": "AMRFinderPlus + Mash + Pling",
+        "tool_url": "https://github.com/ncbi/amr",
+        "note": "AMR detection and plasmid clustering",
+        "rationale": "Combined AMR profiling with Mash distance clustering and Pling plasmid network analysis."
+      }
+    ],
     "route_summary": "Clinical / isolate -> RBK114.24 or NBD114.24 -> barcoded isolate"
   },
   {
@@ -1103,6 +1529,64 @@
       {
         "label": "AMR host association README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/Nanopore-AMR-Host-Association/README.md"
+      }
+    ],
+    "pipeline_diagram": [
+      {
+        "step": "Input",
+        "file_type": "POD5/FAST5",
+        "tool": null,
+        "tool_url": null,
+        "note": "Raw nanopore signal files from clinical metagenome",
+        "rationale": "Starting point for the AMR host-association workflow."
+      },
+      {
+        "step": "Basecalling",
+        "file_type": "FASTQ",
+        "tool": "Dorado",
+        "tool_url": "https://github.com/nanoporetech/dorado",
+        "note": "Convert raw signal to basecalled reads",
+        "rationale": "Dorado SUP for maximum accuracy on complex clinical metagenomes."
+      },
+      {
+        "step": "Demultiplexing",
+        "file_type": "FASTQ",
+        "tool": "Dorado demux",
+        "tool_url": "https://github.com/nanoporetech/dorado",
+        "note": "Separate barcoded samples",
+        "rationale": "Integrated demultiplexing for multiplexed clinical metagenomes."
+      },
+      {
+        "step": "Quality filtering",
+        "file_type": "FASTQ",
+        "tool": "Chopper",
+        "tool_url": "https://github.com/wdecoster/chopper",
+        "note": "Filter and trim reads",
+        "rationale": "Chopper provides flexible quality and length filtering for metagenomes."
+      },
+      {
+        "step": "Assembly",
+        "file_type": "FASTA",
+        "tool": "Flye",
+        "tool_url": "https://github.com/mikolmogorov/Flye",
+        "note": "Metagenomic assembly",
+        "rationale": "Flye metagenomic mode for clinical metagenome assembly."
+      },
+      {
+        "step": "Methylation",
+        "file_type": "Report",
+        "tool": "Modkit + Nanomotif",
+        "tool_url": "https://github.com/nanoporetech/modkit",
+        "note": "Detect and interpret methylation patterns",
+        "rationale": "Methylation-aware analysis links modification patterns to host organisms."
+      },
+      {
+        "step": "AMR + host association",
+        "file_type": "Report",
+        "tool": "MOB-Suite + AMRFinderPlus + Kraken2",
+        "tool_url": "https://github.com/ncbi/amr",
+        "note": "AMR detection, plasmid typing, and host assignment",
+        "rationale": "Combined AMR and host-association analysis for clinical metagenome interpretation."
       }
     ],
     "route_summary": "Clinical / isolate -> barcoded metagenome -> AMR host association"

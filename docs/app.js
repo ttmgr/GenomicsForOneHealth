@@ -663,6 +663,85 @@ function renderComposedSteps(steps) {
   `;
 }
 
+function fileTypeClass(fileType) {
+  if (!fileType) {
+    return "";
+  }
+  const normalized = fileType.toLowerCase();
+  if (normalized.includes("pod5") || normalized.includes("fast5") || normalized.includes("signal")) {
+    return "ft-signal";
+  }
+  if (normalized.includes("fastq") || normalized.includes("reads")) {
+    return "ft-reads";
+  }
+  if (normalized.includes("bam") || normalized.includes("aligned")) {
+    return "ft-aligned";
+  }
+  if (normalized.includes("fasta") || normalized.includes("assembly")) {
+    return "ft-assembly";
+  }
+  if (normalized.includes("report") || normalized.includes("table")) {
+    return "ft-report";
+  }
+  return "";
+}
+
+function renderPipelineDiagram(steps) {
+  if (!steps || steps.length === 0) {
+    return `<p class="muted">No pipeline diagram is available for this workflow.</p>`;
+  }
+
+  return `
+    <div class="diagram-flow">
+      ${steps
+        .map((step, index) => {
+          const toolMarkup = step.tool
+            ? step.tool_url
+              ? `<a class="diagram-tool-link" href="${escapeHtml(step.tool_url)}" target="_blank" rel="noreferrer">${escapeHtml(step.tool)}</a>`
+              : `<span class="diagram-tool-name">${escapeHtml(step.tool)}</span>`
+            : "";
+          const fileTypePill = step.file_type
+            ? `<span class="diagram-filetype ${fileTypeClass(step.file_type)}">${escapeHtml(step.file_type)}</span>`
+            : "";
+          return `
+            ${index > 0 ? '<div class="diagram-connector"></div>' : ""}
+            <div class="diagram-step">
+              <div class="diagram-node">
+                <div class="diagram-node-head">
+                  <strong class="diagram-step-label">${escapeHtml(step.step)}</strong>
+                  ${fileTypePill}
+                </div>
+                ${toolMarkup}
+                ${step.note ? `<p class="diagram-note">${escapeHtml(step.note)}</p>` : ""}
+              </div>
+            </div>
+          `;
+        })
+        .join("")}
+    </div>
+  `;
+}
+
+function renderDiagramRationale(steps) {
+  if (!steps || steps.length === 0) {
+    return "";
+  }
+
+  return `
+    <div class="rationale-list">
+      ${steps
+        .filter((step) => step.rationale)
+        .map((step) => `
+          <div class="rationale-item">
+            <strong>${escapeHtml(step.step)}${step.tool ? ` (${escapeHtml(step.tool)})` : ""}</strong>
+            <p>${escapeHtml(step.rationale)}</p>
+          </div>
+        `)
+        .join("")}
+    </div>
+  `;
+}
+
 function renderResultsPage() {
   const recommendation = computeRecommendation(answers, datasets);
   if (!recommendation) {
@@ -698,13 +777,14 @@ function renderResultsPage() {
 
   const tools = recommendation.backend.playbook.required_tools || [];
   const databases = recommendation.backend.playbook.required_databases || [];
+  const diagramSteps = recommendation.pipeline_diagram || [];
 
   return `
     <section class="wizard-page results-page">
       ${renderPageHeader("results")}
 
-      <section class="match-comparison">
-        <article class="match-column match-yours">
+      <div class="pipeline-view">
+        <aside class="pipeline-col pipeline-col-left">
           <p class="match-column-label">Your project</p>
           <h3>${escapeHtml(routeLabelSummary())}</h3>
           <dl class="match-facts">
@@ -714,140 +794,187 @@ function renderResultsPage() {
           </dl>
           <p class="match-setup">${escapeHtml(recommendation.setup_summary.recommendation)}</p>
           <p class="match-env">Environment: ${escapeHtml(recommendation.analysis_environment.label)}</p>
-        </article>
-        <div class="match-arrow">
-          <span class="result-chip ${recommendation.status === "unsupported" ? "is-warning" : "is-success"}">${escapeHtml(recommendation.status_label)}</span>
-        </div>
-        <article class="match-column match-ours">
-          <p class="match-column-label">${recommendation.composed_steps ? "Composed recommendation" : "Matched workflow"}</p>
-          <h3>${recommendation.composed_steps ? "Composed from published workflows" : escapeHtml(backendTitle)}</h3>
-          <p class="match-explanation">${escapeHtml(recommendation.example.selection_help || recommendation.explanation)}</p>
+          <div class="pipeline-status">
+            <span class="result-chip ${recommendation.status === "unsupported" ? "is-warning" : "is-success"}">${escapeHtml(recommendation.status_label)}</span>
+          </div>
           ${recommendation.example.unsupported_reason ? `<p class="warning-inline">${escapeHtml(recommendation.example.unsupported_reason)}</p>` : ""}
-          <p class="muted">${escapeHtml(recommendation.setup_summary.result_note || "Setup defaults were resolved from the selected route.")}</p>
-        </article>
-      </section>
+        </aside>
 
-      ${recommendation.composed_steps
-        ? `
-          ${renderComposedSteps(recommendation.composed_steps)}
-          <details class="detail-panel">
-            <summary>Nearest published workflow: ${escapeHtml(backendTitle)}</summary>
-            <ol class="step-list" style="padding: 0 18px 18px;">
-              ${recommendation.entry_actions
-                .map(
-                  (action) => `
-                    <li>
-                      <strong>${escapeHtml(action.title)}</strong>
-                      <p>${escapeHtml(action.summary)}</p>
-                      <a href="${escapeHtml(linkHref(action.doc_url))}" target="_blank" rel="noreferrer">${escapeHtml(action.entry_file)}</a>
-                    </li>
-                  `
-                )
-                .join("")}
-            </ol>
-          </details>
-        `
-        : `
-          <section class="result-block">
-            <h3>Next steps</h3>
-            <ol class="step-list">
-              ${recommendation.entry_actions
-                .map(
-                  (action) => `
-                    <li>
-                      <strong>${escapeHtml(action.title)}</strong>
-                      <p>${escapeHtml(action.summary)}</p>
-                      <a href="${escapeHtml(linkHref(action.doc_url))}" target="_blank" rel="noreferrer">${escapeHtml(action.entry_file)}</a>
-                    </li>
-                  `
-                )
-                .join("")}
-            </ol>
-          </section>
-        `
-      }
-
-      ${renderEvidenceSection(recommendation)}
-
-      <section class="result-block setup-details-section">
-        <h3>Setup details</h3>
-        ${
-          setupBiasRows.length > 0
-            ? `
-              <div class="detail-group">
-                <h4>How your sample type shifts the setup advice</h4>
-                ${renderDefinitionList(setupBiasRows)}
-              </div>
-            `
-            : ""
-        }
-        ${
-          recommendation.kit_consequences
-            ? `
-              <div class="detail-group">
-                <h4>Kit consequences</h4>
-                ${renderDefinitionList([
-                  ["Demultiplexing", recommendation.kit_consequences.demultiplexing],
-                  ["Barcode trimming", recommendation.kit_consequences.barcode_trimming],
-                  ["Route shape", recommendation.kit_consequences.route_shape],
-                  ["Early preprocessing shift", recommendation.kit_consequences.first_changes]
-                ])}
-              </div>
-            `
-            : ""
-        }
-        <div class="detail-group">
-          <h4>Preprocessing defaults</h4>
-          ${renderDefinitionList(preprocessingRows)}
+        <div class="pipeline-col pipeline-col-center">
+          <p class="match-column-label">Pipeline diagram</p>
+          <h3>${recommendation.composed_steps ? "Composed from published workflows" : escapeHtml(backendTitle)}</h3>
+          ${renderPipelineDiagram(diagramSteps)}
         </div>
-        ${
-          recommendation.warnings.length > 0
-            ? `
-              <div class="detail-group">
-                <h4>Warnings and caveats</h4>
-                <ul class="detail-list">
-                  ${recommendation.warnings
-                    .map(
-                      (warning) => `
-                        <li>
-                          <strong>${escapeHtml(warning.title)}.</strong>
-                          ${escapeHtml(warning.text)}
-                        </li>
-                      `
-                    )
-                    .join("")}
-                </ul>
-              </div>
-            `
-            : ""
-        }
-        ${
-          recommendation.expert_effects.length > 0
-            ? `
-              <div class="detail-group">
-                <h4>Condition-based adjustments</h4>
-                <ul class="detail-list">
-                  ${recommendation.expert_effects
-                    .map(
-                      (effect) => `
-                        <li>
-                          <strong>${escapeHtml(effect.title)}.</strong>
-                          ${escapeHtml(effect.summary)}
-                        </li>
-                      `
-                    )
-                    .join("")}
-                </ul>
-              </div>
-            `
-            : ""
-        }
-      </section>
 
-      ${renderExternalWorkflows(recommendation)}
+        <aside class="pipeline-col pipeline-col-right">
+          <p class="match-column-label">Why these tools</p>
+          ${renderDiagramRationale(diagramSteps)}
+        </aside>
+      </div>
 
       <details class="detail-panel">
-        <summary>Technical reference</summary>
+        <summary>Full details: setup, commands, tools, databases, and documentation</summary>
+
+        ${recommendation.composed_steps
+          ? `
+            <div class="detail-group">
+              <h4>Composed pipeline steps</h4>
+              <ol class="step-list composed-steps">
+                ${recommendation.composed_steps
+                  .map(
+                    (step) => `
+                      <li>
+                        <strong>${escapeHtml(step.category)}</strong>
+                        <span class="composed-arrow">&rarr;</span>
+                        <span>${escapeHtml(step.recommendation)}</span>
+                        <span class="composed-source">from ${escapeHtml(step.source_label)}</span>
+                        <p class="muted">${escapeHtml(step.rationale)}</p>
+                      </li>
+                    `
+                  )
+                  .join("")}
+              </ol>
+            </div>
+          `
+          : ""
+        }
+
+        <div class="detail-group">
+          <h4>Next steps</h4>
+          <ol class="step-list">
+            ${recommendation.entry_actions
+              .map(
+                (action) => `
+                  <li>
+                    <strong>${escapeHtml(action.title)}</strong>
+                    <p>${escapeHtml(action.summary)}</p>
+                    <a href="${escapeHtml(linkHref(action.doc_url))}" target="_blank" rel="noreferrer">${escapeHtml(action.entry_file)}</a>
+                  </li>
+                `
+              )
+              .join("")}
+          </ol>
+        </div>
+
+        ${renderExternalWorkflows(recommendation)}
+
+        ${recommendation.matrix_notes
+          ? `
+            <div class="detail-group evidence-section">
+              <div class="result-block-head">
+                <h4>Sample-specific guidance</h4>
+                <span class="option-badge">${escapeHtml(recommendation.matrix_notes.label)}</span>
+              </div>
+              ${
+                recommendation.literature_links.length > 0
+                  ? `
+                    <div class="key-references">
+                      <h4>Key references</h4>
+                      <ul class="citation-list">
+                        ${recommendation.literature_links
+                          .map(
+                            (link) => `
+                              <li><a class="citation-link" href="${escapeHtml(linkHref(link.url))}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a></li>
+                            `
+                          )
+                          .join("")}
+                      </ul>
+                    </div>
+                  `
+                  : ""
+              }
+              <p>${escapeHtml(recommendation.matrix_notes.summary)}</p>
+              ${
+                recommendation.matrix_notes.warnings.length > 0
+                  ? `
+                    <ul class="detail-list">
+                      ${recommendation.matrix_notes.warnings
+                        .map((warning) => `<li>${escapeHtml(warning)}</li>`)
+                        .join("")}
+                    </ul>
+                  `
+                  : ""
+              }
+            </div>
+          `
+          : ""
+        }
+
+        <div class="detail-group setup-details-section">
+          <h4>Setup details</h4>
+          ${
+            setupBiasRows.length > 0
+              ? `
+                <div class="detail-group">
+                  <h4>How your sample type shifts the setup advice</h4>
+                  ${renderDefinitionList(setupBiasRows)}
+                </div>
+              `
+              : ""
+          }
+          ${
+            recommendation.kit_consequences
+              ? `
+                <div class="detail-group">
+                  <h4>Kit consequences</h4>
+                  ${renderDefinitionList([
+                    ["Demultiplexing", recommendation.kit_consequences.demultiplexing],
+                    ["Barcode trimming", recommendation.kit_consequences.barcode_trimming],
+                    ["Route shape", recommendation.kit_consequences.route_shape],
+                    ["Early preprocessing shift", recommendation.kit_consequences.first_changes]
+                  ])}
+                </div>
+              `
+              : ""
+          }
+          <div class="detail-group">
+            <h4>Preprocessing defaults</h4>
+            ${renderDefinitionList(preprocessingRows)}
+          </div>
+          ${
+            recommendation.warnings.length > 0
+              ? `
+                <div class="detail-group">
+                  <h4>Warnings and caveats</h4>
+                  <ul class="detail-list">
+                    ${recommendation.warnings
+                      .map(
+                        (warning) => `
+                          <li>
+                            <strong>${escapeHtml(warning.title)}.</strong>
+                            ${escapeHtml(warning.text)}
+                          </li>
+                        `
+                      )
+                      .join("")}
+                  </ul>
+                </div>
+              `
+              : ""
+          }
+          ${
+            recommendation.expert_effects.length > 0
+              ? `
+                <div class="detail-group">
+                  <h4>Condition-based adjustments</h4>
+                  <ul class="detail-list">
+                    ${recommendation.expert_effects
+                      .map(
+                        (effect) => `
+                          <li>
+                            <strong>${escapeHtml(effect.title)}.</strong>
+                            ${escapeHtml(effect.summary)}
+                          </li>
+                        `
+                      )
+                      .join("")}
+                  </ul>
+                </div>
+              `
+              : ""
+          }
+        </div>
+
         <div class="detail-group">
           <h4>Documented commands</h4>
           ${renderCommands(recommendation.curated_commands)}

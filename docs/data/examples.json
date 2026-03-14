@@ -82,6 +82,14 @@
       {"category": "Taxonomic profiling", "recommendation": "Kraken2 with a comprehensive database", "source_pipeline_id": "air_metagenomics", "source_label": "Air Metagenomics", "rationale": "Established environmental community profiling"},
       {"category": "Assembly", "recommendation": "metaFlye or metaMDBG depending on read length", "source_pipeline_id": "wetland_health", "source_label": "Wetland Health DNA track", "rationale": "Best documented environmental metagenomic assembly"},
       {"category": "AMR detection", "recommendation": "AMRFinderPlus on assembled contigs", "source_pipeline_id": "nanopore_amr_host_association", "source_label": "AMR Host Association", "rationale": "Contextual AMR interpretation from published clinical metagenomics"}
+    ],
+    "pipeline_diagram": [
+      {"step": "Input", "file_type": "POD5/FAST5", "tool": null, "tool_url": null, "note": "Raw nanopore signal files", "rationale": "Starting point for all nanopore workflows."},
+      {"step": "Basecalling", "file_type": "FASTQ", "tool": "Dorado", "tool_url": "https://github.com/nanoporetech/dorado", "note": "Convert raw signal to basecalled reads", "rationale": "Dorado SUP gives the highest consensus accuracy. From CRE Plasmid workflow."},
+      {"step": "Quality filtering", "file_type": "FASTQ", "tool": "NanoFilt", "tool_url": "https://github.com/wdecoster/nanofilt", "note": "Filter by quality and length", "rationale": "Proven environmental DNA filtering defaults (Q >= 8, min 200 bp). From Air Metagenomics."},
+      {"step": "Taxonomic profiling", "file_type": "Report", "tool": "Kraken2", "tool_url": "https://github.com/DerrickWood/kraken2", "note": "Classify reads against a reference database", "rationale": "Established environmental community profiling. From Air Metagenomics."},
+      {"step": "Assembly", "file_type": "FASTA", "tool": "metaFlye / metaMDBG", "tool_url": "https://github.com/mikolmogorov/Flye", "note": "Metagenomic assembly depending on read length", "rationale": "Best documented environmental metagenomic assembly. From Wetland Health DNA track."},
+      {"step": "AMR detection", "file_type": "Report", "tool": "AMRFinderPlus", "tool_url": "https://github.com/ncbi/amr", "note": "Detect antimicrobial resistance genes on assembled contigs", "rationale": "Contextual AMR interpretation. From AMR Host Association."}
     ]
   },
   {
@@ -115,6 +123,14 @@
       {"category": "Taxonomic profiling", "recommendation": "Kraken2 with a comprehensive database", "source_pipeline_id": "air_metagenomics", "source_label": "Air Metagenomics", "rationale": "Established environmental community profiling"},
       {"category": "Assembly", "recommendation": "metaFlye or metaMDBG depending on read length", "source_pipeline_id": "wetland_health", "source_label": "Wetland Health DNA track", "rationale": "Best documented environmental metagenomic assembly"},
       {"category": "AMR detection", "recommendation": "AMRFinderPlus on assembled contigs", "source_pipeline_id": "nanopore_amr_host_association", "source_label": "AMR Host Association", "rationale": "Contextual AMR interpretation from published clinical metagenomics"}
+    ],
+    "pipeline_diagram": [
+      {"step": "Input", "file_type": "POD5/FAST5", "tool": null, "tool_url": null, "note": "Raw nanopore signal files", "rationale": "Starting point for all nanopore workflows."},
+      {"step": "Basecalling", "file_type": "FASTQ", "tool": "Dorado", "tool_url": "https://github.com/nanoporetech/dorado", "note": "Convert raw signal to basecalled reads", "rationale": "Dorado SUP gives the highest consensus accuracy. From CRE Plasmid workflow."},
+      {"step": "Quality filtering", "file_type": "FASTQ", "tool": "NanoFilt", "tool_url": "https://github.com/wdecoster/nanofilt", "note": "Filter by quality and length", "rationale": "Proven environmental DNA filtering defaults (Q >= 8, min 200 bp). From Air Metagenomics."},
+      {"step": "Taxonomic profiling", "file_type": "Report", "tool": "Kraken2", "tool_url": "https://github.com/DerrickWood/kraken2", "note": "Classify reads against a reference database", "rationale": "Established environmental community profiling. From Air Metagenomics."},
+      {"step": "Assembly", "file_type": "FASTA", "tool": "metaFlye / metaMDBG", "tool_url": "https://github.com/mikolmogorov/Flye", "note": "Metagenomic assembly depending on read length", "rationale": "Best documented environmental metagenomic assembly. From Wetland Health DNA track."},
+      {"step": "AMR detection", "file_type": "Report", "tool": "AMRFinderPlus", "tool_url": "https://github.com/ncbi/amr", "note": "Detect antimicrobial resistance genes on assembled contigs", "rationale": "Contextual AMR interpretation. From AMR Host Association."}
     ]
   },
   {
@@ -167,6 +183,13 @@
       {"category": "Quality filtering", "recommendation": "NanoFilt Q >= 9, min 100 bp", "source_pipeline_id": "wetland_health", "source_label": "Wetland Health RNA track", "rationale": "Published RNA virome filtering defaults"},
       {"category": "Assembly", "recommendation": "nanoMDBG followed by Medaka polishing", "source_pipeline_id": "wetland_health", "source_label": "Wetland Health RNA track", "rationale": "Documented RNA virome assembly and polishing"},
       {"category": "Classification", "recommendation": "DIAMOND BLASTx against NR", "source_pipeline_id": "wetland_health", "source_label": "Wetland Health RNA track", "rationale": "Translated viral classification from published virome branch"}
+    ],
+    "pipeline_diagram": [
+      {"step": "Input", "file_type": "FASTQ", "tool": null, "tool_url": null, "note": "Basecalled reads from RNA virome material", "rationale": "Starting point for RNA virome workflows."},
+      {"step": "Quality filtering", "file_type": "FASTQ", "tool": "NanoFilt", "tool_url": "https://github.com/wdecoster/nanofilt", "note": "Filter by quality and length", "rationale": "Published RNA virome filtering defaults (Q >= 9, min 100 bp). From Wetland Health RNA track."},
+      {"step": "Assembly", "file_type": "FASTA", "tool": "metaMDBG", "tool_url": "https://github.com/GaetanBenoworkt/metaMDBG", "note": "Assemble viral contigs", "rationale": "Documented RNA virome assembly. From Wetland Health RNA track."},
+      {"step": "Polishing", "file_type": "FASTA", "tool": "Medaka", "tool_url": "https://github.com/nanoporetech/medaka", "note": "Polish assembled viral contigs", "rationale": "Documented RNA virome polishing. From Wetland Health RNA track."},
+      {"step": "Classification", "file_type": "Report", "tool": "DIAMOND", "tool_url": "https://github.com/bbuchfink/diamond", "note": "Translated search against NR database", "rationale": "Translated viral classification. From Wetland Health RNA track."}
     ]
   },
   {
@@ -245,6 +268,13 @@
       {"category": "Primer removal", "recommendation": "Cutadapt", "source_pipeline_id": "zambia_edna", "source_label": "Zambia eDNA", "rationale": "Standard primer trimming after demultiplexing"},
       {"category": "Quality filtering", "recommendation": "VSEARCH with dereplication and chimera removal", "source_pipeline_id": "zambia_edna", "source_label": "Zambia eDNA", "rationale": "Published amplicon quality filtering"},
       {"category": "Taxonomic assignment", "recommendation": "OTU clustering at 99% against MIDORI2", "source_pipeline_id": "zambia_edna", "source_label": "Zambia eDNA", "rationale": "Published 12S taxonomic assignment workflow"}
+    ],
+    "pipeline_diagram": [
+      {"step": "Input", "file_type": "FASTQ", "tool": null, "tool_url": null, "note": "Basecalled reads from 12S eDNA amplicons", "rationale": "Starting point for eDNA amplicon workflows."},
+      {"step": "Demultiplexing", "file_type": "FASTQ", "tool": "OBITools4", "tool_url": "https://git.metabarcoding.org/obitools/obitools4", "note": "Demultiplex amplicon pool", "rationale": "Published amplicon demultiplexing workflow. From Zambia eDNA."},
+      {"step": "Primer removal", "file_type": "FASTQ", "tool": "Cutadapt", "tool_url": "https://github.com/marcelm/cutadapt", "note": "Remove primer sequences", "rationale": "Standard primer trimming after demultiplexing. From Zambia eDNA."},
+      {"step": "Quality filtering", "file_type": "FASTQ", "tool": "VSEARCH", "tool_url": "https://github.com/torognes/vsearch", "note": "Dereplicate and remove chimeras", "rationale": "Published amplicon quality filtering. From Zambia eDNA."},
+      {"step": "Taxonomic assignment", "file_type": "Report", "tool": "MIDORI2", "tool_url": "https://www.reference-midori.info", "note": "OTU clustering at 99% against MIDORI2", "rationale": "Published 12S taxonomic assignment workflow. From Zambia eDNA."}
     ]
   },
   {
@@ -303,6 +333,14 @@
       {"category": "Quality filtering", "recommendation": "NanoFilt Q >= 9, min 200 bp", "source_pipeline_id": "amr_nanopore", "source_label": "AMR Nanopore", "rationale": "Published isolate filtering defaults"},
       {"category": "Assembly", "recommendation": "Flye assembly with Racon polishing", "source_pipeline_id": "amr_nanopore", "source_label": "AMR Nanopore", "rationale": "Published isolate assembly and polishing"},
       {"category": "AMR profiling", "recommendation": "AMRFinderPlus on polished contigs", "source_pipeline_id": "amr_nanopore", "source_label": "AMR Nanopore", "rationale": "Published isolate AMR detection"}
+    ],
+    "pipeline_diagram": [
+      {"step": "Input", "file_type": "POD5/FAST5", "tool": null, "tool_url": null, "note": "Raw nanopore signal files", "rationale": "Starting point for isolate workflows."},
+      {"step": "Basecalling", "file_type": "FASTQ", "tool": "Dorado", "tool_url": "https://github.com/nanoporetech/dorado", "note": "Convert raw signal to basecalled reads", "rationale": "Published isolate basecalling workflow. From AMR Nanopore."},
+      {"step": "Quality filtering", "file_type": "FASTQ", "tool": "NanoFilt", "tool_url": "https://github.com/wdecoster/nanofilt", "note": "Filter by quality and length", "rationale": "Published isolate filtering defaults (Q >= 9, min 200 bp). From AMR Nanopore."},
+      {"step": "Assembly", "file_type": "FASTA", "tool": "Flye", "tool_url": "https://github.com/mikolmogorov/Flye", "note": "Assemble isolate genome", "rationale": "Published isolate assembly. From AMR Nanopore."},
+      {"step": "Polishing", "file_type": "FASTA", "tool": "Racon", "tool_url": "https://github.com/isovic/racon", "note": "Polish assembled genome", "rationale": "Published isolate polishing. From AMR Nanopore."},
+      {"step": "AMR profiling", "file_type": "Report", "tool": "AMRFinderPlus", "tool_url": "https://github.com/ncbi/amr", "note": "Detect antimicrobial resistance genes", "rationale": "Published isolate AMR detection. From AMR Nanopore."}
     ]
   },
   {
@@ -361,6 +399,13 @@
       {"category": "Demultiplexing", "recommendation": "Dorado demux for barcode separation", "source_pipeline_id": "cre_plasmid_clustering", "source_label": "CRE Plasmid workflow", "rationale": "Published per-barcode separation"},
       {"category": "Assembly", "recommendation": "Flye assembly with Medaka polishing", "source_pipeline_id": "cre_plasmid_clustering", "source_label": "CRE Plasmid workflow", "rationale": "Published isolate assembly and polishing"},
       {"category": "Plasmid and AMR", "recommendation": "MOB-Suite, AMRFinderPlus, Mash clustering", "source_pipeline_id": "cre_plasmid_clustering", "source_label": "CRE Plasmid workflow", "rationale": "Published plasmid reconstruction and AMR detection"}
+    ],
+    "pipeline_diagram": [
+      {"step": "Input", "file_type": "POD5/FAST5", "tool": null, "tool_url": null, "note": "Raw nanopore signal files from barcoded isolates", "rationale": "Starting point for barcoded isolate workflows."},
+      {"step": "Basecalling", "file_type": "FASTQ", "tool": "Dorado", "tool_url": "https://github.com/nanoporetech/dorado", "note": "Convert raw signal to basecalled reads", "rationale": "Published barcoded isolate basecalling. From CRE Plasmid workflow."},
+      {"step": "Demultiplexing", "file_type": "FASTQ", "tool": "Dorado demux", "tool_url": "https://github.com/nanoporetech/dorado", "note": "Separate barcoded samples", "rationale": "Published per-barcode separation. From CRE Plasmid workflow."},
+      {"step": "Assembly", "file_type": "FASTA", "tool": "Flye", "tool_url": "https://github.com/mikolmogorov/Flye", "note": "Assemble per-barcode isolate genomes", "rationale": "Published isolate assembly with Medaka polishing. From CRE Plasmid workflow."},
+      {"step": "Plasmid and AMR", "file_type": "Report", "tool": "MOB-Suite + AMRFinderPlus + Mash", "tool_url": "https://github.com/ncbi/amr", "note": "Plasmid reconstruction, AMR detection, clustering", "rationale": "Published plasmid reconstruction and AMR detection. From CRE Plasmid workflow."}
     ]
   },
   {
