@@ -3,7 +3,7 @@
     {
       "id": "stage1",
       "title": "Stage 1 · Biological and analytical intent",
-      "summary": "Use these answers to narrow the collection to workflows that are biologically and analytically compatible with your study.",
+      "summary": "Use these answers to narrow the collection to workflows that are biologically and analytically compatible with your study before the action sheet adds operational detail.",
       "questions": [
         {
           "id": "category",
@@ -235,7 +235,7 @@
     {
       "id": "stage2",
       "title": "Stage 2 · Preprocessing and entry point",
-      "summary": "These answers refine the practical recommendation: which documented entry point to use, whether basecalling or demultiplexing should still happen, and which read-cleaning defaults to prioritize.",
+      "summary": "These answers refine the action sheet: which documented entry point to use, whether basecalling or demultiplexing should still happen, and which read-cleaning defaults to prioritize.",
       "questions": [
         {
           "id": "input_format",

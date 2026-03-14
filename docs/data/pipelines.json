@@ -2,6 +2,8 @@
   {
     "id": "air_metagenomics",
     "title": "Air Metagenomics",
+    "short_title": "Air",
+    "readiness_level": "published",
     "category": "environmental_metagenomics",
     "sample_types": [
       "air_bioaerosol"
@@ -22,6 +24,23 @@
       "rbk114_24"
     ],
     "supports_multiplexing": true,
+    "supported_entry_points": [
+      {
+        "label": "Raw FAST5 or POD5 to end-to-end workflow",
+        "input_formats": [
+          "fast5",
+          "pod5"
+        ],
+        "notes": "Start with basecalling, then continue through the modular bash workflow."
+      },
+      {
+        "label": "Basecalled FASTQ to downstream metagenomics",
+        "input_formats": [
+          "fastq"
+        ],
+        "notes": "Enter at read-level QC and downstream metagenomics processing."
+      }
+    ],
     "default_preprocessing": {
       "input_expectation": "Raw FAST5 or POD5, or already basecalled FASTQ for air metagenomics.",
       "basecalling": "Use Guppy HAC for legacy FAST5 or Dorado HAC for POD5. The validated personal reference pipeline uses Dorado HAC v4.3.0 for POD5 inputs.",
@@ -63,11 +82,23 @@
       "Not a dedicated soil metagenomics workflow.",
       "Study-specific preprocessing differs between the greenhouse pilot and urban campaign."
     ],
+    "closest_alternatives": [
+      "wetland_health",
+      "zambia_edna"
+    ],
+    "decision_notes": [
+      "Air Metagenomics is the nearest environmental DNA route for unsupported non-water metagenomic queries, but it should not be treated as a soil protocol.",
+      "This workflow is strongest when the sample is truly an air or bioaerosol collection."
+    ],
+    "maintainer": "Tim Reska",
+    "last_reviewed": "2026-03-14",
     "track_notes": []
   },
   {
     "id": "wetland_health",
     "title": "Wetland Health",
+    "short_title": "Wetland",
+    "readiness_level": "preprint_multi_track",
     "category": "environmental_metagenomics",
     "sample_types": [
       "wetland_or_passive_water_sample"
@@ -92,6 +123,15 @@
       "amplicon"
     ],
     "supports_multiplexing": true,
+    "supported_entry_points": [
+      {
+        "label": "Basecalled FASTQ into unified wetland launcher",
+        "input_formats": [
+          "fastq"
+        ],
+        "notes": "The group workflow starts from basecalled FASTQ and then routes to the selected branch."
+      }
+    ],
     "default_preprocessing": {
       "input_expectation": "Raw input FASTQ directories for dual DNA/RNA wetland surveillance and related branches.",
       "basecalling": "The published workflow assumes basecalled reads. The curated personal reference uses Dorado SUP v5.0.0 for the main wetland pipeline.",
@@ -133,6 +173,16 @@
       "Not a generic environmental DNA workflow for arbitrary water or soil matrices.",
       "The published group repo centers on basecalled FASTQ entry rather than raw POD5."
     ],
+    "closest_alternatives": [
+      "avian_influenza_profiling",
+      "zambia_edna"
+    ],
+    "decision_notes": [
+      "Wetland Health is an umbrella workflow and should usually resolve to a branch-specific track before execution.",
+      "Use this only when the study context is actually the passive wetland sampling system documented in the repository."
+    ],
+    "maintainer": "Albert Perlas and Tim Reska",
+    "last_reviewed": "2026-03-14",
     "track_notes": [
       {
         "id": "dna_metagenomics",
@@ -234,6 +284,8 @@
   {
     "id": "zambia_edna",
     "title": "Zambia eDNA Metabarcoding Pipeline",
+    "short_title": "Zambia eDNA",
+    "readiness_level": "published",
     "category": "edna_metabarcoding",
     "sample_types": [
       "edna_water_sample"
@@ -252,6 +304,22 @@
       "amplicon"
     ],
     "supports_multiplexing": true,
+    "supported_entry_points": [
+      {
+        "label": "Nanopore FASTQ amplicon entry",
+        "input_formats": [
+          "fastq"
+        ],
+        "notes": "Single-end Nanopore amplicon reads are demultiplexed with OBITools."
+      },
+      {
+        "label": "Illumina paired-end amplicon entry",
+        "input_formats": [
+          "paired_end_fastq"
+        ],
+        "notes": "Illumina reads are merged before shared downstream metabarcoding processing."
+      }
+    ],
     "default_preprocessing": {
       "input_expectation": "Basecalled Nanopore FASTQ or Illumina paired-end FASTQ for 12S / 16S metabarcoding.",
       "basecalling": "The published repo starts from basecalled reads; raw-signal basecalling is outside the documented workflow.",
@@ -283,11 +351,23 @@
       "Does not document a raw POD5 or FAST5 basecalling branch.",
       "Not a general shotgun metagenomics workflow."
     ],
+    "closest_alternatives": [
+      "wetland_health",
+      "air_metagenomics"
+    ],
+    "decision_notes": [
+      "Zambia eDNA is the better fit for general water eDNA metabarcoding than the wetland host-range branch.",
+      "This workflow is not suitable for shotgun or raw-signal-first questions."
+    ],
+    "maintainer": "Daniel Gygax",
+    "last_reviewed": "2026-03-14",
     "track_notes": []
   },
   {
     "id": "listeria_adaptive_sampling",
     "title": "Listeria Adaptive Sampling",
+    "short_title": "Listeria AS",
+    "readiness_level": "documented_project",
     "category": "food_safety",
     "sample_types": [
       "food_safety_sample"
@@ -306,6 +386,22 @@
       "adaptive_sampling"
     ],
     "supports_multiplexing": true,
+    "supported_entry_points": [
+      {
+        "label": "Basecalled BAM to full Listeria workflow",
+        "input_formats": [
+          "bam"
+        ],
+        "notes": "The published workflow usually starts from BAM and converts to FASTQ internally."
+      },
+      {
+        "label": "FASTQ entry for adapted runs",
+        "input_formats": [
+          "fastq"
+        ],
+        "notes": "FASTQ can be used for adapted runs when BAM is not the direct entry point."
+      }
+    ],
     "default_preprocessing": {
       "input_expectation": "Typically starts from basecalled BAM files, but can be adapted to FASTQ inputs.",
       "basecalling": "Raw-signal basecalling is not the main documented entry point; the published workflow usually starts from BAM produced upstream.",
@@ -347,11 +443,23 @@
       "Dedicated to Listeria-focused recovery, not a general-purpose food microbiome workflow.",
       "Exact published setup assumes matched adaptive-sampling and native comparisons."
     ],
+    "closest_alternatives": [
+      "amr_nanopore",
+      "cre_plasmid_clustering"
+    ],
+    "decision_notes": [
+      "This workflow is driven by target enrichment and AS-versus-native benchmarking rather than generic food microbiome analysis.",
+      "If your main goal is isolate assembly or clinical AMR rather than target recovery, use a different route."
+    ],
+    "maintainer": "Tim Reska",
+    "last_reviewed": "2026-03-14",
     "track_notes": []
   },
   {
     "id": "amr_nanopore",
     "title": "AMR Nanopore",
+    "short_title": "AMR Nanopore",
+    "readiness_level": "published",
     "category": "clinical_isolates_plasmids",
     "sample_types": [
       "bacterial_isolate"
@@ -370,6 +478,22 @@
       "standard_isolate"
     ],
     "supports_multiplexing": false,
+    "supported_entry_points": [
+      {
+        "label": "FAST5 isolate entry",
+        "input_formats": [
+          "fast5"
+        ],
+        "notes": "Basecall first, then proceed into isolate read cleaning and assembly."
+      },
+      {
+        "label": "FASTQ isolate entry",
+        "input_formats": [
+          "fastq"
+        ],
+        "notes": "Enter at trimming, filtering, and assembly."
+      }
+    ],
     "default_preprocessing": {
       "input_expectation": "FAST5 or FASTQ from clinical isolate sequencing.",
       "basecalling": "Use Guppy with dna_r9.4.1_450bps_hac when starting from FAST5.",
@@ -406,11 +530,22 @@
       "Not a clinical metagenomics workflow.",
       "Not designed for raw POD5 methylation-aware processing."
     ],
+    "closest_alternatives": [
+      "cre_plasmid_clustering",
+      "nanopore_amr_host_association"
+    ],
+    "decision_notes": [
+      "This route is strongest for isolate-focused AMR profiling rather than multi-host association or plasmid network analysis."
+    ],
+    "maintainer": "Ela Sauerborn",
+    "last_reviewed": "2026-03-14",
     "track_notes": []
   },
   {
     "id": "cre_plasmid_clustering",
     "title": "CRE Plasmid Clustering",
+    "short_title": "CRE Plasmids",
+    "readiness_level": "documented_project",
     "category": "clinical_isolates_plasmids",
     "sample_types": [
       "bacterial_isolate"
@@ -429,6 +564,22 @@
       "rbk114_24"
     ],
     "supports_multiplexing": true,
+    "supported_entry_points": [
+      {
+        "label": "Raw POD5 to demuxed isolate assemblies",
+        "input_formats": [
+          "pod5"
+        ],
+        "notes": "Basecall and demultiplex with Dorado before isolate reconstruction."
+      },
+      {
+        "label": "FASTQ isolate entry",
+        "input_formats": [
+          "fastq"
+        ],
+        "notes": "Enter at cleaning and assembly if reads are already basecalled."
+      }
+    ],
     "default_preprocessing": {
       "input_expectation": "Raw POD5 or basecalled FASTQ from CRE isolate sequencing.",
       "basecalling": "Dorado SUP v5.0.0 for R10.4.1 RBK114.24 data.",
@@ -465,11 +616,22 @@
       "Not a general metagenomic pathogen-surveillance workflow.",
       "Focused on isolate-scale plasmid reconstruction and clustering."
     ],
+    "closest_alternatives": [
+      "amr_nanopore",
+      "nanopore_amr_host_association"
+    ],
+    "decision_notes": [
+      "This route is for isolate-level plasmid comparison rather than generic AMR profiling or metagenomic host linkage."
+    ],
+    "maintainer": "Ela Sauerborn",
+    "last_reviewed": "2026-03-14",
     "track_notes": []
   },
   {
     "id": "nanopore_amr_host_association",
     "title": "Nanopore AMR Host Association",
+    "short_title": "AMR Host Association",
+    "readiness_level": "preprint",
     "category": "clinical_isolates_plasmids",
     "sample_types": [
       "clinical_metagenome"
@@ -487,6 +649,15 @@
       "barcoded_metagenome"
     ],
     "supports_multiplexing": true,
+    "supported_entry_points": [
+      {
+        "label": "Raw POD5 to methylation-aware host association",
+        "input_formats": [
+          "pod5"
+        ],
+        "notes": "The workflow expects raw POD5 and performs basecalling, demultiplexing, and downstream synchronization internally."
+      }
+    ],
     "default_preprocessing": {
       "input_expectation": "Raw POD5 metagenomic data with barcode-aware sample handling.",
       "basecalling": "Dorado SUP branch from POD5 to basecalled BAM.",
@@ -523,11 +694,23 @@
       "Requires raw POD5 entry and methylation-aware downstream analysis.",
       "Not the right workflow for purified clinical isolates or generic plasmid clustering."
     ],
+    "closest_alternatives": [
+      "amr_nanopore",
+      "cre_plasmid_clustering"
+    ],
+    "decision_notes": [
+      "Kraken2 supports annotation here, but the actual host-association inference depends on methylation-aware analysis.",
+      "This is the closest clinical metagenome route in the collection."
+    ],
+    "maintainer": "Harika Urel and Ela Sauerborn",
+    "last_reviewed": "2026-03-14",
     "track_notes": []
   },
   {
     "id": "avian_influenza_profiling",
     "title": "Avian Influenza Profiling",
+    "short_title": "AIV Profiling",
+    "readiness_level": "published",
     "category": "veterinary_zoonotic_surveillance",
     "sample_types": [
       "avian_influenza_sample"
@@ -550,6 +733,22 @@
       "cdna_rbk"
     ],
     "supports_multiplexing": true,
+    "supported_entry_points": [
+      {
+        "label": "Direct RNA basecalling entry",
+        "input_formats": [
+          "pod5"
+        ],
+        "notes": "Choose the chemistry-specific RNA002 or RNA004 basecalling script."
+      },
+      {
+        "label": "Basecalled FASTQ to consensus or assembly",
+        "input_formats": [
+          "fastq"
+        ],
+        "notes": "Enter at the de novo or reference-based influenza workflow."
+      }
+    ],
     "default_preprocessing": {
       "input_expectation": "Raw POD5 or already basecalled FASTQ for AIV-focused branches.",
       "basecalling": "Choose the branch that matches your chemistry: direct RNA002, direct RNA004, or cDNA plus RBK.",
@@ -586,11 +785,22 @@
       "Targeted to avian influenza rather than untargeted viral-metagenome discovery.",
       "Choose the exact chemistry branch before running downstream scripts."
     ],
+    "closest_alternatives": [
+      "wetland_health",
+      "from_feather_to_fur"
+    ],
+    "decision_notes": [
+      "This is the strongest direct RNA or cDNA AIV route in the collection outside the wetland umbrella workflow."
+    ],
+    "maintainer": "Albert Perlas",
+    "last_reviewed": "2026-03-14",
     "track_notes": []
   },
   {
     "id": "from_feather_to_fur",
     "title": "From Feather to Fur",
+    "short_title": "Feather to Fur",
+    "readiness_level": "documented_project",
     "category": "veterinary_zoonotic_surveillance",
     "sample_types": [
       "cross_host_aiv_pair"
@@ -610,6 +820,23 @@
       "standard_isolate"
     ],
     "supports_multiplexing": false,
+    "supported_entry_points": [
+      {
+        "label": "FASTQ entry for variant calling",
+        "input_formats": [
+          "fastq"
+        ],
+        "notes": "Run the variant-calling stage from reads and reference."
+      },
+      {
+        "label": "VCF entry for downstream comparison",
+        "input_formats": [
+          "vcf",
+          "fastq_and_vcf"
+        ],
+        "notes": "Enter at comparative filtering and consensus generation."
+      }
+    ],
     "default_preprocessing": {
       "input_expectation": "Basecalled FASTQ and/or VCF files for avian-to-mammalian comparison workflows.",
       "basecalling": "Basecalling is upstream of the documented variant-comparison workflow.",
@@ -641,11 +868,22 @@
       "Not a general influenza-consensus pipeline.",
       "FluSurver interpretation remains a manual downstream component in the documented workflow."
     ],
+    "closest_alternatives": [
+      "avian_influenza_profiling",
+      "wetland_health"
+    ],
+    "decision_notes": [
+      "This workflow is specifically for cross-host comparison after or alongside variant calling rather than first-pass AIV consensus generation."
+    ],
+    "maintainer": "Albert Perlas",
+    "last_reviewed": "2026-03-14",
     "track_notes": []
   },
   {
     "id": "squiggle4viability",
     "title": "Squiggle4Viability",
+    "short_title": "Squiggle4Viability",
+    "readiness_level": "published",
     "category": "viability_assessment",
     "sample_types": [
       "raw_signal"
@@ -664,6 +902,16 @@
       "signal_only"
     ],
     "supports_multiplexing": false,
+    "supported_entry_points": [
+      {
+        "label": "Raw signal AI inference",
+        "input_formats": [
+          "pod5",
+          "fast5"
+        ],
+        "notes": "Enter directly into segmentation, preprocessing, and model inference."
+      }
+    ],
     "default_preprocessing": {
       "input_expectation": "Raw FAST5 or POD5 files used directly for segmentation, preprocessing, model inference, or signal explainability.",
       "basecalling": "Standard basecalling is not the primary entry point for the core viability model. Raw signal remains the central input.",
@@ -700,6 +948,15 @@
       "Requires distinct dependencies and usually a GPU-capable environment.",
       "Not a substitute for conventional basecalled-read pipelines when the main objective is standard metagenomic analysis."
     ],
+    "closest_alternatives": [
+      "nanopore_amr_host_association",
+      "air_metagenomics"
+    ],
+    "decision_notes": [
+      "This is the only raw-signal-first viability workflow in the collection and should not be treated as a normal taxonomic pipeline."
+    ],
+    "maintainer": "Harika Urel",
+    "last_reviewed": "2026-03-14",
     "track_notes": []
   }
 ]

@@ -1,0 +1,89 @@
+[
+  {
+    "id": "soil_shotgun_dna",
+    "when": {
+      "sample_type": [
+        "soil"
+      ],
+      "molecule_type": [
+        "dna"
+      ]
+    },
+    "message": "Soil shotgun metagenomic DNA is not a published exact workflow in this repository. The environmental DNA workflows here are built around air and passive wetland sampling, not soil matrices.",
+    "why_not_exact": "The collection does not currently include a soil-specific extraction, QC, assembly, and annotation workflow with validated thresholds for this sample class.",
+    "primary_nearest_pipeline": "air_metagenomics",
+    "secondary_nearest_pipelines": [
+      "wetland_health"
+    ],
+    "read_first_links": [
+      {
+        "label": "Air Metagenomics README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Air_Metagenomics/README.md"
+      },
+      {
+        "label": "Wetland Health README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
+      }
+    ]
+  },
+  {
+    "id": "generic_direct_rna_outside_published_context",
+    "when": {
+      "library_mode": [
+        "direct_rna002",
+        "direct_rna004"
+      ]
+    },
+    "unless": {
+      "sample_type": [
+        "wetland_or_passive_water_sample",
+        "avian_influenza_sample"
+      ]
+    },
+    "message": "Direct RNA sequencing is only documented here in the wetland and avian influenza projects. Generic direct-RNA use outside those contexts is not yet a published exact workflow in this collection.",
+    "why_not_exact": "The repo does not contain a general native-RNA workflow spanning arbitrary sample classes, extraction models, and downstream analyses.",
+    "primary_nearest_pipeline": "avian_influenza_profiling",
+    "secondary_nearest_pipelines": [
+      "wetland_health"
+    ],
+    "read_first_links": [
+      {
+        "label": "Avian Influenza Profiling README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling/README.md"
+      },
+      {
+        "label": "Wetland Health README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Environmental_Metagenomics/Wetland_Health/README.md"
+      }
+    ]
+  },
+  {
+    "id": "clinical_metagenome_unsupported_combo",
+    "when": {
+      "sample_type": [
+        "clinical_metagenome"
+      ],
+      "analysis_goal": [
+        "community_profiling",
+        "pathogen_amr_surveillance",
+        "viral_metagenomics"
+      ]
+    },
+    "message": "Clinical metagenomic use cases in this repository are currently centered on AMR host association rather than a general-purpose clinical metagenome workflow.",
+    "why_not_exact": "The documented clinical workflows here focus on isolate AMR profiling, plasmid clustering, or methylation-aware AMR-host linkage rather than generic clinical metagenomics.",
+    "primary_nearest_pipeline": "nanopore_amr_host_association",
+    "secondary_nearest_pipelines": [
+      "amr_nanopore"
+    ],
+    "read_first_links": [
+      {
+        "label": "AMR Host Association README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/Nanopore-AMR-Host-Association/README.md"
+      },
+      {
+        "label": "AMR Nanopore README",
+        "url": "https://github.com/ttmgr/GenomicsForOneHealth/blob/main/Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore/README.md"
+      }
+    ]
+  }
+]
