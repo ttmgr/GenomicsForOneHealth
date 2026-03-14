@@ -314,18 +314,18 @@ const lskResult = computeRecommendation(
 
 assert(lskResult.warnings.some((warning) => warning.title === "Single-isolate ligation framing"), "LSK114 should reinforce single-isolate framing");
 
-const flongleResult = computeRecommendation(
+const minionResult = computeRecommendation(
   {
     sample_context: "environmental",
     material_class: "long_read_metagenomic_dna",
     target_goal: "taxonomy_profiling",
     example_context: "air_bioaerosol_example",
-    flowcell_family: "flongle"
+    flowcell_family: "minion_r10_4_1"
   },
   datasets
 );
 
-assert(flongleResult.warnings.some((warning) => warning.title === "Flongle throughput caution"), "Flongle should trigger pilot framing");
+assert(minionResult.setup_summary.recommendation.includes("MinION R10.4.1"), "MinION should appear in the setup recommendation");
 
 const promethionResult = computeRecommendation(
   {

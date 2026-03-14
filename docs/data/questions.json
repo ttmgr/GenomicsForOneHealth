@@ -618,7 +618,7 @@
       "id": "flowcell",
       "page_type": "setup",
       "title": "Flow Cell",
-      "summary": "Choose the flow cell family. This tunes throughput framing, compatibility notes, and where the selector suggests Flongle, MinION/GridION, PromethION, or RNA-specific paths.",
+      "summary": "Choose the flow cell family. This tunes throughput framing, compatibility notes, and where the selector suggests MinION, PromethION, or RNA-specific paths.",
       "questions": [
         {
           "id": "flowcell_family",
@@ -627,20 +627,8 @@
           "description": "Keep this at the family level rather than a full catalogue number.",
           "options": [
             {
-              "value": "flongle",
-              "label": "Flongle",
-              "help": "Low-output pilot and targeted runs.",
-              "visible_when": {
-                "material_class": [
-                  "long_read_metagenomic_dna",
-                  "edna_12s_amplicon",
-                  "single_isolate_long_read_dna"
-                ]
-              }
-            },
-            {
-              "value": "minion_gridion_r10_4_1",
-              "label": "MinION or GridION R10.4.1",
+              "value": "minion_r10_4_1",
+              "label": "MinION R10.4.1",
               "help": "Current general-purpose ONT DNA route.",
               "visible_when": {
                 "library_mode": [
@@ -675,25 +663,6 @@
               "visible_when": {
                 "library_mode": [
                   "direct_rna"
-                ]
-              }
-            },
-            {
-              "value": "legacy_r9_4_1",
-              "label": "Legacy R9.4.1",
-              "help": "Compatibility route for older workflows or archived runs.",
-              "visible_when": {
-                "library_mode": [
-                  "lsk114",
-                  "rbk114_24",
-                  "nbd114_24",
-                  "rapid_rna_or_cdna",
-                  "amplicon_workflow",
-                  "rapid_pcr_amplicon",
-                  "barcoded_metagenome",
-                  "adaptive_sampling",
-                  "standard_control",
-                  "unsure"
                 ]
               }
             },

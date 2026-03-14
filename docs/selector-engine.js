@@ -418,24 +418,10 @@
       });
     }
 
-    if (nanoporeProfile.flowcell?.id === "flongle") {
-      warnings.push({
-        title: "Flongle throughput caution",
-        text: "Treat this as a pilot or low-output framing rather than a deep production metagenomics run."
-      });
-    }
-
     if (nanoporeProfile.flowcell?.id === "promethion_r10_4_1") {
       warnings.push({
         title: "PromethION depth framing",
         text: "This setup fits deeper metagenomics or larger cohorts and may exceed the throughput assumptions of the published example."
-      });
-    }
-
-    if (nanoporeProfile.flowcell?.id === "legacy_r9_4_1") {
-      warnings.push({
-        title: "Legacy pore compatibility",
-        text: "Interpret current HAC and SUP defaults cautiously when reproducing older R9.4.1 runs."
       });
     }
 

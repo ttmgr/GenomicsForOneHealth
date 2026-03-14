@@ -145,17 +145,8 @@
   ],
   "flow_cells": [
     {
-      "id": "flongle",
-      "label": "Flongle",
-      "summary": "Low-output, low-cost pilot route.",
-      "notes": [
-        "Best for targeted runs, testing, and low-throughput pilots.",
-        "Less suitable for deep environmental metagenomics."
-      ]
-    },
-    {
-      "id": "minion_gridion_r10_4_1",
-      "label": "MinION or GridION R10.4.1",
+      "id": "minion_r10_4_1",
+      "label": "MinION R10.4.1",
       "summary": "Current general-purpose ONT DNA route for most microbial genomics and moderate-depth metagenomics.",
       "notes": [
         "Good default for most new DNA runs.",
@@ -177,14 +168,6 @@
       "summary": "RNA-specific route required for native direct RNA sequencing.",
       "notes": [
         "Use this only for native direct RNA workflows."
-      ]
-    },
-    {
-      "id": "legacy_r9_4_1",
-      "label": "Legacy R9.4.1",
-      "summary": "Compatibility path for older ONT runs or archived analyses.",
-      "notes": [
-        "Keep this only for compatibility and reproduction of older runs."
       ]
     }
   ],
@@ -244,7 +227,7 @@
       ],
       "defaults": {
         "library_mode": "lsk114",
-        "flowcell_family": "minion_gridion_r10_4_1",
+        "flowcell_family": "minion_r10_4_1",
         "basecalling_goal": "balanced_hac",
         "analysis_environment": "group_repo_backend"
       },
@@ -264,7 +247,7 @@
       ],
       "defaults": {
         "library_mode": "lsk114",
-        "flowcell_family": "minion_gridion_r10_4_1",
+        "flowcell_family": "minion_r10_4_1",
         "basecalling_goal": "max_accuracy_sup",
         "analysis_environment": "group_repo_backend"
       },
@@ -283,7 +266,7 @@
       ],
       "defaults": {
         "library_mode": "rapid_rna_or_cdna",
-        "flowcell_family": "minion_gridion_r10_4_1",
+        "flowcell_family": "minion_r10_4_1",
         "basecalling_goal": "balanced_hac",
         "analysis_environment": "group_repo_backend"
       },
@@ -303,7 +286,7 @@
       ],
       "defaults": {
         "library_mode": "amplicon_workflow",
-        "flowcell_family": "minion_gridion_r10_4_1",
+        "flowcell_family": "minion_r10_4_1",
         "basecalling_goal": "balanced_hac",
         "analysis_environment": "group_repo_backend"
       },
@@ -325,7 +308,7 @@
       ],
       "defaults": {
         "library_mode": "lsk114",
-        "flowcell_family": "minion_gridion_r10_4_1",
+        "flowcell_family": "minion_r10_4_1",
         "basecalling_goal": "max_accuracy_sup",
         "analysis_environment": "group_repo_backend"
       },
@@ -347,7 +330,7 @@
       ],
       "defaults": {
         "library_mode": "nbd114_24",
-        "flowcell_family": "minion_gridion_r10_4_1",
+        "flowcell_family": "minion_r10_4_1",
         "basecalling_goal": "max_accuracy_sup",
         "analysis_environment": "group_repo_backend"
       },
@@ -366,7 +349,7 @@
       ],
       "defaults": {
         "library_mode": "barcoded_metagenome",
-        "flowcell_family": "minion_gridion_r10_4_1",
+        "flowcell_family": "minion_r10_4_1",
         "basecalling_goal": "max_accuracy_sup",
         "analysis_environment": "group_repo_backend"
       },
@@ -387,7 +370,7 @@
       ],
       "defaults": {
         "library_mode": "adaptive_sampling",
-        "flowcell_family": "minion_gridion_r10_4_1",
+        "flowcell_family": "minion_r10_4_1",
         "basecalling_goal": "max_accuracy_sup",
         "analysis_environment": "group_repo_backend"
       },
