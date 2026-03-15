@@ -143,6 +143,8 @@ a {
   border-radius: var(--radius-lg);
   background: var(--panel);
   box-shadow: 0 10px 26px rgba(31, 45, 40, 0.04);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .pane-questions {
@@ -478,6 +480,7 @@ a {
 
 .rec-card {
   padding: 20px;
+  overflow: hidden;
 }
 
 .rec-header {
@@ -509,6 +512,8 @@ a {
   font-family: "Fraunces", Georgia, serif;
   letter-spacing: -0.02em;
   transition: opacity 180ms ease, transform 180ms ease;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .rec-slot-meta {
@@ -516,6 +521,7 @@ a {
   font-size: 0.82rem;
   color: var(--muted);
   line-height: 1.45;
+  overflow-wrap: break-word;
 }
 
 .rec-slot-updating {
@@ -543,6 +549,7 @@ a {
   font-size: 0.88rem;
   color: var(--muted);
   line-height: 1.55;
+  overflow-wrap: break-word;
 }
 
 .rec-rationale-list li + li {
@@ -563,7 +570,8 @@ a {
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 700;
-  white-space: nowrap;
+  white-space: normal;
+  text-align: left;
 }
 
 .confidence-dot {
@@ -609,6 +617,8 @@ a {
 .rationale-section {
   padding-bottom: 14px;
   border-bottom: 1px solid var(--line);
+  overflow: hidden;
+  min-width: 0;
 }
 
 .rationale-section:last-child {
@@ -624,6 +634,7 @@ a {
   padding: 10px 12px;
   border-radius: var(--radius-sm);
   background: rgba(17, 75, 58, 0.04);
+  overflow-wrap: break-word;
 }
 
 .alt-name {
@@ -637,6 +648,7 @@ a {
   font-size: 0.85rem;
   color: var(--muted);
   line-height: 1.5;
+  overflow-wrap: break-word;
 }
 
 .command-mini {
@@ -663,7 +675,8 @@ a {
   color: #edf6f1;
   font-size: 0.72rem;
   line-height: 1.5;
-  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .command-mini .copy-button {
@@ -703,6 +716,7 @@ a {
   color: var(--warn-text);
   font-size: 0.82rem;
   line-height: 1.5;
+  overflow-wrap: break-word;
 }
 
 /* ── Results page ────────────────────────────────────── */
