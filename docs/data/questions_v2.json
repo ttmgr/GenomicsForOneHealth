@@ -1,0 +1,203 @@
+{
+  "pages": [
+    {
+      "id": "molecule",
+      "page_type": "route",
+      "title": "What are you sequencing?",
+      "summary": "Start with the molecule type — this determines which kits and workflows are available.",
+      "questions": [
+        {
+          "id": "molecule",
+          "field": "molecule",
+          "label": "Molecule type",
+          "question_type": "radio",
+          "options": [
+            {
+              "value": "dna",
+              "label": "DNA",
+              "help": "Genomic DNA from isolates, environmental samples, or clinical specimens"
+            },
+            {
+              "value": "rna",
+              "label": "RNA",
+              "help": "Total RNA, mRNA, or viral RNA — native or converted to cDNA"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "study_type",
+      "page_type": "route",
+      "title": "What is the study type?",
+      "summary": "This shapes which analysis pipeline and library preparation we recommend.",
+      "questions": [
+        {
+          "id": "study_type",
+          "field": "study_type",
+          "label": "Study type",
+          "question_type": "radio",
+          "options": [
+            {
+              "value": "isolate",
+              "label": "Isolate",
+              "help": "Single organism — assembly, typing, AMR gene detection",
+              "visible_when": { "molecule": ["dna"] }
+            },
+            {
+              "value": "metagenomic",
+              "label": "Metagenomic",
+              "help": "Mixed community — taxonomy, functional profiling, resistome analysis",
+              "visible_when": { "molecule": ["dna"] }
+            },
+            {
+              "value": "transcriptome",
+              "label": "Transcriptome",
+              "help": "Gene expression, splice isoforms, transcript discovery",
+              "visible_when": { "molecule": ["rna"] }
+            },
+            {
+              "value": "targeted",
+              "label": "Targeted / Amplicon",
+              "help": "eDNA metabarcoding, 16S, specific gene panels",
+              "visible_when": { "molecule": ["dna"] }
+            },
+            {
+              "value": "virome",
+              "label": "Virome",
+              "help": "Viral metagenomics — discovery, surveillance, diversity profiling",
+              "visible_when": { "molecule": ["rna"] }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "priority",
+      "page_type": "route",
+      "title": "What matters most?",
+      "summary": "Select one or more priorities — these drive the kit and basecalling recommendation.",
+      "questions": [
+        {
+          "id": "priority",
+          "field": "priority",
+          "label": "Priorities",
+          "question_type": "multi_select",
+          "options": [
+            {
+              "value": "speed",
+              "label": "Speed",
+              "help": "Fastest library prep and turnaround"
+            },
+            {
+              "value": "accuracy",
+              "label": "Accuracy",
+              "help": "Highest consensus accuracy for assembly and variant calling"
+            },
+            {
+              "value": "native_modifications",
+              "label": "Native modifications",
+              "help": "Detect methylation or RNA modifications without bisulfite/antibody steps"
+            },
+            {
+              "value": "yield",
+              "label": "Yield",
+              "help": "Maximize data output per flow cell"
+            },
+            {
+              "value": "low_input",
+              "label": "Low input",
+              "help": "Work with limited or degraded starting material"
+            },
+            {
+              "value": "multiplexing",
+              "label": "Multiplexing",
+              "help": "Pool multiple samples on one flow cell with barcodes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "constraints",
+      "page_type": "constraints",
+      "title": "Sample and compute constraints",
+      "summary": "Optional — refine the recommendation based on your specific situation.",
+      "questions": [
+        {
+          "id": "input_amount",
+          "field": "input_amount",
+          "label": "DNA/RNA input amount",
+          "question_type": "radio",
+          "section": "sample",
+          "options": [
+            { "value": "high", "label": "High (> 1 \u00b5g)", "help": "Plenty of starting material" },
+            { "value": "moderate", "label": "Moderate (100 ng \u2013 1 \u00b5g)", "help": "Standard extraction yield" },
+            { "value": "low", "label": "Low (< 100 ng)", "help": "Limited or precious sample" }
+          ]
+        },
+        {
+          "id": "input_quality",
+          "field": "input_quality",
+          "label": "Input quality",
+          "question_type": "radio",
+          "section": "sample",
+          "options": [
+            { "value": "intact", "label": "Intact / high MW", "help": "Fresh extraction, minimal shearing" },
+            { "value": "degraded", "label": "Degraded / fragmented", "help": "FFPE, old samples, environmental" }
+          ]
+        },
+        {
+          "id": "host_background",
+          "field": "host_background",
+          "label": "Expected host background",
+          "question_type": "radio",
+          "section": "sample",
+          "options": [
+            { "value": "low", "label": "Low / none", "help": "Pure culture, environmental, or enriched" },
+            { "value": "high", "label": "High", "help": "Clinical specimen with human/animal DNA" }
+          ]
+        },
+        {
+          "id": "barcoding_needed",
+          "field": "barcoding_needed",
+          "label": "Barcoding / multiplexing needed?",
+          "question_type": "radio",
+          "section": "setup",
+          "options": [
+            { "value": "yes", "label": "Yes", "help": "Multiple samples on one flow cell" },
+            { "value": "no", "label": "No", "help": "Single sample per flow cell" }
+          ]
+        },
+        {
+          "id": "device",
+          "field": "device",
+          "label": "Sequencing device",
+          "question_type": "radio",
+          "section": "setup",
+          "options": [
+            { "value": "minion", "label": "MinION / Mk1C", "help": "Portable, lower throughput" },
+            { "value": "promethion", "label": "PromethION", "help": "High throughput, facility-grade" }
+          ]
+        },
+        {
+          "id": "compute_gpu",
+          "field": "compute_gpu",
+          "label": "GPU compute available?",
+          "question_type": "radio",
+          "section": "setup",
+          "options": [
+            { "value": "yes", "label": "Yes", "help": "NVIDIA GPU for SUP basecalling" },
+            { "value": "no", "label": "No", "help": "CPU only or cloud basecalling" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "results",
+      "page_type": "results",
+      "title": "Your recommendation",
+      "summary": ""
+    }
+  ]
+}

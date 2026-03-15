@@ -1,110 +1,83 @@
-# Selector Data Guide
+# Advisor Data Guide
 
-The selector now uses a two-layer wizard:
+The advisor uses a rules-based recommendation engine with a 4-step question flow:
 
-1. sparse route pages
-2. Nanopore setup advisor
+1. Molecule type (DNA / RNA)
+2. Study type (isolate, metagenomic, transcriptome, targeted, virome)
+3. Priorities (speed, accuracy, native modifications, yield, low input, multiplexing)
+4. Optional constraints (input amount, quality, host background, barcoding, device, compute)
 
-Published examples and fallback workflows are attached after the route is narrowed.
+## New Files (Advisor)
 
-## Files
+- `questions_v2.json`
+  Defines the 4-step question flow, question types (radio, multi_select), visibility rules, and constraint toggles.
+
+- `recommendation_rules.json`
+  Scoring rules for kit, basecalling, flowcell, and pipeline recommendations. Also contains constraint modifiers that block or prefer options, kit/basecalling/pipeline catalogs, wet-lab checklists, and Dorado model mappings.
+
+- `route_mapping.json`
+  Bridges the new molecule + study_type categories to existing pipelines, examples, playbooks, external workflows, and matrix profiles.
+
+## Legacy Files (Still Referenced)
 
 - `questions.json`
-  Defines the wizard pages and answer schema. This is the main UI contract for the selector. It now includes route pages, setup-advisor pages, a conditions page, and the results page.
+  Original wizard pages. Retained for validation scripts.
 
 - `examples.json`
-  Maps generalized routes to published repository backends. Exact example entries resolve directly to a pipeline and optional track. Unsupported example entries resolve to the nearest published backend while preserving an explicit unsupported label.
+  Maps generalized routes to published repository backends. Referenced via route_mapping.json.
 
 - `expert_rules.json`
-  Stores post-route heuristic adjustments. These rules may add warnings or swap preferred tools inside the selected backend. They must never reroute to another backend.
+  Post-route heuristic adjustments. Referenced for warnings and tool swaps.
 
 - `nanopore_profiles.json`
-  Stores the setup-advisor defaults and compact card content for kits, flow cells, basecalling profiles, and route-specific Nanopore defaults.
+  Kit, flow cell, and basecalling profile details and route defaults.
 
 - `external_workflows.json`
-  Stores the modeled fallback workflows used in the results page when the selector should also surface EPI2ME Labs or CZ ID options.
+  Fallback workflows (EPI2ME Labs, CZ ID) surfaced in the rationale pane.
 
 - `matrix_profiles.json`
-  Stores matrix-specific guidance shared by the results page and the Nanopore guide: selector summaries, warnings, setup biases, fallback workflow hints, guide anchors, and compact linked citations.
+  Sample-specific guidance, literature links, and setup biases.
 
 - `pipelines.json`
-  Keeps the published workflow metadata: titles, docs, supported inputs, tracks, and routing-related fields that are still useful outside the wizard.
+  Published workflow metadata: titles, docs, supported inputs, tracks.
 
 - `playbooks.json`
-  Provides the operator-facing action-sheet content for each backend or track: entry actions, curated commands, preprocessing defaults, prerequisites, outputs, and evidence links.
+  Action-sheet content: entry actions, curated commands, preprocessing defaults, tools, databases.
 
 ## Maintenance Rules
 
-### Add a new published backend
+### Update a recommendation rule
 
-1. Add or update the workflow entry in `pipelines.json`.
-2. Add a matching action sheet in `playbooks.json`.
-3. Add one or more example routes in `examples.json`.
-4. Add or update `nanopore_profiles.json` only if the new route needs different setup defaults.
-5. Add expert rules only if the new backend needs route-specific heuristic tuning that does not change backend selection.
-6. Add or update `matrix_profiles.json` if the backend or example needs matrix-specific notes, literature links, or fallback ordering.
+1. Edit `recommendation_rules.json`.
+2. Each rule needs: `id`, `when` (matching clause), `recommend` (target ID), `score_bonus`, `rationale`.
+3. Constraint modifiers can `block` or `prefer` options based on user constraints.
+4. The engine scores all eligible options (base score 50) and recommends the highest.
 
-### Add a new wizard question
+### Add a new kit or pipeline
 
-1. Add it to the correct page in `questions.json`.
-2. If it is used by expert rules, update `expert_rules.json`.
-3. If it changes route defaults or setup cards, update `nanopore_profiles.json`.
-4. If it is referenced by conditional visibility, ensure the dependency points to an earlier question.
+1. Add the kit to `kit_catalog` in `recommendation_rules.json`.
+2. Add scoring rules referencing the new kit ID.
+3. Add a checklist entry in `checklists`.
+4. Update `route_mapping.json` if it maps to new molecule + study_type combinations.
 
-### Add a new example
+### Add a new study type
 
-Every example must include:
+1. Add the option to `questions_v2.json` (study_type page) with appropriate `visible_when`.
+2. Add scoring rules in `recommendation_rules.json`.
+3. Add a mapping entry in `route_mapping.json`.
 
-- `id`
-- `label`
-- `sample_contexts`
-- `material_classes`
-- `target_goals`
-- `status_class`
-- `route_summary`
-- `selection_help`
+### Expert rule policy
 
-Exact examples must include:
-
-- `pipeline_id`
-- optional `track_id`
-- `matrix_profile_id`
-
-Unsupported examples must include:
-
-- `nearest_pipeline_id`
-- optional `nearest_track_id`
-- `matrix_profile_id`
-- `unsupported_reason`
+- Expert rules refine the selected backend; they do not choose a different backend.
+- Allowed effects: `tool_swap`, `step_insert`, `step_skip`, `warning_only`, `preprocessing_override`.
 
 ### Curated command policy
 
 - Only include commands that are already documented in the repository.
 - Every curated command must include a `source_url`.
-- If the repo does not document a reliable copy-ready command, leave `curated_commands` empty and point the user to the correct wrapper or README entry instead.
-
-### Expert rule policy
-
-- Expert rules refine the selected backend; they do not choose a different backend.
-- Allowed effects are `tool_swap`, `step_insert`, `step_skip`, `warning_only`, and `preprocessing_override`.
-- Do not add any field that reroutes to a different `pipeline_id` or `track_id`.
-
-### External workflow policy
-
-- External workflows are secondary references, not replacements for the internal backends.
-- Use `route_compatibility` to distinguish exact-route alternatives from unsupported-route fallbacks.
-- Use `preferred_matrix_profile_ids` only to bias ordering when a matrix profile strongly favors one external workflow over another.
-- Do not overclaim an external workflow as an exact replacement when it is only directionally related.
-
-### Matrix profile policy
-
-- Route-attached matrix profiles must point to one or more example ids.
-- Guide-only matrix profiles extend the Nanopore guide without adding new selector routes.
-- Keep matrix notes compact: one summary, 2 to 4 warnings, 2 to 5 guide highlights, and 1 to 3 citations.
-- Use `fallback_workflow_ids` only for ordering and emphasis; they do not replace backend resolution.
 
 ## Review Expectations
 
-- Run `node docs/scripts/validate_selector_data.mjs` after editing selector data.
-- Run `node docs/scripts/check_selector_cases.mjs` after changing routing or expert heuristics.
+- Run `node docs/scripts/validate_selector_data.mjs` after editing legacy data files.
+- Run `node docs/scripts/check_selector_cases.mjs` after changing legacy routing or expert heuristics.
 - Keep `last_reviewed` current in `pipelines.json` when a workflow entry is refreshed.

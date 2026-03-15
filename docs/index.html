@@ -4,16 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GenomicsForOneHealth Pipeline Selector</title>
+  <title>GenomicsForOneHealth Pipeline Advisor</title>
   <meta name="description"
-    content="Find the right Nanopore sequencing workflow from the GenomicsForOneHealth collection. Describe your samples and analysis goals, then get a matched published workflow and setup recommendation.">
+    content="Describe your sequencing project and get an opinionated recommendation for kit, basecalling, and analysis pipeline from the GenomicsForOneHealth collection.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script defer src="selector-engine.js"></script>
+  <script defer src="recommendation-engine.js"></script>
   <script defer src="app.js"></script>
 </head>
 
@@ -24,8 +24,8 @@
         <p class="eyebrow">GenomicsForOneHealth</p>
         <h1>Find the right workflow</h1>
         <p class="hero-text">
-          Describe your samples and what you want to analyse. The selector will match you to a published workflow from
-          this repository, suggest a Nanopore sequencing setup, and point you to the documentation you need to get started.
+          Answer a few questions about your sequencing project. The advisor will recommend a kit, basecalling model,
+          and analysis pipeline — with rationale, protocol links, and ready-to-run commands.
         </p>
         <p class="hero-link-row">
           <a href="nanopore-guide.html" target="_blank" rel="noreferrer">Nanopore setup guide</a>
@@ -34,38 +34,31 @@
       <div class="hero-meta">
         <div class="meta-card">
           <p class="meta-label">Step 1</p>
-          <p class="meta-value">Describe your sample, material, and analysis goal</p>
+          <p class="meta-value">Tell us what you are sequencing and what matters most</p>
         </div>
         <div class="meta-card">
           <p class="meta-label">Step 2</p>
-          <p class="meta-value">Refine your Nanopore setup (kit, flow cell, basecalling)</p>
+          <p class="meta-value">Optionally refine with sample and compute constraints</p>
         </div>
         <div class="meta-card">
           <p class="meta-label">Result</p>
-          <p class="meta-value">Matched workflow + sequencing setup + next steps to run it</p>
+          <p class="meta-value">Kit + basecalling + pipeline recommendation with rationale</p>
         </div>
       </div>
     </header>
 
-    <main class="wizard-shell">
-      <section class="wizard-panel">
+    <main class="advisor-shell">
+      <!-- Left pane: questions -->
+      <section class="advisor-pane pane-questions" id="questions-pane">
         <div class="panel-head">
           <div>
-            <p class="panel-kicker">Workflow finder</p>
-            <h2>Describe your sequencing project</h2>
+            <p class="panel-kicker">Sequencing advisor</p>
+            <h2>Describe your project</h2>
           </div>
           <button id="reset-button" class="ghost-button" type="button">Start over</button>
         </div>
 
-        <div class="panel-note">
-          <p>
-            Answer three quick questions about your samples first. The selector will then show you the closest
-            published workflow and help you choose a Nanopore sequencing setup.
-          </p>
-        </div>
-
-        <div id="progress-root" class="progress-root" aria-label="Wizard progress"></div>
-        <div id="status-banner" class="status-banner is-idle" aria-live="polite"></div>
+        <div id="progress-root" class="progress-root" aria-label="Advisor progress"></div>
         <div id="page-root" class="page-root"></div>
 
         <div class="wizard-controls">
@@ -73,6 +66,76 @@
           <button id="next-button" class="primary-button" type="button">Continue</button>
         </div>
       </section>
+
+      <!-- Middle pane: live recommendation -->
+      <aside class="advisor-pane pane-recommendation" id="recommendation-pane">
+        <div class="rec-card" id="rec-card">
+          <div class="rec-header">
+            <p class="panel-kicker">Live recommendation</p>
+            <span class="confidence-badge" id="rec-confidence" data-level="low">
+              <span class="confidence-dot"></span>
+              <span class="confidence-label">Needs more info</span>
+            </span>
+          </div>
+
+          <div class="rec-slot" id="rec-slot-workflow">
+            <p class="rec-slot-label">Workflow</p>
+            <p class="rec-slot-value" id="rec-workflow">—</p>
+          </div>
+
+          <div class="rec-slot" id="rec-slot-kit">
+            <p class="rec-slot-label">Recommended kit</p>
+            <p class="rec-slot-value" id="rec-kit">—</p>
+            <p class="rec-slot-meta" id="rec-kit-meta"></p>
+          </div>
+
+          <div class="rec-slot" id="rec-slot-basecalling">
+            <p class="rec-slot-label">Basecalling model</p>
+            <p class="rec-slot-value" id="rec-basecalling">—</p>
+            <p class="rec-slot-meta" id="rec-basecalling-meta"></p>
+          </div>
+
+          <div class="rec-slot" id="rec-slot-pipeline">
+            <p class="rec-slot-label">Analysis pipeline</p>
+            <p class="rec-slot-value" id="rec-pipeline">—</p>
+            <p class="rec-slot-meta" id="rec-pipeline-meta"></p>
+          </div>
+
+          <div class="rec-slot rec-slot-rationale" id="rec-slot-rationale">
+            <p class="rec-slot-label">Why this is the best fit</p>
+            <ul class="rec-rationale-list" id="rec-rationale"></ul>
+          </div>
+
+          <div class="rec-warnings" id="rec-warnings" hidden></div>
+        </div>
+      </aside>
+
+      <!-- Right pane: rationale, alternatives, commands -->
+      <aside class="advisor-pane pane-rationale" id="rationale-pane">
+        <div class="rationale-section" id="rationale-alternative" hidden>
+          <p class="panel-kicker">Alternative</p>
+          <div id="rationale-alt-content"></div>
+        </div>
+
+        <div class="rationale-section" id="rationale-commands" hidden>
+          <p class="panel-kicker">Ready-to-run commands</p>
+          <div id="rationale-commands-content"></div>
+        </div>
+
+        <div class="rationale-section" id="rationale-checklist" hidden>
+          <p class="panel-kicker">Wet-lab checklist</p>
+          <ol class="checklist" id="rationale-checklist-content"></ol>
+        </div>
+
+        <div class="rationale-section" id="rationale-protocols" hidden>
+          <p class="panel-kicker">Protocol links</p>
+          <ul class="protocol-links" id="rationale-protocols-content"></ul>
+        </div>
+
+        <div class="rationale-section" id="rationale-placeholder">
+          <p class="muted">Answer questions on the left to see recommendations, alternatives, and ready-to-run commands.</p>
+        </div>
+      </aside>
     </main>
   </div>
 </body>

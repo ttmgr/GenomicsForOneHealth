@@ -23,13 +23,13 @@ As a signatory of the San Francisco Declaration on Research Assessment, we suppo
 
 Learn more about our work at the [Urban Lab website](https://sites.google.com/view/urban-lab/home).
 
-## Pipeline Selector
+## Pipeline Advisor
 
-> **Start here:** Use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/) to move through a sparse route wizard and then a separate Nanopore setup advisor.
+> **Start here:** Use the public [Pipeline Advisor](https://ttmgr.github.io/GenomicsForOneHealth/) to describe your sequencing project and get an opinionated recommendation for kit, basecalling model, and analysis pipeline.
 >
-> The selector is a static GitHub Pages app built from the published repository only. It now starts with sample, material, and target, then shows the closest published study example only when that choice is actually needed. After the route is fixed, the setup advisor handles kit or run mode, flow cell family, basecalling intent, analysis environment, and a short route-specific conditions page. If your use case falls outside the current collection, the result shows the nearest published internal example together with secondary external fallbacks such as EPI2ME Labs or CZ ID where appropriate.
+> The advisor is a static GitHub Pages app with a three-pane layout: questions on the left, a live recommendation card in the middle, and rationale with ready-to-run commands on the right. It asks four questions — molecule type (DNA/RNA), study type, priorities, and optional constraints — then recommends a kit, basecalling tier, and EPI2ME workflow with transparent rationale. All decision logic is a JSON-based rules engine that lab staff can audit and update.
 >
-> A compact [Nanopore guide](https://ttmgr.github.io/GenomicsForOneHealth/nanopore-guide.html) is linked from the setup pages so the selector can stay sparse without hiding the reasoning behind kit, flow-cell, or basecalling recommendations.
+> A compact [Nanopore guide](https://ttmgr.github.io/GenomicsForOneHealth/nanopore-guide.html) covers the reasoning behind kit, flow-cell, and basecalling recommendations.
 
 ### Our Team
 - **Prof. Dr. Lara Urban**: Principal Investigator & Supervisor (Helmholtz AI & University of Zurich)
