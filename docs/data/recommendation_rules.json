@@ -1,0 +1,529 @@
+{
+  "kit_rules": [
+    {
+      "id": "dna_speed_rapid",
+      "when": { "molecule": ["dna"], "priority_includes": ["speed"] },
+      "recommend": "rbk114_24",
+      "score_bonus": 20,
+      "rationale": "Rapid Barcoding V14 — fastest library prep, minimal hands-on time"
+    },
+    {
+      "id": "dna_multiplexing_rapid",
+      "when": { "molecule": ["dna"], "priority_includes": ["multiplexing"] },
+      "recommend": "rbk114_24",
+      "score_bonus": 15,
+      "rationale": "Rapid Barcoding V14 supports up to 96 barcodes with fast prep"
+    },
+    {
+      "id": "dna_native_mods",
+      "when": { "molecule": ["dna"], "priority_includes": ["native_modifications"] },
+      "recommend": "nbd114_24",
+      "score_bonus": 25,
+      "rationale": "Native Barcoding V14 — PCR-free preserves methylation and other modifications"
+    },
+    {
+      "id": "dna_accuracy_native",
+      "when": { "molecule": ["dna"], "priority_includes": ["accuracy"] },
+      "recommend": "nbd114_24",
+      "score_bonus": 15,
+      "rationale": "Native Barcoding V14 — no PCR bias, best for accurate consensus"
+    },
+    {
+      "id": "dna_accuracy_ligation",
+      "when": { "molecule": ["dna"], "priority_includes": ["accuracy"] },
+      "recommend": "lsk114",
+      "score_bonus": 12,
+      "rationale": "Ligation Kit V14 — high-quality single-sample prep for maximum accuracy"
+    },
+    {
+      "id": "dna_yield_ligation",
+      "when": { "molecule": ["dna"], "priority_includes": ["yield"] },
+      "recommend": "lsk114",
+      "score_bonus": 15,
+      "rationale": "Ligation Kit V14 — highest yield per sample, no transposase fragmentation"
+    },
+    {
+      "id": "dna_low_input_pcr",
+      "when": { "molecule": ["dna"], "priority_includes": ["low_input"] },
+      "recommend": "rapid_pcr_amplicon",
+      "score_bonus": 20,
+      "rationale": "Rapid PCR Barcoding V14 — PCR amplification from as little as 1 ng input"
+    },
+    {
+      "id": "dna_multiplexing_native",
+      "when": { "molecule": ["dna"], "priority_includes": ["multiplexing"] },
+      "recommend": "nbd114_24",
+      "score_bonus": 10,
+      "rationale": "Native Barcoding V14 — multiplexing without PCR bias"
+    },
+    {
+      "id": "dna_metagenomic_barcoded",
+      "when": { "molecule": ["dna"], "study_type": ["metagenomic"] },
+      "recommend": "barcoded_metagenome",
+      "score_bonus": 10,
+      "rationale": "Pooled metagenomic barcoding optimized for community samples"
+    },
+    {
+      "id": "dna_targeted_amplicon",
+      "when": { "molecule": ["dna"], "study_type": ["targeted"] },
+      "recommend": "amplicon_workflow",
+      "score_bonus": 25,
+      "rationale": "Amplicon workflow is the standard for targeted panels and eDNA barcoding"
+    },
+    {
+      "id": "dna_targeted_rapid_pcr",
+      "when": { "molecule": ["dna"], "study_type": ["targeted"], "priority_includes": ["low_input"] },
+      "recommend": "rapid_pcr_amplicon",
+      "score_bonus": 30,
+      "rationale": "Rapid PCR amplicon — ideal for low-input targeted sequencing"
+    },
+    {
+      "id": "rna_native_direct",
+      "when": { "molecule": ["rna"], "priority_includes": ["native_modifications"] },
+      "recommend": "direct_rna",
+      "score_bonus": 30,
+      "rationale": "Direct RNA Sequencing — native RNA without cDNA conversion, detects modifications"
+    },
+    {
+      "id": "rna_default_direct",
+      "when": { "molecule": ["rna"] },
+      "recommend": "direct_rna",
+      "score_bonus": 5,
+      "rationale": "Direct RNA Sequencing — preserves strand and modification information"
+    },
+    {
+      "id": "rna_yield_cdna",
+      "when": { "molecule": ["rna"], "priority_includes": ["yield"] },
+      "recommend": "rapid_rna_or_cdna",
+      "score_bonus": 25,
+      "rationale": "cDNA-PCR V14 — highest yield, supports splice variant and fusion analysis"
+    },
+    {
+      "id": "rna_multiplexing_cdna",
+      "when": { "molecule": ["rna"], "priority_includes": ["multiplexing"] },
+      "recommend": "rapid_rna_or_cdna",
+      "score_bonus": 25,
+      "rationale": "cDNA-PCR V14 — multiplex up to 24 samples with barcodes"
+    },
+    {
+      "id": "rna_speed_cdna",
+      "when": { "molecule": ["rna"], "priority_includes": ["speed"] },
+      "recommend": "rapid_rna_or_cdna",
+      "score_bonus": 15,
+      "rationale": "cDNA-PCR V14 — faster turnaround than direct RNA"
+    },
+    {
+      "id": "rna_low_input_cdna",
+      "when": { "molecule": ["rna"], "priority_includes": ["low_input"] },
+      "recommend": "rapid_rna_or_cdna",
+      "score_bonus": 20,
+      "rationale": "cDNA-PCR V14 — PCR amplification compensates for low RNA input"
+    },
+    {
+      "id": "rna_accuracy_cdna",
+      "when": { "molecule": ["rna"], "priority_includes": ["accuracy"] },
+      "recommend": "rapid_rna_or_cdna",
+      "score_bonus": 15,
+      "rationale": "cDNA-PCR V14 — higher per-read accuracy than direct RNA"
+    }
+  ],
+
+  "basecalling_rules": [
+    {
+      "id": "default_hac",
+      "when": {},
+      "recommend": "balanced_hac",
+      "score_bonus": 10,
+      "rationale": "HAC is the recommended default for most users — good accuracy/speed balance"
+    },
+    {
+      "id": "accuracy_sup",
+      "when": { "priority_includes": ["accuracy"] },
+      "recommend": "max_accuracy_sup",
+      "score_bonus": 25,
+      "rationale": "SUP gives highest per-read accuracy — best for assembly and variant calling"
+    },
+    {
+      "id": "speed_fast",
+      "when": { "priority_includes": ["speed"] },
+      "recommend": "real_time_fast",
+      "score_bonus": 20,
+      "rationale": "FAST model for real-time triage and rapid turnaround"
+    },
+    {
+      "id": "native_mods_modbase",
+      "when": { "priority_includes": ["native_modifications"] },
+      "recommend": "modified_base_calling",
+      "score_bonus": 30,
+      "rationale": "Modified basecalling detects 5mC, 6mA, and other base modifications"
+    },
+    {
+      "id": "native_mods_sup_fallback",
+      "when": { "priority_includes": ["native_modifications"] },
+      "recommend": "max_accuracy_sup",
+      "score_bonus": 10,
+      "rationale": "SUP model also supports modification-aware basecalling"
+    }
+  ],
+
+  "flowcell_rules": [
+    {
+      "id": "default_minion",
+      "when": {},
+      "recommend": "minion_r10_4_1",
+      "score_bonus": 10,
+      "rationale": "MinION R10.4.1 — versatile, portable, good for most applications"
+    },
+    {
+      "id": "yield_promethion",
+      "when": { "priority_includes": ["yield"] },
+      "recommend": "promethion_r10_4_1",
+      "score_bonus": 20,
+      "rationale": "PromethION R10.4.1 — up to 100 Gb output for deep sequencing"
+    },
+    {
+      "id": "metagenomic_promethion",
+      "when": { "study_type": ["metagenomic"] },
+      "recommend": "promethion_r10_4_1",
+      "score_bonus": 10,
+      "rationale": "PromethION recommended for metagenomics depth requirements"
+    },
+    {
+      "id": "rna_direct_flowcell",
+      "when": { "molecule": ["rna"], "priority_includes": ["native_modifications"] },
+      "recommend": "rna_flow_cell",
+      "score_bonus": 30,
+      "rationale": "RNA flow cell required for direct RNA sequencing"
+    }
+  ],
+
+  "pipeline_rules": [
+    {
+      "id": "dna_isolate_bacterial",
+      "when": { "molecule": ["dna"], "study_type": ["isolate"] },
+      "recommend": "wf-bacterial-genomes",
+      "score_bonus": 30,
+      "rationale": "Assembly, annotation, species ID, sequence typing, and AMR gene detection"
+    },
+    {
+      "id": "dna_metagenomic",
+      "when": { "molecule": ["dna"], "study_type": ["metagenomic"] },
+      "recommend": "wf-metagenomics",
+      "score_bonus": 30,
+      "rationale": "Taxonomic classification with Kraken2 or minimap2, optional AMR analysis"
+    },
+    {
+      "id": "rna_transcriptome",
+      "when": { "molecule": ["rna"], "study_type": ["transcriptome"] },
+      "recommend": "wf-transcriptomes",
+      "score_bonus": 30,
+      "rationale": "Transcript identification, reference-aided assembly, differential expression"
+    },
+    {
+      "id": "rna_virome",
+      "when": { "molecule": ["rna"], "study_type": ["virome"] },
+      "recommend": "wf-metagenomics",
+      "score_bonus": 25,
+      "rationale": "Viral metagenomics with taxonomic classification and host removal"
+    },
+    {
+      "id": "dna_targeted_alignment",
+      "when": { "molecule": ["dna"], "study_type": ["targeted"] },
+      "recommend": "wf-alignment",
+      "score_bonus": 20,
+      "rationale": "Alignment and mapping statistics for targeted panels"
+    },
+    {
+      "id": "dna_targeted_amplicon_wf",
+      "when": { "molecule": ["dna"], "study_type": ["targeted"] },
+      "recommend": "wf-amplicon",
+      "score_bonus": 25,
+      "rationale": "Amplicon-specific variant calling and consensus generation"
+    }
+  ],
+
+  "constraint_modifiers": [
+    {
+      "id": "no_gpu_blocks_sup",
+      "when": { "compute_gpu": ["no"] },
+      "block": ["max_accuracy_sup"],
+      "prefer": ["balanced_hac"],
+      "rationale": "SUP basecalling requires an NVIDIA GPU — falling back to HAC"
+    },
+    {
+      "id": "no_gpu_blocks_modbase",
+      "when": { "compute_gpu": ["no"] },
+      "block": ["modified_base_calling"],
+      "prefer": ["balanced_hac"],
+      "rationale": "Modified basecalling requires GPU compute"
+    },
+    {
+      "id": "low_input_blocks_ligation",
+      "when": { "input_amount": ["low"] },
+      "block": ["lsk114"],
+      "prefer": ["rapid_pcr_amplicon"],
+      "rationale": "Ligation kit requires > 1 µg input — PCR-based kit recommended for low input"
+    },
+    {
+      "id": "low_input_blocks_native_barcode",
+      "when": { "input_amount": ["low"] },
+      "block": ["nbd114_24"],
+      "prefer": ["rbk114_24"],
+      "rationale": "Native barcoding requires high input — rapid barcoding is more flexible"
+    },
+    {
+      "id": "degraded_blocks_ultralong",
+      "when": { "input_quality": ["degraded"] },
+      "block": [],
+      "prefer": ["rbk114_24"],
+      "rationale": "Degraded input favors rapid prep; ultra-long reads not achievable"
+    },
+    {
+      "id": "promethion_device_boost",
+      "when": { "device": ["promethion"] },
+      "block": [],
+      "prefer": ["promethion_r10_4_1"],
+      "rationale": "User has PromethION — selecting matching flow cell"
+    },
+    {
+      "id": "barcoding_yes_blocks_ligation",
+      "when": { "barcoding_needed": ["yes"] },
+      "block": ["lsk114"],
+      "prefer": ["rbk114_24", "nbd114_24"],
+      "rationale": "Ligation kit is single-sample — use a barcoded kit for multiplexing"
+    },
+    {
+      "id": "barcoding_no_prefers_ligation",
+      "when": { "barcoding_needed": ["no"], "molecule": ["dna"] },
+      "block": [],
+      "prefer": ["lsk114"],
+      "rationale": "Single sample — ligation kit gives best yield without barcoding overhead"
+    },
+    {
+      "id": "high_host_prefers_depth",
+      "when": { "host_background": ["high"] },
+      "block": [],
+      "prefer": ["promethion_r10_4_1"],
+      "rationale": "High host background requires deeper sequencing to recover target reads"
+    }
+  ],
+
+  "kit_catalog": {
+    "rbk114_24": {
+      "label": "Rapid Barcoding Kit V14",
+      "sku": "SQK-RBK114.24",
+      "molecule": "dna",
+      "prep_time": "10 min",
+      "input_range": "100 ng – 1 µg",
+      "multiplexing": "up to 24",
+      "pcr_free": false,
+      "url": "https://nanoporetech.com/document/rapid-sequencing-gdna-barcoding-sqk-rbk114"
+    },
+    "nbd114_24": {
+      "label": "Native Barcoding Kit V14",
+      "sku": "SQK-NBD114.96",
+      "molecule": "dna",
+      "prep_time": "60–90 min",
+      "input_range": "400 ng – 1 µg per barcode",
+      "multiplexing": "up to 96",
+      "pcr_free": true,
+      "url": "https://nanoporetech.com/document/ligation-sequencing-gdna-native-barcoding-v14-sqk-nbd114-96"
+    },
+    "lsk114": {
+      "label": "Ligation Sequencing Kit V14",
+      "sku": "SQK-LSK114",
+      "molecule": "dna",
+      "prep_time": "60 min",
+      "input_range": "1 µg",
+      "multiplexing": "single sample",
+      "pcr_free": true,
+      "url": "https://nanoporetech.com/document/ligation-sequencing-gdna-sqk-lsk114"
+    },
+    "rapid_pcr_amplicon": {
+      "label": "Rapid PCR Barcoding Kit V14",
+      "sku": "SQK-RPB114.24",
+      "molecule": "dna",
+      "prep_time": "90 min",
+      "input_range": "1–100 ng",
+      "multiplexing": "up to 24",
+      "pcr_free": false,
+      "url": "https://nanoporetech.com/document/rapid-sequencing-dna-v14-pcr-barcoding-sqk-rpb114-24"
+    },
+    "amplicon_workflow": {
+      "label": "Amplicon Sequencing Kit",
+      "sku": "various",
+      "molecule": "dna",
+      "prep_time": "variable",
+      "input_range": "amplicon-dependent",
+      "multiplexing": "panel-dependent",
+      "pcr_free": false,
+      "url": null
+    },
+    "barcoded_metagenome": {
+      "label": "Barcoded Metagenome Kit",
+      "sku": "various",
+      "molecule": "dna",
+      "prep_time": "30 min",
+      "input_range": "200 ng – 1 µg",
+      "multiplexing": "up to 24",
+      "pcr_free": false,
+      "url": null
+    },
+    "direct_rna": {
+      "label": "Direct RNA Sequencing Kit",
+      "sku": "SQK-RNA004",
+      "molecule": "rna",
+      "prep_time": "90 min",
+      "input_range": "500 ng poly-A RNA",
+      "multiplexing": "single sample",
+      "pcr_free": true,
+      "url": "https://nanoporetech.com/document/chemistry-technical-document"
+    },
+    "rapid_rna_or_cdna": {
+      "label": "cDNA-PCR Sequencing Kit V14",
+      "sku": "SQK-PCB114.24",
+      "molecule": "rna",
+      "prep_time": "3–4 h",
+      "input_range": "1–50 ng total RNA",
+      "multiplexing": "up to 24",
+      "pcr_free": false,
+      "url": "https://nanoporetech.com/document/pcr-cdna-sequencing-v14-barcoding-sqk-pcb114-24"
+    }
+  },
+
+  "basecalling_catalog": {
+    "real_time_fast": {
+      "label": "FAST",
+      "tier": "fast",
+      "description": "Real-time basecalling for triage and monitoring",
+      "compute": "CPU or GPU",
+      "accuracy": "~95%"
+    },
+    "balanced_hac": {
+      "label": "HAC",
+      "tier": "hac",
+      "description": "High-accuracy basecalling — recommended for most users",
+      "compute": "GPU recommended",
+      "accuracy": "~99%"
+    },
+    "max_accuracy_sup": {
+      "label": "SUP",
+      "tier": "sup",
+      "description": "Super-accurate basecalling for assembly and variant calling",
+      "compute": "GPU required",
+      "accuracy": "~99.5%"
+    },
+    "modified_base_calling": {
+      "label": "Modified basecalling",
+      "tier": "sup+mods",
+      "description": "Detects 5mC, 6mA, and other modifications alongside basecalling",
+      "compute": "GPU required",
+      "accuracy": "~99.5% + modification calls"
+    }
+  },
+
+  "pipeline_catalog": {
+    "wf-bacterial-genomes": {
+      "label": "wf-bacterial-genomes",
+      "description": "Bacterial genome assembly, annotation, species ID, sequence typing, AMR",
+      "url": "https://github.com/epi2me-labs/wf-bacterial-genomes",
+      "docs_url": "https://nanoporetech.com/document/epi2me-workflows/wf-bacterial-genomes"
+    },
+    "wf-metagenomics": {
+      "label": "wf-metagenomics",
+      "description": "Taxonomic classification with Kraken2 or minimap2, optional AMR analysis",
+      "url": "https://github.com/epi2me-labs/wf-metagenomics",
+      "docs_url": "https://nanoporetech.com/document/epi2me-workflows/wf-metagenomics"
+    },
+    "wf-transcriptomes": {
+      "label": "wf-transcriptomes",
+      "description": "Transcript identification, reference-aided assembly, differential expression",
+      "url": "https://github.com/epi2me-labs/wf-transcriptomes",
+      "docs_url": "https://nanoporetech.com/document/epi2me-workflows/wf-transcriptomes"
+    },
+    "wf-alignment": {
+      "label": "wf-alignment",
+      "description": "Generic alignment and mapping statistics (advanced / generic fallback)",
+      "url": "https://github.com/epi2me-labs/wf-alignment",
+      "docs_url": "https://nanoporetech.com/document/epi2me-workflows/wf-alignment"
+    },
+    "wf-amplicon": {
+      "label": "wf-amplicon",
+      "description": "Amplicon variant calling and consensus",
+      "url": "https://github.com/epi2me-labs/wf-amplicon",
+      "docs_url": null
+    }
+  },
+
+  "checklists": {
+    "rbk114_24": [
+      "Thaw Rapid Barcoding Kit at room temperature",
+      "Quantify DNA (Qubit) — need 100 ng – 1 µg",
+      "Check fragment length (ideally > 10 kb)",
+      "Prepare flow cell and MinKNOW",
+      "Add 5 µL DNA per barcode",
+      "Pool barcoded samples",
+      "Add Rapid Adapter and load"
+    ],
+    "nbd114_24": [
+      "Thaw Native Barcoding Kit and Ligation Kit",
+      "Quantify DNA (Qubit) — need 400 ng – 1 µg per barcode",
+      "Repair and end-prep DNA (20 min)",
+      "Ligate native barcodes (20 min)",
+      "Pool and clean up barcoded samples",
+      "Ligate sequencing adapter (10 min)",
+      "Load on primed flow cell"
+    ],
+    "lsk114": [
+      "Thaw Ligation Sequencing Kit",
+      "Quantify DNA (Qubit) — need ~1 µg",
+      "Repair and end-prep DNA (20 min)",
+      "Ligate sequencing adapter (10 min)",
+      "Clean up with AMPure XP beads",
+      "Load on primed flow cell"
+    ],
+    "direct_rna": [
+      "Extract total RNA — need > 500 ng poly-A RNA",
+      "Check RNA integrity (RIN > 7 preferred)",
+      "Ligate RNA Adapter",
+      "Reverse transcribe to stabilize strand",
+      "Ligate Sequencing Adapter",
+      "Load on RNA flow cell (FLO-MIN004RA)"
+    ],
+    "rapid_rna_or_cdna": [
+      "Extract total RNA — as little as 1 ng total RNA",
+      "Reverse transcribe and amplify cDNA",
+      "Quantify cDNA (Qubit)",
+      "Add barcodes if multiplexing",
+      "Pool and add Rapid Adapter",
+      "Load on standard flow cell"
+    ],
+    "rapid_pcr_amplicon": [
+      "Quantify DNA — as little as 1 ng input",
+      "PCR amplify with barcoded primers",
+      "Pool amplicons",
+      "Add Rapid Adapter",
+      "Load on primed flow cell"
+    ],
+    "amplicon_workflow": [
+      "Amplify target region with specific primers",
+      "Quantify amplicon (Qubit or gel)",
+      "Prepare library per ONT amplicon protocol",
+      "Load on primed flow cell"
+    ],
+    "barcoded_metagenome": [
+      "Extract metagenomic DNA",
+      "Quantify DNA (Qubit) — need 200 ng – 1 µg",
+      "Barcode samples with rapid or native kit",
+      "Pool barcoded samples",
+      "Add adapter and load on flow cell"
+    ]
+  },
+
+  "dorado_models": {
+    "real_time_fast": "fast",
+    "balanced_hac": "hac",
+    "max_accuracy_sup": "sup",
+    "modified_base_calling": "sup --modified-bases 5mCG_5hmCG"
+  }
+}

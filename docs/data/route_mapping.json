@@ -1,0 +1,131 @@
+{
+  "mappings": [
+    {
+      "molecule": "dna",
+      "study_type": "isolate",
+      "label": "DNA Isolate Sequencing",
+      "legacy_example_ids": [
+        "amr_nanopore_example",
+        "cre_plasmid_example",
+        "other_single_isolate_example",
+        "other_barcoded_isolate_example"
+      ],
+      "primary_pipeline_id": "amr_nanopore",
+      "epi2me_workflow": "wf-bacterial-genomes",
+      "epi2me_workflow_url": "https://github.com/epi2me-labs/wf-bacterial-genomes",
+      "external_workflow_ids": ["epi2me_bacterial_genomes"],
+      "matrix_profile_ids": ["single_isolate_long_read", "barcoded_isolate_long_read"],
+      "protocol_urls": [
+        {
+          "label": "Rapid Barcoding V14 protocol",
+          "url": "https://nanoporetech.com/document/rapid-sequencing-gdna-barcoding-sqk-rbk114"
+        },
+        {
+          "label": "Native Barcoding V14 protocol",
+          "url": "https://nanoporetech.com/document/ligation-sequencing-gdna-native-barcoding-v14-sqk-nbd114-96"
+        }
+      ],
+      "barcoded_example_id": "cre_plasmid_example",
+      "single_example_id": "amr_nanopore_example"
+    },
+    {
+      "molecule": "dna",
+      "study_type": "metagenomic",
+      "label": "DNA Metagenomics",
+      "legacy_example_ids": [
+        "air_bioaerosol_example",
+        "wetland_passive_water_example",
+        "soil_unsupported_example",
+        "other_environmental_unsupported_example",
+        "amr_host_association_example"
+      ],
+      "primary_pipeline_id": "air_metagenomics",
+      "epi2me_workflow": "wf-metagenomics",
+      "epi2me_workflow_url": "https://github.com/epi2me-labs/wf-metagenomics",
+      "external_workflow_ids": ["epi2me_metagenomics", "cz_id_long_read_metagenomics"],
+      "matrix_profile_ids": [
+        "air_aerobiome",
+        "wetland_passive_water_metagenomics",
+        "soil_long_read_metagenomics",
+        "other_environmental_long_read"
+      ],
+      "protocol_urls": [
+        {
+          "label": "Rapid Barcoding V14 protocol",
+          "url": "https://nanoporetech.com/document/rapid-sequencing-gdna-barcoding-sqk-rbk114"
+        }
+      ],
+      "barcoded_example_id": "air_bioaerosol_example",
+      "single_example_id": "air_bioaerosol_example"
+    },
+    {
+      "molecule": "rna",
+      "study_type": "transcriptome",
+      "label": "RNA Transcriptomics",
+      "legacy_example_ids": [],
+      "primary_pipeline_id": null,
+      "epi2me_workflow": "wf-transcriptomes",
+      "epi2me_workflow_url": "https://github.com/epi2me-labs/wf-transcriptomes",
+      "external_workflow_ids": [],
+      "matrix_profile_ids": [],
+      "protocol_urls": [
+        {
+          "label": "Direct RNA Sequencing protocol",
+          "url": "https://nanoporetech.com/document/chemistry-technical-document"
+        },
+        {
+          "label": "cDNA-PCR Sequencing V14 protocol",
+          "url": "https://nanoporetech.com/document/pcr-cdna-sequencing-v14-barcoding-sqk-pcb114-24"
+        }
+      ],
+      "barcoded_example_id": null,
+      "single_example_id": null
+    },
+    {
+      "molecule": "rna",
+      "study_type": "virome",
+      "label": "RNA Virome Metagenomics",
+      "legacy_example_ids": [
+        "wetland_rna_virome_example",
+        "other_environmental_virome_unsupported_example"
+      ],
+      "primary_pipeline_id": "wetland_health",
+      "primary_track_id": "rna_virome",
+      "epi2me_workflow": "wf-metagenomics",
+      "epi2me_workflow_url": "https://github.com/epi2me-labs/wf-metagenomics",
+      "external_workflow_ids": [],
+      "matrix_profile_ids": ["environmental_rna_virome"],
+      "protocol_urls": [
+        {
+          "label": "cDNA-PCR Sequencing V14 protocol",
+          "url": "https://nanoporetech.com/document/pcr-cdna-sequencing-v14-barcoding-sqk-pcb114-24"
+        }
+      ],
+      "barcoded_example_id": null,
+      "single_example_id": "wetland_rna_virome_example"
+    },
+    {
+      "molecule": "dna",
+      "study_type": "targeted",
+      "label": "Targeted / Amplicon Sequencing",
+      "legacy_example_ids": [
+        "wetland_edna_example",
+        "zambia_water_edna_example",
+        "other_edna_unsupported_example"
+      ],
+      "primary_pipeline_id": "zambia_edna",
+      "epi2me_workflow": "wf-alignment",
+      "epi2me_workflow_url": "https://github.com/epi2me-labs/wf-alignment",
+      "external_workflow_ids": ["epi2me_amplicon"],
+      "matrix_profile_ids": ["edna_12s_water"],
+      "protocol_urls": [
+        {
+          "label": "Rapid PCR Barcoding V14 protocol",
+          "url": "https://nanoporetech.com/document/rapid-sequencing-dna-v14-pcr-barcoding-sqk-rpb114-24"
+        }
+      ],
+      "barcoded_example_id": "zambia_water_edna_example",
+      "single_example_id": "wetland_edna_example"
+    }
+  ]
+}
