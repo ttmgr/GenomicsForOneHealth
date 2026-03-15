@@ -458,16 +458,16 @@
   "checklists": {
     "rbk114_24": [
       "Thaw Rapid Barcoding Kit at room temperature",
-      "Quantify DNA (Qubit) — need 100 ng – 1 µg",
+      "Quantify DNA (Qubit) — need 200 ng per barcode",
       "Check fragment length (ideally > 10 kb)",
       "Prepare flow cell and MinKNOW",
-      "Add 5 µL DNA per barcode",
+      "Add 10 µL DNA per barcode",
       "Pool barcoded samples",
       "Add Rapid Adapter and load"
     ],
     "nbd114_24": [
       "Thaw Native Barcoding Kit and Ligation Kit",
-      "Quantify DNA (Qubit) — need 400 ng – 1 µg per barcode",
+      "Quantify DNA (Qubit) — need 200 fmol (amplicons) or 100–500 ng (gDNA) per barcode",
       "Repair and end-prep DNA (20 min)",
       "Ligate native barcodes (20 min)",
       "Pool and clean up barcoded samples",
@@ -476,22 +476,22 @@
     ],
     "lsk114": [
       "Thaw Ligation Sequencing Kit",
-      "Quantify DNA (Qubit) — need ~1 µg",
+      "Quantify DNA (Qubit) — need 0.5–1 µg gDNA",
       "Repair and end-prep DNA (20 min)",
       "Ligate sequencing adapter (10 min)",
       "Clean up with AMPure XP beads",
       "Load on primed flow cell"
     ],
     "direct_rna": [
-      "Extract total RNA — need > 500 ng poly-A RNA",
+      "Extract RNA — need 300 ng poly(A) RNA or 1 µg total RNA",
       "Check RNA integrity (RIN > 7 preferred)",
       "Ligate RNA Adapter",
       "Reverse transcribe to stabilize strand",
       "Ligate Sequencing Adapter",
-      "Load on RNA flow cell (FLO-MIN004RA)"
+      "Load on flow cell (FLO-MIN114HD for R10.4.1)"
     ],
     "rapid_rna_or_cdna": [
-      "Extract total RNA — as little as 1 ng total RNA",
+      "Extract RNA — need 10 ng enriched RNA or 500 ng total RNA",
       "Reverse transcribe and amplify cDNA",
       "Quantify cDNA (Qubit)",
       "Add barcodes if multiplexing",
@@ -499,7 +499,7 @@
       "Load on standard flow cell"
     ],
     "rapid_pcr_amplicon": [
-      "Quantify DNA — as little as 1 ng input",
+      "Quantify DNA — need 1–5 ng gDNA per sample",
       "PCR amplify with barcoded primers",
       "Pool amplicons",
       "Add Rapid Adapter",
