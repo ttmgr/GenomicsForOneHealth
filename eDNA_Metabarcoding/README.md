@@ -41,6 +41,8 @@ flowchart TD
     class E input
 ```
 
+> **Static version:** [flowchart.svg](./flowchart.svg) (for offline or non-GitHub viewing)
+
 ## Data Files
 
 The [`data/`](./data/) directory contains the sample demultiplexing reference tables used in this study:

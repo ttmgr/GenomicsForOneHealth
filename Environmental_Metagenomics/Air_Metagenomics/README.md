@@ -75,6 +75,8 @@ flowchart TD
     class J,J1,J2 binningLevel
 ```
 
+> **Static version:** [flowchart.svg](./flowchart.svg) (for offline or non-GitHub viewing)
+
 ---
 
 ## ** Important First Step: Data Access & Preprocessing**

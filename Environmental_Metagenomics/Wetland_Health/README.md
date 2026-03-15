@@ -232,6 +232,8 @@ flowchart TD
     class D6b,D6c,D6d,D6e contigsLevel
 ```
 
+> **Static version:** [flowchart.svg](./flowchart.svg) (for offline or non-GitHub viewing)
+
 ## Tools Used
 
 This project integrates the following key bioinformatics tools:
@@ -266,8 +268,7 @@ This project integrates the following key bioinformatics tools:
 ## Repository Structure
 
 * `dna_shotgun_analysis_pipeline.md`: Detailed commands for the DNA shotgun metagenomics workflow.
-* `aiv_rna_analysis_pipeline.md`: Detailed commands for the AIV (RNA) analysis workflow.
-* `virome_analysis_pipeline.md`: Detailed commands for the viral metagenomics workflow.
+* `virus_analysis_pipeline.md`: Detailed commands for the AIV (RNA) and virome analysis workflows.
 * `rrna_vertebrate_analysis.md`: Detailed commands for the 12S rRNA vertebrate analysis workflow.
 * `Installation_tutorial.md`: Guide for installing all required tools and databases.
 
@@ -294,7 +295,7 @@ This project integrates the following key bioinformatics tools:
 2.  **Alignment to Reference Genomes:** Filtered reads were aligned to a custom European AIV reference database using Minimap2 (v2.28) with the `-ax map-ont` setting.
 3.  **Consensus Sequence Generation:** SAMtools was used to process alignments and identify the best-matching reference for each of the eight AIV segments. A consensus sequence for each segment was then generated using BCFtools.
 
-    *For detailed commands, see [`aiv_rna_analysis_pipeline.md`](./aiv_rna_analysis_pipeline.md).*
+    *For detailed commands, see [`virus_analysis_pipeline.md`](./virus_analysis_pipeline.md#part-a-aiv-whole-genome-sequencing).*
 
 ### Viral Metagenomics (`virus_analysis_pipeline.md`)
 
