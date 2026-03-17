@@ -4,14 +4,10 @@ This repository contains a full analysis workflow for Oxford Nanopore sequencing
 
 It is designed for high-performance computing batch execution (SLURM), but can also be run locally for smaller tests.
 
-> A polished personal overview of this project is maintained in [Tim_Reska](https://github.com/ttmgr/Tim_Reska/tree/main/pipelines/listeria-adaptive-sampling). Use this group repository for the full script scaffold, installation notes, execution guide, and adaptation details.
-
 ---
 
 ## Why this matters for food safety
 *Listeria monocytogenes* is a foodborne pathogen that can survive in food-processing environments and cause severe disease. Rapidly detecting *Listeria* signal directly from sequencing data, without needing days of cell culturing, helps food safety teams act faster during contamination checks and outbreak investigations.
-
-This approach aligns closely with **quasi-metagenomics** — where an initial short enrichment step is used to push the pathogen to a higher relative abundance before sequencing. While this distorts the ecological composition of the sample, it allows for rapid structural recovery (e.g., circular chromosomes and plasmids) without waiting for a clean colony pick. For background, see [Calderón-Preciado et al. (2022)](https://doi.org/10.1128/spectrum.01923-21) for an example application in food safety.
 
 ## What is Adaptive Sampling?
 Adaptive sampling is a real-time enrichment approach during Nanopore sequencing. As DNA passes through a sequencing pore, the instrument basecalls the first part of the read, compares it to a target reference, and decides to either:
@@ -104,16 +100,17 @@ mamba activate listeria_as
 ```
 
 ### 2) Install Dorado Basecaller & Polisher
-Dorado must be installed manually outside of Mamba. See the centralized [INSTALL_AND_DATABASES.md](../../INSTALL_AND_DATABASES.md) for instructions on downloading the binary and models, or refer to [docs/01_installation.md](docs/01_installation.md) for project-specific configuration.
+Dorado must be installed manually outside of Mamba. See [docs/01_installation.md](docs/01_installation.md) for full instructions on downloading the binary and models.
 
-### 3) Run the Interactive Pipeline
-The pipeline includes a user-friendly wrapper script that will automatically ask you for file paths and configure the pipeline.
+### 3) Run Orchestrator
+
 1. **Clone the repo** and enter it.
-2. **Run the wrapper:**
+2. **Edit path variables** in `scripts/submit_pipeline.sh` (replace `/path/to/project` with your real paths).
+3. **Run the orchestrator script:**
     ```bash
-    bash run_pipeline.sh
+    bash scripts/submit_pipeline.sh
     ```
-    This will prompt you for the location of your raw BAM files and your working directory. It automatically submits and links the full workflow (steps 1 to 20), and gracefully skips outputs that have already been generated.
+    This orchestrator submits and links the full workflow (steps 1 to 20), and gracefully skips outputs that have already been generated.
 
 ---
 
@@ -143,7 +140,3 @@ We have broken down the pipeline documentation into specific guides to make it e
 
 ## Final Note
 If you only change one thing before running: make sure **every placeholder path** is replaced with real paths for your system. Most failed runs come from path mismatches!
-
- 
-  
- 
