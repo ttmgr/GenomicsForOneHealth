@@ -23,14 +23,6 @@ As a signatory of the San Francisco Declaration on Research Assessment, we suppo
 
 Learn more about our work at the [Urban Lab website](https://sites.google.com/view/urban-lab/home).
 
-## Pipeline Advisor
-
-> **Start here:** Use the public [Pipeline Advisor](https://ttmgr.github.io/GenomicsForOneHealth/) to describe your sequencing project and get an opinionated recommendation for kit, basecalling model, and analysis pipeline.
->
-> The advisor is a static GitHub Pages app with a three-pane layout: questions on the left, a live recommendation card in the middle, and rationale with ready-to-run commands on the right. It asks four questions — molecule type (DNA/RNA), study type, priorities, and optional constraints — then recommends a kit, basecalling tier, and EPI2ME workflow with transparent rationale. All decision logic is a JSON-based rules engine that lab staff can audit and update.
->
-> A compact [Nanopore guide](https://ttmgr.github.io/GenomicsForOneHealth/nanopore-guide.html) covers the reasoning behind kit, flow-cell, and basecalling recommendations.
-
 ### Our Team
 - **Prof. Dr. Lara Urban**: Principal Investigator & Supervisor (Helmholtz AI & University of Zurich)
 - **Dr. Albert Perlas** (former Postdoc): Virome and Avian Influenza Virus (AIV) 
@@ -241,6 +233,16 @@ If you use any of these pipelines in your research, please refer to the specific
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+## Pipeline Advisor
+
+> **Start here:** Use the public [Pipeline Advisor](https://ttmgr.github.io/GenomicsForOneHealth/) to describe your sequencing project and get an opinionated recommendation for kit, basecalling model, and analysis pipeline.
+>
+> The advisor is a static GitHub Pages app with a three-pane layout: questions on the left, a live recommendation card in the middle, and rationale with ready-to-run commands on the right. It asks four questions — molecule type (DNA/RNA), study type, priorities, and optional constraints — then recommends a kit, basecalling tier, and EPI2ME workflow with transparent rationale. All decision logic is a JSON-based rules engine that lab staff can audit and update.
+>
+> A compact [Nanopore guide](https://ttmgr.github.io/GenomicsForOneHealth/nanopore-guide.html) covers the reasoning behind kit, flow-cell, and basecalling recommendations.
 
 ---
 
