@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GenomicsForOneHealth Pipeline Advisor</title>
+  <title>GenomicsForOneHealth</title>
   <meta name="description"
-    content="Describe your sequencing project and get an opinionated recommendation for kit, basecalling, and analysis pipeline from the GenomicsForOneHealth collection.">
+    content="A bioinformatics pipeline collection for genomic surveillance and One Health, developed by the Urban Lab at the University of Zurich.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -22,120 +22,270 @@
     <header class="hero">
       <div class="hero-copy">
         <p class="eyebrow">GenomicsForOneHealth</p>
-        <h1>Find the right workflow</h1>
+        <h1>Real-time Genomics for One Health</h1>
         <p class="hero-text">
-          Answer a few questions about your sequencing project. The advisor will recommend a kit, basecalling model,
-          and analysis pipeline — with rationale, protocol links, and ready-to-run commands.
+          Using nanopore technology and AI, we develop genomic surveillance strategies at the intersection of human,
+          animal, and environmental health &mdash; empowering our understanding of pathogens, their transmission, drug
+          resistance, and virulence in the context of food safety, water and air quality, and clinical monitoring.
         </p>
         <p class="hero-link-row">
-          <a href="nanopore-guide.html" target="_blank" rel="noreferrer">Nanopore setup guide</a>
+          <a href="https://sites.google.com/view/urban-lab/home" target="_blank" rel="noreferrer">Urban Lab</a>
+          &nbsp;&middot;&nbsp;
+          <a href="#advisor">Pipeline Advisor</a>
         </p>
       </div>
       <div class="hero-meta">
         <div class="meta-card">
-          <p class="meta-label">Step 1</p>
-          <p class="meta-value">Tell us what you are sequencing and what matters most</p>
+          <p class="meta-label">Pipelines</p>
+          <p class="meta-value">10 workflows across 6 One Health domains</p>
         </div>
         <div class="meta-card">
-          <p class="meta-label">Step 2</p>
-          <p class="meta-value">Optionally refine with sample and compute constraints</p>
+          <p class="meta-label">Based at</p>
+          <p class="meta-value">University of Zurich &mdash; Food Safety &amp; One Health Institutes</p>
         </div>
         <div class="meta-card">
-          <p class="meta-label">Result</p>
-          <p class="meta-value">Kit + basecalling + pipeline recommendation with rationale</p>
+          <p class="meta-label">Funded by</p>
+          <p class="meta-value">EU Horizon Europe, Helmholtz Association, UKRI, and others</p>
         </div>
       </div>
     </header>
 
-    <main class="advisor-shell">
-      <!-- Left pane: questions -->
-      <section class="advisor-pane pane-questions" id="questions-pane">
-        <div class="panel-head">
-          <div>
-            <p class="panel-kicker">Sequencing advisor</p>
-            <h2>Describe your project</h2>
-          </div>
-          <button id="reset-button" class="ghost-button" type="button">Start over</button>
-        </div>
+    <main>
+      <!-- ── Pipeline domains ──────────────────────────────── -->
+      <section class="content-section" id="pipelines">
+        <p class="eyebrow">Our Pipelines</p>
+        <h2 class="section-heading">Six domains, ten workflows</h2>
+        <p class="section-text">
+          Each pipeline is a self-contained, reproducible workflow built on nanopore long-read sequencing. Click through
+          to the documentation and source code for each.
+        </p>
+        <div class="domain-grid">
+          <article class="domain-card">
+            <p class="meta-label">Environmental Metagenomics</p>
+            <h3>Air &amp; Wetland</h3>
+            <p class="domain-desc">Nanopore metagenomics for bioaerosol communities and wetland pathogen &amp; AMR surveillance.</p>
+            <p class="domain-links">
+              <a href="https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Environmental_Metagenomics/Air_Metagenomics" target="_blank" rel="noreferrer">Air pipeline</a>
+              &middot;
+              <a href="https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Environmental_Metagenomics/Wetland_Health" target="_blank" rel="noreferrer">Wetland pipeline</a>
+            </p>
+          </article>
 
-        <div id="progress-root" class="progress-root" aria-label="Advisor progress"></div>
-        <div id="page-root" class="page-root"></div>
+          <article class="domain-card">
+            <p class="meta-label">eDNA Metabarcoding</p>
+            <h3>Zambia Biodiversity</h3>
+            <p class="domain-desc">Portable nanopore eDNA metabarcoding for vertebrate biodiversity monitoring in remote field conditions.</p>
+            <p class="domain-links">
+              <a href="https://github.com/ttmgr/GenomicsForOneHealth/tree/main/eDNA_Metabarcoding" target="_blank" rel="noreferrer">eDNA pipeline</a>
+            </p>
+          </article>
 
-        <div class="wizard-controls">
-          <button id="back-button" class="ghost-button" type="button">Back</button>
-          <button id="next-button" class="primary-button" type="button">Continue</button>
+          <article class="domain-card">
+            <p class="meta-label">Food Safety</p>
+            <h3>Listeria Adaptive Sampling</h3>
+            <p class="domain-desc">High-resolution genomic analysis of <em>Listeria monocytogenes</em> from complex food matrices using adaptive sampling.</p>
+            <p class="domain-links">
+              <a href="https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Food_Safety/Listeria-Adaptive-Sampling" target="_blank" rel="noreferrer">Listeria pipeline</a>
+            </p>
+          </article>
+
+          <article class="domain-card">
+            <p class="meta-label">Clinical Isolates &amp; Plasmid Profiling</p>
+            <h3>AMR, CRE &amp; Host Association</h3>
+            <p class="domain-desc">Rapid clinical AMR detection, CRE plasmid clustering, and methylation-based resistance&ndash;pathogen linkage.</p>
+            <p class="domain-links">
+              <a href="https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Clinical_Isolates_and_Plasmid_Profiling/AMR_nanopore" target="_blank" rel="noreferrer">AMR</a>
+              &middot;
+              <a href="https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Clinical_Isolates_and_Plasmid_Profiling/CRE-Plasmid-clustering" target="_blank" rel="noreferrer">CRE</a>
+              &middot;
+              <a href="https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Clinical_Isolates_and_Plasmid_Profiling/Nanopore-AMR-Host-Association" target="_blank" rel="noreferrer">AMR-Host</a>
+            </p>
+          </article>
+
+          <article class="domain-card">
+            <p class="meta-label">Veterinary &amp; Zoonotic Surveillance</p>
+            <h3>Avian Influenza &amp; Transmission</h3>
+            <p class="domain-desc">Rapid AIV profiling from DNA and RNA nanopore data, plus variant calling for cross-host transmission tracking.</p>
+            <p class="domain-links">
+              <a href="https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Veterinary_and_Zoonotic_Surveillance/Avian-Influenza-Profiling" target="_blank" rel="noreferrer">AIV profiling</a>
+              &middot;
+              <a href="https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur" target="_blank" rel="noreferrer">Feather to Fur</a>
+            </p>
+          </article>
+
+          <article class="domain-card">
+            <p class="meta-label">Viability Assessment</p>
+            <h3>Squiggle4Viability</h3>
+            <p class="domain-desc">Deep learning on raw nanopore signals to distinguish viable from dead microorganisms without culture.</p>
+            <p class="domain-links">
+              <a href="https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Viability_Assessment/Squiggle4Viability" target="_blank" rel="noreferrer">Squiggle pipeline</a>
+            </p>
+          </article>
         </div>
       </section>
 
-      <!-- Middle pane: live recommendation -->
-      <aside class="advisor-pane pane-recommendation" id="recommendation-pane">
-        <div class="rec-card" id="rec-card">
-          <div class="rec-header">
-            <p class="panel-kicker">Live recommendation</p>
-            <span class="confidence-badge" id="rec-confidence" data-level="low">
-              <span class="confidence-dot"></span>
-              <span class="confidence-label">Needs more info</span>
-            </span>
-          </div>
-
-          <div class="rec-slot" id="rec-slot-workflow">
-            <p class="rec-slot-label">Workflow</p>
-            <p class="rec-slot-value" id="rec-workflow">—</p>
-          </div>
-
-          <div class="rec-slot" id="rec-slot-kit">
-            <p class="rec-slot-label">Recommended kit</p>
-            <p class="rec-slot-value" id="rec-kit">—</p>
-            <p class="rec-slot-meta" id="rec-kit-meta"></p>
-          </div>
-
-          <div class="rec-slot" id="rec-slot-basecalling">
-            <p class="rec-slot-label">Basecalling model</p>
-            <p class="rec-slot-value" id="rec-basecalling">—</p>
-            <p class="rec-slot-meta" id="rec-basecalling-meta"></p>
-          </div>
-
-          <div class="rec-slot" id="rec-slot-pipeline">
-            <p class="rec-slot-label">Analysis pipeline</p>
-            <p class="rec-slot-value" id="rec-pipeline">—</p>
-            <p class="rec-slot-meta" id="rec-pipeline-meta"></p>
-          </div>
-
-          <div class="rec-slot rec-slot-rationale" id="rec-slot-rationale">
-            <p class="rec-slot-label">Why this is the best fit</p>
-            <ul class="rec-rationale-list" id="rec-rationale"></ul>
-          </div>
-
-          <div class="rec-warnings" id="rec-warnings" hidden></div>
+      <!-- ── Publication highlight ─────────────────────────── -->
+      <section class="content-section" id="publication">
+        <p class="eyebrow">Highlighted Publication</p>
+        <div class="publication-card">
+          <h3>Real-time genomics for One Health</h3>
+          <p class="pub-authors">Urban, Perlas, Francino, Mart&iacute;-Carreras, Muga, Mwangi, Boykin&nbsp;Okalebo, Stanton, Black, Waipara, Fontsere, Eccles, &Uuml;rel, Reska, Morales, Palmada-Flores, Marques-Bonet, Watsa, Libke, Erkenswick, van&nbsp;Oosterhout</p>
+          <p class="pub-journal">Molecular Systems Biology, 2023</p>
+          <a href="https://doi.org/10.15252/msb.202311686" target="_blank" rel="noreferrer" class="result-link">Read the paper</a>
         </div>
-      </aside>
+      </section>
 
-      <!-- Right pane: rationale, alternatives, commands -->
-      <aside class="advisor-pane pane-rationale" id="rationale-pane">
-        <div class="rationale-section" id="rationale-alternative" hidden>
-          <p class="panel-kicker">Alternative</p>
-          <div id="rationale-alt-content"></div>
+      <!-- ── Team ──────────────────────────────────────────── -->
+      <section class="content-section" id="team">
+        <p class="eyebrow">Our Team</p>
+        <h2 class="section-heading">The One Health group</h2>
+        <div class="team-grid">
+          <div class="team-card">
+            <p class="team-name">Prof. Dr. Lara Urban</p>
+            <p class="team-role">Principal Investigator (Helmholtz AI &amp; University of Zurich)</p>
+          </div>
+          <div class="team-card">
+            <p class="team-name">Dr. Albert Perlas</p>
+            <p class="team-role">Former Postdoc &mdash; Virome &amp; Avian Influenza</p>
+          </div>
+          <div class="team-card">
+            <p class="team-name">Tim Reska</p>
+            <p class="team-role">PhD Student &mdash; Metagenomics (Air &amp; Wetland)</p>
+          </div>
+          <div class="team-card">
+            <p class="team-name">Daniel Gygax</p>
+            <p class="team-role">PhD Student &mdash; eDNA Metabarcoding</p>
+          </div>
+          <div class="team-card">
+            <p class="team-name">Ela Sauerborn</p>
+            <p class="team-role">PhD Student &mdash; CRE Plasmid &amp; Isolates</p>
+          </div>
+          <div class="team-card">
+            <p class="team-name">Harika &Uuml;rel</p>
+            <p class="team-role">PhD Student &mdash; Plasmid &amp; Viability</p>
+          </div>
         </div>
+      </section>
 
-        <div class="rationale-section" id="rationale-commands" hidden>
-          <p class="panel-kicker">Ready-to-run commands</p>
-          <div id="rationale-commands-content"></div>
+      <!-- ── Getting started ───────────────────────────────── -->
+      <section class="content-section" id="getting-started">
+        <p class="eyebrow">Getting Started</p>
+        <h2 class="section-heading">Clone and run</h2>
+        <div class="command-card" style="margin-top: 14px;">
+          <pre><code>git clone https://github.com/ttmgr/GenomicsForOneHealth.git
+cd GenomicsForOneHealth
+mamba env create -f environment.yaml
+conda activate genomics-onehealth</code></pre>
         </div>
+        <p class="section-text">
+          See the full
+          <a href="https://github.com/ttmgr/GenomicsForOneHealth#getting-started" target="_blank" rel="noreferrer">setup guide</a>,
+          <a href="https://github.com/ttmgr/GenomicsForOneHealth/blob/main/INSTALL_AND_DATABASES.md" target="_blank" rel="noreferrer">install &amp; databases</a>, and
+          <a href="https://github.com/ttmgr/GenomicsForOneHealth/blob/main/TOOLS.md" target="_blank" rel="noreferrer">tools reference</a>
+          for details.
+        </p>
+      </section>
 
-        <div class="rationale-section" id="rationale-checklist" hidden>
-          <p class="panel-kicker">Wet-lab checklist</p>
-          <ol class="checklist" id="rationale-checklist-content"></ol>
-        </div>
+      <!-- ── Pipeline advisor (bonus tool) ─────────────────── -->
+      <section class="content-section advisor-section" id="advisor">
+        <p class="eyebrow">Bonus Tool</p>
+        <h2 class="section-heading">Pipeline Advisor</h2>
+        <p class="section-text">
+          Answer a few questions about your sequencing project. The advisor will recommend a kit, basecalling model,
+          and analysis pipeline &mdash; with rationale, protocol links, and ready-to-run commands.
+        </p>
 
-        <div class="rationale-section" id="rationale-protocols" hidden>
-          <p class="panel-kicker">Protocol links</p>
-          <ul class="protocol-links" id="rationale-protocols-content"></ul>
-        </div>
+        <div class="advisor-shell">
+          <!-- Left pane: questions -->
+          <section class="advisor-pane pane-questions" id="questions-pane">
+            <div class="panel-head">
+              <div>
+                <p class="panel-kicker">Sequencing advisor</p>
+                <h2>Describe your project</h2>
+              </div>
+              <button id="reset-button" class="ghost-button" type="button">Start over</button>
+            </div>
 
-        <div class="rationale-section" id="rationale-placeholder">
-          <p class="muted">Answer questions on the left to see recommendations, alternatives, and ready-to-run commands.</p>
+            <div id="progress-root" class="progress-root" aria-label="Advisor progress"></div>
+            <div id="page-root" class="page-root"></div>
+
+            <div class="wizard-controls">
+              <button id="back-button" class="ghost-button" type="button">Back</button>
+              <button id="next-button" class="primary-button" type="button">Continue</button>
+            </div>
+          </section>
+
+          <!-- Middle pane: live recommendation -->
+          <aside class="advisor-pane pane-recommendation" id="recommendation-pane">
+            <div class="rec-card" id="rec-card">
+              <div class="rec-header">
+                <p class="panel-kicker">Live recommendation</p>
+                <span class="confidence-badge" id="rec-confidence" data-level="low">
+                  <span class="confidence-dot"></span>
+                  <span class="confidence-label">Needs more info</span>
+                </span>
+              </div>
+
+              <div class="rec-slot" id="rec-slot-workflow">
+                <p class="rec-slot-label">Workflow</p>
+                <p class="rec-slot-value" id="rec-workflow">&mdash;</p>
+              </div>
+
+              <div class="rec-slot" id="rec-slot-kit">
+                <p class="rec-slot-label">Recommended kit</p>
+                <p class="rec-slot-value" id="rec-kit">&mdash;</p>
+                <p class="rec-slot-meta" id="rec-kit-meta"></p>
+              </div>
+
+              <div class="rec-slot" id="rec-slot-basecalling">
+                <p class="rec-slot-label">Basecalling model</p>
+                <p class="rec-slot-value" id="rec-basecalling">&mdash;</p>
+                <p class="rec-slot-meta" id="rec-basecalling-meta"></p>
+              </div>
+
+              <div class="rec-slot" id="rec-slot-pipeline">
+                <p class="rec-slot-label">Analysis pipeline</p>
+                <p class="rec-slot-value" id="rec-pipeline">&mdash;</p>
+                <p class="rec-slot-meta" id="rec-pipeline-meta"></p>
+              </div>
+
+              <div class="rec-slot rec-slot-rationale" id="rec-slot-rationale">
+                <p class="rec-slot-label">Why this is the best fit</p>
+                <ul class="rec-rationale-list" id="rec-rationale"></ul>
+              </div>
+
+              <div class="rec-warnings" id="rec-warnings" hidden></div>
+            </div>
+          </aside>
+
+          <!-- Right pane: rationale, alternatives, commands -->
+          <aside class="advisor-pane pane-rationale" id="rationale-pane">
+            <div class="rationale-section" id="rationale-alternative" hidden>
+              <p class="panel-kicker">Alternative</p>
+              <div id="rationale-alt-content"></div>
+            </div>
+
+            <div class="rationale-section" id="rationale-commands" hidden>
+              <p class="panel-kicker">Ready-to-run commands</p>
+              <div id="rationale-commands-content"></div>
+            </div>
+
+            <div class="rationale-section" id="rationale-checklist" hidden>
+              <p class="panel-kicker">Wet-lab checklist</p>
+              <ol class="checklist" id="rationale-checklist-content"></ol>
+            </div>
+
+            <div class="rationale-section" id="rationale-protocols" hidden>
+              <p class="panel-kicker">Protocol links</p>
+              <ul class="protocol-links" id="rationale-protocols-content"></ul>
+            </div>
+
+            <div class="rationale-section" id="rationale-placeholder">
+              <p class="muted">Answer questions on the left to see recommendations, alternatives, and ready-to-run commands.</p>
+            </div>
+          </aside>
         </div>
-      </aside>
+      </section>
     </main>
   </div>
 </body>

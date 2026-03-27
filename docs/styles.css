@@ -859,6 +859,139 @@ a {
   margin-top: 6px;
 }
 
+/* ── Content sections ────────────────────────────────── */
+
+.content-section {
+  margin-top: 28px;
+  padding: 26px;
+  border: 1px solid rgba(17, 75, 58, 0.12);
+  border-radius: 30px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 245, 238, 0.96));
+  box-shadow: var(--shadow);
+}
+
+.section-heading {
+  margin: 8px 0 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  letter-spacing: -0.03em;
+}
+
+.section-text {
+  max-width: 720px;
+  margin: 12px 0 0;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* ── Domain grid ─────────────────────────────────────── */
+
+.domain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.domain-card {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  box-shadow: 0 10px 26px rgba(31, 45, 40, 0.04);
+}
+
+.domain-card h3 {
+  margin: 6px 0 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+
+.domain-desc {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.domain-links {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+}
+
+.domain-links a {
+  font-weight: 600;
+}
+
+/* ── Publication card ────────────────────────────────── */
+
+.publication-card {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  box-shadow: 0 10px 26px rgba(31, 45, 40, 0.04);
+  margin-top: 14px;
+}
+
+.publication-card h3 {
+  margin: 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.pub-authors,
+.pub-journal {
+  margin: 6px 0 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.pub-journal {
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* ── Team grid ───────────────────────────────────────── */
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.team-card {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+}
+
+.team-name {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.team-role {
+  margin: 4px 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* ── Advisor section wrapper ─────────────────────────── */
+
+.advisor-section .advisor-shell {
+  margin-top: 20px;
+}
+
 /* ── Print ───────────────────────────────────────────── */
 
 @media print {
@@ -867,9 +1000,7 @@ a {
   }
 
   .hero,
-  .pane-questions .progress-root,
-  .pane-questions .wizard-controls,
-  .pane-rationale,
+  .advisor-section,
   .ghost-button,
   .primary-button {
     display: none !important;
@@ -962,5 +1093,14 @@ a {
 
   .progress-connector {
     display: none;
+  }
+
+  .content-section {
+    padding: 18px;
+  }
+
+  .domain-grid,
+  .team-grid {
+    grid-template-columns: 1fr;
   }
 }
