@@ -313,15 +313,15 @@
       "label": "Rapid Barcoding Kit V14",
       "sku": "SQK-RBK114.24",
       "molecule": "dna",
-      "prep_time": "10 min",
-      "input_range": "100 ng – 1 µg",
+      "prep_time": "~60 min",
+      "input_range": "200 ng – 1 µg per barcode",
       "multiplexing": "up to 24",
       "pcr_free": false,
       "url": "https://nanoporetech.com/document/rapid-sequencing-gdna-barcoding-sqk-rbk114"
     },
     "nbd114_24": {
       "label": "Native Barcoding Kit V14",
-      "sku": "SQK-NBD114.96",
+      "sku": "SQK-NBD114.24",
       "molecule": "dna",
       "prep_time": "60–90 min",
       "input_range": "400 ng – 1 µg per barcode",
@@ -344,7 +344,7 @@
       "sku": "SQK-RPB114.24",
       "molecule": "dna",
       "prep_time": "90 min",
-      "input_range": "1–100 ng",
+      "input_range": "1–5 ng",
       "multiplexing": "up to 24",
       "pcr_free": false,
       "url": "https://nanoporetech.com/document/rapid-sequencing-dna-v14-pcr-barcoding-sqk-rpb114-24"
@@ -374,7 +374,7 @@
       "sku": "SQK-RNA004",
       "molecule": "rna",
       "prep_time": "90 min",
-      "input_range": "500 ng poly-A RNA",
+      "input_range": "300 ng poly(A) RNA or 1 µg total RNA",
       "multiplexing": "single sample",
       "pcr_free": true,
       "url": "https://nanoporetech.com/document/chemistry-technical-document"
@@ -384,7 +384,7 @@
       "sku": "SQK-PCB114.24",
       "molecule": "rna",
       "prep_time": "3–4 h",
-      "input_range": "1–50 ng total RNA",
+      "input_range": "10 ng enriched RNA or 500 ng total RNA",
       "multiplexing": "up to 24",
       "pcr_free": false,
       "url": "https://nanoporetech.com/document/pcr-cdna-sequencing-v14-barcoding-sqk-pcb114-24"
@@ -411,14 +411,14 @@
       "tier": "sup",
       "description": "Super-accurate basecalling for assembly and variant calling",
       "compute": "GPU required",
-      "accuracy": "~99.5%"
+      "accuracy": "~99.75% (Q26)"
     },
     "modified_base_calling": {
       "label": "Modified basecalling",
       "tier": "sup+mods",
       "description": "Detects 5mC, 6mA, and other modifications alongside basecalling",
       "compute": "GPU required",
-      "accuracy": "~99.5% + modification calls"
+      "accuracy": "~99.75% + modification calls"
     }
   },
 
@@ -451,7 +451,7 @@
       "label": "wf-amplicon",
       "description": "Amplicon variant calling and consensus",
       "url": "https://github.com/epi2me-labs/wf-amplicon",
-      "docs_url": null
+      "docs_url": "https://nanoporetech.com/document/epi2me-workflows/wf-amplicon"
     }
   },
 

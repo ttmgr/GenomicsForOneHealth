@@ -12,6 +12,12 @@ const backButton = document.getElementById("back-button");
 const nextButton = document.getElementById("next-button");
 const resetButton = document.getElementById("reset-button");
 
+// Mobile rec bar
+const mobileRecBar = document.getElementById("mobile-rec-bar");
+const mobileRecValue = document.getElementById("mobile-rec-value");
+const mobileRecConfidence = document.getElementById("mobile-rec-confidence");
+const mobileRecExpand = document.getElementById("mobile-rec-expand");
+
 // Recommendation card slots
 const recCard = document.getElementById("rec-card");
 const recConfidence = document.getElementById("rec-confidence");
@@ -41,6 +47,11 @@ const rationalePlaceholder = document.getElementById("rationale-placeholder");
 let datasets = null;
 let answers = {};
 let lastRecommendation = null;
+let previousConfidence = 'low';
+let isTransitioning = false;
+
+const CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>';
+const ARROW_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 4 11 8 5 12"/></svg>';
 
 // ── Utilities ───────────────────────────────────────────────
 
@@ -69,27 +80,32 @@ function linkHref(url) {
 function renderProgress(currentPageId) {
   const pages = getPageSequence();
   const currentIdx = pages.indexOf(currentPageId);
+  const visiblePages = pages.filter(p => p !== 'results');
 
   progressRoot.innerHTML = `
     <div class="progress-steps">
-      ${pages
-        .filter(p => p !== 'results')
+      ${visiblePages
         .map((id, i) => {
           const page = datasets.questionSpec.pages.find(p => p.id === id);
-          const isCurrent = id === currentPageId;
+          const isCurrent = id === currentPageId || (currentPageId === 'results' && i === visiblePages.length - 1);
           const isDone = i < currentIdx;
           const label = page?.title || id;
+          const indexContent = isDone ? CHECK_SVG : (i + 1);
+          const connector = i < visiblePages.length - 1
+            ? `<span class="progress-connector ${isDone ? 'is-filled' : ''}"></span>`
+            : '';
           return `
             <button type="button"
               class="progress-step ${isCurrent ? 'is-current' : ''} ${isDone ? 'is-complete' : ''}"
               data-progress-page="${id}"
               ${!isDone && !isCurrent ? 'disabled' : ''}>
-              <span class="progress-index">${i + 1}</span>
+              <span class="progress-index">${indexContent}</span>
               <span class="progress-label">${escapeHtml(label)}</span>
             </button>
+            ${connector}
           `;
         })
-        .join('<span class="progress-connector"></span>')}
+        .join('')}
     </div>
   `;
 
@@ -214,6 +230,13 @@ function renderPage(pageId) {
         </div>
       </div>
     `).join("");
+
+    // Add skip-to-results shortcut
+    questionsHtml += `
+      <button type="button" class="skip-constraints" id="skip-constraints">
+        ${ARROW_SVG} Skip to results
+      </button>
+    `;
   } else {
     for (const q of page.questions || []) {
       const opts = visibleOptions(q);
@@ -238,6 +261,12 @@ function renderPage(pageId) {
   `;
 
   attachQuestionListeners();
+
+  // Wire up skip-constraints button if present
+  const skipBtn = document.getElementById("skip-constraints");
+  if (skipBtn) {
+    skipBtn.addEventListener("click", () => navigateTo("results"));
+  }
 }
 
 // ── Results page ────────────────────────────────────────────
@@ -270,6 +299,19 @@ function renderResultsPage() {
           </span>
         </div>
         <h2>${escapeHtml(rec.workflow || 'Sequencing workflow')}</h2>
+      </div>
+
+      <div class="results-hero">
+        <p class="results-hero-kicker">Your recommendation</p>
+        <h3>${escapeHtml(rec.workflow || 'Sequencing workflow')}</h3>
+        <div class="results-hero-meta">
+          <span class="confidence-badge" data-level="${rec.confidence}">
+            <span class="confidence-dot"></span>
+            <span class="confidence-label">${confidenceLabel(rec.confidence)}</span>
+          </span>
+          <span>${escapeHtml(kitInfo.label || rec.kit)}</span>
+          <span>${escapeHtml(bcInfo.label || rec.basecalling)}</span>
+        </div>
       </div>
 
       <div class="result-cards">
@@ -382,13 +424,19 @@ function confidenceLabel(level) {
 }
 
 function updateSlot(el, text) {
-  const newText = text || '—';
-  if (el.textContent !== newText) {
-    el.classList.add('rec-slot-updating');
-    el.textContent = newText;
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => el.classList.remove('rec-slot-updating'));
-    });
+  const isEmpty = !text;
+  const newText = text || '';
+  if (el.textContent !== newText || el.classList.contains('is-empty') !== isEmpty) {
+    el.classList.toggle('is-empty', isEmpty);
+    if (isEmpty) {
+      el.textContent = '';
+    } else {
+      el.classList.add('rec-slot-updating');
+      el.textContent = newText;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => el.classList.remove('rec-slot-updating'));
+      });
+    }
   }
 }
 
@@ -396,7 +444,16 @@ function updateRecommendationCard() {
   const rec = computeLiveRecommendation(answers, datasets);
   lastRecommendation = rec;
 
-  // Confidence badge
+  // Confidence badge with pulse on change
+  if (rec.confidence !== previousConfidence) {
+    recConfidence.classList.add('is-changing');
+    mobileRecConfidence.classList.add('is-changing');
+    setTimeout(() => {
+      recConfidence.classList.remove('is-changing');
+      mobileRecConfidence.classList.remove('is-changing');
+    }, 400);
+    previousConfidence = rec.confidence;
+  }
   recConfidence.dataset.level = rec.confidence;
   recConfidence.querySelector('.confidence-label').textContent = confidenceLabel(rec.confidence);
 
@@ -430,6 +487,9 @@ function updateRecommendationCard() {
 
   // Update rationale pane
   updateRationalePane(rec);
+
+  // Update mobile sticky bar
+  updateMobileRecBar(rec);
 }
 
 // ── Rationale pane ──────────────────────────────────────────
@@ -506,12 +566,25 @@ function attachCopyButtons() {
   document.querySelectorAll('.copy-button[data-copy]').forEach(btn => {
     btn.onclick = () => {
       navigator.clipboard.writeText(btn.dataset.copy).then(() => {
-        const orig = btn.textContent;
-        btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = orig; }, 1500);
+        const orig = btn.innerHTML;
+        btn.innerHTML = `<span class="copy-check">${CHECK_SVG}</span> Copied`;
+        btn.classList.add('is-copied');
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          btn.classList.remove('is-copied');
+        }, 1500);
       });
     };
   });
+}
+
+function updateMobileRecBar(rec) {
+  const hasContent = rec.kit || rec.pipeline;
+  mobileRecBar.classList.toggle('is-hidden', !hasContent);
+  mobileRecValue.textContent = rec.kitInfo?.label || rec.pipelineInfo?.label || '—';
+  mobileRecConfidence.dataset.level = rec.confidence;
+  mobileRecConfidence.querySelector('.confidence-label').textContent =
+    rec.confidence === 'high' ? 'High' : rec.confidence === 'medium' ? 'Moderate' : 'Low';
 }
 
 function attachQuestionListeners() {
@@ -621,8 +694,43 @@ window.addEventListener("hashchange", () => {
 });
 
 resetButton.addEventListener("click", () => {
+  const answeredCount = Object.keys(answers).filter(k => {
+    const v = answers[k];
+    return v !== undefined && v !== null && (!Array.isArray(v) || v.length > 0);
+  }).length;
+
+  if (answeredCount >= 3 && !resetButton.dataset.confirmed) {
+    resetButton.classList.add('is-shaking');
+    resetButton.textContent = 'Confirm reset?';
+    resetButton.dataset.confirmed = 'pending';
+    setTimeout(() => {
+      resetButton.classList.remove('is-shaking');
+    }, 400);
+    setTimeout(() => {
+      if (resetButton.dataset.confirmed === 'pending') {
+        resetButton.textContent = 'Start over';
+        delete resetButton.dataset.confirmed;
+      }
+    }, 3000);
+    return;
+  }
+
+  delete resetButton.dataset.confirmed;
+  resetButton.textContent = 'Start over';
   answers = {};
+  previousConfidence = 'low';
   navigateTo("molecule");
+});
+
+// Mobile expand button — scroll to recommendation pane
+mobileRecExpand.addEventListener("click", () => {
+  const recPane = document.getElementById("recommendation-pane");
+  if (recPane) {
+    // On mobile the pane is hidden, scroll to rationale instead
+    const rationalePane = document.getElementById("rationale-pane");
+    const target = rationalePane || recPane;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 });
 
 Promise.all([
