@@ -25,8 +25,9 @@
 #       https://github.com/nanoporetech/dorado
 #   - Large databases (Kraken2, AMRFinderPlus, DIAMOND NR, MIDORI2)
 #     must be downloaded independently — see INSTALL_AND_DATABASES.md
-#   - Some pip packages below (e.g. anvi'o) have complex dependencies;
-#     if conflicts arise, install them in a separate child environment.
+#   - Tools with heavy/conflicting dependencies are listed at the
+#     bottom under "Install separately". Each has its own install
+#     command and is covered by per-pipeline envs where applicable.
 # ============================================================
 
 name: genomics-onehealth
@@ -48,20 +49,15 @@ dependencies:
   - seaborn>=0.12
   - biopython>=1.81
   - pyyaml>=6.0
-  - scikit-bio>=0.6.2   # wetland PCoA analysis
-
-  # ── Basecalling & signal processing ──────────────────────
-  # Dorado: install separately from https://github.com/nanoporetech/dorado
-  # Guppy (legacy): install from ONT community portal
 
   # ── Read QC & preprocessing ──────────────────────────────
+  # Dorado: install separately from https://github.com/nanoporetech/dorado
+  # Guppy (legacy): install from ONT community portal
   - porechop=0.2.4          # adapter trimming
   - chopper>=0.7.0          # quality + length filtering (replaces NanoFilt for newer data)
   - nanofilt=2.8.0          # quality + length filtering (legacy / Listeria pipeline)
   - filtlong>=0.2.1         # long-read quality filtering
   - nanostat>=1.6.0         # summary statistics for Nanopore runs
-  - fastqc>=0.12.1          # general QC
-  - multiqc>=1.18           # aggregate QC reporting
   - seqkit>=2.8.0           # FASTQ/FASTA manipulation
   - seqtk>=1.4              # sequence subsampling and conversion
   - cutadapt>=4.4           # primer/adapter trimming (eDNA, 12S/16S)
@@ -73,23 +69,17 @@ dependencies:
 
   # ── Assembly ─────────────────────────────────────────────
   - flye>=2.9.4             # de novo long-read assembler (metagenome + isolate modes)
-  - metamdbg>=1.1.0         # high-accuracy metagenomic assembler
   - racon>=1.5.0            # rapid consensus polishing
-  - ont-medaka>=2.0.1       # neural-network polishing
 
   # ── Taxonomic classification ──────────────────────────────
   - kraken2>=2.1.3          # k-mer-based classification
   - bracken>=2.9            # Bayesian re-estimation of abundances from Kraken2
   - diamond>=2.1.9          # translated alignment (BLASTx, virome)
   - vsearch>=2.25.0         # eDNA OTU clustering and chimera detection
-  - obitools3>=3.0.0b28     # eDNA demultiplexing and filtering (OBITools4 CLI)
 
   # ── Genome annotation ─────────────────────────────────────
-  - prokka>=1.14.6          # rapid prokaryotic annotation (legacy pipelines)
   - bakta>=1.9.0            # rapid prokaryotic annotation (current standard)
   - prodigal>=2.6.3         # ab initio gene prediction
-  - hmmer>=3.4              # profile HMM search
-  - infernal>=1.1.4         # RNA covariance model search
 
   # ── AMR & virulence detection ─────────────────────────────
   - ncbi-amrfinderplus>=3.12 # AMR + virulence gene detection (nucleotide + protein)
@@ -101,32 +91,8 @@ dependencies:
   - plasmidfinder>=2.1.6    # replicon typing
 
   # ── Metagenome binning ────────────────────────────────────
-  - metabat2>=2.15          # metagenomic binning
-  - maxbin2>=2.2.7          # metagenomic binning
-  - concoct>=1.1.0          # metagenomic binning
-  - checkm-genome>=1.2.3    # bin completeness and contamination QC
   - vamb>=4.1.3             # variational autoencoder binning
-
-  # ── Functional annotation ─────────────────────────────────
-  - eggnog-mapper>=2.1.12   # COG/KEGG/GO annotation via eggNOG database
-
-  # ── DNA methylation / epigenomics ────────────────────────
-  - ont-modkit>=0.3.0       # base modification pileup from BAM
-  # nanomotif: install via pip (see below)
-
-  # ── Influenza-specific tools ──────────────────────────────
-  - irma>=1.1.4             # iterative influenza consensus assembly
-
-  # ── Visualization & reporting ─────────────────────────────
-  - plotly>=5.18
-  - bokeh>=3.3
-  - jupyter>=1.0
-  - ipython>=8.0
-  - r-base>=4.3             # R for ggplot2-based figures in wetland/avian pipelines
-  - r-ggplot2
-  - r-dplyr
-  - r-tidyr
-  - r-readr
+  - checkm-genome>=1.2.3    # bin completeness and contamination QC
 
   # ── System utilities ──────────────────────────────────────
   - pigz                    # parallel gzip
@@ -137,15 +103,71 @@ dependencies:
   # ── Pip-only packages ─────────────────────────────────────
   - pip:
     - nanomotif>=0.6.4      # methylation motif discovery + bin contamination scoring
-    - NanoPlot>=1.42.0      # Nanopore run visualization
-    - pycoQC>=2.5.2         # basecalling QC from sequencing summary
     - pling>=1.0.0          # plasmid network construction and clustering
 
-# ── Manual install (not available via conda/pip) ──────────
-# metaMDBG (if conda package unavailable): https://github.com/GaetanBenoitDev/metaMDBG
+# ============================================================
+# Install separately — conflicting or heavy dependencies
+# ============================================================
+# These tools are used by specific pipelines but have dependency
+# trees that conflict with the core environment. Each pipeline
+# that needs them has its own per-pipeline env/ where applicable.
+#
+# ont-medaka>=2.0.1  (neural-network polishing; pins TF-lite/numpy)
+#   Used by: CRE-Plasmid-clustering (see its env/environment.yaml)
+#   Install: mamba create -n medaka -c conda-forge -c bioconda ont-medaka
+#
+# OBITools4  (eDNA demultiplexing and filtering — Go binary)
+#   Used by: eDNA_Metabarcoding, Wetland_Health
+#   Install: download from https://github.com/metabarcoding/obitools4
+#   Note: the conda obitools3 package is a different (Python) tool
+#
+# concoct>=1.1.0  (metagenomic binning; old scipy/scikit-learn pins)
+#   Used by: Air_Metagenomics via MetaWRAP (see its env/environment.yaml)
+#   Install: mamba create -n concoct -c conda-forge -c bioconda concoct
+#
+# metabat2>=2.15 / maxbin2>=2.2.7  (metagenomic binning)
+#   Used by: Air_Metagenomics via MetaWRAP (see its env/environment.yaml)
+#   Install: mamba create -n metawrap -c conda-forge -c bioconda metawrap
+#
+# metamdbg>=1.1.0  (high-accuracy metagenomic assembler)
+#   Used by: Food_Safety/Listeria
+#   Install: https://github.com/GaetanBenoitDev/metaMDBG (manual build)
+#
+# eggnog-mapper>=2.1.12  (COG/KEGG/GO annotation; diamond version conflicts)
+#   Used by: Air_Metagenomics (see its env/environment.yaml)
+#   Install: mamba create -n eggnog -c conda-forge -c bioconda eggnog-mapper
+#
+# irma>=1.1.4  (iterative influenza consensus assembly; Perl deps)
+#   Used by: Avian-Influenza-Profiling
+#   Install: https://wonder.cdc.gov/amd/flu/irma/ or bioconda if available
+#
+# ont-modkit>=0.3.0  (base modification pileup from BAM)
+#   Used by: Nanopore-AMR-Host-Association
+#   Install: mamba create -n modkit -c conda-forge -c bioconda ont-modkit
+#
+# prokka>=1.14.6  (prokaryotic annotation; many sub-deps: aragorn, barrnap, tbl2asn)
+#   Used by: Air_Metagenomics (legacy; bakta preferred)
+#   Install: mamba create -n prokka -c conda-forge -c bioconda prokka
+#
+# scikit-bio>=0.6.2  (PCoA analysis; numpy/scipy constraints)
+#   Used by: Wetland_Health (see its env/environment.yaml)
+#   Install: mamba create -n scikit-bio -c conda-forge scikit-bio
+#
+# Clair3  (deep-learning variant caller)
+#   Used by: From_Feather_to_Fur variant calling pipeline
+#   Install: mamba create -n clair3 -c conda-forge -c bioconda clair3
+#
+# ── Other manual installs (not available via conda/pip) ────
 # Dorado: https://github.com/nanoporetech/dorado/releases
 # MEGAN-CE: https://github.com/husonlab/megan-ce/releases
 # MetaWRAP (if conflicting): install in a separate env per docs
 # anvi'o: install in a dedicated env: https://anvio.org/install/
 # Conifer: https://gitlab.com/conifer-metagenomics/conifer
 # MGCalibrator: https://github.com/rrwick/MGCalibrator (or equivalent)
+#
+# ── Optional QC/visualization tools (install if needed) ────
+# These are useful for ad-hoc analysis but not required by any
+# pipeline script:
+#   fastqc, multiqc, hmmer, infernal, NanoPlot, pycoQC,
+#   plotly, bokeh, jupyter, ipython,
+#   r-base, r-ggplot2, r-dplyr, r-tidyr, r-readr
