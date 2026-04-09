@@ -13,6 +13,18 @@ To get results immediately without reading the full methodology, we have provide
     ```
 3. **Answer the prompts** (Provide your input FASTQ/POD5 paths and desired output directory).
 
+### HPC Quick Start (SLURM)
+For HPC clusters with SLURM, use the master pipeline script that submits per-sample dependency chains across multiple coverage levels:
+
+1. **Adjust SLURM parameters** in `run_full_pipeline.sh` (partition, queue, email).
+2. **Dry-run first:**
+    ```bash
+    ./run_full_pipeline.sh --input-dir /path/to/fastqs --dry-run
+    ```
+3. **Review** the dry-run output, then re-run without `--dry-run` to submit jobs.
+
+See [Section 5: HPC / SLURM Pipeline](#5-hpc--slurm-pipeline-run_full_pipelinesh) for details.
+
 ---
 
 ## 1. Goal & Scope
@@ -26,14 +38,19 @@ Identify and compare plasmids (and chromosomes) from relevant bacterial isolates
 ## 2. Workflow Overview
 
 1. **Signal → Bases**: Basecall raw POD5 signals with Dorado
-2. **Per‑sample separation**: Demultiplex barcoded reads (Dorado demux)
+2. **Per-sample separation**: Demultiplex barcoded reads (Dorado demux)
 3. **Read cleaning**: Adapter trimming & QC filtering (*optional if the newer dorado basecaller model handles it with the --trim adapter flag*)
-4. **Assembly**: De novo assembly (Flye)
-5. **Consensus polishing**: Correct (Medaka v2.0.1 with `--bacteria` flag)
-6. **Plasmid reconstruction & typing**: MOB‑Suite (mob\_recon)
-7. **AMR gene detection**: AMRFinderPlus
-9. **Plasmid relatedness**: Mash first, then cluster (e.g. DCJ distance via Pling)
-10. **Miscellaneous**: Manual SNP/Mash matrices & visualizations; species ID via Pathogenwatch or PubMLST
+4. **Read downsampling** *(HPC only)*: Subsample to target coverages with Rasusa
+5. **Assembly**: De novo assembly (Flye)
+6. **Consensus polishing**: Correct (Medaka v2.0.1 with `--bacteria` flag)
+7. **Assembly QC** *(HPC only)*: Genome completeness & contamination check (CheckM2)
+8. **Plasmid reconstruction & typing**: MOB-Suite (mob\_recon)
+9. **AMR gene detection**: AMRFinderPlus
+10. **Carbapenemase summary** *(HPC only)*: Automated extraction of carbapenemase-encoding plasmids
+11. **Plasmid relatedness**: Mash first, then cluster (e.g. DCJ distance via Pling)
+12. **Species ID & MLST**: GTDB-Tk or MLST-only *(HPC)*, or manually via Pathogenwatch/PubMLST
+13. **Coverage sensitivity analysis** *(HPC only)*: Multi-coverage comparison for publication
+14. **Miscellaneous**: Manual SNP/Mash matrices & visualizations
 
 ---
 
@@ -237,7 +254,116 @@ pling align --containment_distance 0.3 --cores 8 --sourmash plasmid.txt "$OUTDIR
 
 ---
 
-## 5. Suggested Folder Structure
+## 5. HPC / SLURM Pipeline (`run_full_pipeline.sh`)
+
+For large-scale analyses on HPC clusters, `run_full_pipeline.sh` submits one SLURM job per sample per step with automatic dependency chains. It extends the local workflow with multi-coverage downsampling, quality assessment, automated summaries, and taxonomy.
+
+### 5.1 Dependency DAG
+
+```text
+rasusa -> flye -> medaka -> [checkm2, annotation] -> carba_summary -> [mash/pling, coverage_analysis]
+                         -> taxonomy/MLST
+```
+
+### 5.2 Prerequisites
+
+**Micromamba environments** (the script activates these per step):
+- `assembly` — Flye, Medaka
+- `amr_env` — AMRFinderPlus
+- `mobsuite_env` — MOB-Suite
+- `checkm2_env` — CheckM2
+
+**Databases:**
+- CheckM2 database (`--checkm2-db /path/to/checkm2_db`)
+- GTDB-Tk database (`--gtdbtk-data /path/to/gtdbtk_db`, only if `--run-gtdb`)
+
+**Helper scripts** (must be in the same directory as `run_full_pipeline.sh`):
+- `build_carbapenemase_summary.py` — aggregates AMRFinder + MOB-suite results to identify carbapenemase-encoding plasmids
+- `analyze_coverage_publication_fixed.py` — publication-ready multi-coverage comparison
+- `run_mash_then_pling_by_group_v2.slurm` — Mash distance + Pling clustering wrapper
+- `run_taxonomy_mlst_hybrid.sh` / `run_taxonomy_mlst_only.sh` — taxonomy and MLST scripts
+
+### 5.3 Rasusa Downsampling
+
+Subsamples reads to controlled coverage levels for sensitivity analysis. Runs per sample, per coverage.
+
+```bash
+rasusa reads -g 5m -c 30 -s 42 input.fastq > output_30x.fastq
+```
+
+Key parameters: `--coverages "30x 40x 60x"` (space-separated), `--genome-size 5m`
+
+### 5.4 CheckM2 Quality Assessment
+
+Verifies genome completeness and contamination after polishing. Runs per sample, per coverage.
+
+```bash
+checkm2 predict --threads 8 --input <fasta_dir> --output-directory <outdir> --extension fasta
+```
+
+Skip with `--skip-checkm2`.
+
+### 5.5 Carbapenemase Summary
+
+Aggregates AMRFinder + MOB-suite annotation results to extract carbapenemase-encoding plasmids. Runs once per coverage level after all annotation jobs complete. Uses `build_carbapenemase_summary.py`.
+
+### 5.6 Taxonomy & MLST
+
+Automated species identification, replacing manual Pathogenwatch/PubMLST.
+
+- **Default (MLST-only):** runs `run_taxonomy_mlst_only.sh`
+- **Full taxonomy:** add `--run-gtdb --gtdbtk-data /path/to/gtdbtk_db` to use GTDB-Tk
+
+Runs once after all polishing jobs complete.
+
+### 5.7 Coverage Sensitivity Analysis
+
+Publication-ready comparison of results across coverage levels. Uses `analyze_coverage_publication_fixed.py`. Skip with `--skip-coverage-analysis`.
+
+### 5.8 SLURM Configuration
+
+- **Partition/queue:** `-p cpu_p -q cpu_normal` are site-specific defaults; edit in the script for your cluster
+- **Dry-run mode:** `--dry-run` prints all sbatch commands without submitting
+- **Monitoring:** `squeue -u $USER`
+- **Cancel all:** job IDs are collected and printed at the end for easy cancellation
+
+### 5.9 Full CLI Reference
+
+```text
+Usage: run_full_pipeline.sh --input-dir DIR [OPTIONS]
+
+Required:
+  --input-dir DIR            Directory containing raw FASTQ files
+
+Pipeline control:
+  --coverages "30x 40x 60x"  Space-separated coverage targets (default: "30x 40x 60x")
+  --genome-size SIZE         Genome size for rasusa/flye (default: 5m)
+  --skip-checkm2             Skip CheckM2 quality assessment
+  --skip-pling               Skip Mash/PLING plasmid network analysis
+  --skip-coverage-analysis   Skip coverage sensitivity analysis
+  --run-gtdb                 Enable GTDB-Tk taxonomy (default: MLST only)
+  --gtdbtk-data PATH         GTDB-Tk database path (required if --run-gtdb)
+
+Parameters:
+  --checkm2-db PATH          CheckM2 database path
+  --mash-threshold FLOAT     Mash distance threshold (default: 0.005)
+  --pling-containment FLOAT  PLING containment threshold (default: 0.3)
+
+SLURM:
+  --email ADDRESS            Email for SLURM notifications
+  --work-dir DIR             Project root for outputs (default: parent of input-dir)
+  --log-dir DIR              Directory for SLURM logs (default: ./logs)
+
+Other:
+  --dry-run                  Print sbatch commands without submitting
+  --help                     Show this help
+```
+
+---
+
+## 6. Suggested Folder Structure
+
+### Local pipeline (`run_pipeline.sh`)
 
 ```text
 project/
@@ -248,14 +374,34 @@ project/
 ├─ medaka/                  # polished assemblies
 ├─ mob/                     # plasmid reconstruction
 ├─ amr/                     # AMR gene tables
-├─ clustering/             # plasmid clustering & distances
+├─ clustering/              # plasmid clustering & distances
 └─ reports/                 # summary tables & figures
+```
+
+### HPC pipeline (`run_full_pipeline.sh`)
+
+```text
+project/
+├─ raw/                              # input FASTQs
+├─ 30x/ 40x/ 60x/                   # rasusa-downsampled reads (per coverage)
+├─ flye_30x/ flye_40x/ ...          # Flye assemblies (per coverage)
+├─ polished_fasta_30x/ ...          # Medaka-polished FASTAs (per coverage)
+├─ checkm2_30x/ ...                 # CheckM2 quality reports (per coverage)
+├─ annotation_30x/ ...              # AMRFinder + MOB-suite results (per coverage)
+│   ├─ <sample>/amrfinder/
+│   ├─ <sample>/mob_recon/
+│   └─ summaries/                   # carbapenemase summary tables
+├─ taxonomy_mlst_results/           # GTDB-Tk or MLST results
+├─ clustering/                      # Mash + Pling plasmid networks
+├─ coverage_publication_analysis/   # coverage sensitivity figures
+└─ logs/                            # SLURM .out/.err logs
 ```
 
 ---
 
-## 6. Software Checklist
+## 7. Software Checklist
 
+**Core pipeline:**
 - Dorado (v5.0)
 - Porechop (v0.2.3), NanoFilt (v2.8.0), Seqkit (v2.10.0)
 - Flye (v2.9.5)
@@ -264,6 +410,13 @@ project/
 - MOB-suite (v3.1.8)
 - AMRFinderPlus (v4.0.3)
 - Mash (v2.3), Pling (v1.0.1)
+
+**HPC pipeline (additional):**
+- Rasusa (v2.0+)
+- CheckM2 (v1.0+)
+- MLST (v2.23+)
+- GTDB-Tk (v2.3+) *(optional, for full taxonomy)*
+- Micromamba (for HPC environment management)
 
  
   
