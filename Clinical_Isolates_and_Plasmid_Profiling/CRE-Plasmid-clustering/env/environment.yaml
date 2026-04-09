@@ -1,0 +1,58 @@
+name: cre-plasmid-clustering
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  # ── Python core ───────────────────────────────────────────
+  - python>=3.10
+  - pandas>=2.0
+  - numpy>=1.24
+  - matplotlib>=3.7
+  - seaborn>=0.12
+
+  # ── Read QC & preprocessing ───────────────────────────────
+  - porechop=0.2.4           # adapter trimming
+  - nanofilt=2.8.0           # quality + length filtering
+  - seqkit>=2.8.0            # read statistics and FASTQ manipulation
+
+  # ── Downsampling ──────────────────────────────────────────
+  - rasusa>=2.0               # read subsampling to target coverage (HPC pipeline)
+
+  # ── Assembly ──────────────────────────────────────────────
+  - flye>=2.9.4              # de novo long-read assembler (isolate mode)
+
+  # ── Alignment & depth ────────────────────────────────────
+  - minimap2>=2.28           # read-to-assembly alignment for depth estimation
+  - samtools>=1.19           # BAM manipulation and depth calculation
+
+  # ── Consensus polishing ───────────────────────────────────
+  - ont-medaka>=2.0.1        # neural-network polishing (use --bacteria flag)
+
+  # ── Plasmid analysis ──────────────────────────────────────
+  - mob-suite>=3.1.8         # plasmid reconstruction and replicon typing
+  - mash>=2.3                # MinHash pairwise plasmid distance
+  - pling>=1.0.1             # DCJ-based plasmid network clustering
+
+  # ── AMR detection ─────────────────────────────────────────
+  - ncbi-amrfinderplus>=4.0  # AMR gene detection (nucleotide + protein)
+
+  # ── Typing ────────────────────────────────────────────────
+  - mlst>=2.23                # MLST sequence typing (HPC pipeline)
+
+# ── Separate environments (HPC pipeline, dependency conflicts) ──
+# CheckM2 (genome quality assessment):
+#   micromamba create -n checkm2_env -c conda-forge -c bioconda checkm2
+#
+# GTDB-Tk (optional, full taxonomy):
+#   micromamba create -n gtdbtk_env -c conda-forge -c bioconda gtdbtk
+
+# ── Manual install (not available via conda) ─────────────────
+# Dorado: https://github.com/nanoporetech/dorado/releases
+#   Used for basecalling (SUP model) and demultiplexing
+#
+# External tools used for reporting (not scripted):
+#   Bandage (assembly graph visualisation): https://rrwick.github.io/Bandage/
+#   Pathogenwatch (species ID): https://pathogen.watch/
+#   PubMLST (MLST typing): https://pubmlst.org/
