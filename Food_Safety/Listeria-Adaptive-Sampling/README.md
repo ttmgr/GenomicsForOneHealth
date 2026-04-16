@@ -37,32 +37,42 @@ graph TD
     classDef process fill:#fff3e0,stroke:#e65100,stroke-width:2px;
     classDef target fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
     classDef output fill:#f3e5f5,stroke:#4a148c,stroke-width:2px;
-    classDef optional fill:#eceff1,stroke:#607d8b,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef strain fill:#fce4ec,stroke:#880e4f,stroke-width:2px;
+    classDef analysis fill:#e8eaf6,stroke:#283593,stroke-width:2px;
 
-    %% Nodes
+    %% Nodes — Processing Pipeline (Steps 1-23)
     A["Raw BAM Files"]:::input
     B["1. Convert BAM to FASTQ"]:::process
     C["2. Adapter Trimming"]:::process
     D["3. Length Filtering >100bp"]:::process
     E["5. Taxonomic Classifier\nKraken2"]:::process
     F["7. Target Extraction\nListeria"]:::target
-    
-    %% Assemblers
+
     subgraph Assembly
         G1["Flye"]:::process
         G2["MetaMDBG"]:::process
         G3["Myloasm"]:::process
     end
-    
+
     H["11. AMR Detection\nAMRFinderPlus"]:::process
     I["12-13. Target Contig Extraction"]:::target
-    
-    %% Reports
     J["14-16. Compile Overviews"]:::process
     K["17. SLURM HTML Report"]:::output
-    L["22. Local Plots & Comparisons"]:::optional
-    
-    %% Edges
+
+    %% Nodes — Strain-Level Competitive Mapping (Steps 80-83)
+    R["14-Genome Reference Panel\n4 Lm + 3 non-mono + 7 background"]:::input
+    S1["80. Build Combined Reference\n& Minimap2 Index"]:::strain
+    S2["81. Competitive Mapping\nminimap2 --secondary=no"]:::strain
+    S3["82. Tiered Aggregation\nLm / non-mono / background"]:::strain
+    S4["83. Build Sample Metadata"]:::strain
+
+    %% Nodes — Statistical Analysis & Publication Figures
+    T1["analyze_listeria.py\nData Cleaning & Annotation"]:::analysis
+    T2["plot_listeria_publication_v4.py\n15 Publication Figures"]:::analysis
+    T3["plot_strain_long_format.py\nStrain Timecourse Figures"]:::analysis
+    T4["export_all_stats_tables.py\nMann-Whitney U / Stats"]:::analysis
+
+    %% Edges — Processing Pipeline
     A --> B
     B --> C
     C --> D
@@ -80,7 +90,20 @@ graph TD
     F --> J
     I --> J
     J --> K
-    K -.-> L
+
+    %% Edges — Strain Mapping
+    R --> S1
+    D --> S2
+    S1 --> S2
+    S2 --> S3
+    S3 --> S4
+
+    %% Edges — Statistical Analysis
+    K --> T1
+    T1 --> T2
+    T2 --> T4
+    S3 --> T3
+    T3 --> T4
 ```
 
 ---
