@@ -9,3 +9,9 @@ report/
 test.html
 old.csv
 listera_3.csv
+
+# Analysis outputs
+outputs/
+data/
+*.xlsx
+email_package*/
