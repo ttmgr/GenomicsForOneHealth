@@ -136,6 +136,68 @@ We have broken down the pipeline documentation into specific guides to make it e
    - How to use the `sample_metadata_template.csv` to map barcodes to real sample conditions.
    - How to easily change the target regex logic to extract **Salmonella**, **E. coli**, or any other organism instead of *Listeria*.
 
+5. **[Statistical Analysis and Publication Figures](docs/05_project_notes.md)**
+   - Lessons learned and project history from building this pipeline.
+
+---
+
+## Statistical Analysis & Publication Figures
+
+After the main pipeline finishes, a set of Python scripts handles downstream statistical analysis and publication figure generation. These scripts live in the same `scripts/` directory and operate on the pipeline's output data.
+
+### Analysis Workflow
+
+```
+Pipeline output (listeria_reads.csv / .xlsx)
+        |
+        v
+  analyze_listeria.py          -- Data cleaning, filtering, annotation
+        |
+        v
+  plot_listeria_publication_v4.py  -- 15 publication-quality figures (PNG/PDF/SVG)
+        |
+        v
+  export_all_stats_tables.py   -- Consolidated statistical test summary
+        |
+        +---> export_mwu_docx.py           -- Mann-Whitney U results to DOCX
+        +---> build_mwu_excel.py           -- MWU results to Excel workbook
+        +---> export_results_summary_sheet.py  -- Summary statistics sheet
+```
+
+### Key Analysis Scripts
+
+| Script | Description |
+|--------|-------------|
+| `listeria_pipeline_common.py` | Shared constants: strain lists, timepoint mappings, categorical columns, path helpers |
+| `analyze_listeria.py` | End-to-end analysis from raw CSV/XLSX to final annotated Excel table |
+| `plot_listeria_publication_v4.py` | Generates 15 figures comparing AS vs Native across metrics (proportions, total reads/bases, strain detection) |
+| `plot_strain_long_format.py` | Strain-level timecourse and swab-type comparison figures from 14-genome competitive mapping |
+| `plot_fig5_with_baseline.py` | Combined panel figure generation |
+| `build_metagenomics_master_combined_csv.py` | Parses workbook sheets into a clean combined metagenomics CSV |
+| `add_listeria_xlsx_sheets.py` | Adds derived Quasimetagenomics and Metagenomics sheets to the master Excel |
+| `run_pi_revision_round_v2.py` | Orchestrates the full analysis pipeline in sequence (analyze -> plot -> export) |
+
+### Running the Analysis
+
+```bash
+# Full pipeline (recommended)
+python scripts/run_pi_revision_round_v2.py \
+    --input data/listeria_final_corrected_v2.xlsx \
+    --sheet Data \
+    --output-root outputs/pi_revision_v2
+
+# Or run individual steps
+python scripts/analyze_listeria.py --input data/listeria_reads.csv --output-root outputs/
+python scripts/plot_listeria_publication_v4.py --input outputs/listeria_final_table.xlsx --output-root outputs/publication_v4
+```
+
+### Statistical Methods
+
+- **Mann-Whitney U tests** for AS vs Native comparisons (non-parametric, unpaired)
+- **Spearman rank correlations** for timepoint trends
+- **Kruskal-Wallis omnibus tests** for swab-type differences
+- All figures use colourblind-safe palettes (Okabe-Ito)
+
 ---
 
 ## Final Note
