@@ -141,9 +141,65 @@ We have broken down the pipeline documentation into specific guides to make it e
 
 ---
 
+## Strain-Level Competitive Mapping (Steps 80-83)
+
+The core strain-level analysis uses competitive mapping against a 14-genome reference panel to resolve reads to individual strains. This is designed for SLURM HPC execution.
+
+### Reference Panel (14 genomes)
+
+| Tier | Species |
+|------|---------|
+| **L. monocytogenes** (4) | EGDe, LL195, LMNC326, N13-0119 |
+| **Non-mono Listeria** (3) | L. innocua J5051, L. ivanovii Nr26, L. welshimeri Nr14 |
+| **Background** (7) | E. coli, P. mirabilis, Y. enterocolitica, Y. frederiksenii, S. aureus, R. equi, P. aeruginosa |
+
+### Strain Mapping Workflow
+
+```
+Reference FASTAs (14 genomes)
+        |
+        v
+  80_prepare_background_refs.sh    -- Combine FASTAs, build minimap2 index, strain map
+        |
+        v
+  81_strain_mapping_background.sh  -- Competitive mapping per sample (SLURM array)
+        |                             minimap2 --secondary=no → per-strain stats
+        v
+  82_strain_summary_background.py  -- Aggregate into tiered summary CSVs
+        |
+        v
+  83_build_metadata_v3.py          -- Build sample_metadata.csv from master sheet
+```
+
+### Running the Strain Analysis
+
+```bash
+# Step 80: Build combined reference + minimap2 index
+sbatch scripts/80_prepare_background_refs.sh
+
+# Step 81: Competitive mapping (one job per sample)
+sbatch --array=1-N scripts/81_strain_mapping_background.sh
+
+# Step 82: Aggregate results
+WORK_DIR=/path/to/project python scripts/82_strain_summary_background.py
+
+# Step 83: Build metadata
+python scripts/83_build_metadata_v3.py
+```
+
+### Outputs
+
+- `strain_proportions_master_5.csv` — Long-format table (one row per sample x strain)
+- `strain_summary_by_condition_5.csv` — L. monocytogenes summary by AS/N condition
+- `nonmono_summary_by_condition_5.csv` — Non-mono Listeria summary
+- `background_summary_by_condition_5.csv` — Background species summary
+- `mismapping_control_5.csv` — Negative control mismapping estimates
+
+---
+
 ## Statistical Analysis & Publication Figures
 
-After the main pipeline finishes, a set of Python scripts handles downstream statistical analysis and publication figure generation. These scripts live in the same `scripts/` directory and operate on the pipeline's output data.
+After the main pipeline and strain mapping finish, a set of Python scripts handles downstream statistical analysis and publication figure generation. These scripts live in the same `scripts/` directory and operate on the pipeline's output data.
 
 ### Analysis Workflow
 
@@ -162,6 +218,11 @@ Pipeline output (listeria_reads.csv / .xlsx)
         +---> export_mwu_docx.py           -- Mann-Whitney U results to DOCX
         +---> build_mwu_excel.py           -- MWU results to Excel workbook
         +---> export_results_summary_sheet.py  -- Summary statistics sheet
+
+Strain mapping output (strain_proportions_master_5.csv)
+        |
+        v
+  plot_strain_long_format.py   -- Strain-level timecourse & swab-type figures + MWU tests
 ```
 
 ### Key Analysis Scripts
