@@ -2,7 +2,7 @@
 
 This category covers pipelines for genomic surveillance of foodborne pathogens using nanopore sequencing — enabling rapid, high-resolution detection and characterization directly from complex food safety samples.
 
-**Contact:** Tim Reska (PhD Student) & Dr. Lara Urban
+**Contact:** Dr. Lara Urban
 
 > **Pipeline Selector:** To route food-safety samples against the wider collection first, use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/).
 
