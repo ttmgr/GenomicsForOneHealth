@@ -43,7 +43,13 @@ warnings.filterwarnings("ignore")
 # ── paths ────────────────────────────────────────────────────────────────
 ROOT = SCRIPTS.parent
 OUT_DIR = ROOT / "outputs" / "species_timecourse"
+OUT_DIR_V7 = ROOT / "outputs" / "email_package_v7"
 SAVE_FORMATS = ("png", "pdf")
+
+# Log y-axis convention shared with plot_boxplots_logscale.py:
+# plain log10 with values clipped to FLOOR_PCT = 1 % so ticks bottom at 10⁰.
+# No log10(x + c) pseudocount (overruled by Lara 2026-04-18).
+FLOOR_PCT = 1.0
 
 # ── rcParams (match email_package_v4 / plot_fig5_with_baseline.py) ──────
 plt.rcParams.update({
@@ -99,11 +105,12 @@ SPECIES_CONFIG = {
 }
 
 
-def _save(fig: plt.Figure, stem: str) -> None:
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+def _save(fig: plt.Figure, stem: str, out_dir: Path | None = None) -> None:
+    target = out_dir if out_dir is not None else OUT_DIR
+    target.mkdir(parents=True, exist_ok=True)
     for ext in SAVE_FORMATS:
-        fig.savefig(OUT_DIR / f"{stem}.{ext}")
-    print(f"[fig] wrote {OUT_DIR / stem}.{{png,pdf}}")
+        fig.savefig(target / f"{stem}.{ext}")
+    print(f"[fig] wrote {target / stem}.{{png,pdf}}")
 
 
 def _add_species_pcts(wide: pd.DataFrame) -> pd.DataFrame:
@@ -425,11 +432,34 @@ def _draw_species_lines_with_0h(
             )
 
 
-def fig_all_listeria_species_timecourse_colored0h(wide: pd.DataFrame) -> None:
-    """Revised Figure 3: all 4 Listeria species over time, 0h coloured and
-    connected to the species lines; no horizontal baseline line."""
+def _clip_species_for_log(sub: pd.DataFrame, species_keys: list[str]) -> pd.DataFrame:
+    """For the log10 variant: clip per-species % values < FLOOR_PCT up to the floor
+    so they render at the bottom of the axis instead of falling off."""
+    out = sub.copy()
+    for sp_name in species_keys:
+        col = SPECIES_CONFIG[sp_name]["col"]
+        if col in out.columns:
+            out.loc[out[col] < FLOOR_PCT, col] = FLOOR_PCT
+    return out
+
+
+def _build_species_timecourse_colored0h(
+    wide: pd.DataFrame,
+    *,
+    yscale: str = "linear",
+    out_dir: Path | None = None,
+    stem: str = "fig_all_listeria_species_timecourse_colored0h",
+) -> None:
+    """Inner builder for the colored-0h species timecourse line plot.
+
+    Two y-scale variants share this code path:
+      yscale='linear' → published default; ymin=0
+      yscale='log'    → log10 with FLOOR_PCT=1 % clipping; ticks at 10⁰/10¹/10²
+    """
     sub = _base_filter(wide)
     species_keys = list(SPECIES_CONFIG.keys())
+    if yscale == "log":
+        sub = _clip_species_for_log(sub, species_keys)
 
     fig, ax = plt.subplots(figsize=(10, 7.5))
     rng = np.random.default_rng(77)
@@ -438,6 +468,19 @@ def fig_all_listeria_species_timecourse_colored0h(wide: pd.DataFrame) -> None:
     _draw_species_lines_with_0h(ax, sub, species_keys, rng)
     _format_ax(ax)
     ax.set_ylabel("Reads (% of total sample)")
+
+    if yscale == "log":
+        # Override the linear ylim from _format_ax. Top = 1.3× max observed
+        # across all species, bottom fixed at FLOOR_PCT.
+        ymax = float(
+            np.nanmax([
+                sub[SPECIES_CONFIG[sp]["col"]].max() for sp in species_keys
+                if SPECIES_CONFIG[sp]["col"] in sub.columns
+            ])
+        )
+        ax.set_yscale("log")
+        ax.set_ylim(bottom=FLOOR_PCT, top=max(ymax * 1.3, FLOOR_PCT * 100))
+        ax.set_ylabel("Reads (% of total sample)  [log10, floor 1 %]")
 
     n_samples = sub["basename"].nunique()
     ax.text(
@@ -452,8 +495,27 @@ def fig_all_listeria_species_timecourse_colored0h(wide: pd.DataFrame) -> None:
     )
 
     fig.tight_layout(rect=[0, 0, 0.82, 1])
-    _save(fig, "fig_all_listeria_species_timecourse_colored0h")
+    _save(fig, stem, out_dir=out_dir)
     plt.close(fig)
+
+
+def fig_all_listeria_species_timecourse_colored0h(wide: pd.DataFrame) -> None:
+    """Revised Figure 2 (line plot, linear). Published default; preserved
+    byte-stable for the v5 bundle."""
+    _build_species_timecourse_colored0h(
+        wide, yscale="linear",
+        stem="fig_all_listeria_species_timecourse_colored0h",
+    )
+
+
+def fig_all_listeria_species_timecourse_colored0h_log10(wide: pd.DataFrame) -> None:
+    """Figure 2 log10 variant for v7 (FLOOR_PCT = 1 %). Stays a LINE plot
+    per co-author spec (do NOT convert to boxplot)."""
+    _build_species_timecourse_colored0h(
+        wide, yscale="log",
+        out_dir=OUT_DIR_V7,
+        stem="2_fig_all_listeria_species_timecourse_colored0h_log10",
+    )
 
 
 def main() -> None:
@@ -472,9 +534,12 @@ def main() -> None:
         fig_lm_vs_innocua_per_spiking(wide)
         fig_all_listeria_species_timecourse(wide)
         fig_all_species_per_spiking(wide)
-    fig_all_listeria_species_timecourse_colored0h(wide)
+        fig_all_listeria_species_timecourse_colored0h(wide)
 
-    print(f"\nDone. Output: {OUT_DIR}")
+    # v7 paper-ready variant — log10 line plot (Fig 2 in the manuscript)
+    fig_all_listeria_species_timecourse_colored0h_log10(wide)
+
+    print(f"\nDone. Linear default: {OUT_DIR}; log10 v7: {OUT_DIR_V7}")
 
 
 if __name__ == "__main__":
