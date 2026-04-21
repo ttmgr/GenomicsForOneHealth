@@ -15,11 +15,11 @@ SKIP_BARCODE_ID=""
 
 if [ "${INPUT_TYPE}" == "reads" ]; then
     PREVIOUS_PIPELINE_TOP_LEVEL_OUTPUT_DIR="${PREVIOUS_PIPELINE_TOP_LEVEL_OUTPUT_DIR_READS}"
-    SLURM_LOG_DIR="/home/YOUR_USERNAME/logs/minimap_megan_post_slurm"
+    SLURM_LOG_DIR="${HOME}/logs/minimap_megan_post_slurm"
     OUT_DIR_SUFFIX="_output"
 elif [ "${INPUT_TYPE}" == "contigs" ]; then
     PREVIOUS_PIPELINE_TOP_LEVEL_OUTPUT_DIR="${PREVIOUS_PIPELINE_TOP_LEVEL_OUTPUT_DIR_CONTIGS}"
-    SLURM_LOG_DIR="/home/YOUR_USERNAME/logs/contig_megan_post_slurm"
+    SLURM_LOG_DIR="${HOME}/logs/contig_megan_post_slurm"
     OUT_DIR_SUFFIX="_contigs_output"
 else
     echo "ERROR: Invalid INPUT_TYPE '${INPUT_TYPE}'."
