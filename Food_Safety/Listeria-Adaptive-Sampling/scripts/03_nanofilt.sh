@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 3: Remove short reads (<100 bp) after adapter trimming.
 # Input: processing/porechop/trimmed_<sample>.fastq

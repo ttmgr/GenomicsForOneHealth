@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Main launcher for the Listeria adaptive-sampling workflow.
 # What it does: submits all pipeline steps with dependencies and skips completed outputs.

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # --- User Configuration ---
 INPUT_TYPE="reads" # Options: "reads" or "contigs"

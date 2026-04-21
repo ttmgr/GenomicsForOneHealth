@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 5: Classify each filtered read taxonomically with Kraken2.
 # Input: processing/nanofilt/filtered_<sample>.fastq

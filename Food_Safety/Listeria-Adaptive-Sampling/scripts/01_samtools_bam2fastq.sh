@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 1: Convert Nanopore BAM files to FASTQ.
 # Input: BAM file chosen by SLURM array index from filelist.txt

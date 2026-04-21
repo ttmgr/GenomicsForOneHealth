@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 2: Trim sequencing adapters from reads.
 # Input: processing/samtools/<sample>.fastq

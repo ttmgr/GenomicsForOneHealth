@@ -1,3 +1,5 @@
+#!/bin/bash
+set -euo pipefail
 # Define your input file and output file
 input_file="./basecalled_duplex.bam"
 output_file="./read_ratio_results.txt"

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Make directories for output
 mkdir -p processing/kraken2_contigs

@@ -7,6 +7,7 @@
 #SBATCH -q gpu
 #SBATCH --gres=gpu:1
 
+set -euo pipefail
 # Read command-line arguments
 input_fast5_dir=$1
 output_fastq_file=$2

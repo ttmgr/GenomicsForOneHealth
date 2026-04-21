@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 10: Convert filtered reads from FASTQ to FASTA format.
 # Input: processing/nanofilt/filtered_<sample>.fastq
