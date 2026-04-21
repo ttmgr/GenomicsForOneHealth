@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 17 (v2 wrapper): run the v2 Python report generator.
 # Input: compiled outputs under processing/

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # Quick preflight check for report inputs.
 # What it does: verifies key summary files exist and are non-empty.
 # Usage: ./check_report_inputs.sh /path/to/project

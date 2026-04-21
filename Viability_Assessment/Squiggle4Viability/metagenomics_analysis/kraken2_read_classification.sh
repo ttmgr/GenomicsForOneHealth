@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Define input and output directories
 INPUT_DIR="/path/to/your/fastq/files"

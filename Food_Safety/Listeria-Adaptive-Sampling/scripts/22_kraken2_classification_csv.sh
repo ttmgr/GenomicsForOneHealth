@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 22: Export Kraken2 read and contig classifications to CSV.
 # Input: processing/kraken2/classified_*.txt and processing/kraken2_contigs/*/classified_*.txt

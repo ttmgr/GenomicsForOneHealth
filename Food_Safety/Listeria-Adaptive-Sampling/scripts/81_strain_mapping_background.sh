@@ -10,6 +10,7 @@
 #SBATCH -c 12
 #SBATCH -t 24:00:00
 #SBATCH --job-name=strain_map_5
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 81: Competitive mapping against the expanded reference
 #          (4 L. mono + 3 non-mono Listeria + background species).

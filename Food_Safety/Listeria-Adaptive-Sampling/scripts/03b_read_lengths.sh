@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 3b: Build read-length distributions for raw and filtered reads.
 # Input: processing/samtools/<sample>.fastq and processing/nanofilt/filtered_<sample>.fastq

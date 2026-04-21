@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 23: Generate cohort-level reports, split CSVs, and local plots.
 # Runs all post-processing scripts that were previously local-only.

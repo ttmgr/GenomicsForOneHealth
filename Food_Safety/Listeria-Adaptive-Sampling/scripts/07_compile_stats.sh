@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 7: Merge per-sample QC and Listeria summaries into shared tables.
 # Input: processing/nanostat/*.txt and processing/listeria/listeria_summary.tsv

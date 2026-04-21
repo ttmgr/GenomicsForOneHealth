@@ -3,6 +3,7 @@
 #SBATCH -q gpu_short
 #SBATCH --gres=gpu:1
 
+set -euo pipefail
 
 #/path/to/fastq_directory
 
