@@ -114,11 +114,11 @@ plt.rcParams.update(
     {
         "font.family": "sans-serif",
         "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
-        "font.size": 10,
-        "axes.labelsize": 11,
-        "xtick.labelsize": 10,
-        "ytick.labelsize": 10,
-        "legend.fontsize": 9,
+        "font.size": 12,
+        "axes.labelsize": 13,
+        "xtick.labelsize": 11,
+        "ytick.labelsize": 11,
+        "legend.fontsize": 10,
         "axes.linewidth": 0.9,
         "xtick.major.width": 0.9,
         "ytick.major.width": 0.9,
@@ -229,6 +229,15 @@ def load_strain_long(
         if s not in bases_wide.columns:
             bases_wide[s] = 0
     wide["lm_total_bases"] = bases_wide[LM_STRAINS].sum(axis=1)
+
+    # Preserve per-strain bases for the non-Lm Listeria species so the
+    # species-timecourse bases variant can compute individual species base
+    # fractions. The column name is `<strain>_bases` (e.g. L_innocua_J5051_bases).
+    for s in NONMONO_SPECIES:
+        if s in bases_wide.columns:
+            wide[f"{s}_bases"] = bases_wide[s]
+        else:
+            wide[f"{s}_bases"] = 0
 
     # Total reads = sum over all 16 strains in the panel (NOT total sequencer reads).
     # This is the denominator for "abundance within the reference panel".
@@ -426,7 +435,7 @@ def fig_strain_timecourse_by_strain(wide: pd.DataFrame, out_dir: Path) -> None:
         & (wide["Treatment"].isin(TREATMENT_ORDER))
     ].copy()
 
-    fig, (ax_abs, ax_rel) = plt.subplots(1, 2, figsize=(15, 5.8), constrained_layout=True)
+    fig, (ax_abs, ax_rel) = plt.subplots(1, 2, figsize=(15, 7.2))
     rng = np.random.default_rng(123)
 
     def _draw(ax, metric_col_tpl: str, ylabel: str, title: str) -> None:
@@ -483,24 +492,28 @@ def fig_strain_timecourse_by_strain(wide: pd.DataFrame, out_dir: Path) -> None:
         "Strain reads / Lm-mapped reads (%)",
         "Relative strain composition (within Lm pool)",
     )
-    ax_rel.legend(
-        title="L. monocytogenes strain",
-        loc="upper left",
-        bbox_to_anchor=(1.02, 1.0),
+    # Legend below, centered between the two panels. n is folded into the
+    # legend title so we don't need a separate corner annotation.
+    handles, labels = ax_abs.get_legend_handles_labels()
+    n_samples = sub["basename"].nunique()
+    fig.legend(
+        handles, labels,
+        title=f"L. monocytogenes strain  (n = {n_samples})",
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.01),
+        ncol=len(LM_STRAINS),
         frameon=False,
-        fontsize=9,
-        title_fontsize=10,
+        fontsize=10,
+        title_fontsize=11,
     )
     fig.suptitle(
         "Per-strain relative abundance across the quasimetagenomic timeline",
-        fontsize=13,
+        fontsize=14,
     )
-    n_samples = sub["basename"].nunique()
-    ax_rel.text(
-        0.99, 0.99, f"n = {n_samples}",
-        transform=ax_rel.transAxes, ha="right", va="top",
-        fontsize=8, color="#444",
-    )
+    # Reserve ~14% at the bottom for legend + rotated x-labels, ~5% at the top
+    # for the suptitle. No constrained_layout — fig.legend outside the axes
+    # interacts badly with it.
+    fig.subplots_adjust(left=0.07, right=0.98, top=0.92, bottom=0.18, wspace=0.22)
     _save(fig, out_dir, "fig_strain_timecourse_by_strain")
     plt.close(fig)
 
