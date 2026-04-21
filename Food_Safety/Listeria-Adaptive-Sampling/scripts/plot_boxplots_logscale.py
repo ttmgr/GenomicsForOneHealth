@@ -56,6 +56,8 @@ warnings.filterwarnings("ignore")
 ROOT = SCRIPTS.parent
 OUT_DIR = ROOT / "outputs" / "email_package_v6"   # legacy default for v6 builders
 OUT_DIR_V7 = ROOT / "outputs" / "email_package_v7"
+OUT_DIR_V7_SYMLOG = ROOT / "outputs" / "email_package_v7_symlog"
+OUT_DIR_V8 = ROOT / "outputs" / "email_package_v8"
 
 FLOOR_PCT = 1.0    # hard-floor for log-scale (% reads); below this clipped
                    # so the y-axis starts at 10^0 = 1 % (convention: tick
@@ -66,11 +68,11 @@ LINTHRESH = 1.0    # symlog linear threshold (% reads); 0 -> 1 % rendered on a
 plt.rcParams.update({
     "font.family": "sans-serif",
     "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
-    "font.size": 10,
-    "axes.labelsize": 11,
-    "xtick.labelsize": 10,
-    "ytick.labelsize": 10,
-    "legend.fontsize": 9,
+    "font.size": 12,
+    "axes.labelsize": 13,
+    "xtick.labelsize": 11,
+    "ytick.labelsize": 11,
+    "legend.fontsize": 10,
     "axes.linewidth": 0.9,
     "xtick.major.width": 0.9,
     "ytick.major.width": 0.9,
@@ -188,7 +190,20 @@ def _draw_box_or_point(
 
 def _legend(ax, handles, **kwargs) -> None:
     ax.legend(handles=handles, loc="upper left", bbox_to_anchor=(1.02, 1.0),
-              frameon=False, fontsize=9, **kwargs)
+              frameon=False, fontsize=10, **kwargs)
+
+
+def _legend_fig1(ax, scale: str) -> None:
+    handles = [
+        mpatches.Patch(color=matplotlib.colors.to_rgba(PALETTE_CONDITION["AS"], 0.35),
+                       label="Adaptive Sampling (AS)"),
+        mpatches.Patch(color=matplotlib.colors.to_rgba(PALETTE_CONDITION["N"], 0.35),
+                       label="Native (N)"),
+    ]
+    if scale == "linear":
+        ax.legend(handles=handles, loc="upper right", frameon=False, fontsize=10)
+    else:
+        _legend(ax, handles)
 
 
 # --------------------------------------------------------------------------- #
@@ -229,12 +244,12 @@ def fig1_AS_vs_N_sponge_quasimeta(
     tps = [tp for tp in TP_ORDER if (sub["timepoint"] == tp).any()]
     n_tps = len(tps)
 
-    fig, ax = plt.subplots(figsize=(2.7 * n_tps + 3.2, 6.4))
+    fig, ax = plt.subplots(figsize=(1.6 * n_tps + 2.5, 5.6))
     y_all: list[float] = []
 
     for i, tp in enumerate(tps):
         tp_data = sub[sub["timepoint"] == tp]
-        for cond, offset, seed_off in [("AS", -0.22, 0), ("N", 0.22, 1)]:
+        for cond, offset, seed_off in [("AS", -0.15, 0), ("N", 0.15, 1)]:
             vals = tp_data.loc[tp_data["condition"] == cond, "lm_pct_total_reads"].dropna().to_numpy()
             if not len(vals):
                 continue
@@ -243,24 +258,62 @@ def fig1_AS_vs_N_sponge_quasimeta(
             _draw_box_or_point(
                 ax, i + offset, vals_plot,
                 PALETTE_CONDITION[cond], COND_MARKERS[cond],
-                width=0.38, seed=i * 7 + seed_off,
+                width=0.28, seed=i * 7 + seed_off,
             )
 
     ax.set_xticks(range(n_tps))
     ax.set_xticklabels(tps)
-    ax.set_xlim(-0.6, n_tps - 0.4)
+    ax.set_xlim(-0.45, n_tps - 0.55)
     ax.set_xlabel("Sponge incubation timepoint")
     ax.set_ylabel("Lm reads (%)")
     _apply_scale(ax, scale, max(y_all) if y_all else 1.0)
 
-    _legend(ax, [
-        mpatches.Patch(color=matplotlib.colors.to_rgba(PALETTE_CONDITION["AS"], 0.35),
-                       label="Adaptive Sampling (AS)"),
-        mpatches.Patch(color=matplotlib.colors.to_rgba(PALETTE_CONDITION["N"], 0.35),
-                       label="Native (N)"),
-    ])
-    fig.tight_layout(rect=[0, 0, 0.86, 1])
+    _legend_fig1(ax, scale)
+    fig.tight_layout(rect=[0, 0, 1, 1] if scale == "linear" else [0, 0, 0.88, 1])
     _save(fig, stem or f"1_fig_AS_vs_N_sponge_quasimeta_boxplot_{scale}", out_dir=out_dir)
+    plt.close(fig)
+
+
+def fig1_AS_vs_N_sponge_quasimeta_bases(
+    wide: pd.DataFrame,
+    scale: str,
+    *,
+    out_dir: Path | None = None,
+    stem: str | None = None,
+) -> None:
+    """Same as fig1_AS_vs_N_sponge_quasimeta but on a per-base basis
+    (lm_pct_sample_bases = Lm bases / total sample bases × 100)."""
+    sub = _sponge_lm_nonctrl(wide)
+    tps = [tp for tp in TP_ORDER if (sub["timepoint"] == tp).any()]
+    n_tps = len(tps)
+
+    fig, ax = plt.subplots(figsize=(1.6 * n_tps + 2.5, 5.6))
+    y_all: list[float] = []
+
+    for i, tp in enumerate(tps):
+        tp_data = sub[sub["timepoint"] == tp]
+        for cond, offset, seed_off in [("AS", -0.15, 0), ("N", 0.15, 1)]:
+            vals = tp_data.loc[tp_data["condition"] == cond, "lm_pct_sample_bases"].dropna().to_numpy()
+            if not len(vals):
+                continue
+            y_all.extend(vals.tolist())
+            vals_plot = _clip_for_log(vals, scale)
+            _draw_box_or_point(
+                ax, i + offset, vals_plot,
+                PALETTE_CONDITION[cond], COND_MARKERS[cond],
+                width=0.28, seed=i * 7 + seed_off,
+            )
+
+    ax.set_xticks(range(n_tps))
+    ax.set_xticklabels(tps)
+    ax.set_xlim(-0.45, n_tps - 0.55)
+    ax.set_xlabel("Sponge incubation timepoint")
+    ax.set_ylabel("Lm bases (%)")
+    _apply_scale(ax, scale, max(y_all) if y_all else 1.0)
+
+    _legend_fig1(ax, scale)
+    fig.tight_layout(rect=[0, 0, 1, 1] if scale == "linear" else [0, 0, 0.88, 1])
+    _save(fig, stem or f"1b_fig_AS_vs_N_sponge_quasimeta_bases_{scale}", out_dir=out_dir)
     plt.close(fig)
 
 
@@ -271,7 +324,7 @@ def fig2_per_Lm_timecourse(wide: pd.DataFrame, scale: str) -> None:
     sub = _sponge_N(wide)
     tps = TP_ORDER
 
-    fig, axes = plt.subplots(1, 3, figsize=(18, 5.8), sharey=(scale != "log"))
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5.2), sharey=(scale != "log"))
     panel_colours = {"Lm2": "#2E75B6", "Lm4": "#2CA02C", "Lm6": "#D55E00"}
 
     y_max_global = 0.0
@@ -306,7 +359,7 @@ def fig2_per_Lm_timecourse(wide: pd.DataFrame, scale: str) -> None:
         "Sponge quasimetagenomic timecourse, N only — stratified by Lm spiking level",
         fontsize=12, y=1.02,
     )
-    fig.tight_layout(rect=[0, 0, 1, 0.97])
+    fig.tight_layout(rect=[0, 0, 1, 0.98])
     _save(fig, f"2_fig_timecourse_N_sponge_per_Lm_boxplot_{scale}")
     plt.close(fig)
 
@@ -325,7 +378,7 @@ def fig3_all_species_timecourse(wide: pd.DataFrame, scale: str) -> None:
     offsets = np.linspace(-span / 2, span / 2, n_species)
     width = 0.15
 
-    fig, ax = plt.subplots(figsize=(12, 6.5))
+    fig, ax = plt.subplots(figsize=(12, 5.9))
     y_all: list[float] = []
 
     for i, tp in enumerate(tps):
@@ -364,7 +417,7 @@ def fig3_all_species_timecourse(wide: pd.DataFrame, scale: str) -> None:
         )
         for sp in species_keys
     ])
-    fig.tight_layout(rect=[0, 0, 0.84, 1])
+    fig.tight_layout(rect=[0, 0, 0.87, 1])
     _save(fig, f"3_fig_all_species_timecourse_boxplot_{scale}")
     plt.close(fig)
 
@@ -382,7 +435,7 @@ def fig4_swab_comparison_N(
     meta_n = _metagenomic(wide)
     meta_n = meta_n[meta_n["condition"] == "N"].copy()
 
-    fig, ax = plt.subplots(figsize=(8.5, 6.2))
+    fig, ax = plt.subplots(figsize=(8.5, 5.4))
     y_all: list[float] = []
     for i, swab in enumerate(SWAB_ORDER):
         vals = meta_n.loc[meta_n["swab_type"] == swab, "lm_pct_total_reads"].dropna().to_numpy()
@@ -398,13 +451,51 @@ def fig4_swab_comparison_N(
     ax.set_xticks(range(len(SWAB_ORDER)))
     ax.set_xticklabels(SWAB_ORDER)
     ax.set_xlim(-0.6, len(SWAB_ORDER) - 0.4)
-    ax.set_xlabel("Swab type")
+    ax.set_xlabel("Swabbing material")
     ax.set_ylabel("Lm reads / total sample reads (%)")
     _apply_scale(ax, scale, max(y_all) if y_all else 1.0)
 
     _legend(ax, [mpatches.Patch(color=PALETTE_SWAB[s], label=s) for s in SWAB_ORDER])
-    fig.tight_layout(rect=[0, 0, 0.85, 1])
+    fig.tight_layout(rect=[0, 0, 0.88, 1])
     _save(fig, stem or f"4_fig_swab_comparison_N_only_boxplot_{scale}", out_dir=out_dir)
+    plt.close(fig)
+
+
+def fig4_swab_comparison_N_bases(
+    wide: pd.DataFrame,
+    scale: str,
+    *,
+    out_dir: Path | None = None,
+    stem: str | None = None,
+) -> None:
+    """Same as fig4_swab_comparison_N but on a per-base basis
+    (lm_pct_sample_bases = Lm bases / total sample bases × 100)."""
+    meta_n = _metagenomic(wide)
+    meta_n = meta_n[meta_n["condition"] == "N"].copy()
+
+    fig, ax = plt.subplots(figsize=(8.5, 5.4))
+    y_all: list[float] = []
+    for i, swab in enumerate(SWAB_ORDER):
+        vals = meta_n.loc[meta_n["swab_type"] == swab, "lm_pct_sample_bases"].dropna().to_numpy()
+        if not len(vals):
+            continue
+        y_all.extend(vals.tolist())
+        vals_plot = _clip_for_log(vals, scale)
+        _draw_box_or_point(
+            ax, i, vals_plot, PALETTE_SWAB[swab], marker="o",
+            width=0.55, seed=i * 11,
+        )
+
+    ax.set_xticks(range(len(SWAB_ORDER)))
+    ax.set_xticklabels(SWAB_ORDER)
+    ax.set_xlim(-0.6, len(SWAB_ORDER) - 0.4)
+    ax.set_xlabel("Swabbing material")
+    ax.set_ylabel("Lm bases / total sample bases (%)")
+    _apply_scale(ax, scale, max(y_all) if y_all else 1.0)
+
+    _legend(ax, [mpatches.Patch(color=PALETTE_SWAB[s], label=s) for s in SWAB_ORDER])
+    fig.tight_layout(rect=[0, 0, 0.88, 1])
+    _save(fig, stem or f"4b_fig_swab_comparison_N_only_bases_{scale}", out_dir=out_dir)
     plt.close(fig)
 
 
@@ -419,7 +510,7 @@ def fig5_per_strain_timecourse(wide: pd.DataFrame, scale: str) -> None:
     offsets = np.linspace(-span / 2, span / 2, n_strains)
     width = 0.15
 
-    fig, (ax_abs, ax_rel) = plt.subplots(1, 2, figsize=(16, 5.8))
+    fig, (ax_abs, ax_rel) = plt.subplots(1, 2, figsize=(16, 5.3))
 
     def _draw_panel(ax: plt.Axes, metric_tpl: str, ylabel: str, title: str) -> None:
         y_all: list[float] = []
@@ -480,7 +571,7 @@ def fig5_per_strain_timecourse(wide: pd.DataFrame, scale: str) -> None:
         "Per-strain relative abundance across the quasimetagenomic timeline",
         fontsize=13,
     )
-    fig.tight_layout(rect=[0, 0, 0.90, 0.96])
+    fig.tight_layout(rect=[0, 0, 0.92, 0.97])
     _save(fig, f"5_fig_strain_timecourse_boxplot_{scale}")
     plt.close(fig)
 
@@ -497,7 +588,7 @@ def fig5_right_panel_log10_only(wide: pd.DataFrame) -> None:
     offsets = np.linspace(-span / 2, span / 2, len(LM_STRAINS))
     width = 0.15
 
-    fig, ax = plt.subplots(figsize=(10, 6.2))
+    fig, ax = plt.subplots(figsize=(10, 5.6))
 
     y_all: list[float] = []
     for i, tp in enumerate(tps):
@@ -543,7 +634,7 @@ def fig5_right_panel_log10_only(wide: pd.DataFrame) -> None:
         loc="upper left", bbox_to_anchor=(1.02, 1.0),
         frameon=False, fontsize=9, title_fontsize=10,
     )
-    fig.tight_layout(rect=[0, 0, 0.83, 1])
+    fig.tight_layout(rect=[0, 0, 0.86, 1])
 
     # Separate output dir — this is the *only* pure-log10 plot that is
     # scientifically appropriate for this dataset.
@@ -570,7 +661,7 @@ def fig3_AS_vs_N_per_swab_metagenomic(
 ) -> None:
     meta = _metagenomic(wide)
 
-    fig, ax = plt.subplots(figsize=(2.7 * len(SWAB_ORDER) + 3.2, 6.4))
+    fig, ax = plt.subplots(figsize=(2.7 * len(SWAB_ORDER) - 0.8, 5.6))
     y_all: list[float] = []
 
     for i, swab in enumerate(SWAB_ORDER):
@@ -590,18 +681,86 @@ def fig3_AS_vs_N_per_swab_metagenomic(
     ax.set_xticks(range(len(SWAB_ORDER)))
     ax.set_xticklabels(SWAB_ORDER)
     ax.set_xlim(-0.6, len(SWAB_ORDER) - 0.4)
-    ax.set_xlabel("Swab type (metagenomic, 0h baseline)")
-    ax.set_ylabel("Lm reads (%)")
+    ax.set_xlabel("Swabbing Material")
+    ax.set_ylabel("Lm reads / total sample reads (%)")
     _apply_scale(ax, scale, max(y_all) if y_all else 1.0)
 
-    _legend(ax, [
-        mpatches.Patch(color=matplotlib.colors.to_rgba(PALETTE_CONDITION["AS"], 0.35),
-                       label="Adaptive Sampling (AS)"),
-        mpatches.Patch(color=matplotlib.colors.to_rgba(PALETTE_CONDITION["N"], 0.35),
-                       label="Native (N)"),
-    ])
-    fig.tight_layout(rect=[0, 0, 0.86, 1])
+    legend_handles = [
+        mpatches.Patch(
+            facecolor=matplotlib.colors.to_rgba(PALETTE_CONDITION["AS"], 0.25),
+            edgecolor="black", linewidth=1.0,
+            label="Adaptive Sampling (AS)",
+        ),
+        mpatches.Patch(
+            facecolor=matplotlib.colors.to_rgba(PALETTE_CONDITION["N"], 0.25),
+            edgecolor="black", linewidth=1.0,
+            label="Native (N)",
+        ),
+    ]
+    ax.legend(
+        handles=legend_handles,
+        loc="upper center", bbox_to_anchor=(0.5, -0.14),
+        ncol=2, frameon=False, fontsize=10,
+    )
+    fig.tight_layout(rect=[0, 0.06, 1, 1])
     _save(fig, stem or f"3_fig_AS_vs_N_per_swab_metagenomic_boxplot_{scale}", out_dir=out_dir)
+    plt.close(fig)
+
+
+def fig3_AS_vs_N_per_swab_metagenomic_bases(
+    wide: pd.DataFrame,
+    scale: str,
+    *,
+    out_dir: Path | None = None,
+    stem: str | None = None,
+) -> None:
+    """Same as fig3_AS_vs_N_per_swab_metagenomic but on a per-base basis
+    (lm_pct_sample_bases = Lm bases / total sample bases × 100)."""
+    meta = _metagenomic(wide)
+
+    fig, ax = plt.subplots(figsize=(2.7 * len(SWAB_ORDER) - 0.8, 5.6))
+    y_all: list[float] = []
+
+    for i, swab in enumerate(SWAB_ORDER):
+        swab_data = meta[meta["swab_type"] == swab]
+        for cond, offset, seed_off in [("AS", -0.22, 0), ("N", 0.22, 1)]:
+            vals = swab_data.loc[swab_data["condition"] == cond, "lm_pct_sample_bases"].dropna().to_numpy()
+            if not len(vals):
+                continue
+            y_all.extend(vals.tolist())
+            vals_plot = _clip_for_log(vals, scale)
+            _draw_box_or_point(
+                ax, i + offset, vals_plot,
+                PALETTE_CONDITION[cond], COND_MARKERS[cond],
+                width=0.38, seed=i * 13 + seed_off,
+            )
+
+    ax.set_xticks(range(len(SWAB_ORDER)))
+    ax.set_xticklabels(SWAB_ORDER)
+    ax.set_xlim(-0.6, len(SWAB_ORDER) - 0.4)
+    ax.set_xlabel("Swabbing Material")
+    ax.set_ylabel("Lm bases / total sample bases (%)")
+    _apply_scale(ax, scale, max(y_all) if y_all else 1.0)
+
+    legend_handles = [
+        mpatches.Patch(
+            facecolor=matplotlib.colors.to_rgba(PALETTE_CONDITION["AS"], 0.25),
+            edgecolor="black", linewidth=1.0,
+            label="Adaptive Sampling (AS)",
+        ),
+        mpatches.Patch(
+            facecolor=matplotlib.colors.to_rgba(PALETTE_CONDITION["N"], 0.25),
+            edgecolor="black", linewidth=1.0,
+            label="Native (N)",
+        ),
+    ]
+    ax.legend(
+        handles=legend_handles,
+        loc="upper center", bbox_to_anchor=(0.5, -0.14),
+        ncol=2, frameon=False, fontsize=10,
+    )
+    fig.tight_layout(rect=[0, 0.06, 1, 1])
+    _save(fig, stem or f"3b_fig_AS_vs_N_per_swab_metagenomic_bases_{scale}", out_dir=out_dir)
     plt.close(fig)
 
 
@@ -615,6 +774,7 @@ def fig3_AS_vs_N_per_swab_metagenomic(
 def fig5_per_strain_timecourse_mixed(
     wide: pd.DataFrame,
     *,
+    scale_a: str = "log",
     out_dir: Path | None = None,
     stem: str | None = None,
 ) -> None:
@@ -625,7 +785,7 @@ def fig5_per_strain_timecourse_mixed(
     offsets = np.linspace(-span / 2, span / 2, n_strains)
     width = 0.15
 
-    fig, (ax_abs, ax_rel) = plt.subplots(1, 2, figsize=(16, 5.8))
+    fig, (ax_abs, ax_rel) = plt.subplots(1, 2, figsize=(16, 5.3))
 
     def _draw_panel(ax: plt.Axes, metric_tpl: str, ylabel: str, title: str, scale: str) -> None:
         y_all: list[float] = []
@@ -655,9 +815,9 @@ def fig5_per_strain_timecourse_mixed(
 
     _draw_panel(
         ax_abs, "{strain}_pct_sample_total",
-        "Strain reads / total sample reads (%)  [log10]",
+        f"Strain reads / total sample reads (%)  [{scale_a}]",
         "Absolute strain abundance",
-        scale="log",
+        scale=scale_a,
     )
     _draw_panel(
         ax_rel, "{strain}_pct_within_lm",
@@ -685,11 +845,11 @@ def fig5_per_strain_timecourse_mixed(
                 fontsize=8, color="#444")
 
     fig.suptitle(
-        "Per-strain abundance across the quasimetagenomic timeline "
-        "(Panel A log10, Panel B linear)",
+        f"Per-strain abundance across the quasimetagenomic timeline "
+        f"(Panel A {scale_a}, Panel B linear)",
         fontsize=13,
     )
-    fig.tight_layout(rect=[0, 0, 0.90, 0.96])
+    fig.tight_layout(rect=[0, 0, 0.92, 0.97])
     _save(fig, stem or "5_fig_strain_timecourse_boxes_log10", out_dir=out_dir)
     plt.close(fig)
 
@@ -748,7 +908,134 @@ def build_v7(wide: pd.DataFrame) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# Entrypoint                                                                  #
+# v7 symlog build driver — sibling bundle for email_package_v7_symlog/        #
+# Same 5 paper figures as build_v7, but every log-scaled axis switches to     #
+# matplotlib ``symlog`` (linear 0→1 % stub, log above). Panels that are       #
+# inherently linear in v7 (Fig 5 Panel B, relative composition) stay linear.  #
+# --------------------------------------------------------------------------- #
+def build_v7_symlog(wide: pd.DataFrame) -> None:
+    """Symlog counterpart to build_v7. Output to outputs/email_package_v7_symlog/.
+
+    Symlog convention (LINTHRESH = 1.0): values 0→1 % render on a linear stub,
+    > 1 % on a log axis. Handles true zeros that plain log10 would clip.
+    """
+    out = OUT_DIR_V7_SYMLOG
+
+    fig1_AS_vs_N_sponge_quasimeta(
+        wide, "symlog",
+        out_dir=out,
+        stem="1_fig_AS_vs_N_sponge_quasimeta_boxes_symlog",
+    )
+    fig3_AS_vs_N_per_swab_metagenomic(
+        wide, "symlog",
+        out_dir=out,
+        stem="3_fig_AS_vs_N_per_swab_metagenomic_boxes_symlog",
+    )
+    fig4_swab_comparison_N(
+        wide, "symlog",
+        out_dir=out,
+        stem="4_fig_swab_comparison_N_only_boxes_symlog",
+    )
+    fig5_per_strain_timecourse_mixed(
+        wide,
+        scale_a="symlog",
+        out_dir=out,
+        stem="5_fig_strain_timecourse_boxes_symlog",
+    )
+
+
+# --------------------------------------------------------------------------- #
+# v8 build driver — per-base variants + larger fonts + tighter whitespace     #
+# --------------------------------------------------------------------------- #
+def build_paper_v8(wide: pd.DataFrame) -> None:
+    """Paper-ready bundle v8: all v7 figures with larger fonts and tighter
+    whitespace, plus new per-base variants 1b (Fig 1) and 4b (Fig 4).
+
+    Outputs (all to outputs/email_package_v8/):
+      1_fig_AS_vs_N_sponge_quasimeta_boxes_log10          — Fig 1, per-read
+      1b_fig_AS_vs_N_sponge_quasimeta_bases_log10         — Fig 1b, per-base (NEW)
+      3_fig_AS_vs_N_per_swab_metagenomic_boxes_log10      — Fig 3, log10
+      3_fig_AS_vs_N_per_swab_metagenomic_boxes_linear     — Fig 3, linear
+      4_fig_swab_comparison_N_only_boxes_log10            — Fig 4, per-read log10
+      4_fig_swab_comparison_N_only_boxes_linear           — Fig 4, per-read linear
+      4b_fig_swab_comparison_N_only_bases_log10           — Fig 4b, per-base log10 (NEW)
+      4b_fig_swab_comparison_N_only_bases_linear          — Fig 4b, per-base linear (NEW)
+      5_fig_strain_timecourse_boxes_log10                 — Fig 5, mixed scales
+
+    Fig 2 (line plot, log10) is built by plot_species_timecourse.py; call that
+    script separately and pass out_dir=OUT_DIR_V8 if desired.
+    """
+    out = OUT_DIR_V8
+
+    fig1_AS_vs_N_sponge_quasimeta(
+        wide, "log",
+        out_dir=out,
+        stem="1_fig_AS_vs_N_sponge_quasimeta_boxes_log10",
+    )
+    fig1_AS_vs_N_sponge_quasimeta(
+        wide, "linear",
+        out_dir=out,
+        stem="1_fig_AS_vs_N_sponge_quasimeta_boxes_linear",
+    )
+    fig1_AS_vs_N_sponge_quasimeta_bases(
+        wide, "log",
+        out_dir=out,
+        stem="1b_fig_AS_vs_N_sponge_quasimeta_bases_log10",
+    )
+    fig1_AS_vs_N_sponge_quasimeta_bases(
+        wide, "linear",
+        out_dir=out,
+        stem="1b_fig_AS_vs_N_sponge_quasimeta_bases_linear",
+    )
+    fig3_AS_vs_N_per_swab_metagenomic(
+        wide, "log",
+        out_dir=out,
+        stem="3_fig_AS_vs_N_per_swab_metagenomic_boxes_log10",
+    )
+    fig3_AS_vs_N_per_swab_metagenomic(
+        wide, "linear",
+        out_dir=out,
+        stem="3_fig_AS_vs_N_per_swab_metagenomic_boxes_linear",
+    )
+    fig3_AS_vs_N_per_swab_metagenomic_bases(
+        wide, "log",
+        out_dir=out,
+        stem="3b_fig_AS_vs_N_per_swab_metagenomic_bases_log10",
+    )
+    fig3_AS_vs_N_per_swab_metagenomic_bases(
+        wide, "linear",
+        out_dir=out,
+        stem="3b_fig_AS_vs_N_per_swab_metagenomic_bases_linear",
+    )
+    fig4_swab_comparison_N(
+        wide, "log",
+        out_dir=out,
+        stem="4_fig_swab_comparison_N_only_boxes_log10",
+    )
+    fig4_swab_comparison_N(
+        wide, "linear",
+        out_dir=out,
+        stem="4_fig_swab_comparison_N_only_boxes_linear",
+    )
+    fig4_swab_comparison_N_bases(
+        wide, "log",
+        out_dir=out,
+        stem="4b_fig_swab_comparison_N_only_bases_log10",
+    )
+    fig4_swab_comparison_N_bases(
+        wide, "linear",
+        out_dir=out,
+        stem="4b_fig_swab_comparison_N_only_bases_linear",
+    )
+    fig5_per_strain_timecourse_mixed(
+        wide,
+        out_dir=out,
+        stem="5_fig_strain_timecourse_boxes_log10",
+    )
+
+
+# --------------------------------------------------------------------------- #
+# Entrypoint (legacy v8 symlog helpers — unused in main)                      #
 # --------------------------------------------------------------------------- #
 def _save_v8(fig: plt.Figure, stem: str) -> None:
     out = ROOT / "outputs" / "email_package_v8"
@@ -807,11 +1094,12 @@ def main() -> None:
     wide = _add_species_pcts(wide)
 
     print(f"\n{'='*60}")
-    print("v7 paper-ready bundle (FLOOR_PCT=1.0, no pseudocount)")
+    print("v8 paper-ready bundle (larger fonts, tighter whitespace, per-base Fig 1b + 4b)")
     print(f"{'='*60}\n")
-    build_v7(wide)
-    print(f"\nDone. Output: {OUT_DIR_V7}")
-    print("Fig 2 (line plot, log10) is built by plot_species_timecourse.py.")
+    build_paper_v8(wide)
+
+    print(f"\nDone. Output: {OUT_DIR_V8}")
+    print("Fig 2 (line plot) variants are built by plot_species_timecourse.py.")
 
 
 if __name__ == "__main__":
