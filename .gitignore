@@ -91,3 +91,4 @@ figures/
 # ── SLURM ────────────────────────────────────────────────────
 slurm-*.out
 slurm-*.err
+CLAUDE.md
