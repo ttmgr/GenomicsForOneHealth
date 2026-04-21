@@ -19,15 +19,15 @@ SKIP_BARCODE=""          # Set to "barcode01" to SKIP barcode01
 CONDA_ENV_NAME="diamond" # Environment with seqtk, seqkit, minimap2
 
 # Minimap2 Database
-MINIMAP2_NT_DB_MMI="/path/to/datasets/mm_nt_db_ONT.mmi"
+MINIMAP2_NT_DB_MMI="/path/to/mm_nt_db_ONT.mmi"
 # --- End of User Configuration ---
 
 if [ "${INPUT_TYPE}" == "reads" ]; then
     TOP_LEVEL_OUTPUT_DIR="${TOP_LEVEL_OUTPUT_DIR_READS}"
-    SLURM_LOG_DIR="/home/YOUR_USERNAME/logs/minimap_pipeline_slurm"
+    SLURM_LOG_DIR="${HOME}/logs/minimap_pipeline_slurm"
 elif [ "${INPUT_TYPE}" == "contigs" ]; then
     TOP_LEVEL_OUTPUT_DIR="${TOP_LEVEL_OUTPUT_DIR_CONTIGS}"
-    SLURM_LOG_DIR="/home/YOUR_USERNAME/logs/contig_minimap_slurm"
+    SLURM_LOG_DIR="${HOME}/logs/contig_minimap_slurm"
 else
     echo "ERROR: Invalid INPUT_TYPE '${INPUT_TYPE}'."
     exit 1

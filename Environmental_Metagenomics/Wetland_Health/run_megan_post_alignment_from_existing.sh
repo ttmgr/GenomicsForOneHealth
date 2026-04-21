@@ -22,9 +22,9 @@ if [ -z "${INPUT_SAM_FULL_PATH}" ] || [ -z "${INPUT_SORTED_FASTA_FULL_PATH}" ]; 
 fi
 
 CONDA_ENV_NAME="diamond"
-MINIMAP_MEGAN_SCRIPTS_DIR="/path/to/project/pb-metagenomics-tools/Taxonomic-Profiling-Minimap-Megan/scripts"
-C2C_CONVERTER_BASE_DIR="/path/to/project/pb-metagenomics-tools/pb-metagenomics-scripts/Convert-to-kreport-mpa"
-MEGAN_MAP_DB_NUC="/path/to/datasets/megan/megan-nucl-Feb2022.db"
+MINIMAP_MEGAN_SCRIPTS_DIR="/path/to/pb-metagenomics-tools/Taxonomic-Profiling-Minimap-Megan/scripts"
+C2C_CONVERTER_BASE_DIR="/path/to/pb-metagenomics-scripts/Convert-to-kreport-mpa"
+MEGAN_MAP_DB_NUC="/path/to/megan/megan-nucl-Feb2022.db"
 
 THREADS=${SLURM_CPUS_PER_TASK:-10}
 PYTHON_EXEC="python3"
