@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 14: Extract contigs classified as Listeria and summarize contig metrics.
 # Input: Kraken2 contig classification files and assembly FASTA files

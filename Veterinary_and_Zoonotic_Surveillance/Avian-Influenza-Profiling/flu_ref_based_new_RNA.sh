@@ -3,6 +3,7 @@
 #SBATCH -q gpu_short
 #SBATCH --gres=gpu:1
 
+set -euo pipefail
 # Directory containing FASTQ files
 fastq_dir=$1
 # Directory containing reference files for each segment

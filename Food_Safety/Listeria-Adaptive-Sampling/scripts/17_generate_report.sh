@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 17: Build the main HTML report for the full pipeline.
 # Input: Listeria overview, AMR overview, and assembly stats outputs

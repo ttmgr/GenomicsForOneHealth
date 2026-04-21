@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # ============================================================
 # Step 9b: Dorado Polish — assembly polishing with original reads
 #

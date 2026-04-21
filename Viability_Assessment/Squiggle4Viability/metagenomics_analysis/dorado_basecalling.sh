@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Define the absolute path to the dorado binary
 DORADO_BIN="/path/to/dorado/exe"

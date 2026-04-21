@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 16: Merge AMRFinder outputs into summary tables for reporting.
 # Input: processing/amrfinder/{reads,flye,mdbg,myloasm}/amrfinder_*.tsv

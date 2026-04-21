@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Run Flye on the filtered files in the nanofilt directory
 for fq in processing/nanofilt/*.fastq; do

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 15: Build one integrated Listeria overview table and plots.
 # Input: Listeria read summary, Listeria contig summary, and NanoStat outputs

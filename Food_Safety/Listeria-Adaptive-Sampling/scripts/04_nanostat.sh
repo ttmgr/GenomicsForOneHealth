@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 4: Calculate per-sample read QC metrics (count, N50, quality, bases).
 # Input: processing/nanofilt/filtered_<sample>.fastq

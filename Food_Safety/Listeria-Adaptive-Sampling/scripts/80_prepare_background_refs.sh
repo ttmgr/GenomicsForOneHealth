@@ -10,6 +10,7 @@
 #SBATCH -c 4
 #SBATCH -t 2:00:00
 #SBATCH --job-name=background_refs
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 80: Prepare expanded Listeria + background reference for competitive
 #          mapping. 4 L. monocytogenes + 3 non-mono Listeria + 7 background
