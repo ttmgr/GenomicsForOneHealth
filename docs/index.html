@@ -297,6 +297,17 @@ conda activate genomics-onehealth</code></pre>
     <button type="button" class="confidence-popover-close" id="confidence-popover-close" aria-label="Close">×</button>
   </div>
 
+  <!-- Mobile bottom sheet — opened from the sticky bar's "View recommendation" button -->
+  <div class="mobile-rec-sheet-overlay" id="mobile-rec-sheet-overlay" hidden></div>
+  <div class="mobile-rec-sheet" id="mobile-rec-sheet" role="dialog" aria-modal="true" aria-labelledby="mobile-rec-sheet-title" hidden>
+    <div class="mobile-rec-sheet-handle" aria-hidden="true"></div>
+    <div class="mobile-rec-sheet-head">
+      <h3 id="mobile-rec-sheet-title">Your recommendation</h3>
+      <button type="button" class="mobile-rec-sheet-close" id="mobile-rec-sheet-close" aria-label="Close">×</button>
+    </div>
+    <div class="mobile-rec-sheet-body" id="mobile-rec-sheet-body"></div>
+  </div>
+
   <!-- Mobile sticky recommendation bar (visible < 860px) -->
   <div class="mobile-rec-bar is-hidden" id="mobile-rec-bar">
     <div class="mobile-rec-bar-inner">
