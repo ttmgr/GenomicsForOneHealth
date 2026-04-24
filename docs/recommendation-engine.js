@@ -82,19 +82,52 @@ function rankScores(scores) {
 
 // ── Confidence ──────────────────────────────────────────────
 
-function computeConfidence(answers, topScore, secondScore) {
-  const answered = ['molecule', 'study_type', 'priority'].filter(
+const CORE_FIELDS = ['molecule', 'study_type', 'priority'];
+
+function countCoreAnswered(answers) {
+  return CORE_FIELDS.filter(
     f => answers[f] !== undefined && answers[f] !== null &&
          (Array.isArray(answers[f]) ? answers[f].length > 0 : true)
   ).length;
+}
 
-  if (answered < 1) return 'low';
-  if (answered < 2) return 'low';
-  if (answered < 3) return 'medium';
+function computeConfidence(answers, topScore, secondScore) {
+  const coreFieldsAnswered = countCoreAnswered(answers);
+  const top = topScore || 0;
+  const second = secondScore || 0;
+  const scoreGap = top - second;
 
-  const gap = (topScore || 0) - (secondScore || 0);
-  if (gap >= 15) return 'high';
-  return 'medium';
+  let level;
+  if (coreFieldsAnswered < 2) level = 'low';
+  else if (coreFieldsAnswered < 3) level = 'medium';
+  else level = scoreGap >= 15 ? 'high' : 'medium';
+
+  let reason;
+  if (coreFieldsAnswered < 3) {
+    reason = `${coreFieldsAnswered} of 3 core fields answered — answer the rest to lock in a recommendation.`;
+  } else if (level === 'high') {
+    reason = `3 of 3 core fields answered; top kit leads by ${scoreGap} points.`;
+  } else if (top === 0) {
+    reason = 'No kit currently scores positively for these answers.';
+  } else {
+    reason = `3 of 3 core fields answered, but top kit only leads by ${scoreGap} points — try refining constraints to break the tie.`;
+  }
+
+  return {
+    level,
+    signals: {
+      coreFieldsAnswered,
+      coreFieldsTotal: CORE_FIELDS.length,
+      scoreGap,
+      topScore: top,
+      secondScore: second,
+      reason
+    }
+  };
+}
+
+function canPreviewResults(answers) {
+  return countCoreAnswered(answers) === CORE_FIELDS.length;
 }
 
 // ── Kit scoring ─────────────────────────────────────────────
@@ -171,7 +204,25 @@ function findRouteMapping(answers, routeMappings) {
   ) || null;
 }
 
-// ── Dorado command builder ──────────────────────────────────
+// ── Command builders ────────────────────────────────────────
+
+const COMMAND_PLACEHOLDERS = {
+  '/path/to/pod5/': 'Replace with the directory containing your raw POD5 files',
+  '/path/to/fastq/': 'Replace with the directory containing your demultiplexed FASTQ.gz files',
+  'results/': 'Output directory for pipeline results (created if missing)',
+  'calls.bam': 'Basecalled output BAM file (rename if running multiple samples)'
+};
+
+function buildCommandSpec(fullCommand, language = 'bash') {
+  if (!fullCommand) return null;
+  const placeholders = [];
+  for (const [token, annotation] of Object.entries(COMMAND_PLACEHOLDERS)) {
+    if (fullCommand.includes(token)) {
+      placeholders.push({ token, annotation });
+    }
+  }
+  return { language, fullCommand, placeholders };
+}
 
 function buildDoradoCommand(basecallingId, rules) {
   const modelMap = rules.dorado_models || {};
@@ -180,13 +231,21 @@ function buildDoradoCommand(basecallingId, rules) {
   return `dorado basecaller ${model} /path/to/pod5/ > calls.bam`;
 }
 
-// ── Nextflow command builder ────────────────────────────────
+function buildDoradoCommandSpec(basecallingId, rules) {
+  const cmd = buildDoradoCommand(basecallingId, rules);
+  return cmd ? buildCommandSpec(cmd, 'bash') : null;
+}
 
 function buildNextflowCommand(pipelineId) {
   if (!pipelineId) return null;
   return `nextflow run epi2me-labs/${pipelineId} \\
     --fastq /path/to/fastq/ \\
     --out_dir results/`;
+}
+
+function buildNextflowCommandSpec(pipelineId) {
+  const cmd = buildNextflowCommand(pipelineId);
+  return cmd ? buildCommandSpec(cmd, 'bash') : null;
 }
 
 // ── Main recommendation function ────────────────────────────
@@ -207,13 +266,18 @@ function computeLiveRecommendation(answers, datasets) {
     rationale: [],
     alternative: null,
     confidence: 'low',
+    confidenceSignals: null,
     doradoCommand: null,
     nextflowCommand: null,
+    doradoCommandSpec: null,
+    nextflowCommandSpec: null,
     routeMapping: null,
     checklist: null,
     protocolUrls: [],
     warnings: [],
-    appliedModifiers: []
+    appliedModifiers: [],
+    topCandidates: { kits: [], pipelines: [] },
+    conflict: null
   };
 
   if (!rules) return result;
@@ -245,15 +309,21 @@ function computeLiveRecommendation(answers, datasets) {
   const fcResult = scoreFlowcells(answers, rules);
   const plResult = scorePipelines(answers, rules);
 
-  // Best kit
+  // Best kit (honor UI-only override if the user pinned a runner-up via "Swap primary")
   if (kitResult.ranked.length > 0) {
-    const [kitId, kitScore] = kitResult.ranked[0];
+    let primaryIdx = 0;
+    if (answers.__kit_override) {
+      const overrideIdx = kitResult.ranked.findIndex(([id]) => id === answers.__kit_override);
+      if (overrideIdx >= 0) primaryIdx = overrideIdx;
+    }
+    const [kitId, kitScore] = kitResult.ranked[primaryIdx];
     result.kit = kitId;
     result.kitInfo = rules.kit_catalog?.[kitId] || null;
 
-    // Alternative kit
-    if (kitResult.ranked.length > 1) {
-      const [altId, altScore] = kitResult.ranked[1];
+    // Alternative kit (next-best after the chosen primary)
+    const altPair = kitResult.ranked.find(([id], i) => i !== primaryIdx);
+    if (altPair) {
+      const [altId, altScore] = altPair;
       const altInfo = rules.kit_catalog?.[altId];
       result.alternative = {
         kit: altId,
@@ -303,17 +373,25 @@ function computeLiveRecommendation(answers, datasets) {
     }
   }
 
-  // Confidence
+  // Top-N candidates for comparison view
+  result.topCandidates.kits = rankKitsTopN(kitResult, rules, answers, 3);
+  result.topCandidates.pipelines = rankPipelinesTopN(plResult, rules, answers, 3);
+
+  // Confidence + signals
   const kitTop = kitResult.ranked[0]?.[1] || 0;
   const kitSecond = kitResult.ranked[1]?.[1] || 0;
-  result.confidence = computeConfidence(answers, kitTop, kitSecond);
+  const conf = computeConfidence(answers, kitTop, kitSecond);
+  result.confidence = conf.level;
+  result.confidenceSignals = conf.signals;
 
-  // Commands
+  // Commands (legacy strings + annotated specs)
   if (result.basecalling) {
     result.doradoCommand = buildDoradoCommand(result.basecalling, rules);
+    result.doradoCommandSpec = buildDoradoCommandSpec(result.basecalling, rules);
   }
   if (result.pipeline) {
     result.nextflowCommand = buildNextflowCommand(result.pipeline);
+    result.nextflowCommandSpec = buildNextflowCommandSpec(result.pipeline);
   }
 
   // Route mapping (bridge to legacy data)
@@ -346,6 +424,9 @@ function computeLiveRecommendation(answers, datasets) {
   // Deduplicate rationale
   result.rationale = [...new Set(result.rationale)];
 
+  // Conflict detection (no-match state)
+  result.conflict = detectConflicts(answers, kitResult, bcResult, fcResult, rules);
+
   return result;
 }
 
@@ -375,6 +456,151 @@ function findTradeoff(primaryId, altId, catalog) {
     tradeoffs.push('Single sample only — no multiplexing');
   }
   return tradeoffs.length ? tradeoffs.join('; ') : 'Different trade-off profile';
+}
+
+// ── Top-N ranking (powers the comparison view) ──────────────
+
+function collectRationaleFor(recommendId, ruleSet, answers) {
+  const rationale = [];
+  for (const rule of ruleSet || []) {
+    if (rule.recommend === recommendId && matchesWhen(rule.when, answers)) {
+      rationale.push(rule.rationale);
+    }
+  }
+  return [...new Set(rationale)];
+}
+
+function rankKitsTopN(kitResult, rules, answers, n = 3) {
+  const ranked = kitResult.ranked.slice(0, n);
+  if (ranked.length === 0) return [];
+  const topScore = ranked[0][1];
+  return ranked.map(([id, score], idx) => {
+    const info = rules.kit_catalog?.[id] || null;
+    const rationale = collectRationaleFor(id, rules.kit_rules, answers);
+    return {
+      id,
+      score,
+      info,
+      rationale,
+      tradeoff: idx === 0 ? null : findTradeoff(ranked[0][0], id, rules.kit_catalog),
+      wonBy: idx === 0 ? (score - (ranked[1]?.[1] || 0)) : 0,
+      lostBy: idx === 0 ? 0 : topScore - score
+    };
+  });
+}
+
+function rankPipelinesTopN(plResult, rules, answers, n = 3) {
+  const ranked = plResult.ranked.slice(0, n);
+  if (ranked.length === 0) return [];
+  const topScore = ranked[0][1];
+  return ranked.map(([id, score], idx) => {
+    const info = rules.pipeline_catalog?.[id] || null;
+    const rationale = collectRationaleFor(id, rules.pipeline_rules, answers);
+    return {
+      id,
+      score,
+      info,
+      rationale,
+      tradeoff: null,
+      wonBy: idx === 0 ? (score - (ranked[1]?.[1] || 0)) : 0,
+      lostBy: idx === 0 ? 0 : topScore - score
+    };
+  });
+}
+
+// ── Conflict / no-match detection ───────────────────────────
+
+const FIELD_LABELS = {
+  molecule: 'molecule type',
+  study_type: 'study type',
+  priority: 'priorities',
+  input_amount: 'input amount',
+  input_quality: 'input quality',
+  host_background: 'host-DNA background',
+  barcoding_needed: 'multiplexing',
+  device: 'device',
+  compute_gpu: 'compute setup'
+};
+
+function fieldToPageId(field) {
+  if (CORE_FIELDS.includes(field)) return field;
+  return 'constraints';
+}
+
+function detectConflicts(answers, kitResult, bcResult, fcResult, rules) {
+  if (!canPreviewResults(answers)) return null;
+  if (kitResult.ranked.length > 0) return null;
+
+  // Find the constraint modifier(s) that blocked all kits.
+  const allBlocking = [...kitResult.appliedMods, ...bcResult.appliedMods, ...fcResult.appliedMods]
+    .filter(mod => mod && mod.block && mod.block.length > 0);
+
+  let culprit = null;
+  let suggest = null;
+  if (allBlocking.length > 0) {
+    // The most-recently-applied blocker is most likely the user's last constraint tweak.
+    const lastMod = allBlocking[allBlocking.length - 1];
+    const whenFields = Object.keys(lastMod.when || {});
+    // Prefer a constraint field over a core field — constraints are the easier thing to change.
+    culprit = whenFields.find(f => !CORE_FIELDS.includes(f)) || whenFields[0] || null;
+    if (culprit && lastMod.when?.[culprit]) {
+      const accepted = Array.isArray(lastMod.when[culprit])
+        ? lastMod.when[culprit].join(' or ')
+        : lastMod.when[culprit];
+      suggest = `Try a different ${FIELD_LABELS[culprit] || culprit} (currently set to "${accepted}").`;
+    }
+  }
+
+  const message = culprit
+    ? `No kit matches all your constraints. Revisit your ${FIELD_LABELS[culprit] || culprit} answer — ${suggest || 'a different value may unblock a recommendation.'}`
+    : 'No kit matches the current combination of answers. Try relaxing one of your constraints.';
+
+  return {
+    hasNoMatch: true,
+    culprit,
+    culpritPageId: culprit ? fieldToPageId(culprit) : null,
+    suggest,
+    message
+  };
+}
+
+// ── Share-link encoding ─────────────────────────────────────
+
+const MULTI_SELECT_FIELDS = new Set(['priority']);
+
+function hashEncodeAnswers(answers) {
+  const parts = [];
+  for (const [key, value] of Object.entries(answers || {})) {
+    if (key.startsWith('__')) continue;
+    if (value === undefined || value === null) continue;
+    if (Array.isArray(value)) {
+      if (value.length === 0) continue;
+      parts.push(`${encodeURIComponent(key)}=${value.map(encodeURIComponent).join(',')}`);
+    } else if (value !== '') {
+      parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+    }
+  }
+  return parts.join('&');
+}
+
+function hashDecodeAnswers(hashString) {
+  const result = {};
+  if (!hashString) return result;
+  const stripped = hashString.replace(/^[#?]+/, '');
+  if (!stripped) return result;
+  for (const part of stripped.split('&')) {
+    if (!part) continue;
+    const eq = part.indexOf('=');
+    if (eq < 0) continue;
+    const key = decodeURIComponent(part.slice(0, eq));
+    const raw = decodeURIComponent(part.slice(eq + 1));
+    if (MULTI_SELECT_FIELDS.has(key)) {
+      result[key] = raw.split(',').filter(Boolean);
+    } else {
+      result[key] = raw;
+    }
+  }
+  return result;
 }
 
 // ── Page navigation helpers ─────────────────────────────────
