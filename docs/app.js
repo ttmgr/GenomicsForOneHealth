@@ -10,6 +10,7 @@ const progressRoot = document.getElementById("progress-root");
 const pageRoot = document.getElementById("page-root");
 const backButton = document.getElementById("back-button");
 const nextButton = document.getElementById("next-button");
+const skipToResultsButton = document.getElementById("skip-to-results-button");
 const resetButton = document.getElementById("reset-button");
 
 // Mobile rec bar
@@ -53,11 +54,54 @@ let lastAnnouncedKit = null;
 
 // ── State ───────────────────────────────────────────────────
 
+const STORAGE_KEY = 'advisor.answers.v1';
+
 let datasets = null;
 let answers = {};
 let lastRecommendation = null;
 let previousConfidence = 'low';
 let isTransitioning = false;
+let pendingFlashField = null;
+
+function loadAnswersFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return (parsed && typeof parsed === 'object') ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveAnswersToStorage(state) {
+  try {
+    const toSave = { ...state };
+    // Don't persist UI-only override across sessions
+    delete toSave.__kit_override;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+  } catch {
+    // localStorage may be unavailable (private mode) — silently ignore
+  }
+}
+
+function clearStoredAnswers() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch {}
+}
+
+function loadAnswersFromUrl() {
+  // Share-link form: #results?m=dna&s=isolate&...
+  const hash = location.hash || '';
+  const qIdx = hash.indexOf('?');
+  if (qIdx < 0) return null;
+  const query = hash.slice(qIdx + 1);
+  const parsed = hashDecodeAnswers(query);
+  if (!parsed || Object.keys(parsed).length === 0) return null;
+  // Strip the query so navigation works on a clean #pageId
+  const target = hash.slice(1, qIdx) || 'results';
+  history.replaceState(null, '', `#${target}`);
+  return parsed;
+}
 
 const CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>';
 const ARROW_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 4 11 8 5 12"/></svg>';
@@ -89,25 +133,31 @@ function linkHref(url) {
 function renderProgress(currentPageId) {
   const pages = getPageSequence();
   const currentIdx = pages.indexOf(currentPageId);
-  const visiblePages = pages.filter(p => p !== 'results');
+  const resultsReady = canPreviewResults(answers);
 
   progressRoot.innerHTML = `
     <div class="progress-steps">
-      ${visiblePages
+      ${pages
         .map((id, i) => {
           const page = datasets.questionSpec.pages.find(p => p.id === id);
-          const isCurrent = id === currentPageId || (currentPageId === 'results' && i === visiblePages.length - 1);
+          const isResults = id === 'results';
+          const isCurrent = id === currentPageId;
           const isDone = i < currentIdx;
-          const label = page?.title || id;
-          const indexContent = isDone ? CHECK_SVG : (i + 1);
-          const connector = i < visiblePages.length - 1
+          const label = isResults ? 'Results' : (page?.title || id);
+          const indexContent = isDone
+            ? CHECK_SVG
+            : (isResults ? '<span class="progress-results-icon" aria-hidden="true">✦</span>' : (i + 1));
+          const connector = i < pages.length - 1
             ? `<span class="progress-connector ${isDone ? 'is-filled' : ''}"></span>`
             : '';
+          // Reachability: standard pages use canReachPage; results step only enables once core answers are in
+          const reachable = isResults ? resultsReady : canReachPage(id, answers, datasets.questionSpec);
+          const disabled = !isCurrent && !reachable;
           return `
             <button type="button"
-              class="progress-step ${isCurrent ? 'is-current' : ''} ${isDone ? 'is-complete' : ''}"
+              class="progress-step ${isCurrent ? 'is-current' : ''} ${isDone ? 'is-complete' : ''} ${isResults ? 'is-results-step' : ''}"
               data-progress-page="${id}"
-              ${!isDone && !isCurrent ? 'disabled' : ''}>
+              ${disabled ? 'disabled' : ''}>
               <span class="progress-index">${indexContent}</span>
               <span class="progress-label">${escapeHtml(label)}</span>
             </button>
@@ -121,7 +171,9 @@ function renderProgress(currentPageId) {
   progressRoot.querySelectorAll("[data-progress-page]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const target = btn.dataset.progressPage;
-      if (canReachPage(target, answers, datasets.questionSpec)) {
+      if (target === 'results') {
+        if (canPreviewResults(answers)) navigateTo(target);
+      } else if (canReachPage(target, answers, datasets.questionSpec)) {
         navigateTo(target);
       }
     });
@@ -243,13 +295,6 @@ function renderPage(pageId) {
         </div>
       </div>
     `).join("");
-
-    // Add skip-to-results shortcut
-    questionsHtml += `
-      <button type="button" class="skip-constraints" id="skip-constraints">
-        ${ARROW_SVG} Skip to results
-      </button>
-    `;
   } else {
     for (const q of page.questions || []) {
       const opts = visibleOptions(q);
@@ -274,12 +319,6 @@ function renderPage(pageId) {
   `;
 
   attachQuestionListeners();
-
-  // Wire up skip-constraints button if present
-  const skipBtn = document.getElementById("skip-constraints");
-  if (skipBtn) {
-    skipBtn.addEventListener("click", () => navigateTo("results"));
-  }
 }
 
 // ── Results page ────────────────────────────────────────────
@@ -738,14 +777,24 @@ function updateRecommendationCard() {
     recRationale.innerHTML = '<li class="muted">Answer more questions to see rationale</li>';
   }
 
-  // Warnings
-  if (rec.warnings.length > 0) {
+  // Warnings (and conflict surfaced inline when no kit qualifies)
+  const conflict = rec.conflict;
+  if (conflict?.hasNoMatch) {
+    recWarnings.hidden = false;
+    recWarnings.innerHTML = `
+      <p class="rec-slot-label rec-slot-conflict-label">No match yet</p>
+      <p class="rec-slot-conflict">${escapeHtml(conflict.message)}</p>
+    `;
+    recCard.classList.add('rec-card--conflict');
+  } else if (rec.warnings.length > 0) {
+    recCard.classList.remove('rec-card--conflict');
     recWarnings.hidden = false;
     recWarnings.innerHTML = `
       <p class="rec-slot-label">Warnings</p>
       ${rec.warnings.map(w => `<p class="warning-inline">${escapeHtml(w)}</p>`).join('')}
     `;
   } else {
+    recCard.classList.remove('rec-card--conflict');
     recWarnings.hidden = true;
     recWarnings.innerHTML = '';
   }
@@ -946,6 +995,8 @@ function attachConflictHandlers() {
   document.querySelectorAll('[data-conflict-revisit]').forEach(btn => {
     btn.onclick = () => {
       const pageId = btn.dataset.conflictRevisit;
+      const field = btn.dataset.conflictField;
+      if (field) pendingFlashField = field;
       navigateTo(pageId);
     };
   });
@@ -955,9 +1006,25 @@ function attachConflictHandlers() {
       const constraintFields = ['input_amount', 'input_quality', 'host_background', 'barcoding_needed', 'device', 'compute_gpu'];
       for (const f of constraintFields) delete answers[f];
       delete answers.__kit_override;
+      saveAnswersToStorage(answers);
       render();
     };
   }
+}
+
+function applyPendingFlash() {
+  if (!pendingFlashField) return;
+  const field = pendingFlashField;
+  pendingFlashField = null;
+  // Find the relevant inputs and flash their option-card or constraint-card parent
+  const inputs = pageRoot.querySelectorAll(`[data-field="${field}"]`);
+  inputs.forEach(input => {
+    const card = input.closest('.option-card') || input.closest('.constraint-card');
+    if (card) {
+      card.classList.add('is-flash');
+      setTimeout(() => card.classList.remove('is-flash'), 1700);
+    }
+  });
 }
 
 // ── Confidence popover ──────────────────────────────────────
@@ -1057,9 +1124,13 @@ function attachQuestionListeners() {
         answers[field] = event.target.value;
       }
 
+      // Changing any answer invalidates the user's prior swap-primary choice
+      delete answers.__kit_override;
+
       // Normalize when upstream changes
       answers = normalizeAnswers(answers, field, datasets.questionSpec);
 
+      saveAnswersToStorage(answers);
       render();
     });
   });
@@ -1102,6 +1173,7 @@ function updateControls(pageId) {
 
   if (pageId === "results") {
     nextButton.hidden = true;
+    if (skipToResultsButton) skipToResultsButton.hidden = true;
     return;
   }
 
@@ -1109,6 +1181,13 @@ function updateControls(pageId) {
   nextButton.textContent = pageId === "constraints" ? "Show recommendation" : "Continue";
   nextButton.disabled = !next || !isPageComplete(pageId, answers, datasets.questionSpec);
   nextButton.onclick = () => { if (next) navigateTo(next); };
+
+  // Persistent skip-to-results: visible whenever the engine has enough to score
+  if (skipToResultsButton) {
+    const canSkip = canPreviewResults(answers) && pageId !== "constraints";
+    skipToResultsButton.hidden = !canSkip;
+    skipToResultsButton.onclick = () => navigateTo("results");
+  }
 }
 
 // ── Main render ─────────────────────────────────────────────
@@ -1121,6 +1200,7 @@ function render() {
   updateRecommendationCard();
   renderPage(pageId);
   updateControls(pageId);
+  applyPendingFlash();
 }
 
 function renderFatal(error) {
@@ -1172,6 +1252,8 @@ resetButton.addEventListener("click", () => {
   resetButton.textContent = 'Start over';
   answers = {};
   previousConfidence = 'low';
+  lastAnnouncedKit = null;
+  clearStoredAnswers();
   navigateTo("molecule");
 });
 
@@ -1211,6 +1293,17 @@ Promise.all([
       externalWorkflows,
       matrixProfiles
     };
+
+    // Hydrate answers: URL share-link wins, then localStorage, then empty.
+    const fromUrl = loadAnswersFromUrl();
+    if (fromUrl) {
+      answers = fromUrl;
+      saveAnswersToStorage(answers);
+    } else {
+      const fromStorage = loadAnswersFromStorage();
+      if (fromStorage) answers = fromStorage;
+    }
+
     render();
   })
   .catch(renderFatal);
