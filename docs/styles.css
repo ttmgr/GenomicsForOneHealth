@@ -1358,6 +1358,65 @@ a {
   margin-top: 20px;
 }
 
+/* ── Advisor standalone shell (advisor-ont.html) ─────── */
+/* Ready for the standalone page once it consumes styles.css */
+
+.page-shell.advisor-standalone {
+  max-width: 920px;
+}
+
+.advisor-standalone .advisor-shell {
+  grid-template-columns: 1fr;
+}
+
+.advisor-standalone .pane-recommendation,
+.advisor-standalone .pane-rationale {
+  position: static;
+}
+
+.standalone-hero {
+  display: grid;
+  gap: 12px;
+  padding: 26px;
+  border: 1px solid rgba(17, 75, 58, 0.12);
+  border-radius: 30px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 245, 238, 0.96));
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+
+.standalone-hero h1 {
+  margin: 4px 0 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.standalone-hero p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 640px;
+}
+
+.standalone-footer {
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 0.85rem;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  justify-content: space-between;
+}
+
+.standalone-footer a {
+  font-weight: 600;
+}
+
 /* ── Print ───────────────────────────────────────────── */
 
 @media print {

@@ -167,9 +167,9 @@ conda activate genomics-onehealth</code></pre>
       </section>
 
       <!-- ── Pipeline advisor (bonus tool) ─────────────────── -->
-      <section class="content-section advisor-section" id="advisor">
+      <section class="content-section advisor-section" id="advisor" aria-labelledby="advisor-heading">
         <p class="eyebrow">Pipeline Advisor</p>
-        <h2 class="section-heading">What should I sequence with?</h2>
+        <h2 class="section-heading" id="advisor-heading">What should I sequence with?</h2>
         <p class="section-text">
           Describe your project and get a kit, basecalling model, and pipeline recommendation.
         </p>
@@ -239,6 +239,11 @@ conda activate genomics-onehealth</code></pre>
 
           <!-- Right pane: rationale, alternatives, commands -->
           <aside class="advisor-pane pane-rationale" id="rationale-pane">
+            <div class="rationale-section" id="rationale-compare" hidden>
+              <p class="panel-kicker">Top candidates</p>
+              <div id="rationale-compare-content"></div>
+            </div>
+
             <div class="rationale-section" id="rationale-alternative" hidden>
               <p class="panel-kicker">Alternative</p>
               <div id="rationale-alt-content"></div>
@@ -279,7 +284,7 @@ conda activate genomics-onehealth</code></pre>
         <span class="confidence-dot"></span>
         <span class="confidence-label">Needs info</span>
       </span>
-      <button class="mobile-rec-expand" id="mobile-rec-expand" type="button">Details</button>
+      <button class="mobile-rec-expand" id="mobile-rec-expand" type="button" aria-haspopup="dialog">View recommendation ↓</button>
     </div>
   </div>
 </body>
