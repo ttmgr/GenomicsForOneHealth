@@ -322,6 +322,21 @@ a {
   height: 14px;
 }
 
+.progress-step.is-results-step:not(.is-current):not(.is-complete) .progress-index {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.progress-step.is-results-step:disabled {
+  background: rgba(228, 241, 236, 0.25);
+  border-style: dashed;
+}
+
+.progress-results-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
 .progress-index {
   width: 26px;
   height: 26px;
@@ -624,6 +639,17 @@ a {
   display: flex;
   justify-content: space-between;
   gap: 12px;
+  align-items: center;
+}
+
+.wizard-controls-right {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+#skip-to-results-button {
+  font-size: 0.85rem;
 }
 
 /* ── Recommendation card ─────────────────────────────── */
@@ -748,6 +774,25 @@ a {
 
 .rec-warnings {
   margin-top: 10px;
+}
+
+.rec-card--conflict::before {
+  background: linear-gradient(90deg, var(--conflict-text), #c0392b 60%, rgba(192, 57, 43, 0.4));
+}
+
+.rec-slot-conflict-label {
+  color: var(--conflict-text) !important;
+}
+
+.rec-slot-conflict {
+  margin: 6px 0 0;
+  padding: 8px 10px;
+  border-radius: var(--radius-xs);
+  background: var(--conflict-bg);
+  color: var(--conflict-text);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  border: 1px solid var(--conflict-border);
 }
 
 /* ── Confidence badge ────────────────────────────────── */
