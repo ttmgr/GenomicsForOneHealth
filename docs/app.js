@@ -190,8 +190,9 @@ function visibleOptions(question) {
 
 function renderRadioQuestion(question, options) {
   const answer = answers[question.field] || "";
+  const groupLabel = escapeHtml(question.label || question.id);
   return `
-    <div class="option-grid is-route-grid">
+    <div class="option-grid is-route-grid" role="radiogroup" aria-label="${groupLabel}">
       ${options.map(opt => {
         const inputId = `${question.id}_${opt.value}`;
         const checked = answer === opt.value;
@@ -213,8 +214,9 @@ function renderRadioQuestion(question, options) {
 
 function renderMultiSelectQuestion(question, options) {
   const selected = answers[question.field] || [];
+  const groupLabel = escapeHtml(question.label || question.id);
   return `
-    <div class="option-grid is-priority-grid">
+    <div class="option-grid is-priority-grid" role="group" aria-label="${groupLabel}">
       ${options.map(opt => {
         const inputId = `${question.id}_${opt.value}`;
         const checked = selected.includes(opt.value);
@@ -1257,14 +1259,160 @@ resetButton.addEventListener("click", () => {
   navigateTo("molecule");
 });
 
-// Mobile expand button — scroll to recommendation pane
-mobileRecExpand.addEventListener("click", () => {
-  const recPane = document.getElementById("recommendation-pane");
-  if (recPane) {
-    // On mobile the pane is hidden, scroll to rationale instead
-    const rationalePane = document.getElementById("rationale-pane");
-    const target = rationalePane || recPane;
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+// ── Mobile bottom sheet ─────────────────────────────────────
+
+const mobileRecSheet = document.getElementById("mobile-rec-sheet");
+const mobileRecSheetOverlay = document.getElementById("mobile-rec-sheet-overlay");
+const mobileRecSheetClose = document.getElementById("mobile-rec-sheet-close");
+const mobileRecSheetBody = document.getElementById("mobile-rec-sheet-body");
+let mobileSheetReturnFocus = null;
+
+function renderMobileSheetBody(rec) {
+  if (!rec || !rec.kit) {
+    return `<p class="muted">Answer more questions on the wizard to see a recommendation here.</p>`;
+  }
+  const kitInfo = rec.kitInfo || {};
+  const bcInfo = rec.basecallingInfo || {};
+  const plInfo = rec.pipelineInfo || {};
+  return `
+    <div class="mobile-sheet-summary">
+      <p class="panel-kicker">Workflow</p>
+      <p class="mobile-sheet-workflow">${escapeHtml(rec.workflow || '—')}</p>
+      <dl class="mobile-sheet-grid">
+        <div><dt>Kit</dt><dd>${escapeHtml(kitInfo.label || rec.kit)}${kitInfo.sku ? ` <span class="muted">(${escapeHtml(kitInfo.sku)})</span>` : ''}</dd></div>
+        <div><dt>Basecalling</dt><dd>${escapeHtml(bcInfo.label || rec.basecalling || '—')}</dd></div>
+        <div><dt>Pipeline</dt><dd>${escapeHtml(plInfo.label || rec.pipeline || '—')}</dd></div>
+      </dl>
+    </div>
+    ${renderComparisonTable(rec, { compact: true })}
+    ${renderCommandsSection(rec)}
+    <div class="mobile-sheet-actions">
+      <button type="button" class="primary-button" data-mobile-sheet-action="results">View full results →</button>
+    </div>
+  `;
+}
+
+function trapFocusIn(container) {
+  const selectors = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  const focusables = Array.from(container.querySelectorAll(selectors)).filter(el => !el.hasAttribute('hidden') && el.offsetParent !== null);
+  if (focusables.length === 0) return null;
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  const handler = (e) => {
+    if (e.key !== 'Tab') return;
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+  container.addEventListener('keydown', handler);
+  return () => container.removeEventListener('keydown', handler);
+}
+
+let mobileSheetUntrap = null;
+
+function openMobileSheet() {
+  if (!mobileRecSheet) return;
+  mobileSheetReturnFocus = document.activeElement;
+  mobileRecSheetBody.innerHTML = renderMobileSheetBody(lastRecommendation);
+  // Wire copy + swap inside the sheet
+  mobileRecSheetBody.querySelectorAll('.copy-button[data-copy]').forEach(btn => {
+    btn.onclick = () => {
+      navigator.clipboard.writeText(btn.dataset.copy).then(() => flashCopyFeedback(btn));
+    };
+  });
+  mobileRecSheetBody.querySelectorAll('[data-swap-kit]').forEach(btn => {
+    btn.onclick = () => {
+      answers.__kit_override = btn.dataset.swapKit;
+      saveAnswersToStorage(answers);
+      mobileRecSheetBody.innerHTML = renderMobileSheetBody(computeLiveRecommendation(answers, datasets));
+      // Re-bind handlers in the freshly-rendered body
+      openMobileSheet._rebind();
+    };
+  });
+  openMobileSheet._rebind = () => {
+    mobileRecSheetBody.querySelectorAll('.copy-button[data-copy]').forEach(btn => {
+      btn.onclick = () => navigator.clipboard.writeText(btn.dataset.copy).then(() => flashCopyFeedback(btn));
+    });
+  };
+  mobileRecSheetBody.querySelectorAll('[data-mobile-sheet-action="results"]').forEach(btn => {
+    btn.onclick = () => {
+      closeMobileSheet();
+      navigateTo('results');
+    };
+  });
+
+  mobileRecSheet.hidden = false;
+  mobileRecSheetOverlay.hidden = false;
+  // Force layout flush so the transition runs
+  void mobileRecSheet.offsetHeight;
+  mobileRecSheet.classList.add('is-open');
+  mobileRecSheetOverlay.classList.add('is-open');
+  document.body.classList.add('has-mobile-sheet-open');
+  if (mobileRecExpand) {
+    mobileRecExpand.setAttribute('aria-expanded', 'true');
+    mobileRecExpand.textContent = 'Close';
+  }
+  mobileSheetUntrap = trapFocusIn(mobileRecSheet);
+  mobileRecSheetClose.focus();
+}
+
+function closeMobileSheet() {
+  if (!mobileRecSheet || mobileRecSheet.hidden) return;
+  mobileRecSheet.classList.remove('is-open');
+  mobileRecSheetOverlay.classList.remove('is-open');
+  document.body.classList.remove('has-mobile-sheet-open');
+  if (mobileSheetUntrap) { mobileSheetUntrap(); mobileSheetUntrap = null; }
+  if (mobileRecExpand) {
+    mobileRecExpand.setAttribute('aria-expanded', 'false');
+    mobileRecExpand.textContent = 'View recommendation ↓';
+  }
+  setTimeout(() => {
+    mobileRecSheet.hidden = true;
+    mobileRecSheetOverlay.hidden = true;
+  }, 240);
+  if (mobileSheetReturnFocus && typeof mobileSheetReturnFocus.focus === 'function') {
+    mobileSheetReturnFocus.focus();
+  }
+  mobileSheetReturnFocus = null;
+}
+
+if (mobileRecExpand) {
+  mobileRecExpand.addEventListener("click", () => {
+    if (mobileRecSheet.hidden) openMobileSheet();
+    else closeMobileSheet();
+  });
+}
+if (mobileRecSheetOverlay) mobileRecSheetOverlay.addEventListener("click", closeMobileSheet);
+if (mobileRecSheetClose) mobileRecSheetClose.addEventListener("click", closeMobileSheet);
+
+// ── Global keyboard handlers ────────────────────────────────
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (mobileRecSheet && !mobileRecSheet.hidden) {
+      e.preventDefault();
+      closeMobileSheet();
+      return;
+    }
+    if (confidencePopover && !confidencePopover.hidden) {
+      e.preventDefault();
+      closeConfidencePopover();
+      return;
+    }
+  }
+
+  if (e.key === "Enter") {
+    const tag = (e.target?.tagName || '').toLowerCase();
+    const isFormControl = tag === 'input' || tag === 'textarea' || tag === 'select' || tag === 'button';
+    if (isFormControl) return;
+    if (!nextButton.hidden && !nextButton.disabled) {
+      e.preventDefault();
+      nextButton.click();
+    }
   }
 });
 
