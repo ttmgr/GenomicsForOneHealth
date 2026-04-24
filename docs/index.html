@@ -199,11 +199,20 @@ conda activate genomics-onehealth</code></pre>
             <div class="rec-card" id="rec-card">
               <div class="rec-header">
                 <p class="panel-kicker">Live recommendation</p>
-                <span class="confidence-badge" id="rec-confidence" data-level="low">
+                <button type="button"
+                  class="confidence-badge confidence-chip"
+                  id="rec-confidence"
+                  data-level="low"
+                  aria-haspopup="dialog"
+                  aria-expanded="false"
+                  aria-controls="confidence-popover">
                   <span class="confidence-dot"></span>
                   <span class="confidence-label">Needs more info</span>
-                </span>
+                  <span class="confidence-info-icon" aria-hidden="true">i</span>
+                </button>
               </div>
+
+              <div class="visually-hidden" aria-live="polite" id="rec-live"></div>
 
               <div class="rec-slot" id="rec-slot-workflow">
                 <p class="rec-slot-label">Workflow</p>
@@ -273,6 +282,18 @@ conda activate genomics-onehealth</code></pre>
     </main>
   </div>
 
+  <!-- Shared confidence popover (toggled by any .confidence-chip) -->
+  <div class="confidence-popover" id="confidence-popover" role="dialog" aria-labelledby="confidence-popover-title" hidden>
+    <p class="confidence-popover-title" id="confidence-popover-title">Confidence: <span data-popover-level>low</span></p>
+    <dl class="confidence-signals">
+      <div class="confidence-signal-row"><dt>Core fields answered</dt><dd data-popover-core>0 of 3</dd></div>
+      <div class="confidence-signal-row"><dt>Top kit leads by</dt><dd data-popover-gap>—</dd></div>
+      <div class="confidence-signal-row"><dt>Top kit score</dt><dd data-popover-top>—</dd></div>
+    </dl>
+    <p class="confidence-popover-explain" data-popover-reason></p>
+    <button type="button" class="confidence-popover-close" id="confidence-popover-close" aria-label="Close">×</button>
+  </div>
+
   <!-- Mobile sticky recommendation bar (visible < 860px) -->
   <div class="mobile-rec-bar is-hidden" id="mobile-rec-bar">
     <div class="mobile-rec-bar-inner">
@@ -280,10 +301,17 @@ conda activate genomics-onehealth</code></pre>
         <p class="mobile-rec-label">Recommendation</p>
         <p class="mobile-rec-value" id="mobile-rec-value">&mdash;</p>
       </div>
-      <span class="confidence-badge" id="mobile-rec-confidence" data-level="low">
+      <button type="button"
+        class="confidence-badge confidence-chip"
+        id="mobile-rec-confidence"
+        data-level="low"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-controls="confidence-popover">
         <span class="confidence-dot"></span>
         <span class="confidence-label">Needs info</span>
-      </span>
+        <span class="confidence-info-icon" aria-hidden="true">i</span>
+      </button>
       <button class="mobile-rec-expand" id="mobile-rec-expand" type="button" aria-haspopup="dialog">View recommendation ↓</button>
     </div>
   </div>
