@@ -60,8 +60,8 @@ let datasets = null;
 let answers = {};
 let lastRecommendation = null;
 let previousConfidence = 'low';
-let isTransitioning = false;
 let pendingFlashField = null;
+let shouldFocusPageHeading = false;
 
 function loadAnswersFromStorage() {
   try {
@@ -128,6 +128,53 @@ function linkHref(url) {
   return url.replace(/^docs\//, "");
 }
 
+function isRecommendationReady() {
+  return canPreviewResults(answers);
+}
+
+function answeredCoreCount() {
+  return ['molecule', 'study_type', 'priority'].filter(field => {
+    const val = answers[field];
+    return Array.isArray(val) ? val.length > 0 : val !== undefined && val !== null;
+  }).length;
+}
+
+function nextCoreQuestion() {
+  if (!answers.molecule) return 'Choose the molecule type to narrow the workflow space.';
+  if (!answers.study_type) return 'Choose the study type so the advisor can match a pipeline family.';
+  if (!answers.priority || answers.priority.length === 0) return 'Select at least one priority to unlock the recommendation.';
+  return 'Optional constraints can refine the recommendation.';
+}
+
+function pendingWorkflowLabel() {
+  const parts = [];
+  if (answers.molecule) parts.push(answers.molecule.toUpperCase());
+  if (answers.study_type) parts.push(findOptionLabel('study_type', answers.study_type));
+  if (answers.priority?.length) {
+    parts.push(answers.priority.map(p => findOptionLabel('priority', p)).join(' + '));
+  }
+  return parts.length ? parts.join(' → ') : 'Start with your sequencing project';
+}
+
+function setSlotLabel(valueEl, label) {
+  const labelEl = valueEl.closest('.rec-slot')?.querySelector('.rec-slot-label');
+  if (labelEl) labelEl.textContent = label;
+}
+
+function setRecommendationLabels(mode) {
+  if (mode === 'pending') {
+    setSlotLabel(recWorkflow, 'Project profile');
+    setSlotLabel(recKit, 'Recommendation status');
+    setSlotLabel(recBasecalling, 'What unlocks next');
+    setSlotLabel(recPipeline, 'Result preview');
+    return;
+  }
+  setSlotLabel(recWorkflow, 'Workflow');
+  setSlotLabel(recKit, 'Recommended kit');
+  setSlotLabel(recBasecalling, 'Basecalling model');
+  setSlotLabel(recPipeline, 'Analysis pipeline');
+}
+
 // ── Progress bar ────────────────────────────────────────────
 
 function renderProgress(currentPageId) {
@@ -157,6 +204,9 @@ function renderProgress(currentPageId) {
             <button type="button"
               class="progress-step ${isCurrent ? 'is-current' : ''} ${isDone ? 'is-complete' : ''} ${isResults ? 'is-results-step' : ''}"
               data-progress-page="${id}"
+              aria-label="${escapeHtml(`${isResults ? 'Results' : `Step ${i + 1}`}: ${label}${isCurrent ? ' current' : ''}`)}"
+              ${isCurrent ? 'aria-current="step"' : ''}
+              ${disabled ? 'aria-disabled="true"' : ''}
               ${disabled ? 'disabled' : ''}>
               <span class="progress-index">${indexContent}</span>
               <span class="progress-label">${escapeHtml(label)}</span>
@@ -738,7 +788,9 @@ function updateSlot(el, text) {
 
 function updateRecommendationCard() {
   const rec = computeLiveRecommendation(answers, datasets);
+  const ready = isRecommendationReady();
   lastRecommendation = rec;
+  recCard.classList.toggle('rec-card--pending', !ready);
 
   // Confidence badge with pulse on change
   if (rec.confidence !== previousConfidence) {
@@ -758,12 +810,34 @@ function updateRecommendationCard() {
 
   // Announce kit change to screen readers
   const currentKit = rec.kitInfo?.label || rec.kit;
-  if (currentKit && currentKit !== lastAnnouncedKit && recLive) {
+  if (ready && currentKit && currentKit !== lastAnnouncedKit && recLive) {
     recLive.textContent = `Recommendation updated to ${currentKit}`;
     lastAnnouncedKit = currentKit;
   }
 
-  // Slots
+  if (!ready) {
+    lastAnnouncedKit = null;
+    setRecommendationLabels('pending');
+    updateSlot(recWorkflow, pendingWorkflowLabel());
+    updateSlot(recKit, `${answeredCoreCount()} of 3 core answers complete`);
+    recKitMeta.textContent = nextCoreQuestion();
+    updateSlot(recBasecalling, 'Kit, basecaller, and commands stay hidden until then');
+    recBasecallingMeta.textContent = 'This avoids treating a default score as a real recommendation.';
+    updateSlot(recPipeline, 'Recommendation pending');
+    recPipelineMeta.textContent = 'Answer molecule, study type, and priorities first.';
+    recRationale.innerHTML = `
+      <li>${escapeHtml(nextCoreQuestion())}</li>
+      <li>Optional constraints can be added after the core path is clear.</li>
+    `;
+    recCard.classList.remove('rec-card--conflict');
+    recWarnings.hidden = true;
+    recWarnings.innerHTML = '';
+    updateRationalePane(rec, ready);
+    updateMobileRecBar(rec, ready);
+    return;
+  }
+
+  setRecommendationLabels('ready');
   updateSlot(recWorkflow, rec.workflow);
   updateSlot(recKit, rec.kitInfo?.label || (rec.kit ? rec.kit : null));
   recKitMeta.textContent = rec.kitInfo?.sku || '';
@@ -802,17 +876,33 @@ function updateRecommendationCard() {
   }
 
   // Update rationale pane
-  updateRationalePane(rec);
+  updateRationalePane(rec, ready);
 
   // Update mobile sticky bar
-  updateMobileRecBar(rec);
+  updateMobileRecBar(rec, ready);
 }
 
 // ── Rationale pane ──────────────────────────────────────────
 
-function updateRationalePane(rec) {
-  const hasContent = rec.kit || rec.pipeline;
+function updateRationalePane(rec, ready = isRecommendationReady()) {
+  const hasContent = ready && (rec.kit || rec.pipeline);
   rationalePlaceholder.hidden = hasContent;
+  if (!ready) {
+    rationalePlaceholder.innerHTML = `
+      <p class="muted"><strong>Recommendation pending.</strong> ${escapeHtml(nextCoreQuestion())}</p>
+      <p class="muted">Commands, protocol links, and kit comparisons appear after the core path is complete.</p>
+    `;
+    [rationaleCompare, rationaleAlt, rationaleCommands, rationaleChecklist, rationaleProtocols].forEach(section => {
+      if (section) section.hidden = true;
+    });
+    rationaleCompareContent.innerHTML = '';
+    rationaleAltContent.innerHTML = '';
+    rationaleCommandsContent.innerHTML = '';
+    rationaleChecklistContent.innerHTML = '';
+    rationaleProtocolsContent.innerHTML = '';
+    return;
+  }
+  rationalePlaceholder.innerHTML = '<p class="muted">Answer questions on the left to see recommendations, alternatives, and ready-to-run commands.</p>';
 
   // Compare table (visible once we have at least 2 candidates)
   if (rationaleCompare && rec.topCandidates?.kits?.length >= 2) {
@@ -1098,9 +1188,21 @@ function attachConfidenceChipHandlers() {
   }
 }
 
-function updateMobileRecBar(rec) {
-  const hasContent = rec.kit || rec.pipeline;
+function updateMobileRecBar(rec, ready = isRecommendationReady()) {
+  const hasContent = ready && (rec.kit || rec.pipeline);
+  mobileRecBar.hidden = !hasContent;
+  mobileRecBar.setAttribute('aria-hidden', hasContent ? 'false' : 'true');
   mobileRecBar.classList.toggle('is-hidden', !hasContent);
+  document.body.classList.toggle('has-mobile-rec', hasContent);
+  if (!hasContent && mobileRecSheet && !mobileRecSheet.hidden) {
+    closeMobileSheet();
+  }
+  if (!hasContent) {
+    mobileRecValue.textContent = '—';
+    mobileRecConfidence.dataset.level = 'low';
+    mobileRecConfidence.querySelector('.confidence-label').textContent = 'Needs info';
+    return;
+  }
   mobileRecValue.textContent = rec.kitInfo?.label || rec.pipelineInfo?.label || '—';
   mobileRecConfidence.dataset.level = rec.confidence;
   mobileRecConfidence.querySelector('.confidence-label').textContent =
@@ -1162,7 +1264,22 @@ function syncHash() {
 }
 
 function navigateTo(pageId) {
-  location.hash = `#${pageId}`;
+  shouldFocusPageHeading = true;
+  const nextHash = `#${pageId}`;
+  if (location.hash === nextHash) {
+    render();
+  } else {
+    location.hash = nextHash;
+  }
+}
+
+function focusPageHeading() {
+  if (!shouldFocusPageHeading) return;
+  shouldFocusPageHeading = false;
+  const heading = pageRoot.querySelector('.page-header h2');
+  if (!heading) return;
+  heading.setAttribute('tabindex', '-1');
+  heading.focus({ preventScroll: true });
 }
 
 function updateControls(pageId) {
@@ -1203,6 +1320,7 @@ function render() {
   renderPage(pageId);
   updateControls(pageId);
   applyPendingFlash();
+  focusPageHeading();
 }
 
 function renderFatal(error) {
@@ -1268,8 +1386,13 @@ const mobileRecSheetBody = document.getElementById("mobile-rec-sheet-body");
 let mobileSheetReturnFocus = null;
 
 function renderMobileSheetBody(rec) {
-  if (!rec || !rec.kit) {
-    return `<p class="muted">Answer more questions on the wizard to see a recommendation here.</p>`;
+  if (!rec || !isRecommendationReady() || !rec.kit) {
+    return `
+      <div class="mobile-sheet-summary">
+        <p class="panel-kicker">Recommendation pending</p>
+        <p class="mobile-sheet-workflow">${escapeHtml(nextCoreQuestion())}</p>
+      </div>
+    `;
   }
   const kitInfo = rec.kitInfo || {};
   const bcInfo = rec.basecallingInfo || {};
@@ -1290,6 +1413,28 @@ function renderMobileSheetBody(rec) {
       <button type="button" class="primary-button" data-mobile-sheet-action="results">View full results →</button>
     </div>
   `;
+}
+
+function bindMobileSheetActions() {
+  mobileRecSheetBody.querySelectorAll('.copy-button[data-copy]').forEach(btn => {
+    btn.onclick = () => {
+      navigator.clipboard.writeText(btn.dataset.copy).then(() => flashCopyFeedback(btn));
+    };
+  });
+  mobileRecSheetBody.querySelectorAll('[data-swap-kit]').forEach(btn => {
+    btn.onclick = () => {
+      answers.__kit_override = btn.dataset.swapKit;
+      saveAnswersToStorage(answers);
+      mobileRecSheetBody.innerHTML = renderMobileSheetBody(computeLiveRecommendation(answers, datasets));
+      bindMobileSheetActions();
+    };
+  });
+  mobileRecSheetBody.querySelectorAll('[data-mobile-sheet-action="results"]').forEach(btn => {
+    btn.onclick = () => {
+      closeMobileSheet();
+      navigateTo('results');
+    };
+  });
 }
 
 function trapFocusIn(container) {
@@ -1318,32 +1463,7 @@ function openMobileSheet() {
   if (!mobileRecSheet) return;
   mobileSheetReturnFocus = document.activeElement;
   mobileRecSheetBody.innerHTML = renderMobileSheetBody(lastRecommendation);
-  // Wire copy + swap inside the sheet
-  mobileRecSheetBody.querySelectorAll('.copy-button[data-copy]').forEach(btn => {
-    btn.onclick = () => {
-      navigator.clipboard.writeText(btn.dataset.copy).then(() => flashCopyFeedback(btn));
-    };
-  });
-  mobileRecSheetBody.querySelectorAll('[data-swap-kit]').forEach(btn => {
-    btn.onclick = () => {
-      answers.__kit_override = btn.dataset.swapKit;
-      saveAnswersToStorage(answers);
-      mobileRecSheetBody.innerHTML = renderMobileSheetBody(computeLiveRecommendation(answers, datasets));
-      // Re-bind handlers in the freshly-rendered body
-      openMobileSheet._rebind();
-    };
-  });
-  openMobileSheet._rebind = () => {
-    mobileRecSheetBody.querySelectorAll('.copy-button[data-copy]').forEach(btn => {
-      btn.onclick = () => navigator.clipboard.writeText(btn.dataset.copy).then(() => flashCopyFeedback(btn));
-    });
-  };
-  mobileRecSheetBody.querySelectorAll('[data-mobile-sheet-action="results"]').forEach(btn => {
-    btn.onclick = () => {
-      closeMobileSheet();
-      navigateTo('results');
-    };
-  });
+  bindMobileSheetActions();
 
   mobileRecSheet.hidden = false;
   mobileRecSheetOverlay.hidden = false;
