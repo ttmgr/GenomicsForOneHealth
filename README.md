@@ -236,11 +236,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-## Pipeline Advisor
+## Pipeline Reference
 
-> **Start here:** Use the public [Pipeline Advisor](https://ttmgr.github.io/GenomicsForOneHealth/) to describe your sequencing project and get an opinionated recommendation for kit, basecalling model, and analysis pipeline.
->
-> The advisor is a static GitHub Pages app with a three-pane layout: questions on the left, a live recommendation card in the middle, and rationale with ready-to-run commands on the right. It asks four questions — molecule type (DNA/RNA), study type, priorities, and optional constraints — then recommends a kit, basecalling tier, and EPI2ME workflow with transparent rationale. All decision logic is a JSON-based rules engine that lab staff can audit and update.
+> For example commands, usage patterns, and links to Nanopore documentation for every tool in this repository, see **[PIPELINES.md](./PIPELINES.md)**.
 >
 > A compact [Nanopore guide](https://ttmgr.github.io/GenomicsForOneHealth/nanopore-guide.html) covers the reasoning behind kit, flow-cell, and basecalling recommendations.
 
