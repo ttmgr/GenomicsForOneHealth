@@ -707,7 +707,7 @@ function printHeader(rec) {
   const date = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   return `
     <div class="print-header" aria-hidden="true">
-      Pipeline Advisor — ${escapeHtml(rec.workflow || 'Sequencing workflow')} — Generated ${escapeHtml(date)}
+      Sequencing Advisor — ${escapeHtml(rec.workflow || 'Sequencing workflow')} — Generated ${escapeHtml(date)}
     </div>
   `;
 }
