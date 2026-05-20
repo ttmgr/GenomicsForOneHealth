@@ -1,0 +1,263 @@
+name: squiggle4viability
+display_name: Squiggle4Viability
+domain: Viability Assessment (Squiggle-level)
+description: >-
+  Deep-learning assessment of microbial viability directly from raw Nanopore
+  signal (POD5), plus a supporting metagenomics arm. AI mode: segment signals,
+  build ground truth, preprocess to normalized tensors, concatenate, train a
+  ResNet/Transformer, run inference (fixed-length chunks or read-level), and apply
+  explainable-AI tools (Class Activation Maps, sudden-drop detection). Metagenomics
+  mode: Dorado basecalling/demux, read processing (Porechop/NanoFilt), Flye + Racon
+  assembly/polishing, and Kraken2 read/contig classification. Requires PyTorch and
+  GPU; this project has its own environment (it is excluded from the unified
+  environment.yaml).
+supported_input_types:
+  - pod5
+  - fastq
+  - bam
+tools:
+  - name: python (PyTorch stack)
+    version: "requirements.txt (separate GPU env; not in unified environment.yaml)"
+    purpose: ResNet/Transformer training and inference (torch), with pod5, numpy, scipy, opencv, matplotlib, tqdm, pandas, scikit-learn.
+    url: https://github.com/Genomics4OneHealth/Squiggle4Viability
+  - name: dorado
+    version: "manual install (config dna_r10.4.1_e8.2_400bps_hac@v4.3.0)"
+    purpose: Basecalling/demux for the metagenomics arm.
+    url: https://github.com/nanoporetech/dorado
+  - name: porechop
+    version: "0.2.4"
+    purpose: Adapter trimming (metagenomics arm).
+    url: https://github.com/rrwick/Porechop
+  - name: NanoFilt
+    version: "2.8.0"
+    purpose: Length filtering (-l 100).
+    url: https://github.com/wdecoster/nanofilt
+  - name: flye
+    version: ">=2.9.4"
+    purpose: Metagenomic assembly (--meta).
+    url: https://github.com/mikolmogorov/Flye
+  - name: minimap2
+    version: ">=2.28"
+    purpose: Polishing alignment.
+    url: https://github.com/lh3/minimap2
+  - name: racon
+    version: ">=1.5.0"
+    purpose: Assembly polishing.
+    url: https://github.com/isovic/racon
+  - name: samtools
+    version: ">=1.19"
+    purpose: SAM/BAM handling.
+    url: https://github.com/samtools/samtools
+  - name: kraken2
+    version: ">=2.1.3"
+    purpose: Read/contig taxonomic classification.
+    url: https://github.com/DerrickWood/kraken2
+required_databases:
+  - name: Kraken2 database
+    note: Read- and contig-level classification (metagenomics arm).
+  - name: Bundled ResNet models
+    note: models/antibiotic_ecoli_ResNet_550ep.ckpt and models/UV_ecoli_ResNet_677ep.ckpt ship in the repo.
+parameters:
+  - name: pod5_dir
+    required: true
+    description: Input POD5 directory.
+  - name: out_dir
+    required: true
+    description: Output directory.
+  - name: chunk_size
+    required: false
+    default: 10000
+    description: segment.py --chunk_size (verbatim).
+  - name: start_index
+    required: false
+    default: 1500
+    description: segment.py --start_index (verbatim).
+  - name: datatype
+    required: false
+    default: pos
+    description: preprocess.py -dt (pos/target or neg/non-target).
+  - name: sig_len
+    required: false
+    default: 10000
+    description: Signal length (-sl) for preprocess/train/inference.
+  - name: model_type
+    required: false
+    default: ResNet1
+    description: Model architecture (ResNet1/ResNet2/ResNet3/Transformer/ResNet4Sequence).
+  - name: model_weights
+    required: true
+    description: Trained model checkpoint (.ckpt), e.g. models/antibiotic_ecoli_ResNet_550ep.ckpt.
+  - name: pos_tensor
+    required: true
+    description: Positive (target) training tensor.
+  - name: neg_tensor
+    required: true
+    description: Negative (non-target) training tensor.
+  - name: val_pos_tensor
+    required: true
+    description: Positive validation tensor.
+  - name: val_neg_tensor
+    required: true
+    description: Negative validation tensor.
+  - name: trained_model_out
+    required: true
+    description: Output directory/path for trained checkpoints.
+  - name: epochs
+    required: false
+    default: 100
+    description: trainer.py -e (verbatim).
+  - name: learning_rate
+    required: false
+    default: "1e-4"
+    description: trainer.py -l (verbatim).
+  - name: batch
+    required: false
+    default: 1000
+    description: trainer.py --batch (verbatim).
+  - name: ground_truth_file
+    required: true
+    description: Ground-truth labels file for CAM generation.
+  - name: cam_folder
+    required: true
+    description: Output folder for Class Activation Maps.
+  - name: pod5_file
+    required: true
+    description: Single POD5 file for CAM generation.
+  - name: drops_tsv
+    required: true
+    description: Output TSV for sudden-drop detection.
+  - name: kraken2_db
+    required: true
+    description: Kraken2 database path (metagenomics arm).
+pre_hooks:
+  - "preflight.check_dir_exists(pod5_dir)"
+  - "preflight.check_command_available('python3')"
+  - "preflight.check_file_exists(model_weights)"
+command_templates:
+  - id: segment
+    description: Segment signals into chunks.
+    template: |-
+      python AI_scripts/segment.py --path_dir {pod5_dir} --out_dir {out_dir} --chunk_size {chunk_size} --start_index {start_index}
+    source: Viability_Assessment/Squiggle4Viability/AI_scripts/segment.py
+  - id: preprocess
+    description: Normalize signals and save as PyTorch tensors.
+    template: |-
+      python AI_scripts/preprocess.py -i {pod5_dir} -o {out_dir} -dt {datatype} -sl {sig_len}
+    source: Viability_Assessment/Squiggle4Viability/AI_scripts/preprocess.py
+    needs_review: true
+  - id: concat
+    description: Concatenate preprocessed positive/negative tensors.
+    template: |-
+      python AI_scripts/concat.py --preprocessed_pos_folder {pos_tensor} --preprocessed_neg_folder {neg_tensor} --save_pos {out_dir}/train_pos.pt --save_neg {out_dir}/train_neg.pt
+    source: Viability_Assessment/Squiggle4Viability/AI_scripts/concat.py
+  - id: train
+    description: Train a ResNet/Transformer model.
+    template: |-
+      python AI_scripts/trainer.py -tt {pos_tensor} -nt {neg_tensor} -tv {val_pos_tensor} -nv {val_neg_tensor} -o {trained_model_out} -m {model_type} -e {epochs} -sl {sig_len} -l {learning_rate} --batch {batch}
+    source: Viability_Assessment/Squiggle4Viability/AI_scripts/trainer.py
+  - id: inference_chunks
+    description: Inference on fixed-length chunks.
+    template: |-
+      python AI_scripts/inference.py -m {model_weights} -i {pod5_dir} -o {out_dir} -mt {model_type} -sl {sig_len}
+    source: Viability_Assessment/Squiggle4Viability/AI_scripts/inference.py
+  - id: inference_read_level
+    description: Inference grouped by read length (no fixed chunking).
+    template: |-
+      python AI_scripts/inference_read_level.py -m {model_weights} -i {pod5_dir} -o {out_dir} -mt {model_type}
+    source: Viability_Assessment/Squiggle4Viability/AI_scripts/inference_read_level.py
+  - id: generate_cam
+    description: Generate Class Activation Maps for explainability.
+    template: |-
+      python AI_scripts/generate_CAM.py --ground_truth_file {ground_truth_file} --model_weights {model_weights} --cam_folder {cam_folder} --pod5_path {pod5_file}
+    source: Viability_Assessment/Squiggle4Viability/AI_scripts/generate_CAM.py
+    needs_review: true
+  - id: detect_drops
+    description: Detect sudden signal drops (XAI rule).
+    template: |-
+      python AI_scripts/detect_drops.py --in_path {pod5_dir} --out_path {drops_tsv}
+    source: Viability_Assessment/Squiggle4Viability/AI_scripts/detect_drops.py
+    needs_review: true
+  - id: meta_basecall
+    description: Metagenomics arm - basecall and demultiplex.
+    template: |-
+      bash metagenomics_analysis/dorado_basecalling.sh
+    source: Viability_Assessment/Squiggle4Viability/metagenomics_analysis/dorado_basecalling.sh
+  - id: meta_readprocessing
+    description: Metagenomics arm - Porechop + NanoFilt (-l 100).
+    template: |-
+      bash metagenomics_analysis/readprocessing.sh
+    source: Viability_Assessment/Squiggle4Viability/metagenomics_analysis/readprocessing.sh
+  - id: meta_assembly_polishing
+    description: Metagenomics arm - Flye --meta + Minimap2 + Racon.
+    template: |-
+      bash metagenomics_analysis/assembly_polishing.sh
+    source: Viability_Assessment/Squiggle4Viability/metagenomics_analysis/assembly_polishing.sh
+  - id: meta_kraken2_reads
+    description: Metagenomics arm - Kraken2 read classification.
+    template: |-
+      bash metagenomics_analysis/kraken2_read_classification.sh
+    source: Viability_Assessment/Squiggle4Viability/metagenomics_analysis/kraken2_read_classification.sh
+post_hooks:
+  - "parsers.parse_generic_tsv(drops_tsv)"
+  - "parsers.parse_kraken2_report(kraken_report)"
+validation_hooks:
+  - "validation.unexpected_empty_output(path=drops_tsv)"
+  - "validation.command_not_available(command='python3')"
+outputs:
+  - name: inference batch_*.txt
+    type: txt
+    description: Per-read predictions (read_id, predicted class, probability of being dead).
+  - name: trained checkpoints
+    type: ckpt
+    description: model_epoch_*.ckpt PyTorch checkpoints.
+  - name: CAM PDFs
+    type: pdf
+    description: Class Activation Maps for explainability.
+  - name: drops.tsv
+    type: tsv
+    description: Sudden-drop detection per read (read_id, sudden_drop, n_candidates, signal_len).
+caveats:
+  - LLM outputs are suggestions, not biological, clinical, regulatory, or diagnostic conclusions; viability predictions are model estimates.
+  - Requires PyTorch and a GPU; this project has its own environment and is explicitly excluded from the unified environment.yaml.
+  - Bundled models were trained on E. coli (antibiotic and UV death); applying them to other organisms is out of distribution.
+failure_modes:
+  - symptom: run_pipeline.sh AI mode fails to find inference_variable_length.py.
+    cause: The wrapper and README reference AI_scripts/inference_variable_length.py, which is not present in the directory.
+    mitigation: Use inference.py (fixed chunks) or inference_read_level.py instead. See needs_review.
+source_files:
+  - Viability_Assessment/Squiggle4Viability/README.md
+  - Viability_Assessment/Squiggle4Viability/run_pipeline.sh
+  - Viability_Assessment/Squiggle4Viability/AI_scripts/segment.py
+  - Viability_Assessment/Squiggle4Viability/AI_scripts/preprocess.py
+  - Viability_Assessment/Squiggle4Viability/AI_scripts/concat.py
+  - Viability_Assessment/Squiggle4Viability/AI_scripts/trainer.py
+  - Viability_Assessment/Squiggle4Viability/AI_scripts/inference.py
+  - Viability_Assessment/Squiggle4Viability/AI_scripts/inference_read_level.py
+  - Viability_Assessment/Squiggle4Viability/AI_scripts/generate_CAM.py
+  - Viability_Assessment/Squiggle4Viability/AI_scripts/detect_drops.py
+  - Viability_Assessment/Squiggle4Viability/metagenomics_analysis/dorado_basecalling.sh
+  - Viability_Assessment/Squiggle4Viability/metagenomics_analysis/readprocessing.sh
+  - Viability_Assessment/Squiggle4Viability/metagenomics_analysis/assembly_polishing.sh
+  - Viability_Assessment/Squiggle4Viability/metagenomics_analysis/kraken2_read_classification.sh
+  - Viability_Assessment/Squiggle4Viability/metagenomics_analysis/kraken2_contig_classification.sh
+  - Viability_Assessment/Squiggle4Viability/metagenomics_analysis/extract_genus_read_ids.py
+  - Viability_Assessment/Squiggle4Viability/metagenomics_analysis/extract_non_chimeras.py
+  - MANUAL_EXECUTION_GUIDE.md
+external_references:
+  - label: ONT Dorado
+    url: https://github.com/nanoporetech/dorado
+    note: Basecalling/demux for the metagenomics arm.
+  - label: ONT pod5-file-format
+    url: https://github.com/nanoporetech/pod5-file-format
+    note: POD5 reading used by the AI scripts (pod5 Python package).
+external_reference_notes: >-
+  No upstream EPI2ME/Nanopore workflow performs signal-level viability inference;
+  this is a repository-specific deep-learning method, and the local repository
+  remains the source of truth. ONT Dorado and the POD5 format are referenced for
+  comparison only (basecalling and signal I/O); there is no EPI2ME analog.
+needs_review:
+  - "run_pipeline.sh and README invoke AI_scripts/inference_variable_length.py, but that file is not present in AI_scripts/ (only inference.py and inference_read_level.py exist). The wrapper will fail as written; templates here use the files that exist."
+  - "README documents `generate_cam.py` (lowercase) but the actual file is `generate_CAM.py` (capitalized); the template uses the real filename."
+  - "README documents detect_drops.py with --figure_path, but detect_drops.py's argparse only exposes --in_path, --out_path, --padding (figure plotting is commented out); the template omits --figure_path."
+  - "README shows preprocess.py with -b 1000, but preprocess.py's click signature has no -b/--batch option (batch size is hardcoded to 1000 internally); the template omits -b."
+  - "A file literally named 'mask_dark regions_cam.py' (with a space) exists; the README references mask_dark_regions_cam.py. The masking step is not represented as a runnable template due to the filename mismatch."

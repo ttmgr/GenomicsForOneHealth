@@ -244,6 +244,14 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
+## Experimental agent skills
+
+This repository now includes an experimental `agent_skills/` layer: a machine-readable framework for LLM-assisted workflow orchestration, parameter validation, result parsing, sanity checks, and audit logging. It is designed for inspectability and reproducibility across coding agents such as Codex, Claude Code, Cursor, Continue, and related tools. It does not treat LLMs as biological or clinical authorities.
+
+See [`agent_skills/README.md`](./agent_skills/README.md) to get started, and [`AGENTS.md`](./AGENTS.md) for agent operating rules.
+
+---
+
 <div align="center">
   <i>"Rapid response to infectious threats through advanced genomic surveillance."</i>
 </div>
