@@ -1,0 +1,150 @@
+name: wetland_12s_vertebrate_metabarcoding
+display_name: Wetland Health - 12S Vertebrate Metabarcoding (Track 4)
+domain: Environmental Metagenomics
+description: >-
+  Vertebrate (notably avian) host detection branch of the Wetland Health study,
+  from 12S rRNA amplicon eDNA. Demultiplex basecalled reads by 9 bp tags
+  (OBITools4 obimultiplex, up to 2 mismatches), trim primers (Cutadapt), then run
+  the VSEARCH pipeline: expected-error quality filter (maxEE 1.0), dereplicate and
+  drop singletons, remove chimeras de novo, cluster OTUs at 97% identity, and
+  assign taxonomy by global alignment against MIDORI2 ("Unique 266"). Route here
+  for vertebrate host-range inference from wetland passive water samples.
+supported_input_types:
+  - fastq
+tools:
+  - name: obimultiplex
+    version: "OBITools4 1.3.1 (separate install)"
+    purpose: Demultiplex amplicon reads by 9 bp tags.
+    url: https://github.com/metabarcoding/obitools4
+  - name: cutadapt
+    version: "4.2"
+    purpose: Primer trimming.
+    url: https://github.com/marcelm/cutadapt
+  - name: vsearch
+    version: "2.21"
+    purpose: Filter, dereplicate, chimera removal, OTU clustering, taxonomy.
+    url: https://github.com/torognes/vsearch
+required_databases:
+  - name: MIDORI2 ("Unique 266")
+    note: Curated vertebrate mitochondrial reference for taxonomic assignment.
+parameters:
+  - name: input_fastq
+    required: true
+    description: Basecalled 12S amplicon reads.
+  - name: tagfile
+    required: true
+    description: Tab-delimited 9 bp tag file (--tags).
+  - name: primerfile
+    required: true
+    description: Primer FASTA (--primerfile).
+  - name: demux_fastq
+    required: true
+    description: Demultiplexed reads output.
+  - name: primer_fwd
+    required: true
+    description: Anchored forward primer sequence (cutadapt -g ^SEQ).
+  - name: primer_rev
+    required: true
+    description: Anchored reverse primer sequence (cutadapt -G ^SEQ).
+  - name: trimmed_fastq
+    required: true
+    description: Primer-trimmed reads.
+  - name: filtered_fasta
+    required: true
+    description: VSEARCH quality-filtered FASTA.
+  - name: derep_fasta
+    required: true
+    description: Dereplicated FASTA.
+  - name: nochimeras_fasta
+    required: true
+    description: Chimera-removed FASTA.
+  - name: otus_fasta
+    required: true
+    description: OTU centroids FASTA.
+  - name: midori_db
+    required: true
+    description: MIDORI2 reference FASTA (e.g. MIDORI2_unique_266.fasta).
+  - name: assignments
+    required: true
+    description: BLAST6 taxonomy assignment output.
+pre_hooks:
+  - "preflight.check_file_exists(input_fastq)"
+  - "preflight.check_file_exists(midori_db)"
+  - "preflight.check_command_available('vsearch')"
+  - "preflight.check_command_available('cutadapt')"
+  - "preflight.check_command_available('obimultiplex')"
+command_templates:
+  - id: demultiplex
+    description: Demultiplex by 9 bp tags (<=2 mismatches).
+    template: |-
+      obimultiplex --tags {tagfile} --primerfile {primerfile} --allow-mismatch 2 --input {input_fastq} --output {demux_fastq}
+    source: Environmental_Metagenomics/Wetland_Health/rrna_vertebrate_analysis.md
+  - id: trim_primers
+    description: Remove anchored forward/reverse primers.
+    template: |-
+      cutadapt -g ^{primer_fwd} -G ^{primer_rev} -o {trimmed_fastq} {demux_fastq}
+    source: Environmental_Metagenomics/Wetland_Health/rrna_vertebrate_analysis.md
+  - id: quality_filter
+    description: Filter reads by expected error (maxEE 1.0).
+    template: |-
+      vsearch --fastq_filter {trimmed_fastq} --fastq_maxee 1.0 --fastaout {filtered_fasta}
+    source: Environmental_Metagenomics/Wetland_Health/rrna_vertebrate_analysis.md
+  - id: dereplicate
+    description: Dereplicate and discard singletons.
+    template: |-
+      vsearch --derep_fulllength {filtered_fasta} --sizeout --minuniquesize 2 --output {derep_fasta}
+    source: Environmental_Metagenomics/Wetland_Health/rrna_vertebrate_analysis.md
+  - id: chimera_removal
+    description: Remove chimeras de novo.
+    template: |-
+      vsearch --uchime_denovo {derep_fasta} --nonchimeras {nochimeras_fasta}
+    source: Environmental_Metagenomics/Wetland_Health/rrna_vertebrate_analysis.md
+  - id: cluster_otus
+    description: Cluster OTUs at 97% identity.
+    template: |-
+      vsearch --cluster_size {nochimeras_fasta} --id 0.97 --centroids {otus_fasta}
+    source: Environmental_Metagenomics/Wetland_Health/rrna_vertebrate_analysis.md
+  - id: assign_taxonomy
+    description: Assign taxonomy against MIDORI2 (>=98% identity).
+    template: |-
+      vsearch --usearch_global {otus_fasta} --db {midori_db} --id 0.98 --blast6out {assignments}
+    source: Environmental_Metagenomics/Wetland_Health/rrna_vertebrate_analysis.md
+post_hooks:
+  - "parsers.parse_generic_tsv(assignments)"
+validation_hooks:
+  - "validation.unexpected_empty_output(path=otus_fasta)"
+  - "validation.unexpected_empty_output(path=assignments)"
+outputs:
+  - name: otus.fasta
+    type: fasta
+    description: OTU centroids at 97% identity.
+  - name: assignments.b6
+    type: blast6
+    description: MIDORI2 taxonomy assignments (>=98% identity, accepted at >=80% query coverage and >=5 reads after aggregation).
+caveats:
+  - LLM outputs are suggestions, not biological, clinical, regulatory, or diagnostic conclusions.
+  - Assignments are limited to vertebrates (e.g. Aves); biogeographically implausible calls are collapsed to higher ranks (validated against eBird).
+  - This is the wetland host-range branch; for broader water eDNA metabarcoding the Zambia eDNA skill may fit better.
+failure_modes:
+  - symptom: Few or no OTUs.
+    cause: Aggressive maxEE/singleton filtering on low-input amplicons, or tag/primer mismatch.
+    mitigation: Verify the tag file and primers; inspect read counts after each VSEARCH step.
+source_files:
+  - Environmental_Metagenomics/Wetland_Health/rrna_vertebrate_analysis.md
+  - Environmental_Metagenomics/Wetland_Health/README.md
+  - MANUAL_EXECUTION_GUIDE.md
+external_references:
+  - label: EPI2ME wf-16s
+    url: https://github.com/epi2me-labs/wf-16s
+    note: Upstream 16S/18S/ITS amplicon taxonomy (Minimap2/Kraken2). Comparison only.
+  - label: EPI2ME wf-amplicon
+    url: https://github.com/epi2me-labs/wf-amplicon
+    note: Upstream haploid amplicon consensus/variant calling. Comparison only.
+external_reference_notes: >-
+  Upstream wf-16s classifies amplicons against curated 16S/18S/ITS databases via
+  Minimap2/Kraken2; the local branch uses OBITools4 tag demultiplexing + a VSEARCH
+  OTU pipeline + MIDORI2 for vertebrate detection. Upstream is referenced for
+  comparison only; local commands remain source of truth. Note this branch
+  clusters OTUs at 97% identity, whereas the Zambia eDNA workflow clusters at 99%.
+needs_review:
+  - "primer sequences are placeholders (^PRIMER_FWD / ^PRIMER_REV) in the documented command; supply the study's actual 12SV05 primer sequences."

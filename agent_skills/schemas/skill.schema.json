@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ttmgr/GenomicsForOneHealth/agent_skills/schemas/skill.schema.json",
+  "title": "GenomicsForOneHealth agent skill",
+  "description": "Schema for a single machine-readable workflow skill in agent_skills/skills/. A skill is the agent-facing, source-traceable description of one documented One Health Nanopore workflow. It must be derived from the local repository; commands, tools, parameters, and databases are never invented. This schema documents the contract and supports optional structural validation; the Python hooks perform their own lightweight checks and do not require a JSON Schema validator.",
+  "type": "object",
+  "required": [
+    "name",
+    "display_name",
+    "domain",
+    "description",
+    "supported_input_types",
+    "tools",
+    "required_databases",
+    "parameters",
+    "pre_hooks",
+    "command_templates",
+    "post_hooks",
+    "validation_hooks",
+    "outputs",
+    "caveats",
+    "failure_modes",
+    "source_files",
+    "external_references",
+    "external_reference_notes",
+    "needs_review"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Stable snake_case identifier, unique within the pack."
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-readable title."
+    },
+    "domain": {
+      "type": "string",
+      "description": "One Health domain, e.g. 'Environmental Metagenomics', 'Clinical Isolates & Plasmid Profiling'."
+    },
+    "description": {
+      "type": "string",
+      "description": "What the workflow does and when to route to it."
+    },
+    "supported_input_types": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Input file types, e.g. pod5, fast5, fastq, fastq.gz, bam, fasta, vcf, paired_end_fastq."
+    },
+    "tools": {
+      "type": "array",
+      "description": "Tools the workflow invokes, with version pins from the repository environment files where available.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {"type": "string"},
+          "version": {"type": "string"},
+          "purpose": {"type": "string"},
+          "url": {"type": "string"},
+          "install": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "required_databases": {
+      "type": "array",
+      "description": "Reference databases required. May be empty for workflows that need none.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {"type": "string"},
+          "note": {"type": "string"},
+          "source_url": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "parameters": {
+      "type": "array",
+      "description": "Declared parameters. Only these may be used by command_builder; defaults must be repository-documented.",
+      "items": {
+        "type": "object",
+        "required": ["name", "required"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[A-Za-z0-9_]+$"},
+          "required": {"type": "boolean"},
+          "default": {},
+          "description": {"type": "string"},
+          "example": {}
+        },
+        "additionalProperties": true
+      }
+    },
+    "pre_hooks": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Preflight checks to run before building commands, referencing functions in hooks/preflight.py."
+    },
+    "command_templates": {
+      "type": "array",
+      "description": "Ordered command templates, extracted verbatim from source_files. Use {placeholder} for declared parameters.",
+      "items": {
+        "type": "object",
+        "required": ["id", "template"],
+        "properties": {
+          "id": {"type": "string"},
+          "description": {"type": "string"},
+          "template": {"type": "string"},
+          "source": {"type": "string", "description": "Repo-relative file the command was taken from."},
+          "needs_review": {"type": "boolean"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "post_hooks": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Parsers to run on outputs, referencing functions in hooks/parsers.py."
+    },
+    "validation_hooks": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Sanity checks to run, referencing functions in hooks/validation.py."
+    },
+    "outputs": {
+      "type": "array",
+      "description": "Expected outputs.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {"type": "string"},
+          "type": {"type": "string"},
+          "description": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "caveats": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Limitations and the standing note that LLM outputs are suggestions, not biological/clinical/regulatory/diagnostic conclusions."
+    },
+    "failure_modes": {
+      "type": "array",
+      "description": "Known failure modes and mitigations.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "symptom": {"type": "string"},
+          "cause": {"type": "string"},
+          "mitigation": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "source_files": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "description": "Repo-relative paths this skill is derived from. Required for traceability."
+    },
+    "external_references": {
+      "type": "array",
+      "description": "Upstream Nanopore/EPI2ME URLs used only for comparison and completeness.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {"type": "string"},
+          "url": {"type": "string"},
+          "note": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "external_reference_notes": {
+      "type": "string",
+      "description": "How upstream comparison relates to local behavior. Local repository remains the source of truth."
+    },
+    "needs_review": {
+      "description": "true (or a list of specific notes) when repository-derived behavior is ambiguous, partial, or conflicts with upstream.",
+      "oneOf": [
+        {"type": "boolean"},
+        {"type": "array", "items": {"type": "string"}}
+      ]
+    }
+  }
+}

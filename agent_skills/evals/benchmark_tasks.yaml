@@ -1,0 +1,159 @@
+# Benchmark tasks for the GenomicsForOneHealth skill pack.
+#
+# Each task states an expected behavior. Tasks marked offline_checkable: true are
+# executed by run_benchmarks.py against the hooks (no LLM runtime needed). Tasks
+# marked offline_checkable: false describe routing/reporting behavior that an
+# agent should satisfy and a human can review.
+
+tasks:
+  # --- Routing (agent judgment; reviewed by a human) ---
+  - id: route_clinical_metagenome_host_association
+    category: routing
+    description: A clinical metagenome (POD5) needing AMR-to-host linkage routes to nanopore_amr_host_association.
+    request: "Link AMR genes to their bacterial host in a clinical metagenome from raw POD5."
+    expect_skill: nanopore_amr_host_association
+    offline_checkable: false
+  - id: route_air_bioaerosol
+    category: routing
+    description: An air/bioaerosol metagenome routes to air_metagenomics, not a water/soil workflow.
+    request: "Profile the microbiome of a bioaerosol air sample and recover MAGs."
+    expect_skill: air_metagenomics
+    offline_checkable: false
+  - id: route_water_edna
+    category: routing
+    description: Vertebrate water eDNA metabarcoding routes to zambia_edna_metabarcoding.
+    request: "Identify vertebrate species from 12S/16S eDNA in water samples (Nanopore and Illumina)."
+    expect_skill: zambia_edna_metabarcoding
+    offline_checkable: false
+  - id: route_influenza_consensus
+    category: routing
+    description: AIV consensus from RNA routes to a flu skill (avian_influenza_profiling or wetland_aiv_rna_consensus).
+    request: "Generate AIV segment consensus sequences from RNA004 reads."
+    expect_skill_one_of: [avian_influenza_profiling, wetland_aiv_rna_consensus]
+    offline_checkable: false
+
+  # --- Preflight: missing inputs and databases ---
+  - id: detect_missing_input_file
+    category: preflight
+    description: A non-existent FASTQ is reported as missing.
+    hook: "preflight.check_file_exists"
+    arg: "/nonexistent/reads.fastq"
+    expect_ok: false
+    offline_checkable: true
+  - id: detect_missing_database
+    category: preflight
+    description: A non-existent Kraken2 database path is reported as missing.
+    hook: "preflight.check_database_exists"
+    arg: "/nonexistent/kraken2_db"
+    expect_ok: false
+    offline_checkable: true
+  - id: accept_existing_fastq_extension
+    category: preflight
+    description: A .fastq.gz path is recognized as FASTQ.
+    hook: "preflight.check_fastq_extension"
+    arg: "reads.fastq.gz"
+    expect_ok: true
+    offline_checkable: true
+
+  # --- Command building and parameter discipline ---
+  - id: build_command_from_declared_parameters
+    category: command_building
+    description: A skill command builds when all declared parameters are supplied.
+    skill: cre_plasmid_clustering
+    command_id: nanofilt
+    parameters: {trimmed_fastq: t.fastq, filtered_fastq: f.fastq, min_q: 8, min_len: 200}
+    expect_ok: true
+    offline_checkable: true
+  - id: refuse_undeclared_parameter
+    category: command_building
+    description: Supplying a parameter the skill does not declare is refused.
+    skill: cre_plasmid_clustering
+    parameters: {not_a_real_param: 1}
+    expect_validate_ok: false
+    offline_checkable: true
+  - id: detect_missing_required_parameter
+    category: command_building
+    description: Omitting a required parameter is reported, never guessed.
+    skill: from_feather_to_fur
+    parameters: {}
+    expect_validate_ok: false
+    offline_checkable: true
+  - id: shell_injection_is_quoted
+    category: command_building
+    description: A value containing shell metacharacters is quoted, not interpolated raw.
+    template: "kraken2 --db {db} {reads}"
+    parameters: {db: /data/k2, reads: "r.fq; rm -rf /"}
+    expect_contains: "'r.fq; rm -rf /'"
+    offline_checkable: true
+
+  # --- Output parsing ---
+  - id: parse_nanostat_summary
+    category: parsing
+    description: A NanoStat summary parses into numeric metrics.
+    parser: parse_nanostat
+    fixture: nanostat
+    expect_metric: number_of_reads
+    offline_checkable: true
+  - id: parse_kraken2_report
+    category: parsing
+    description: A Kraken2 report yields a classified percentage.
+    parser: parse_kraken2_report
+    fixture: kraken2
+    expect_classified_percent: 61.8
+    offline_checkable: true
+  - id: parse_amrfinder_table
+    category: parsing
+    description: An AMRFinderPlus table yields gene symbols.
+    parser: parse_amrfinder_table
+    fixture: amrfinder
+    expect_min_hits: 1
+    offline_checkable: true
+  - id: parse_vcf_records
+    category: parsing
+    description: A VCF parses into variant records.
+    parser: parse_vcf
+    fixture: vcf
+    expect_min_variants: 1
+    offline_checkable: true
+
+  # --- Validation flags and caveated reporting ---
+  - id: flag_low_read_yield
+    category: validation
+    description: A sample below the read-count threshold raises a warning.
+    validator: low_read_yield
+    kwargs: {n_reads: 50}
+    expect_flag: true
+    offline_checkable: true
+  - id: missing_amr_hits_is_info
+    category: validation
+    description: Zero AMR hits is informational, not an error.
+    validator: missing_amr_hits
+    kwargs: {n_hits: 0}
+    expect_flag: true
+    expect_severity: info
+    offline_checkable: true
+
+  # --- Audit logging ---
+  - id: write_audit_log_has_required_keys
+    category: audit
+    description: An audit log is written as JSON with timestamp, source_files, and external_references.
+    offline_checkable: true
+
+  # --- Traceability and review discipline ---
+  - id: every_skill_has_source_files
+    category: traceability
+    description: Every skill lists at least one source file.
+    offline_checkable: true
+  - id: every_skill_has_caveats_and_external_notes
+    category: traceability
+    description: Every skill has caveats and an external_reference_notes field.
+    offline_checkable: true
+  - id: ambiguous_behavior_marked_needs_review
+    category: review
+    description: Skills with known doc/code conflicts carry needs_review notes (e.g. squiggle4viability, air_metagenomics).
+    expect_needs_review_skills: [squiggle4viability, air_metagenomics, nanopore_amr_host_association]
+    offline_checkable: true
+  - id: external_refs_do_not_overwrite_local
+    category: review
+    description: external_reference_notes affirm the local repository as source of truth (comparison only).
+    offline_checkable: true

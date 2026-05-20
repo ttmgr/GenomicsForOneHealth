@@ -1,0 +1,171 @@
+name: from_feather_to_fur
+display_name: From Feather to Fur
+domain: Veterinary & Zoonotic Surveillance (Virome)
+description: >-
+  Variant-calling workflow tracking H5N1 transmission from avian to mammalian
+  hosts. Filters and cleans reads, maps to a reference with Minimap2, calls
+  variants with Clair3, then compares an animal sample against the inoculum to
+  retain variants that are animal-only or differ by >=25% in frequency
+  (process_vcf.py). The filtered variants are compressed, used to build a
+  consensus FASTA with BCFtools, and annotated with FluSurver (manual web step).
+supported_input_types:
+  - fastq
+  - vcf
+tools:
+  - name: filtlong
+    version: ">=0.2.1"
+    purpose: Quality/length read filtering.
+    url: https://github.com/rrwick/Filtlong
+  - name: porechop
+    version: "0.2.4"
+    purpose: Adapter trimming.
+    url: https://github.com/rrwick/Porechop
+  - name: minimap2
+    version: ">=2.28"
+    purpose: Read-to-reference alignment.
+    url: https://github.com/lh3/minimap2
+  - name: samtools
+    version: ">=1.19"
+    purpose: BAM view/sort/index.
+    url: https://github.com/samtools/samtools
+  - name: run_clair3.sh
+    version: "Clair3 (separate env)"
+    purpose: Variant calling (ONT platform).
+    url: https://github.com/HKU-BAL/Clair3
+  - name: bcftools
+    version: ">=1.19"
+    purpose: VCF view/index and consensus generation.
+    url: https://github.com/samtools/bcftools
+  - name: FluSurver
+    version: "web service (manual step)"
+    purpose: Variant annotation of the consensus FASTA.
+    url: https://flusurver.bii.a-star.edu.sg/
+required_databases:
+  - name: Reference genome FASTA
+    note: Host/segment reference for mapping and consensus (user-provided).
+  - name: Clair3 model
+    note: ONT model directory passed to run_clair3.sh --model_path.
+parameters:
+  - name: reads_fastq
+    required: true
+    description: Raw sample FASTQ(.gz).
+  - name: reference_fasta
+    required: true
+    description: Reference genome FASTA.
+  - name: out_dir
+    required: true
+    description: Output directory.
+  - name: clair3_model
+    required: true
+    description: Path to the Clair3 ONT model.
+  - name: threads
+    required: false
+    default: 8
+    description: Threads for Clair3.
+  - name: animal_vcf
+    required: true
+    description: Annotated animal-sample VCF (process_vcf input).
+  - name: inoculum_vcf
+    required: true
+    description: Annotated inoculum VCF (process_vcf input).
+  - name: filtered_txt
+    required: true
+    description: Output filtered-variants table (TSV).
+  - name: filtered_vcf
+    required: true
+    description: Output filtered-variants VCF.
+  - name: consensus_fasta
+    required: true
+    description: Output consensus FASTA for FluSurver upload.
+pre_hooks:
+  - "preflight.check_file_exists(reads_fastq)"
+  - "preflight.check_file_exists(reference_fasta)"
+  - "preflight.check_dir_exists(clair3_model)"
+  - "preflight.check_command_available('minimap2')"
+  - "preflight.check_command_available('bcftools')"
+command_templates:
+  - id: filter_reads
+    description: Quality/length filter (Q>=8, len>=150).
+    template: |-
+      filtlong --min_mean_q 8 --min_length 150 {reads_fastq} > {out_dir}/temp_filtered.fastq
+    source: Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/variant_calling.sh
+  - id: trim_reads
+    description: Remove adapters.
+    template: |-
+      porechop -i {out_dir}/temp_filtered.fastq -o {out_dir}/cleaned_reads.fastq
+    source: Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/variant_calling.sh
+  - id: map_reads
+    description: Map cleaned reads to the reference, sort and index.
+    template: |-
+      minimap2 -ax map-ont {reference_fasta} {out_dir}/cleaned_reads.fastq | samtools view -Sb - > {out_dir}/mapped.bam && samtools sort -o {out_dir}/mapped_sorted.bam {out_dir}/mapped.bam && samtools index {out_dir}/mapped_sorted.bam
+    source: Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/variant_calling.sh
+  - id: call_variants_clair3
+    description: Call variants with Clair3 (ONT).
+    template: |-
+      run_clair3.sh --bam_fn={out_dir}/mapped_sorted.bam --ref_fn={reference_fasta} --threads={threads} --platform=ont --model_path={clair3_model} --output={out_dir}/clair3_output --include_all_ctgs
+    source: Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/variant_calling.sh
+  - id: filter_variants
+    description: Keep animal-only or >=25% frequency-difference variants vs inoculum.
+    template: |-
+      python3 process_vcf.py --animal {animal_vcf} --inoculum {inoculum_vcf} --output_excel {filtered_txt} --output_vcf {filtered_vcf}
+    source: Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/process_vcf.py
+  - id: compress_index_vcf
+    description: Compress and index the filtered VCF.
+    template: |-
+      bgzip {filtered_vcf} && bcftools index {filtered_vcf}.gz
+    source: Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md
+  - id: build_consensus
+    description: Build a consensus FASTA containing the filtered variants.
+    template: |-
+      bcftools consensus -f {reference_fasta} -s - -o {consensus_fasta} {filtered_vcf}.gz
+    source: Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md
+post_hooks:
+  - "parsers.parse_vcf(filtered_vcf)"
+  - "parsers.parse_generic_tsv(filtered_txt)"
+validation_hooks:
+  - "validation.unexpected_empty_output(path=consensus_fasta)"
+  - "validation.unexpected_empty_output(path=filtered_vcf)"
+outputs:
+  - name: clair3_output/merge_output.vcf.gz
+    type: vcf
+    description: Clair3 variant calls.
+  - name: filtered_variants_<prefix>.txt
+    type: tsv
+    description: Filtered variant table (animal-only or >=25% frequency difference).
+  - name: filtered_variants_<prefix>.vcf
+    type: vcf
+    description: Filtered variants as VCF.
+  - name: qsp_<prefix>.fasta
+    type: fasta
+    description: Consensus FASTA for FluSurver annotation.
+caveats:
+  - LLM outputs are suggestions, not biological, clinical, regulatory, or diagnostic conclusions.
+  - FluSurver annotation is a manual web step; download of results requires a user-specific result URL.
+  - Clair3 is installed in a separate environment; ensure the ONT model path is correct.
+failure_modes:
+  - symptom: bcftools consensus produces no variants applied.
+    cause: Filtered VCF empty or not bgzipped/indexed.
+    mitigation: Confirm process_vcf retained variants and the VCF was bgzipped and indexed.
+source_files:
+  - Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/README.md
+  - Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/run_pipeline.sh
+  - Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/variant_calling.sh
+  - Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/process_vcf.py
+  - Veterinary_and_Zoonotic_Surveillance/From_feather_to_fur/run_process_vcf.sh
+  - MANUAL_EXECUTION_GUIDE.md
+  - environment.yaml
+external_references:
+  - label: EPI2ME wf-flu
+    url: https://github.com/epi2me-labs/wf-flu
+    note: Upstream influenza typing/variant analysis. Comparison only.
+  - label: Clair3
+    url: https://github.com/HKU-BAL/Clair3
+    note: Variant caller used here.
+external_reference_notes: >-
+  No upstream EPI2ME workflow performs the animal-vs-inoculum differential variant
+  filtering implemented in process_vcf.py; this is repository-specific. wf-flu is
+  referenced only for general influenza variant-analysis comparison.
+needs_review:
+  - "variant_calling.sh ends with `bcftools view merge_output.vcf.gz > all_variants.vcf` against a relative filename (not the Clair3 output path) and is annotated in-script as needing modification; treat that final line as a template, not a verified command."
+  - "process_vcf.py and run_process_vcf.sh have a malformed first line (`!/usr/bin/env python3` / `!/bin/bash`, missing the leading `#`); run via an explicit interpreter (python3 / bash) until fixed upstream."
+  - "README documents merging FluSurver output with filtered variants via an inline pandas snippet (not a standalone script); not represented as a command template here."
