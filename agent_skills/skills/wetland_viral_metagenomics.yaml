@@ -1,0 +1,128 @@
+name: wetland_viral_metagenomics
+display_name: Wetland Health - Viral Metagenomics (Track 3)
+domain: Environmental Metagenomics
+description: >-
+  Untargeted RNA virome characterization branch of the Wetland Health study, from
+  total environmental RNA (cDNA). Quality-filter reads (Filtlong Q>=7, len>=100),
+  convert to FASTA, run translated alignment with DIAMOND BLASTx against the NCBI
+  non-redundant (NR) protein database, then extract and classify viral hits into
+  viral families with a documented Python parser. Route here for viral-family-level
+  virome discovery (use the AIV branch for targeted influenza consensus).
+supported_input_types:
+  - fastq
+tools:
+  - name: filtlong
+    version: ">=0.2.1"
+    purpose: Quality/length read filtering.
+    url: https://github.com/rrwick/Filtlong
+  - name: seqkit
+    version: ">=2.8.0"
+    purpose: FASTQ to FASTA conversion.
+    url: https://github.com/shenwei356/seqkit
+  - name: diamond
+    version: "2.1.13"
+    purpose: Translated alignment (BLASTx) vs NCBI NR.
+    url: https://github.com/bbuchfink/diamond
+  - name: classify_viral_hits.py
+    version: "documented Python snippet (pandas)"
+    purpose: Extract viral hits and aggregate per viral family.
+    url: ""
+required_databases:
+  - name: DIAMOND NCBI NR database
+    note: Large protein database; build with `diamond makedb`. See INSTALL_AND_DATABASES.md.
+parameters:
+  - name: cdna_reads
+    required: true
+    description: Input cDNA FASTQ from RNA sequencing.
+  - name: out_dir
+    required: true
+    description: Output directory.
+  - name: filtered_fastq
+    required: true
+    description: Filtlong-filtered reads.
+  - name: filtered_fasta
+    required: true
+    description: FASTA for DIAMOND.
+  - name: diamond_db
+    required: true
+    description: DIAMOND NR database path.
+  - name: diamond_out
+    required: true
+    description: DIAMOND results TSV path.
+  - name: threads
+    required: false
+    default: 16
+    description: DIAMOND threads (verbatim from virus_analysis_pipeline.md).
+  - name: min_id
+    required: false
+    default: 80
+    description: DIAMOND --id percent identity (verbatim).
+  - name: max_target_seqs
+    required: false
+    default: 1
+    description: DIAMOND --max-target-seqs (verbatim; 5 in the multi-sample variant).
+pre_hooks:
+  - "preflight.check_file_exists(cdna_reads)"
+  - "preflight.check_database_exists(diamond_db)"
+  - "preflight.check_command_available('diamond')"
+  - "preflight.check_command_available('seqkit')"
+command_templates:
+  - id: filter_reads
+    description: Quality/length filter (Q>=7, len>=100).
+    template: |-
+      filtlong --min_mean_q 7 --min_length 100 {cdna_reads} > {filtered_fastq}
+    source: Environmental_Metagenomics/Wetland_Health/virus_analysis_pipeline.md
+  - id: fq2fa
+    description: Convert reads to FASTA for DIAMOND.
+    template: |-
+      seqkit fq2fa {filtered_fastq} > {filtered_fasta}
+    source: Environmental_Metagenomics/Wetland_Health/virus_analysis_pipeline.md
+  - id: diamond_blastx
+    description: Translated alignment vs NCBI NR.
+    template: |-
+      diamond blastx --db {diamond_db} --query {filtered_fasta} --out {diamond_out} --outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore stitle --max-target-seqs {max_target_seqs} --id {min_id} --threads {threads} --sensitive
+    source: Environmental_Metagenomics/Wetland_Health/virus_analysis_pipeline.md
+  - id: classify_viral_hits
+    description: Extract viral hits and aggregate per viral family.
+    template: |-
+      python3 classify_viral_hits.py
+    source: Environmental_Metagenomics/Wetland_Health/virus_analysis_pipeline.md
+    needs_review: true
+post_hooks:
+  - "parsers.parse_generic_tsv(diamond_out)"
+validation_hooks:
+  - "validation.unexpected_empty_output(path=diamond_out)"
+  - "validation.low_read_yield(n_reads=n_reads)"
+outputs:
+  - name: diamond_results.tsv
+    type: tsv
+    description: DIAMOND BLASTx hits (outfmt 6 with stitle).
+  - name: viral_family_counts.tsv
+    type: tsv
+    description: Reads per viral family from classify_viral_hits.py.
+caveats:
+  - LLM outputs are suggestions, not biological, clinical, regulatory, or diagnostic conclusions.
+  - The NR database is very large; build time and memory are substantial.
+  - classify_viral_hits.py is provided in the documentation as an inline script; family keyword lists are heuristic.
+failure_modes:
+  - symptom: No viral hits.
+    cause: Low viral load, stringent --id, or NR coverage gaps.
+    mitigation: Review DIAMOND hit counts; relax --id or --max-target-seqs cautiously.
+source_files:
+  - Environmental_Metagenomics/Wetland_Health/virus_analysis_pipeline.md
+  - Environmental_Metagenomics/Wetland_Health/README.md
+  - MANUAL_EXECUTION_GUIDE.md
+  - INSTALL_AND_DATABASES.md
+external_references:
+  - label: EPI2ME wf-metagenomics
+    url: https://github.com/epi2me-labs/wf-metagenomics
+    note: Upstream metagenomic classification. Comparison only.
+  - label: CZ ID
+    url: https://public.czid.org/
+    note: Cloud long-read metagenomics for virome interpretation (referenced in external_workflows.json). Comparison only.
+external_reference_notes: >-
+  No upstream EPI2ME workflow performs DIAMOND-BLASTx-vs-NR virome family
+  classification; this is repository-specific. wf-metagenomics and CZ ID are
+  referenced for comparison only.
+needs_review:
+  - "classify_viral_hits.py is documented as an inline snippet in virus_analysis_pipeline.md (reads diamond_results.tsv from the current directory); confirm its exact location/IO before running."

@@ -1,0 +1,199 @@
+name: zambia_edna_metabarcoding
+display_name: Zambia eDNA Metabarcoding
+domain: eDNA Metabarcoding
+description: >-
+  Vertebrate eDNA metabarcoding of Zambian water samples (12S/16S), comparing
+  portable Nanopore against Illumina. Two entry points converge on a shared
+  VSEARCH pipeline: Nanopore single-end reads are demultiplexed with OBITools
+  obimultiplex; Illumina paired-end reads are merged (obipairing), ACGT-filtered
+  (obigrep), then demultiplexed. Common downstream: Cutadapt primer trimming,
+  VSEARCH length/quality filtering, dereplication, UCHIME3 chimera removal, OTU
+  clustering at 99%, and global alignment against MIDORI2. Route here for water
+  eDNA biodiversity metabarcoding (not shotgun metagenomics).
+supported_input_types:
+  - fastq
+  - paired_end_fastq
+tools:
+  - name: obimultiplex
+    version: "OBITools4 (separate install)"
+    purpose: Demultiplexing (Nanopore single-end and merged Illumina).
+    url: https://github.com/metabarcoding/obitools4
+  - name: obipairing
+    version: "OBITools4"
+    purpose: Merge Illumina paired-end reads.
+    url: https://github.com/metabarcoding/obitools4
+  - name: obigrep
+    version: "OBITools4"
+    purpose: Filter for ACGT-only alignment-mode reads.
+    url: https://github.com/metabarcoding/obitools4
+  - name: cutadapt
+    version: ">=4.4"
+    purpose: Primer-pair trimming.
+    url: https://github.com/marcelm/cutadapt
+  - name: vsearch
+    version: ">=2.25.0"
+    purpose: Filtering, dereplication, chimera removal, OTU clustering, taxonomy.
+    url: https://github.com/torognes/vsearch
+required_databases:
+  - name: MIDORI2 reference
+    note: Mitochondrial reference for taxonomic assignment (downloaded separately).
+parameters:
+  - name: input_fastq
+    required: true
+    description: Nanopore single-end amplicon FASTQ (12S or 16S).
+  - name: dmx_tsv
+    required: true
+    description: Demultiplexing reference table (zambia_12_ngs_dmx_final.tsv / zambia_16_ngs_dmx_final.tsv).
+  - name: demux_out
+    required: true
+    description: Demultiplexed reads output (.fastq.gz).
+  - name: unknown_out
+    required: true
+    description: Unassigned reads output (.fastq.gz).
+  - name: forward_reads
+    required: false
+    description: Illumina forward reads (.fq.gz) for the paired-end entry.
+  - name: reverse_reads
+    required: false
+    description: Illumina reverse reads (.fq.gz) for the paired-end entry.
+  - name: merged_fastq
+    required: false
+    description: Merged Illumina reads output.
+  - name: acgt_fastq
+    required: false
+    description: ACGT-filtered merged reads.
+  - name: forward_primer
+    required: true
+    description: Forward primer sequence for cutadapt -g.
+  - name: reverse_primer
+    required: true
+    description: Reverse primer sequence for cutadapt -a.
+  - name: trimmed_fastq
+    required: true
+    description: Primer-trimmed reads.
+  - name: filtered_fasta
+    required: true
+    description: VSEARCH quality-filtered FASTA.
+  - name: derep_fasta
+    required: true
+    description: Dereplicated FASTA.
+  - name: nochimera_fasta
+    required: true
+    description: Chimera-removed FASTA.
+  - name: otus_fasta
+    required: true
+    description: OTU centroids FASTA.
+  - name: midori_fasta
+    required: true
+    description: MIDORI2 reference FASTA (for makeudb).
+  - name: midori_udb
+    required: true
+    description: MIDORI2 UDB database output.
+  - name: results_tsv
+    required: true
+    description: Global alignment taxonomy results (BLAST6).
+  - name: threads
+    required: false
+    default: 32
+    description: VSEARCH/Cutadapt threads (verbatim from MANUAL_EXECUTION_GUIDE.md).
+pre_hooks:
+  - "preflight.check_file_exists(input_fastq)"
+  - "preflight.check_file_exists(dmx_tsv)"
+  - "preflight.check_command_available('vsearch')"
+  - "preflight.check_command_available('cutadapt')"
+  - "preflight.check_command_available('obimultiplex')"
+command_templates:
+  - id: demux_nanopore
+    description: Demultiplex Nanopore single-end amplicon reads.
+    template: |-
+      obimultiplex {input_fastq} -t {dmx_tsv} -o {demux_out} -u {unknown_out} -e 2 --fastq-output --compress --output-OBI-header --max-cpu 1 --no-order
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: illumina_pair
+    description: Merge Illumina paired-end reads (paired-end entry).
+    template: |-
+      obipairing --max-cpu 8 --compress --min-identity 0.90 --min-overlap 20 --forward-reads {forward_reads} --reverse-reads {reverse_reads} --out {merged_fastq}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: illumina_acgt_filter
+    description: Keep ACGT-only alignment-mode merged reads.
+    template: |-
+      obigrep --predicate 'annotations.mode == "alignment"' --max-cpu 8 --compress --out {acgt_fastq} {merged_fastq}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: illumina_demux
+    description: Demultiplex merged Illumina reads.
+    template: |-
+      obimultiplex {acgt_fastq} -t {dmx_tsv} -o {demux_out} -u {unknown_out} -e 2 --fastq-output --compress --max-cpu 8 --no-order
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: trim_primers
+    description: Trim the primer pair (shared downstream).
+    template: |-
+      cutadapt -g {forward_primer} -a {reverse_primer} --revcomp --error-rate 0.1 --cores {threads} -o {trimmed_fastq} {demux_out}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: quality_filter
+    description: Length and quality filter (80-150 bp, maxEE 1).
+    template: |-
+      vsearch --fastq_filter {trimmed_fastq} --fastq_minlen 80 --fastq_maxlen 150 --fastq_maxns 0 --fastq_maxee 1 --fastq_qmax 64 --fastaout {filtered_fasta} --fasta_width 0 --threads {threads}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: dereplicate
+    description: Dereplicate, discard singletons.
+    template: |-
+      vsearch --derep_fulllength {filtered_fasta} --minuniquesize 2 --sizein --sizeout --fasta_width 0 --output {derep_fasta} --threads {threads}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: chimera_removal
+    description: Remove chimeras de novo (UCHIME3).
+    template: |-
+      vsearch --uchime3_denovo {derep_fasta} --nonchimeras {nochimera_fasta} --threads {threads}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: cluster_otus
+    description: Cluster OTUs at 99% identity.
+    template: |-
+      vsearch --cluster_size {nochimera_fasta} --id 0.99 --sizein --sizeout --centroids {otus_fasta} --threads {threads}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: make_midori_udb
+    description: Build the MIDORI2 UDB database.
+    template: |-
+      vsearch --makeudb_usearch {midori_fasta} --output {midori_udb}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: assign_taxonomy
+    description: Global alignment of OTUs against MIDORI2.
+    template: |-
+      vsearch --usearch_global {otus_fasta} --db {midori_udb} --strand both --id 0.90 --query_cov 0.80 --maxaccepts 1 --blast6out {results_tsv} --threads {threads}
+    source: MANUAL_EXECUTION_GUIDE.md
+post_hooks:
+  - "parsers.parse_generic_tsv(results_tsv)"
+validation_hooks:
+  - "validation.unexpected_empty_output(path=otus_fasta)"
+  - "validation.unexpected_empty_output(path=results_tsv)"
+outputs:
+  - name: otus.fa
+    type: fasta
+    description: OTU centroids at 99% identity.
+  - name: global_alignment_results.tsv
+    type: blast6
+    description: MIDORI2 taxonomy assignments (>=90% identity, >=80% query coverage).
+caveats:
+  - LLM outputs are suggestions, not biological, clinical, regulatory, or diagnostic conclusions.
+  - Best fit for water eDNA metabarcoding, not shotgun metagenomics; the repo documents no raw POD5/FAST5 basecalling branch for this workflow.
+  - The published demultiplexing tables (data/zambia_12_ngs_dmx_final.tsv, data/zambia_16_ngs_dmx_final.tsv) reproduce the study's exact tag/primer parameters.
+failure_modes:
+  - symptom: Most reads land in the unknown output.
+    cause: Wrong demultiplexing table or too-strict -e mismatch tolerance.
+    mitigation: Confirm the correct 12S vs 16S table; OBITools -e 2 allows two mismatches.
+source_files:
+  - eDNA_Metabarcoding/README.md
+  - MANUAL_EXECUTION_GUIDE.md
+  - environment.yaml
+external_references:
+  - label: EPI2ME wf-16s
+    url: https://github.com/epi2me-labs/wf-16s
+    note: Upstream 16S/18S/ITS amplicon taxonomy. Comparison only.
+  - label: EPI2ME wf-amplicon
+    url: https://github.com/epi2me-labs/wf-amplicon
+    note: Upstream haploid amplicon analysis. Comparison only.
+external_reference_notes: >-
+  Upstream wf-16s/wf-amplicon classify amplicons via Minimap2/Kraken2 or Medaka
+  consensus; the local pipeline uses an OBITools + VSEARCH + MIDORI2 metabarcoding
+  workflow with explicit Nanopore and Illumina entry points. external_workflows.json
+  in this repo already maps eDNA routes to EPI2ME amplicon workflows for the
+  rationale pane. Upstream is comparison only; local commands remain source of truth.
+needs_review:
+  - "Forward/reverse primer sequences and the per-route tag tables are study-specific; supply the correct values. OBITools4 is installed separately (the conda obitools3 package is a different tool)."
