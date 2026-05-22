@@ -12,8 +12,8 @@ caveated report. Do not invent unsupported workflow behavior.
 1. Route the request to a single skill by matching the user's molecule type
    (DNA/RNA), sample type, and goal against each skill's `domain`, `description`,
    and `supported_input_types`. If nothing fits, say so; do not force a match.
-2. Load the skill with `hooks/command_builder.load_skill_yaml`.
-3. Run the skill's `pre_hooks` (functions in `hooks/preflight.py`) against the
+2. Load the skill with `core/hooks/command_builder.load_skill_yaml`.
+3. Run the skill's `pre_hooks` (functions in `core/hooks/preflight.py`) against the
    user's actual inputs, databases, and tools. Report any failures and stop before
    building commands that would fail.
 4. Validate parameters with `command_builder.validate_required_parameters`. If a
@@ -23,11 +23,14 @@ caveated report. Do not invent unsupported workflow behavior.
    built command strings to the user. Do not execute destructive commands without
    explicit confirmation; the hooks build commands, they do not run them.
 6. After the user runs a step (or provides outputs), parse results with the
-   declared `post_hooks` (functions in `hooks/parsers.py`).
-7. Run the declared `validation_hooks` (functions in `hooks/validation.py`) and
-   include every raised flag in the report, with its severity.
-8. Write an audit log with `hooks/audit.write_audit_log`, including the skill's
-   `source_files` and `external_references`.
+   declared `post_hooks` — generic parsers in `core/hooks/parsers.py`, tool-specific
+   parsers in `project/hooks/parsers_genomics.py`.
+7. Run the declared `validation_hooks` (`core/hooks/validation.py` and
+   `project/hooks/validation_genomics.py`) and include every raised flag in the
+   report, with its severity.
+8. Write an audit log with `core/hooks/audit.write_audit_log`, including the skill's
+   `source_files` and `external_references`, then distil the run into the memory
+   store with `audit.append_run_record('agent_skills/memory', ...)`.
 9. Produce a human-readable report: what was run, key parsed metrics, validation
    flags, and explicit caveats.
 
