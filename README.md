@@ -77,9 +77,10 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 ### 3. Food Safety
 
-#### [Listeria Adaptive Sampling Pipeline](./Food_Safety/Listeria-Adaptive-Sampling/README.md)
+#### [A metagenomic framework for rapid *Listeria monocytogenes* surveillance in food production environments](./Food_Safety/Listeria-Adaptive-Sampling/README.md)
 *High-resolution genomic analysis of Listeria monocytogenes from complex food safety samples using Oxford Nanopore Adaptive Sampling.*
-**First Author:** Tim Reska | **Corresponding Author:** Dr. Lara Urban
+**First Author:** Francis Muchaamba | **Corresponding Author:** Francis Muchaamba
+> **Publication:** [bioRxiv, 2026](https://www.biorxiv.org/content/10.64898/2026.04.23.720354v1)
 
 ---
 
