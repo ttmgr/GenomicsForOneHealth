@@ -1539,27 +1539,13 @@ document.addEventListener("keydown", (e) => {
 Promise.all([
   fetchJson("data/questions_v2.json"),
   fetchJson("data/recommendation_rules.json"),
-  fetchJson("data/route_mapping.json"),
-  fetchJson("data/pipelines.json"),
-  fetchJson("data/playbooks.json"),
-  fetchJson("data/examples.json"),
-  fetchJson("data/expert_rules.json"),
-  fetchJson("data/nanopore_profiles.json"),
-  fetchJson("data/external_workflows.json"),
-  fetchJson("data/matrix_profiles.json")
+  fetchJson("data/route_mapping.json")
 ])
-  .then(([questionSpec, recommendationRules, routeMapping, pipelines, playbooks, examples, expertRules, nanoporeProfiles, externalWorkflows, matrixProfiles]) => {
+  .then(([questionSpec, recommendationRules, routeMapping]) => {
     datasets = {
       questionSpec,
       recommendationRules,
-      routeMapping,
-      pipelines,
-      playbooks,
-      examples,
-      expertRules,
-      nanoporeProfiles,
-      externalWorkflows,
-      matrixProfiles
+      routeMapping
     };
 
     // Hydrate answers: URL share-link wins, then localStorage, then empty.

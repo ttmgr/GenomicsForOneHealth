@@ -1,4 +1,4 @@
-# Listeria Adaptive Sampling Pipeline
+# A metagenomic framework for rapid *Listeria monocytogenes* surveillance in food production environments
 
 This repository contains a full analysis workflow for Oxford Nanopore sequencing data, focused on *Listeria* detection and characterization from mixed microbiome samples.
 
@@ -286,3 +286,10 @@ python scripts/plot_listeria_publication_v4.py --input outputs/listeria_final_ta
 
 ## Final Note
 If you only change one thing before running: make sure **every placeholder path** is replaced with real paths for your system. Most failed runs come from path mismatches!
+
+---
+
+## Citation
+If you use this pipeline, please cite:
+
+> Muchaamba F, Reska T, Biggel M, Locken KM, Weilguny L, Corti S, Kelbert L, Roger S, Urban L. *A metagenomic framework for rapid Listeria monocytogenes surveillance in food production environments.* [bioRxiv, 2026](https://www.biorxiv.org/content/10.64898/2026.04.23.720354v1). DOI: [10.64898/2026.04.23.720354](https://doi.org/10.64898/2026.04.23.720354)

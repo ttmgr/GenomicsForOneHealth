@@ -77,9 +77,10 @@ This repository currently hosts 10 distinct, yet complementary, analytical pipel
 
 ### 3. Food Safety
 
-#### [Listeria Adaptive Sampling Pipeline](./Food_Safety/Listeria-Adaptive-Sampling/README.md)
+#### [A metagenomic framework for rapid *Listeria monocytogenes* surveillance in food production environments](./Food_Safety/Listeria-Adaptive-Sampling/README.md)
 *High-resolution genomic analysis of Listeria monocytogenes from complex food safety samples using Oxford Nanopore Adaptive Sampling.*
-**First Author:** Tim Reska | **Corresponding Author:** Dr. Lara Urban
+**First Author:** Francis Muchaamba | **Corresponding Author:** Francis Muchaamba
+> **Publication:** [bioRxiv, 2026](https://www.biorxiv.org/content/10.64898/2026.04.23.720354v1)
 
 ---
 
@@ -241,6 +242,14 @@ Distributed under the MIT License. See `LICENSE` for more information.
 > For example commands, usage patterns, and links to Nanopore documentation for every tool in this repository, see **[PIPELINES.md](./PIPELINES.md)**.
 >
 > A compact [Nanopore guide](https://ttmgr.github.io/GenomicsForOneHealth/nanopore-guide.html) covers the reasoning behind kit, flow-cell, and basecalling recommendations.
+
+---
+
+## Experimental agent skills
+
+This repository now includes an experimental `agent_skills/` layer: a machine-readable framework for LLM-assisted workflow orchestration, parameter validation, result parsing, sanity checks, and audit logging. It is designed for inspectability and reproducibility across coding agents such as Codex, Claude Code, Cursor, Continue, and related tools. It does not treat LLMs as biological or clinical authorities.
+
+See [`agent_skills/README.md`](./agent_skills/README.md) to get started, and [`AGENTS.md`](./AGENTS.md) for agent operating rules.
 
 ---
 
