@@ -4,6 +4,12 @@ All notable changes to the GenomicsForOneHealth collection will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-05-22
+### Changed
+- Listeria Adaptive Sampling publication status updated from "in preparation" to the bioRxiv preprint (DOI 10.64898/2026.04.23.720354); corrected authorship (Francis Muchaamba first/corresponding author) across `README.md`, `Food_Safety/README.md`, `CITATION.cff`.
+### Added
+- `## Citation` section in `Food_Safety/Listeria-Adaptive-Sampling/README.md`; new reference entry in `CITATION.cff`.
+
 ## [1.1.0] - 2026-03-11
 ### Added
 - Root-level `environment.yaml`: unified conda/mamba environment covering all pipelines except Squiggle4Viability.

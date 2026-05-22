@@ -1,0 +1,278 @@
+name: listeria_adaptive_sampling
+display_name: Listeria Adaptive Sampling
+domain: Food Safety
+description: >-
+  High-resolution detection and characterization of Listeria monocytogenes from
+  complex food-safety samples sequenced with Oxford Nanopore Adaptive Sampling,
+  benchmarking Adaptive Sampling (AS) against Native (N) runs. From basecalled
+  BAM: convert to FASTQ, trim, length-filter, QC, classify with Kraken2, extract
+  Listeria target reads, assemble with three assemblers (metaMDBG, Myloasm,
+  metaFlye), polish with Dorado, detect AMR/virulence with AMRFinderPlus, extract
+  target contigs, and compile comparative overviews and an HTML report. SLURM
+  orchestrated (scripts/submit_pipeline.sh); also includes a 14-genome competitive
+  strain-mapping module (steps 80-83).
+supported_input_types:
+  - bam
+  - fastq
+tools:
+  - name: samtools
+    version: ">=1.19"
+    purpose: BAM to FASTQ (-@ 4), competitive mapping support.
+    url: https://github.com/samtools/samtools
+  - name: porechop
+    version: "0.2.4"
+    purpose: Adapter trimming.
+    url: https://github.com/rrwick/Porechop
+  - name: NanoFilt
+    version: "2.8.0"
+    purpose: Length filtering (reads < 100 bp removed).
+    url: https://github.com/wdecoster/nanofilt
+  - name: NanoStat
+    version: ">=1.6.0"
+    purpose: Per-sample QC metrics.
+    url: https://github.com/wdecoster/NanoStat
+  - name: kraken2
+    version: ">=2.1.3"
+    purpose: Read- and contig-level taxonomic classification.
+    url: https://github.com/DerrickWood/kraken2
+  - name: seqtk
+    version: ">=1.4"
+    purpose: Extract target reads by ID (subseq).
+    url: https://github.com/lh3/seqtk
+  - name: seqkit
+    version: ">=2.8.0"
+    purpose: FASTQ to FASTA conversion.
+    url: https://github.com/shenwei356/seqkit
+  - name: metaMDBG
+    version: ">=1.1.0 (manual build)"
+    purpose: Metagenomic target assembly.
+    url: https://github.com/GaetanBenoitDev/metaMDBG
+  - name: flye
+    version: ">=2.9.4"
+    purpose: Metagenomic target assembly (--meta).
+    url: https://github.com/mikolmogorov/Flye
+  - name: myloasm
+    version: "listed in project env; no documented command in repo"
+    purpose: Third assembler option (see needs_review).
+    url: ""
+  - name: dorado
+    version: "manual install"
+    purpose: Align reads to drafts and polish (--bacteria).
+    url: https://github.com/nanoporetech/dorado
+  - name: amrfinder
+    version: "ncbi-amrfinderplus >=3.12"
+    purpose: AMR/virulence detection (--plus).
+    url: https://github.com/ncbi/amr
+required_databases:
+  - name: Kraken2 database
+    note: Read- and contig-level classification. See INSTALL_AND_DATABASES.md.
+  - name: AMRFinderPlus database
+    note: Installed/updated via `amrfinder --update`.
+parameters:
+  - name: input_bam
+    required: true
+    description: Basecalled BAM input.
+  - name: reads_fastq
+    required: true
+    description: FASTQ produced from the BAM.
+  - name: trimmed_fastq
+    required: true
+    description: Porechop output.
+  - name: filtered_fastq
+    required: true
+    description: NanoFilt output.
+  - name: min_q
+    required: false
+    default: 9
+    description: NanoFilt minimum quality per MANUAL_EXECUTION_GUIDE (see needs_review; flag reference documents only -l 100).
+  - name: min_len
+    required: false
+    default: 100
+    description: NanoFilt minimum length.
+  - name: nanostat_out
+    required: true
+    description: NanoStat summary output.
+  - name: kraken2_db
+    required: true
+    description: Kraken2 database path.
+  - name: kraken_report
+    required: true
+    description: Kraken2 read report path.
+  - name: kraken_output
+    required: true
+    description: Kraken2 per-read classification output path.
+  - name: target_read_ids
+    required: true
+    description: File of read IDs for the target organism (derived from Kraken2 output).
+  - name: target_fastq
+    required: true
+    description: Extracted target reads FASTQ.
+  - name: assembly_out_dir
+    required: true
+    description: Assembler output directory.
+  - name: assembly_fasta
+    required: true
+    description: Draft assembly FASTA.
+  - name: aln_bam
+    required: true
+    description: Reads aligned to the draft (sorted BAM).
+  - name: polished_fasta
+    required: true
+    description: Dorado-polished assembly.
+  - name: contigs_fasta
+    required: true
+    description: Contigs FASTA for AMR screening.
+  - name: amr_out
+    required: true
+    description: AMRFinderPlus output table.
+  - name: threads
+    required: false
+    default: 8
+    description: Threads (manual guide uses 8 for kraken2/flye/amrfinder; 4 for samtools fastq).
+pre_hooks:
+  - "preflight.check_file_exists(input_bam)"
+  - "preflight.check_database_exists(kraken2_db)"
+  - "preflight.check_command_available('kraken2')"
+  - "preflight.check_command_available('seqtk')"
+  - "preflight.check_any_command_available(['metaMDBG', 'flye'])"
+  - "preflight.check_command_available('amrfinder')"
+command_templates:
+  - id: bam2fastq
+    description: Convert basecalled BAM to FASTQ.
+    template: |-
+      samtools fastq -@ 4 {input_bam} > {reads_fastq}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: porechop
+    description: Trim adapters.
+    template: |-
+      porechop -i {reads_fastq} -o {trimmed_fastq} -t {threads}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: nanofilt
+    description: Length/quality filter (reads < 100 bp removed).
+    template: |-
+      NanoFilt -q {min_q} -l {min_len} < {trimmed_fastq} > {filtered_fastq}
+    source: MANUAL_EXECUTION_GUIDE.md
+    needs_review: true
+  - id: nanostat
+    description: Per-sample QC metrics.
+    template: |-
+      NanoStat --fastq {filtered_fastq} > {nanostat_out}
+    source: Food_Safety/Listeria-Adaptive-Sampling/docs/02_pipeline_steps.md
+  - id: kraken2_reads
+    description: Whole-sample taxonomic classification.
+    template: |-
+      kraken2 --db {kraken2_db} --use-names --threads {threads} --report {kraken_report} --output {kraken_output} {filtered_fastq}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: extract_target_reads
+    description: Extract target (Listeria) reads by ID.
+    template: |-
+      seqtk subseq {filtered_fastq} {target_read_ids} > {target_fastq}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: assembly_metaflye
+    description: Metagenomic target assembly (metaFlye).
+    template: |-
+      flye --meta --nano-hq {target_fastq} --out-dir {assembly_out_dir} --threads {threads}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: assembly_metamdbg
+    description: Metagenomic target assembly (metaMDBG).
+    template: |-
+      metaMDBG asm --out-dir {assembly_out_dir} --in-ont {target_fastq} --threads {threads}
+    source: Food_Safety/Listeria-Adaptive-Sampling/docs/02_pipeline_steps.md
+  - id: dorado_align_for_polish
+    description: Align target reads to the draft assembly.
+    template: |-
+      dorado aligner {assembly_fasta} {target_fastq} | samtools sort -o {aln_bam} && samtools index {aln_bam}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: dorado_polish
+    description: Polish the draft with Dorado (bacterial model).
+    template: |-
+      dorado polish --bacteria {aln_bam} {assembly_fasta} > {polished_fasta}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: seqkit_fq2fa
+    description: Convert reads FASTQ to FASTA for read-level AMR screening.
+    template: |-
+      seqkit fq2fa {filtered_fastq} -o {contigs_fasta}
+    source: Food_Safety/Listeria-Adaptive-Sampling/docs/02_pipeline_steps.md
+  - id: amrfinder
+    description: AMR/virulence detection on reads or contigs.
+    template: |-
+      amrfinder --plus -n {contigs_fasta} --threads {threads} > {amr_out}
+    source: MANUAL_EXECUTION_GUIDE.md
+  - id: kraken2_contigs
+    description: Taxonomic classification of assembled contigs.
+    template: |-
+      kraken2 --db {kraken2_db} --use-names --threads {threads} --report {kraken_report} --output {kraken_output} {polished_fasta}
+    source: Food_Safety/Listeria-Adaptive-Sampling/docs/02_pipeline_steps.md
+post_hooks:
+  - "parsers.parse_nanostat(nanostat_out)"
+  - "parsers.parse_kraken2_report(kraken_report)"
+  - "parsers.parse_amrfinder_table(amr_out)"
+validation_hooks:
+  - "validation.low_read_yield(n_reads=n_reads, total_bases=total_bases)"
+  - "validation.low_classification_rate(classified_percent)"
+  - "validation.missing_amr_hits(n_hits)"
+outputs:
+  - name: read_metrics_summary.csv
+    type: csv
+    description: Compiled read and target summary tables (step 7).
+  - name: listeria target reads/contigs
+    type: fasta/fastq
+    description: Extracted Listeria reads and contigs.
+  - name: amrfinder tables
+    type: tsv
+    description: AMR/virulence calls on reads and per-assembler contigs.
+  - name: HTML pipeline report
+    type: html
+    description: Comprehensive AS-vs-N comparison report (step 17).
+  - name: strain proportion CSVs
+    type: csv
+    description: 14-genome competitive strain-mapping summaries (steps 80-83).
+caveats:
+  - LLM outputs are suggestions, not biological, clinical, regulatory, or diagnostic conclusions.
+  - Dedicated to Listeria target recovery and AS-vs-Native benchmarking, not a general food-microbiome workflow.
+  - The orchestrator (submit_pipeline.sh) is SLURM-oriented and sources scripts/pipeline.conf for paths; replace every placeholder path before running.
+  - The target organism is configurable (docs/04_adapting_pipeline.md) by changing the extraction regex.
+failure_modes:
+  - symptom: Missing Kraken DB error.
+    cause: KRAKEN2_DB path not set/downloaded.
+    mitigation: Set the database path in pipeline.conf / scripts and verify with preflight.check_database_exists.
+  - symptom: No target reads extracted.
+    cause: Target absent or Kraken2 classification produced no matching read IDs.
+    mitigation: Inspect the Kraken2 report; confirm the target regex matches the intended taxon.
+source_files:
+  - Food_Safety/Listeria-Adaptive-Sampling/README.md
+  - Food_Safety/Listeria-Adaptive-Sampling/docs/01_installation.md
+  - Food_Safety/Listeria-Adaptive-Sampling/docs/02_pipeline_steps.md
+  - Food_Safety/Listeria-Adaptive-Sampling/docs/03_execution_guide.md
+  - Food_Safety/Listeria-Adaptive-Sampling/docs/04_adapting_pipeline.md
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/submit_pipeline.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/01_samtools_bam2fastq.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/02_porechop.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/03_nanofilt.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/04_nanostat.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/05_kraken2.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/06_listeria_extract.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/08_metamdbg.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/09_metaflye.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/09b_dorado_polish.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/11_amrfinderplus.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/13_kraken2_contigs.sh
+  - Food_Safety/Listeria-Adaptive-Sampling/scripts/14_listeria_contigs.sh
+  - MANUAL_EXECUTION_GUIDE.md
+  - environment.yaml
+external_references:
+  - label: EPI2ME wf-metagenomics
+    url: https://github.com/epi2me-labs/wf-metagenomics
+    note: Upstream Kraken2/Minimap2 metagenomic classification + AMR scanning. Comparison only.
+  - label: EPI2ME wf-bacterial-genomes
+    url: https://github.com/epi2me-labs/wf-bacterial-genomes
+    note: Upstream isolate assembly + AMR for the recovered-target arm. Comparison only.
+external_reference_notes: >-
+  No upstream EPI2ME workflow targets adaptive-sampling-vs-native benchmarking or
+  three-assembler comparison; this is repository-specific. Upstream metagenomics/
+  bacterial-genomes workflows are referenced only for the classification and
+  recovered-target AMR steps.
+needs_review:
+  - "NanoFilt: docs/02_pipeline_steps.md documents only `-l 100` (length filter), while MANUAL_EXECUTION_GUIDE.md uses `-q 9 -l 100`; the template includes -q as a parameter defaulting to 9 - confirm whether quality filtering is applied."
+  - "Myloasm (08b_myloasm.sh) is listed as an assembler in the project env and pipeline map but has no documented command line in the inspected sources; add a command template only after reading 08b_myloasm.sh."
+  - "submit_pipeline.sh sources scripts/pipeline.conf (not present in the inspected listing) for WORK_DIR, ROUNDS, BAM_BASE_DIR, SAMPLE_SHEET_DIR, KRAKEN2_DB; these must be provided."

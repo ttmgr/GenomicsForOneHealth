@@ -111,24 +111,6 @@ mamba create -n vamb -c conda-forge -c bioconda vamb
 conda activate vamb
 # or:
 # pip install vamb
-
-# (Optional for abundance estimation) Install strobealign for --aemb:
-mamba install -n vamb -c bioconda strobealign
-```
-
-You're right, let me correct the VAMB section to use minimap2 for abundance calculation instead of strobealign:
-
-## 2) VAMB
-
-Concept. Variational autoencoder integrating k-mer composition and multi-sample coverage; strong performance on cohort data.
-
-### 2.1 Installation
-
-```bash
-mamba create -n vamb -c conda-forge -c bioconda vamb
-conda activate vamb
-# or:
-# pip install vamb
 ```
 
 ### 2.2 Inputs and run
@@ -160,19 +142,7 @@ vamb bin default \
   -p 16
 ```
 
-```bash
-# 5) VAMB (using minimap2-generated BAMs)
-python concatenate.py --keepnames contigs_catalogue.fna.gz flye_out/assembly.fasta
-minimap2 -t 32 -ax map-ont contigs_catalogue.fna.gz reads_filtered.fastq | samtools sort -o sample.bam
-samtools index sample.bam
-vamb bin default \
-  --outdir vambout \
-  --fasta contigs_catalogue.fna.gz \
-  --bamfiles sample.bam \
-  --minfasta 200000 -m 2000 -p 16
-```
-
-Key parameters remain the same: `--minfasta` (minimum total bin size to output), `-m` (minimum contig length), `-p` (threads), `--cuda` (use GPU), `--seed` (reproducibility).
+Key parameters. `--minfasta` (minimum total bin size to output), `-m` (minimum contig length), `-p` (threads), `--cuda` (use GPU), `--seed` (reproducibility).
 
 ⸻
 

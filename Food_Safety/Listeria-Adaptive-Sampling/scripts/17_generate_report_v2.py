@@ -1328,7 +1328,7 @@ def build_report(df_reads_r, df_listeria_r, df_amr_reads_r, df_amr_contigs_r,
     # ================================================================
     html_footer = f"""
 <div class="footer">
-  Raw data processed by Tim Thilo Maria Reska's Pipeline v1.0.<br>
+  Raw data processed by the Listeria Adaptive Sampling pipeline v1.0.<br>
   Report generated via customized Python engine.
 </div>
 

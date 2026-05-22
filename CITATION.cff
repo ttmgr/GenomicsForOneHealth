@@ -141,3 +141,30 @@ references:
     journal: "Virus Evolution"
     year: 2024
     doi: 10.1093/ve/veaf010
+
+  - type: article
+    title: >
+      A metagenomic framework for rapid Listeria monocytogenes surveillance in
+      food production environments
+    authors:
+      - family-names: Muchaamba
+        given-names: Francis
+      - family-names: Reska
+        given-names: Tim
+      - family-names: Biggel
+        given-names: "M."
+      - family-names: Locken
+        given-names: "K. M."
+      - family-names: Weilguny
+        given-names: "L."
+      - family-names: Corti
+        given-names: "S."
+      - family-names: Kelbert
+        given-names: "L."
+      - family-names: Roger
+        given-names: "S."
+      - family-names: Urban
+        given-names: Lara
+    journal: "bioRxiv"
+    year: 2026
+    doi: 10.64898/2026.04.23.720354
