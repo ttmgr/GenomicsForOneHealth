@@ -426,17 +426,12 @@
       "length_quality_filtering": "NanoFilt length filtering removes reads below 100 bp; the workflow also compiles yield and read-length summaries.",
       "additional_preprocessing": "Run Kraken2 before Listeria extraction, then compare AS versus native branches in the report."
     },
-    "execution_model": "Script-based workflow oriented to SLURM, with a local wrapper and detailed supporting docs in the group repo plus a concise personal overview in Tim_Reska.",
+    "execution_model": "Script-based workflow oriented to SLURM, with a local wrapper and detailed supporting docs in the group repo.",
     "primary_docs": [
       {
         "label": "Group pipeline README",
         "url": "https://github.com/ttmgr/GenomicsForOneHealth/tree/main/Food_Safety/Listeria-Adaptive-Sampling",
         "url_label": "Food_Safety/Listeria-Adaptive-Sampling"
-      },
-      {
-        "label": "Curated personal overview",
-        "url": "https://github.com/ttmgr/Tim_Reska/tree/main/pipelines/listeria-adaptive-sampling",
-        "url_label": "Tim_Reska/pipelines/listeria-adaptive-sampling"
       }
     ],
     "setup_docs": [
