@@ -20,14 +20,29 @@ parameters, `command_templates`, and declared hooks. The authoritative descripti
 _Avoid_: "recipe", "playbook" (a Playbook is an Advisor concept, see below).
 
 **Hook**:
-A Python function in `agent_skills/hooks/` that runs around a Skill: preflight (pre-run
-checks), command_builder (parameter validation + command assembly), parsers (post-run output
-parsing), validation, audit.
+A Python function that runs around a Skill: preflight (pre-run checks), command_builder
+(parameter validation + command assembly), parsers (post-run output parsing), validation,
+audit. Generic, project-agnostic hooks live in `agent_skills/core/hooks/`; tool-specific
+hooks live in `agent_skills/project/hooks/`. `agent_skills/hooks/` is a backward-compatible
+facade re-exporting both (see ADR-0004).
 _Avoid_: "plugin", "middleware".
 
+**Harness core / project layer / adapter**:
+`agent_skills/core/` is the project-agnostic engine (hooks, schema, prompts, memory spec,
+offline runner); `agent_skills/project/` is the GenomicsForOneHealth layer (tool parsers,
+threshold validators, routing prompt, benchmark tasks); `agent_skills/adapters/claude_code/`
+is the Claude Code adapter. The core never imports the project layer.
+_Avoid_: calling the whole thing just "the skill pack" — the harness is reusable; the skills are the content.
+
+**Memory store**:
+The durable memory at `agent_skills/memory/` (format spec `agent_skills/core/memory/README.md`):
+one fact per file with frontmatter, a `MEMORY.md` index, types decision/run/preference/reference.
+_Avoid_: conflating it with the JSON **audit log** — the audit log is the full machine record; a memory file is the human-scannable distillation.
+
 **Output parser**:
-A Hook (in `hooks/parsers.py`) that turns a tool's output file into a dict. One per format:
-**Kraken2 report**, **NanoStat summary**, **AMRFinderPlus table**, **VCF**, **generic TSV**.
+A Hook that turns a tool's output file into a dict. Generic ones (in `core/hooks/parsers.py`):
+**VCF**, **generic TSV**. Tool-specific ones (in `project/hooks/parsers_genomics.py`):
+**Kraken2 report**, **NanoStat summary**, **AMRFinderPlus table**.
 _Avoid_: "loader", "reader" used interchangeably — a parser returns structured data, never raises.
 
 ### The Advisor (`docs/`)

@@ -1,36 +1,61 @@
-# agent_skills: a coding-agent skill pack for One Health genomics
+# agent_skills: a portable coding-agent harness (with a One Health skill layer)
 
-This directory is a machine-readable, inspectable layer over the
-GenomicsForOneHealth pipeline collection. It lets LLM-assisted coding agents
-(Codex, Claude Code, Cursor, Continue, and similar tools) route a sequencing
-project to the right documented workflow, validate inputs, build commands only
-from declared templates, parse outputs, run sanity checks, and write audit logs,
-without inventing commands, parameters, tools, or databases.
+This directory is a machine-readable, inspectable harness for driving documented
+workflows with LLM-assisted coding agents (Codex, Claude Code, Cursor, Continue,
+and similar tools). An agent uses it to route a project to the right documented
+workflow, validate inputs, build commands only from declared templates, parse
+outputs, run sanity checks, and write audit logs and memory, **without inventing
+commands, parameters, tools, or databases**.
+
+It is built as a portable **harness** with a thin project layer on top, so the
+engine can be lifted into any repository:
+
+- a project-agnostic **core** (the engine, instruction contract, schema, memory
+  format, and offline checks);
+- a **Claude Code adapter** (the only Claude-specific part);
+- a **project layer** that supplies this repository's tool-specific hooks, routing
+  prompt, and benchmark tasks;
+- the **skills** — 13 GenomicsForOneHealth YAML workflow specs — as the *optional*
+  project content the harness drives.
 
 It is not a chatbot demo. It is a workflow-orchestration layer designed for
 inspectability and reproducibility, and it is useful even with no LLM runtime: the
-hooks and the eval runner are plain Python you can call directly.
-
-The local repository is the source of truth. Current public Oxford Nanopore and
-EPI2ME references are used only for comparison and completeness (see
-`references/external_nanopore_epi2me_inventory.md`); they never override the local
-workflows.
+hooks and the eval runner are plain Python you can call directly. The local
+repository is the source of truth; external references are used only for comparison
+and never override the local workflows.
 
 ## Layout
 
 ```
 agent_skills/
   README.md                  this file
-  AGENTS.md                  agent-agnostic operating rules
-  CLAUDE.md                  Claude Code operating rules
-  schemas/skill.schema.json  JSON Schema for a skill
-  skills/*.yaml              one skill per documented workflow (13)
-  hooks/                     preflight, command_builder, parsers, validation, audit
-  prompts/                   reusable prompts (use / extract / validate)
+  core/                      ── project-agnostic harness ──
+    AGENTS.md                agent-agnostic operating contract
+    schemas/skill.schema.json  JSON Schema for a skill
+    hooks/                   preflight, command_builder, audit, generic parsers/validation
+    prompts/                 extract_new_skill.md, validate_skill.md
+    memory/README.md         the memory format spec
+    eval/run_harness_checks.py  content-free offline runner
+  adapters/claude_code/      ── Claude Code adapter ──
+    CLAUDE.md                Claude Code operating rules
+    README.md                how to install the harness in another repo
+    settings.hooks.sample.json  sample .claude/settings.json wiring
+  project/                   ── GenomicsForOneHealth layer ──
+    hooks/                   parsers_genomics.py, validation_genomics.py
+    prompts/use_skill_pack.md  project routing
+    eval/                    benchmark_tasks.yaml, fixtures.py
+  skills/*.yaml              13 skill specs (optional project content)
   references/                upstream Nanopore + EPI2ME comparison inventory
   examples/                  five worked examples
-  evals/                     benchmark_tasks.yaml + run_benchmarks.py
+  memory/                    live memory store for this repo (MEMORY.md + facts)
+  hooks/                     backward-compatible facade re-exporting core + project
+  evals/run_benchmarks.py    project wiring for the offline runner
 ```
+
+The `hooks/` facade and `evals/run_benchmarks.py` are kept so existing imports
+(`from agent_skills.hooks import command_builder`) and the published docs links
+keep working unchanged. New code should import from `agent_skills.core.hooks`
+(portable) or `agent_skills.project.hooks` (project-specific).
 
 ## Skills
 
@@ -57,16 +82,32 @@ command must cite a source.
 Standard library only, except `command_builder.load_skill_yaml`, which uses PyYAML
 (already a project dependency; see the root `environment.yaml`).
 
+Generic engine (`core/hooks/`, portable):
+
 - `preflight.py`: input/file/dir/database/command existence checks.
 - `command_builder.py`: load a skill, validate parameters, build (never execute)
   commands. It refuses undeclared parameters, reports missing required parameters,
   and shell-quotes values to prevent injection.
-- `parsers.py`: NanoStat, Kraken2 report, AMRFinderPlus, VCF, and generic TSV.
-- `validation.py`: low yield, low N50, low classification rate, contamination,
-  missing AMR hits, empty output, missing database, missing command. Default
-  thresholds come from `Air_Metagenomics/config/config.yaml`.
-- `audit.py`: JSON audit log with timestamp, inputs, parameters, commands, results,
-  flags, source files, and external references.
+- `parsers.py`: VCF and generic TSV.
+- `validation.py`: low classification rate (heuristic), empty output, missing
+  database, missing command.
+- `audit.py`: JSON audit log, plus `append_run_record` to distil a run into the
+  memory store.
+
+Project layer (`project/hooks/`, GenomicsForOneHealth-specific):
+
+- `parsers_genomics.py`: NanoStat, Kraken2 report, AMRFinderPlus.
+- `validation_genomics.py`: low yield, low N50, contamination, missing AMR hits.
+  Default thresholds come from `Air_Metagenomics/config/config.yaml`.
+
+## Memory
+
+Durable memory persists what code and git history don't: architectural decisions,
+distilled agent-run summaries, and operator preferences. The format is specified in
+`core/memory/README.md` (one fact per file, frontmatter, a `MEMORY.md` index,
+`[[wikilinks]]`), mirroring the Claude Code memory convention. The live store for
+this repo is `agent_skills/memory/`; `audit.append_run_record` writes `type: run`
+entries automatically.
 
 ## Quick start
 
@@ -79,7 +120,8 @@ import json; print(json.dumps(cb.load_skill_yaml('agent_skills/skills/cre_plasmi
 python agent_skills/evals/run_benchmarks.py
 ```
 
-To drive a workflow with an agent, follow `prompts/use_skill_pack.md`.
+To drive a workflow with an agent, follow `project/prompts/use_skill_pack.md`. To
+lift the harness into another repository, see `adapters/claude_code/README.md`.
 
 ## Caveats
 

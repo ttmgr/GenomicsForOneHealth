@@ -13,6 +13,10 @@ Before editing workflows, commands, or pipeline documentation:
 6. Mark ambiguous behavior as `needs_review`.
 7. Keep changes small, explicit, and source-backed.
 
-Coding-agent operating rules are in `agent_skills/AGENTS.md` (agent-agnostic) and
-`agent_skills/CLAUDE.md` (Claude Code). Treat all LLM outputs as suggestions, not
-biological, clinical, regulatory, or diagnostic conclusions.
+`agent_skills/` is a portable harness (agnostic `core/` + a Claude Code adapter)
+over a thin project layer; the 13 skill YAMLs are optional project content (see
+ADR-0004). Coding-agent operating rules are in `agent_skills/core/AGENTS.md`
+(agent-agnostic) and `agent_skills/adapters/claude_code/CLAUDE.md` (Claude Code);
+project routing is in `agent_skills/project/prompts/use_skill_pack.md`. Treat all
+LLM outputs as suggestions, not biological, clinical, regulatory, or diagnostic
+conclusions.

@@ -14,7 +14,7 @@ scripts, or a manual-execution section) into a new YAML skill in
    - input and output file types;
    - required databases and reference resources;
    - caveats, limitations, and troubleshooting notes.
-3. Create a YAML file that conforms to `agent_skills/schemas/skill.schema.json`.
+3. Create a YAML file that conforms to `agent_skills/core/schemas/skill.schema.json`.
    Fill every required field. Use `{placeholder}` only for values that vary per
    run, and declare each placeholder under `parameters` (mark `required` and give a
    documented `default` only when the source documents one). Escape any literal
@@ -28,9 +28,10 @@ scripts, or a manual-execution section) into a new YAML skill in
    command is not documented at all, do not invent it: add a TODO note in
    `needs_review` with the source context instead.
 7. Reference the relevant `pre_hooks`, `post_hooks`, and `validation_hooks` from the
-   `hooks/` package; add a new hook only if an existing one does not fit.
+   hooks layer — generic ones in `core/hooks/`, project tool-specific ones in
+   `project/hooks/`; add a new hook only if an existing one does not fit.
 8. Update the schema if the new skill needs a field the schema lacks.
-9. Add an eval task to `agent_skills/evals/benchmark_tasks.yaml` for the new skill
+9. Add an eval task to `agent_skills/project/eval/benchmark_tasks.yaml` for the new skill
    (at least: routing, missing-input detection, command building).
 10. Add a worked example under `agent_skills/examples/` if the workflow is a major
     one.

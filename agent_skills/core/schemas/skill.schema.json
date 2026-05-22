@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/ttmgr/GenomicsForOneHealth/agent_skills/schemas/skill.schema.json",
-  "title": "GenomicsForOneHealth agent skill",
-  "description": "Schema for a single machine-readable workflow skill in agent_skills/skills/. A skill is the agent-facing, source-traceable description of one documented One Health Nanopore workflow. It must be derived from the local repository; commands, tools, parameters, and databases are never invented. This schema documents the contract and supports optional structural validation; the Python hooks perform their own lightweight checks and do not require a JSON Schema validator.",
+  "$id": "https://github.com/ttmgr/GenomicsForOneHealth/agent_skills/core/schemas/skill.schema.json",
+  "title": "Agent harness skill",
+  "description": "Schema for a single machine-readable workflow skill (in this repository, agent_skills/skills/). A skill is the agent-facing, source-traceable description of one documented workflow. It must be derived from the local repository; commands, tools, parameters, and databases are never invented. This schema documents the contract and supports optional structural validation; the Python hooks perform their own lightweight checks and do not require a JSON Schema validator.",
   "type": "object",
   "required": [
     "name",
@@ -38,7 +38,7 @@
     },
     "domain": {
       "type": "string",
-      "description": "One Health domain, e.g. 'Environmental Metagenomics', 'Clinical Isolates & Plasmid Profiling'."
+      "description": "The domain/category this workflow belongs to. In this repository, a One Health domain, e.g. 'Environmental Metagenomics', 'Clinical Isolates & Plasmid Profiling'."
     },
     "description": {
       "type": "string",
@@ -166,7 +166,7 @@
     },
     "external_references": {
       "type": "array",
-      "description": "Upstream Nanopore/EPI2ME URLs used only for comparison and completeness.",
+      "description": "Upstream/external URLs used only for comparison and completeness.",
       "items": {
         "type": "object",
         "properties": {

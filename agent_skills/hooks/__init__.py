@@ -1,20 +1,19 @@
-"""Lightweight, inspectable hooks for the GenomicsForOneHealth agent skill pack.
+"""Backward-compatible facade for the harness hooks.
 
-These modules let a coding agent validate inputs, build (never execute) commands,
-parse documented tool outputs, run sanity checks, and write audit logs for the
-One Health Nanopore workflows described in agent_skills/skills/*.yaml.
+The hooks were split into a portable, project-agnostic engine and a
+GenomicsForOneHealth project layer:
+  - agent_skills/core/hooks/     project-agnostic engine
+  - agent_skills/project/hooks/  tool-specific parsers and threshold validators
 
-Design rules:
-  - Standard library only, except command_builder.load_skill_yaml which uses
-    PyYAML (already a project dependency; see environment.yaml).
-  - Functions return plain dictionaries with explicit, documented keys.
-  - Nothing here executes a workflow command or mutates input data.
+This package re-exports both so existing imports keep working unchanged:
+    from agent_skills.hooks import preflight, command_builder, parsers, validation, audit
 
-The local repository is the source of truth. These hooks never invent commands,
-parameters, tools, or databases; they only operate on what a skill declares.
+New code should import from agent_skills.core.hooks (portable) or
+agent_skills.project.hooks (project-specific) directly.
 """
 
-from . import preflight, command_builder, parsers, validation, audit
+from agent_skills.core.hooks import preflight, command_builder, audit
+from . import parsers, validation
 
 __all__ = ["preflight", "command_builder", "parsers", "validation", "audit"]
-__version__ = "0.1.0"
+__version__ = "0.2.0"
