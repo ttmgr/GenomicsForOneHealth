@@ -1,13 +1,13 @@
 #!/bin/bash
 #SBATCH --job-name=abricate_array
-#SBATCH --output=/home/haicu/ttreska57/logs/abricate_%A_%a.out
-#SBATCH --error=/home/haicu/ttreska57/logs/abricate_%A_%a.err
+#SBATCH --output=logs/abricate_%A_%a.out
+#SBATCH --error=logs/abricate_%A_%a.err
 #SBATCH -p cpu_p
 #SBATCH -q cpu_normal
 #SBATCH --mem=100G
 #SBATCH -t 12:00:00
 #SBATCH --nice=10000
-#SBATCH --mail-user=timthilomaria.reska@helmholtz-munich.de
+# #SBATCH --mail-user=your.email@institution.edu
 #SBATCH --mail-type=ALL
 #SBATCH -c 15
 #SBATCH --array=0-16
@@ -19,7 +19,7 @@ echo "Date: $(date)"
 echo "Job ID: ${SLURM_JOB_ID:-NA}, Array Task: ${SLURM_ARRAY_TASK_ID:-NA}"
 echo "Working directory: $(pwd)"
 
-BASEDIR="/lustre/groups/hpc/urban_lab/projects/tim/plasmids_virulence"
+BASEDIR="${BASEDIR:?Set BASEDIR to your project root}"
 
 FASTAS=(
   wastewater_polished_nanomdbg/G1.fasta
