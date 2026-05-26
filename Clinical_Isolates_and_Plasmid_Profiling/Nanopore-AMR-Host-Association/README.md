@@ -297,6 +297,117 @@ python amr_host_association.py \
 
 ---
 
+## Plasmid profiling (steps 17–22)
+
+Steps 17–20 run as **independent SLURM job arrays** (one task per sample, `--array=0-N`). They all take the **polished assembly FASTA** from step 8 as input. Steps 21–22 integrate the per-tool outputs into a single contig-level analysis.
+
+> **Before running:** set `BASEDIR` to your project root, e.g. `export BASEDIR=/path/to/project`. All array scripts read `BASEDIR` and expect the FASTA array and output directories relative to it. Adjust the `FASTAS` array inside each script to match your samples.
+
+---
+
+### 17. ABRicate array (AMR, replicons, virulence)
+
+**Script:** `run_abricate_array.sh`
+**Input:** polished assembly FASTA (per sample)
+**Output:** `{SAMPLE}_card.tsv`, `{SAMPLE}_plasmidfinder.tsv`, `{SAMPLE}_vfdb.tsv`
+
+Screens each assembly against CARD, PlasmidFinder, and VFDB using ABRicate (`--minid 90 --mincov 80`).
+
+```bash
+export BASEDIR=/path/to/project
+sbatch run_abricate_array.sh
+```
+
+---
+
+### 18. MOB-typer array (plasmid mobility)
+
+**Script:** `run_mobtyper_array.sh`
+**Input:** polished assembly FASTA (per sample)
+**Output:** `{SAMPLE}_mob_typer.tsv`, `{SAMPLE}_mob_mge_report.tsv`
+
+Runs MOB-suite mob_typer with `--multi` (each contig treated as an independent plasmid candidate). Reports replicon type, relaxase, MPF, oriT, predicted mobility, and host-range.
+
+```bash
+export BASEDIR=/path/to/project
+sbatch run_mobtyper_array.sh
+```
+
+---
+
+### 19. IntegronFinder array (integron structures)
+
+**Script:** `run_integronfinder_array.sh`
+**Input:** polished assembly FASTA (per sample)
+**Output:** `integronfinder_results/{SAMPLE}/{SAMPLE}.integrons`, `{SAMPLE}.summary`
+
+Detects integron integrases (intI), attC recombination sites, and gene cassettes using HMMER + Infernal covariance models. Classifies as complete integron, CALIN, or In0.
+
+```bash
+export BASEDIR=/path/to/project
+sbatch run_integronfinder_array.sh
+```
+
+---
+
+### 20. ISEScan array (insertion sequences)
+
+**Script:** `run_isescan_array.sh`
+**Input:** polished assembly FASTA (per sample)
+**Output:** `isescan_results/{SAMPLE}/{SAMPLE}.fasta.tsv`
+
+Predicts insertion sequence (IS) elements via FragGeneScan ORF calling + HMM scan against IS family profiles. Substantially slower than the other tools on large metagenomes (`-t 48:00:00`).
+
+```bash
+export BASEDIR=/path/to/project
+sbatch run_isescan_array.sh
+```
+
+---
+
+### 21. Combine array inputs
+
+**Script:** `combine_array_inputs.py`
+**Input:** per-sample outputs from steps 17–20
+**Output:** namespaced, anchor-filtered inputs in `array_run/`
+
+Rewrites contig IDs as `{SAMPLE}__{contig}` to avoid cross-sample collisions. ABRicate + IntegronFinder hits define the anchor contig set; MOB-suite and ISEScan annotate anchors only (never expand the set). Configurable via environment variables:
+
+```bash
+export ABRICATE_DIR=$BASEDIR/abricate_results
+export INTEGRONFINDER_DIR=$BASEDIR/integronfinder_results
+export MOBSUITE_DIR=$BASEDIR/mobsuite_results
+export ISESCAN_DIR=$BASEDIR/isescan_results
+export FASTA_DIRS=$BASEDIR/assemblies
+export INTEGRATED_RUN_DIR=$BASEDIR/integrated_run/array_run
+
+python3 combine_array_inputs.py
+```
+
+---
+
+### 22. Integrated plasmid analysis
+
+**Script:** `analyze_plasmid_results.py`
+**Input:** combined outputs from step 21 (run from the `array_run/` directory)
+**Output:** `final_plasmid_contig_summary.tsv`, `final_plasmid_feature_long_table.tsv`, `high_priority_plasmid_contigs.tsv`
+
+Integrates per-tool master tables into a contig-level summary (one row per contig with all annotations), a feature-level long table (one row per gene hit), and a high-priority subset table (contigs carrying AMR or virulence genes).
+
+```bash
+cd $BASEDIR/integrated_run/array_run
+python3 ../analyze_plasmid_results.py
+```
+
+**Optional SLURM wrapper** (`cluster_combine_and_analyze.sh`) runs steps 21–22 as a single batch job:
+
+```bash
+export BASEDIR=/path/to/project
+sbatch cluster_combine_and_analyze.sh
+```
+
+---
+
 ## Final output tables
 
 ### AMR plasmid host association
