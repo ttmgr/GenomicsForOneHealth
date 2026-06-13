@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 6: Pull out reads classified as Listeria and summarize them.
 # Input: filtered FASTQ and Kraken2 read classification for each sample

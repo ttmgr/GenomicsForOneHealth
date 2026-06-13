@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 8b: Assemble filtered reads with Myloasm.
 # Input: processing/nanofilt/filtered_<sample>.fastq

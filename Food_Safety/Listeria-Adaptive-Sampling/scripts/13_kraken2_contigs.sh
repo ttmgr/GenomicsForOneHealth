@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 13: Classify assembled contigs with Kraken2.
 # Input: Flye-polished, metaMDBG, and Myloasm contigs

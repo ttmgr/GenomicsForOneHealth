@@ -5,6 +5,7 @@
 #SBATCH -q gpu_short
 #SBATCH --gres=gpu:1
 
+set -euo pipefail
 # Read command-line arguments for input directory and output file
 input_dir=$1
 output_fastq_file=$2

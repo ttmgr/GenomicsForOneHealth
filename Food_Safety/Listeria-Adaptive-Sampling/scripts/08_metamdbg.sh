@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 8: Assemble filtered reads with metaMDBG.
 # Input: processing/nanofilt/filtered_<sample>.fastq
