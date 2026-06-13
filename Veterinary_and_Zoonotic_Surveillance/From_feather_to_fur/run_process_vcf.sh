@@ -9,6 +9,7 @@
 #SBATCH --time=01:00:00
 #SBATCH --mem=4G
 
+set -euo pipefail
 # Load Python module if necessary
 module load python/3.x  # Load Python module depending on your cluster environment
 

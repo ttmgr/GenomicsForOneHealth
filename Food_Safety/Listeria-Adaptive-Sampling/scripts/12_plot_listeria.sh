@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Optional plot step: make quick Listeria read-count and base-count figures.
 # Input: processing/listeria/listeria_summary.tsv

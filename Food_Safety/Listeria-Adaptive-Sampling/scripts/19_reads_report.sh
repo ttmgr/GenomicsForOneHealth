@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 19: Build a fast reads-focused report before assembly-heavy steps finish.
 # Input: read metrics, Listeria read summary, and AMR read summary

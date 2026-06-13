@@ -3,6 +3,7 @@
 #SBATCH -q gpu
 #SBATCH --gres=gpu:1
 
+set -euo pipefail
 #you can prepare your reference with makeblastdb 
 #give reference_file without .fasta extension, blastn needs the indexed files
 

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 18: Summarize assembly quality metrics with seqkit stats.
 # Input: assembly FASTA files from Flye, metaMDBG, and Myloasm

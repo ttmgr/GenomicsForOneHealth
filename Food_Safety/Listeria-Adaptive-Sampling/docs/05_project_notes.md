@@ -7,9 +7,9 @@ Listeria Adaptive Sampling Pipeline — Oxford Nanopore sequencing for detecting
 vs Normal (N) sequencing across multiple extraction methods (Sponge, Cotton, Zymo)
 and two cohorts (Black, Blue).
 
-**Cluster**: HPC at Helmholtz Munich (`hpc-cluster`)
-**Project dir**: `/path/to/project/foodsafety`
-**Conda env**: `tim`
+**Cluster**: HPC (institution-specific)
+**Project dir**: set `WORK_DIR` in `scripts/pipeline.conf`
+**Conda env**: set `CONDA_ENV` in `scripts/pipeline.conf`
 **Rounds**: Round 1 (`listeria_1/`) and Round 2 (`listeria_2/`) — different biological samples, NOT re-sequencing
 
 ---
@@ -134,7 +134,7 @@ Files updated: `build_local_black_report.py`, `15_compile_listeria_overview.py`,
 
 ### Full run (all samples, all rounds)
 ```bash
-cd /path/to/project/foodsafety
+cd /path/to/your/project
 bash scripts/submit_pipeline.sh
 ```
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # Define the absolute path to the configuration file, with fallback
 CONFIG_FILE="${CONFIG_FILE:-dna_r10.4.1_e8.2_400bps_hac@v4.3.0}"

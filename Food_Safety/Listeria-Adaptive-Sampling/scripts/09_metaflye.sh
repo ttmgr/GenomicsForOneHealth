@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 9: Assemble with Flye, map reads back, then polish with Racon.
 # Input: processing/nanofilt/filtered_<sample>.fastq

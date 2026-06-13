@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Main launcher for the Listeria adaptive-sampling workflow.
 # What it does: submits all pipeline steps with dependencies and skips completed outputs.
@@ -19,7 +20,7 @@ FILELIST_PATH="${WORK_DIR}/filelist.txt"
 BARCODE_FILTER="$_BARCODE_FILTER"
 RUN_DORADO="$_RUN_DORADO"
 SKIP_FILELIST="$_SKIP_FILELIST"
-LOG_DIR="/home/YOUR_USERNAME/logs"
+LOG_DIR="${HOME}/logs"
 
 # Default SBATCH settings
 SBATCH_ARGS=(

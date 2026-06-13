@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 11: Screen reads and contigs for AMR/virulence markers with AMRFinderPlus.
 # Input: FASTA reads plus Flye, metaMDBG, and Myloasm assemblies

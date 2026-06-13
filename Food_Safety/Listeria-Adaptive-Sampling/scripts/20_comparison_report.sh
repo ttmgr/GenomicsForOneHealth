@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # -----------------------------------------------------------------------------
 # Step 20: Compare AS vs N results across the defined Black sample group.
 # Input: summary tables from steps 15, 16, and 18

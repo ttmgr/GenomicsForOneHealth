@@ -9,6 +9,7 @@
 #SBATCH --job-name=avian_influenza_variant_call
 #SBATCH -c 8
 
+set -euo pipefail
 # Define paths using positional parameters
 REFERENCE=$1        # Path to the reference genome
 READS=$2            # Path to the raw reads file

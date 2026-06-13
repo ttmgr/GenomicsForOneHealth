@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Iterate over barcode files numbered from 01 to 24
 for i in {01..24}

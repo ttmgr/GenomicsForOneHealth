@@ -6,6 +6,7 @@
 #SBATCH -q gpu_short
 #SBATCH --gres=gpu:1
 
+set -euo pipefail
 # Read command-line arguments
 input_dir=$1
 output_bam_file=$2
