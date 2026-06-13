@@ -35,4 +35,6 @@ This repository contains pipelines directly associated with publications from th
 
 ## Contact
 
-For questions beyond GitHub issues, please contact [Lara Urban](https://sites.google.com/view/urban-lab/home).
+For questions beyond GitHub issues, please contact the [Urban Lab](https://sites.google.com/view/urban-lab/home).
+
+Maintainers should see [HANDOVER.md](./HANDOVER.md) for pipeline ownership and maintenance responsibilities.

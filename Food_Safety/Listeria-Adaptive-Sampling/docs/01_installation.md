@@ -35,7 +35,7 @@ Then activate it:
 ```bash
 mamba activate listeria_as
 ```
-*(Note: If the scripts on your cluster specifically look for `conda activate tim`, you can either name your environment `tim` or update the `# Activate conda environment` section at the top of the `scripts/*.sh` files.)*
+*(Note: the pipeline scripts read the environment name from `CONDA_ENV` in `scripts/pipeline.conf` — set it to whatever you named your environment, e.g. `listeria_as`.)*
 
 ### Quick check that tools are available:
 ```bash
