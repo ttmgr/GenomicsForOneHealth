@@ -1,5 +1,10 @@
 # agent_skills is a portable harness (agnostic core + Claude Code adapter) over a thin project layer
 
+> **Update (2026-06-13):** The harness described here was extracted from this repository to its own
+> home at [ttmgr/Tim_Reska → nanopore_agentic_system](https://github.com/ttmgr/Tim_Reska/tree/main/nanopore_agentic_system).
+> This ADR is kept as the historical record of the layering decision; the `agent_skills/` paths
+> referenced below no longer exist in this repository.
+
 `agent_skills/` began as a project-specific skill pack: 13 GenomicsForOneHealth YAML
 workflow specs plus Python hooks and instruction files written in service of those
 YAMLs. The reusable value, though, is the *mechanism* — memory, hooks, and
@@ -44,4 +49,4 @@ preferences.
 - A future reviewer should add new portable code under `core/` and new
   GenomicsForOneHealth specifics under `project/`, not back into the `hooks/` facade.
 
-_Status: accepted._
+_Status: accepted; harness later extracted to its own repository — see the update note at the top (2026-06-13)._
