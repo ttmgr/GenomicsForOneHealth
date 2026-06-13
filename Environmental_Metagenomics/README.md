@@ -2,7 +2,7 @@
 
 This category covers nanopore metagenomics pipelines applied to environmental monitoring — characterizing microbial communities from air and water samples, detecting pathogens, antimicrobial resistance genes, and viruses in situ.
 
-**Contact:** Tim Reska (PhD Student) & Dr. Lara Urban
+**Contact:** For questions, [open a GitHub issue](https://github.com/ttmgr/GenomicsForOneHealth/issues) or reach the [Urban Lab](https://sites.google.com/view/urban-lab/home).
 
 > **Pipeline Selector:** If you need help deciding between Air Metagenomics and Wetland Health, start with the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/).
 

@@ -2,7 +2,7 @@
 
 This category covers nanopore-based pipelines for clinical genomic diagnostics — characterizing antimicrobial resistance (AMR), plasmid content, and resistance-host associations directly from sequencing data.
 
-**Contacts:** Ela Sauerborn (PhD Student), Harika Ürel (PhD Student) & Dr. Lara Urban
+**Contact:** For questions, [open a GitHub issue](https://github.com/ttmgr/GenomicsForOneHealth/issues) or reach the [Urban Lab](https://sites.google.com/view/urban-lab/home).
 
 > **Pipeline Selector:** Use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/) to distinguish isolate AMR profiling, plasmid clustering, and host-association workflows before diving into individual READMEs.
 

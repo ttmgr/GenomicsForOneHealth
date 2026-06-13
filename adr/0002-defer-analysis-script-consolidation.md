@@ -12,9 +12,7 @@ re-suggest it without this context.
   `21_kraken2_to_spreadsheets.py`; lazy `^(.*?)\s*\(taxid\s+\d+\)\s*$` stripping the suffix in
   `22_kraken2_classification_csv.py`; and `\(taxid\s+(\d+)\)` plus a strip-all-parens
   `clean_taxon` with an "Unclassified" fallback in `amr_host_association.py`. Unifying these
-  would silently change at least one script's output. (Separately, `agent_skills/hooks/parsers.py`
-  parses the Kraken2 `--report` file — a *different* format from the per-read classified files
-  these scripts parse; see CONTEXT.md.)
+  would silently change at least one script's output.
 - **Each plotting script defines its own rcParams and palette constants.** A shared style module
   risks altering already-published figures.
 - **These scripts are publication-adjacent and cannot be re-run against the original data in this

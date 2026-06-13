@@ -2,7 +2,7 @@
 
 This category covers nanopore-based pipelines for veterinary virology and zoonotic disease surveillance — profiling avian influenza viruses (AIV) and tracking viral transmission across host species.
 
-**Contact:** Dr. Albert Perlas & Dr. Lara Urban
+**Contact:** For questions, [open a GitHub issue](https://github.com/ttmgr/GenomicsForOneHealth/issues) or reach the [Urban Lab](https://sites.google.com/view/urban-lab/home).
 
 > **Pipeline Selector:** If you need to decide between targeted AIV profiling and cross-host variant tracking, start with the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/).
 

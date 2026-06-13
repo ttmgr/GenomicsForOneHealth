@@ -2,7 +2,7 @@
 
 This category covers pipelines for assessing microbial viability directly from raw nanopore electrical signals, without the need for cell culture or viability staining.
 
-**Contact:** Harika Ürel (PhD Student) & Dr. Lara Urban
+**Contact:** For questions, [open a GitHub issue](https://github.com/ttmgr/GenomicsForOneHealth/issues) or reach the [Urban Lab](https://sites.google.com/view/urban-lab/home).
 
 > **Pipeline Selector:** Use the public [Pipeline Selector](https://ttmgr.github.io/GenomicsForOneHealth/) if you need to determine whether your project belongs in signal-level viability inference or one of the read-based workflows elsewhere in the collection.
 
